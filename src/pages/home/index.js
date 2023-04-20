@@ -1,1 +1,1 @@
-export {default as Home} from './components/index.jsx'
+export {default as Home} from './components/index'

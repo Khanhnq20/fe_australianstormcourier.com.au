@@ -18,6 +18,9 @@ export default function Index() {
             <Marketing></Marketing>
             <BecomeCustomer></BecomeCustomer>
             <Address></Address>
+            <div>
+                <img src='http://australianstormcourier.com.au/wp-content/uploads/2023/04/city-1536x864.jpg' width={"100%"}/>
+            </div>
         </div>
     </>
   )
