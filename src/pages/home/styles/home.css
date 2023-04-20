@@ -1,0 +1,111 @@
+.ban-background{
+    display: flex;
+    height: fit-content;
+    animation: sparkle 60s linear infinite;
+}
+.ban-ctn-1{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ban-img{
+    max-width: 662px;
+}
+
+.ban-txt-header{
+    font-size: 1.25em;
+    font-weight: 700;
+    color: white;
+    text-align: left;
+}
+
+.ban-txt{
+    color: white;
+    text-align: left;
+}
+
+.ban-content{
+    margin-left: auto;
+    margin-right:0;
+}
+
+.ban-background{
+    background-color: var(--clr-btn-warning);
+    background-image: url(	https://australianstormcourier.com.au/wp-content/themes/flatsome3.15/assets/img/effects/sparkle1.png)
+    /* url(https://australianstormcourier.com.au/wp-content/themes/flatsome3.15/assets/img/effects/sparkle2.png); */
+}
+
+.del-img{
+    max-height: 496px;
+    width: 648px;
+}
+
+.del-content{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.del-root{
+    background-color:#F3F3F3;
+    padding: 40px 0;
+}
+
+.del-row{
+    max-width: 1362.5px;
+}
+
+.rate-root{
+    padding: 40px 0;
+}
+
+.mar-item{
+    display: flex;
+    gap: 15px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px -2px;
+}
+
+.mar-item-frame{
+    display: flex;
+}
+
+.mar-txt-header{
+    text-align: center;
+    font-weight: 600;
+}
+
+.mar-txt{
+    text-align: center;
+}
+
+.cus-img{
+    max-width: 435px;
+}
+
+.cus-root{
+    background-color: #F3F3F3;;
+}
+.cus-item{
+    box-shadow: 0 1px 3px -2px;
+    background-color: white;
+}
+
+.as-img{
+    max-width: 172px;
+    display: inline-block;
+}
+.as-ctn-1{
+    text-align: center;
+}
+
+@keyframes sparkle {
+    0% {
+        background-position: 0px 0px,0px 0px,0px 0px
+    }
+
+    100% {
+        background-position: -500px -1000px,-400px -400px,300px 300px
+    }
+}

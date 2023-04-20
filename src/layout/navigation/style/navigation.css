@@ -1,0 +1,59 @@
+.my-btn-yellow{
+    color:white;
+    font-weight: 800;
+    background-color: var(--clr-btn-warning);
+    border: 1px solid var(--clr-btn-warning);
+    width: fit-content;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    font-family: var(--font-family);
+    border-radius: 10px;
+}
+.my-btn-yellow:hover{
+    color:var(--clr-btn-light);
+    background-color:peru ;
+}
+.my-btn-yellow:active{
+    background-color: var(--clr-btn-warning);
+}
+
+.my-btn-white{
+    color:white;
+    background-color: var(--clr-btn-light);
+    color: var(--clr-btn-warning);
+    border: 2px solid var(--clr-btn-warning);
+    font-weight: 700;
+    width: fit-content;
+}
+
+.my-btn-white:hover{
+    color: var(--clr-btn-light);
+    background-color: var(--clr-btn-warning);
+    border: 2px solid var(--clr-btn-warning);
+}
+
+[data-color="primary"] {
+    background: var(--clr-btn-warning);
+}
+
+.nav-ctn-1{
+    display: flex;
+    justify-content: center !important;
+    
+}
+
+.nav-ctn-2{
+    display: flex;
+    justify-content: center !important;
+    gap:20px;
+}
+
+.nav-txt{
+    font-weight: 600;
+    color: var(--clr-txt-primary);
+    font-size: var(--font-size-header);
+}
+
+.nav-logo-frame{
+    padding-right: 100px;
+}
