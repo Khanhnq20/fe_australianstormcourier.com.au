@@ -1,8 +1,13 @@
 .my-btn-yellow{
     color:white;
-    font-weight: 700;
+    font-weight: 800;
     background-color: var(--clr-btn-warning);
-    border: 2px solid var(--clr-btn-warning);
+    border: 1px solid var(--clr-btn-warning);
+    width: fit-content;
+    font-size: 0.85em;
+    text-transform: uppercase;
+    font-family: var(--font-family);
+    border-radius: 10px;
 }
 .my-btn-yellow:hover{
     color:var(--clr-btn-light);
@@ -18,6 +23,7 @@
     color: var(--clr-btn-warning);
     border: 2px solid var(--clr-btn-warning);
     font-weight: 700;
+    width: fit-content;
 }
 
 .my-btn-white:hover{
@@ -46,4 +52,8 @@
     font-weight: 600;
     color: var(--clr-txt-primary);
     font-size: var(--font-size-header);
+}
+
+.nav-logo-frame{
+    padding-right: 100px;
 }

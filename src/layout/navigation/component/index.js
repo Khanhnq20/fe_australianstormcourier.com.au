@@ -10,13 +10,13 @@ export default function Index() {
     <>
         <Navbar bg="light" variant="light">
             <Container className="nav-ctn-1">
-                <Navbar.Brand href="#home">
+                <Navbar.Brand className="nav-logo-frame" href="#home">
                     <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" width="50px"/>
                 </Navbar.Brand>
                 <Nav>
-                    <Nav.Link className='nav-txt' href="#home">Home</Nav.Link>
-                    <Nav.Link className='nav-txt' href="#features">Features</Nav.Link>
-                    <Nav.Link className='nav-txt' href="#pricing">Pricing</Nav.Link>
+                    <Nav.Link className='nav-txt' href="#home">HOME</Nav.Link>
+                    <Nav.Link className='nav-txt' href="#features">FEATURES</Nav.Link>
+                    <Nav.Link className='nav-txt' href="#pricing">PRICING</Nav.Link>
                 </Nav>
             </Container>
             <Container className='nav-ctn-2'>

@@ -1,7 +1,21 @@
 :root{
   --clr-btn-warning: #fcb900;
+  --clr-darker: #EFB103;
   --clr-btn-light: #ffffff;
   --clr-txt-primary: rgba(17,17,17,.85);
   --clr-txt-secondary: #666666;
-  --font-size-header: 1.2em;
+  --font-size: 14px;
+  --font-family: 'Roboto',sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--font-size);
+}
+
+body {
+  font-family: var(--font-family);
 }
