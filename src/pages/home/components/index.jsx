@@ -6,6 +6,9 @@ import '../styles/home.css';
 import Button from 'react-bootstrap/Button';
 import "../../../layout/navigation/style/navigation.css"
 
+function ScrollActive(className){
+}
+
 export default function Index() {
   return (
     <>
@@ -24,7 +27,7 @@ export default function Index() {
     </>
   )
 }
-
+//box four animate fadeLeft
 function Banner(){
     return(
         <>
@@ -32,8 +35,9 @@ function Banner(){
                 <div className='container'>
                     <Row className='ban-background'>
                         <Col className='ban-ctn-1 py-4'>
-                            <div className='ban-content'>
+                            <div className='ban-content fadeLeft'>
                                 <h3 className='ban-txt-header'>AUSTRALIAN STORM COURIER – AS COURIER</h3>
+
                                 <p className='ban-txt'>Australian Storm Courier is a professional 
                                 and equitable delivery company based in Australia who can provide 
                                 standard or same-day deliveries across each city in Australia</p>
@@ -58,7 +62,7 @@ function Delivery(){
                 <div className='container'>
                     <Row>
                         <Col className='del-content py-4'>
-                                <h3>DELIVERY SERVICES</h3>
+                                <h3 className='card-header'>DELIVERY SERVICES</h3>
                                 <p>
                                 If you need assistance with parcel deliveries, we can help! We can assist with deliveries of all 
                                 sizes whether personal or business related. AS Courier provides package delivery and same-day courier 
@@ -70,7 +74,7 @@ function Delivery(){
                         <Col className='col-12 col-md-6'>
                             <div>
                                 <div>
-                                    <img className='del-img img-auto-flex' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/shipping.jpg"/>
+                                    <img className='del-img img-auto-flex fadeRight' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/shipping.jpg"/>
                                 </div>
                             </div>
                         </Col>
@@ -90,14 +94,15 @@ function Rate(){
                         <Col className='col-12 col-md-6'>
                             <div>
                                 <div>
-                                    <img className='del-img img-auto-flex' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/gps.jpg"/>
+                                    <img className='del-img img-auto-flex fadeLeft' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/gps.jpg"/>
                                 </div>
                             </div>
                         </Col>
                         <Col className='del-content py-4'>
-                                <h3>CHOOSE YOUR OWN RATES</h3>
+                                <h3 className='card-header'>CHOOSE YOUR OWN RATES</h3>
                                 <p>
-                                You decide your own rates and dates and our drivers can accept your jobs or offer a different rate. We offer you the flexibility to choose your favourite drivers and rates.
+                                    You decide your own rates and dates and our drivers can accept your jobs or offer a different rate. 
+                                    We offer you the flexibility to choose your favourite drivers and rates.
                                 </p>
                                 <Button variant="warning" className='my-btn-yellow'>SEND NOW</Button>
                         </Col>
@@ -115,7 +120,7 @@ function Notifycation(){
                 <div className='container'>
                     <Row>
                         <Col className='del-content py-4'>
-                                <h3>WHY DRIVER FOR AUSTRALIAN STORM COURIER?</h3>
+                                <h3 className='card-header'>WHY DRIVER FOR AUSTRALIAN STORM COURIER?</h3>
                                 <p>
                                 We offer job flexibility and choice. You get to decide what jobs are best suited for you, 
                                 and get paid for it! At Australian Storm Courier, we understand the importance of a 
@@ -126,7 +131,7 @@ function Notifycation(){
                         <Col className='col-12 col-md-6'>
                             <div>
                                 <div>
-                                    <img className='del-img img-auto-flex' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/cv-1024x652.jpg"/>
+                                    <img className='del-img img-auto-flex fadeRight' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/cv-1024x652.jpg"/>
                                 </div>
                             </div>
                         </Col>
@@ -151,7 +156,7 @@ function Marketing(){
                         </Col>
                     </Row>
                     <Row>
-                    <Col sm="12" lg="6">
+                        <Col sm="12" lg="6" className='fadeLeft'>
                             <div className='mar-item'>
                                 <div>
                                     <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/truck-300x300.png' width={"60px"}/>
@@ -169,7 +174,7 @@ function Marketing(){
                             </div>
                         </Col>
 
-                        <Col sm="12" lg="6">
+                        <Col sm="12" lg="6" className='fadeLeft'>
                             <div className='mar-item mb-4'>
                                 <div>
                                     <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/route-300x300.png' width={"60px"}/>
@@ -187,7 +192,7 @@ function Marketing(){
                             </div>
                         </Col>
 
-                        <Col sm="12" lg="6">
+                        <Col sm="12" lg="6" className='fadeLeft-slower'>
                         <div className='mar-item'>
                                 <div>
                                     <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/dollar-bill-300x300.png' width={"60px"}/>
@@ -205,7 +210,7 @@ function Marketing(){
                             </div>
                         </Col>
 
-                        <Col sm="12" lg="6">
+                        <Col sm="12" lg="6" className='fadeLeft-slower'>
                         <div className='mar-item'>
                                 <div>
                                     <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/truck-300x300.png' width={"60px"}/>
@@ -235,12 +240,12 @@ function BecomeCustomer(){
         <>
             <div className='cus-root'>
                 <div className='container px-4 py-5'>
-                    <div className='pb-4'>
+                    <div className='pb-4 fadeDown'>
                         <h3 className='mar-txt-header'>YOU CAN QUICKLY BECOME A CUSTOMER OR DRIVER.</h3>
                         <p className='mar-txt'>When you are a customer, you can send your package quickly. 
                         When you are a driver, you can receive many orders in a day.</p>
                     </div>
-                    <Row className='gap-4'>
+                    <Row className='gap-4 fadeLeft'>
                         <Col className='cus-item p-3'>
                             <div className='cus-img'>
                                 <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender.png' width="100%" height="100%"/>
