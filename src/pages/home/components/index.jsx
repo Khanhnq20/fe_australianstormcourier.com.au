@@ -10,8 +10,7 @@ export default function Index() {
   return (
     <>
         <div>
-            <Banner>
-            </Banner>
+            <Banner></Banner>
             <Delivery></Delivery>
             <Rate></Rate>
             <Notifycation></Notifycation>
@@ -19,7 +18,7 @@ export default function Index() {
             <BecomeCustomer></BecomeCustomer>
             <Address></Address>
             <div>
-                <img src='http://australianstormcourier.com.au/wp-content/uploads/2023/04/city-1536x864.jpg' width={"100%"}/>
+                <img className='img-auto-flex' src='http://australianstormcourier.com.au/wp-content/uploads/2023/04/city-1536x864.jpg' width={"100%"}/>
             </div>
         </div>
     </>
@@ -29,10 +28,10 @@ export default function Index() {
 function Banner(){
     return(
         <>
-            <div className='ban-background'>
+            <div className='ban-background py-4'>
                 <div className='container'>
                     <Row className='ban-background'>
-                        <Col className='ban-ctn-1'>
+                        <Col className='ban-ctn-1 py-4'>
                             <div className='ban-content'>
                                 <h3 className='ban-txt-header'>AUSTRALIAN STORM COURIER – AS COURIER</h3>
                                 <p className='ban-txt'>Australian Storm Courier is a professional 
@@ -40,9 +39,9 @@ function Banner(){
                                 standard or same-day deliveries across each city in Australia</p>
                             </div>
                         </Col>
-                        <Col>
+                        <Col className='col-12 col-md-6'>
                             <div>
-                                <img className='ban-img' src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender1-1024x1024.png'/>
+                                <img className='ban-img img-auto-flex' src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender1-1024x1024.png'/>
                             </div>
                         </Col>
                     </Row>
@@ -58,7 +57,7 @@ function Delivery(){
             <div className='del-root'>
                 <div className='container'>
                     <Row>
-                        <Col className='del-content'>
+                        <Col className='del-content py-4'>
                                 <h3>DELIVERY SERVICES</h3>
                                 <p>
                                 If you need assistance with parcel deliveries, we can help! We can assist with deliveries of all 
@@ -68,10 +67,10 @@ function Delivery(){
                                 </p>
                                 <Button variant="warning" className='my-btn-yellow'>BECOME A CUSTOMER</Button>
                         </Col>
-                        <Col>
+                        <Col className='col-12 col-md-6'>
                             <div>
                                 <div>
-                                    <img className='del-img' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/shipping.jpg"/>
+                                    <img className='del-img img-auto-flex' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/shipping.jpg"/>
                                 </div>
                             </div>
                         </Col>
@@ -88,14 +87,14 @@ function Rate(){
             <div className='rate-root'>
                 <div className='container'>
                     <Row className='del-row'>
-                        <Col>
+                        <Col className='col-12 col-md-6'>
                             <div>
                                 <div>
-                                    <img className='del-img' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/gps.jpg"/>
+                                    <img className='del-img img-auto-flex' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/gps.jpg"/>
                                 </div>
                             </div>
                         </Col>
-                        <Col className='del-content'>
+                        <Col className='del-content py-4'>
                                 <h3>CHOOSE YOUR OWN RATES</h3>
                                 <p>
                                 You decide your own rates and dates and our drivers can accept your jobs or offer a different rate. We offer you the flexibility to choose your favourite drivers and rates.
@@ -115,7 +114,7 @@ function Notifycation(){
             <div className='del-root'>
                 <div className='container'>
                     <Row>
-                        <Col className='del-content'>
+                        <Col className='del-content py-4'>
                                 <h3>WHY DRIVER FOR AUSTRALIAN STORM COURIER?</h3>
                                 <p>
                                 We offer job flexibility and choice. You get to decide what jobs are best suited for you, 
@@ -124,10 +123,10 @@ function Notifycation(){
                                 </p>
                                 <Button variant="warning" className='my-btn-yellow'>BECOME A DRIVER</Button>
                         </Col>
-                        <Col>
+                        <Col className='col-12 col-md-6'>
                             <div>
                                 <div>
-                                    <img className='del-img' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/shipping.jpg"/>
+                                    <img className='del-img img-auto-flex' src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/cv-1024x652.jpg"/>
                                 </div>
                             </div>
                         </Col>
@@ -142,17 +141,17 @@ function Marketing(){
     return(
         <>
             <div>       
-                <div className='container py-5'>
+                <div className='container py-4'>
                     <Row>
-                        <Col>
+                        <Col className='py-4'>
                             <h3 className='mar-txt-header'>WHY CHOOSE US?</h3>
                             <p className='mar-txt'>Need to send something on time? Contact us now. Over 100 businesses trust 
                                 Australian Storm Courier. Whether it’s small parcels or large pallets, we’re 
-                                here for you anytime to get these shipments where they need to be.</p>
+                                here for you anytime to get these shipments where they need to be.</p>  
                         </Col>
                     </Row>
                     <Row>
-                        <Col sm="12" lg="6">
+                    <Col sm="12" lg="6">
                             <div className='mar-item'>
                                 <div>
                                     <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/truck-300x300.png' width={"60px"}/>
@@ -173,15 +172,33 @@ function Marketing(){
                         <Col sm="12" lg="6">
                             <div className='mar-item mb-4'>
                                 <div>
-                                    <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/truck-300x300.png' width={"60px"}/>
+                                    <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/route-300x300.png' width={"60px"}/>
                                 </div>
                                 <div>
                                     <div>
                                         <h4>
-                                            Fastest Delivery
+                                            GPS Postal Tracking
                                         </h4>
                                         <p>
-                                            We specialize in same-day delivery, door-to-door express shipping, contactless, and pickups.
+                                            Both you and your customers have full visibility on your parcels location from pickup right through to delivery.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col>
+
+                        <Col sm="12" lg="6">
+                        <div className='mar-item'>
+                                <div>
+                                    <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/dollar-bill-300x300.png' width={"60px"}/>
+                                </div>
+                                <div>
+                                    <div>
+                                        <h4>
+                                            Saving Your Money
+                                        </h4>
+                                        <p>
+                                            With us, you will get the most reputable and quality service at a very reasonable price.
                                         </p>
                                     </div>
                                 </div>
@@ -196,28 +213,11 @@ function Marketing(){
                                 <div>
                                     <div>
                                         <h4>
-                                            Fastest Delivery
+                                            Support Local Businesses
                                         </h4>
                                         <p>
-                                            We specialize in same-day delivery, door-to-door express shipping, contactless, and pickups.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </Col>
-
-                        <Col sm="12" lg="6">
-                        <div className='mar-item'>
-                                <div>
-                                    <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/truck-300x300.png' width={"60px"}/>
-                                </div>
-                                <div>
-                                    <div>
-                                        <h4>
-                                            Fastest Delivery
-                                        </h4>
-                                        <p>
-                                            We specialize in same-day delivery, door-to-door express shipping, contactless, and pickups.
+                                            Whether you’re just starting out or already in business, 
+                                            our mission is to help you make the most of your precious time.
                                         </p>
                                     </div>
                                 </div>
@@ -241,12 +241,6 @@ function BecomeCustomer(){
                         When you are a driver, you can receive many orders in a day.</p>
                     </div>
                     <Row className='gap-4'>
-                        <Col className='cus-item p-3' >
-                            <div className='cus-img'>
-                                <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender.png' width="100%" height="100%"/>
-                            </div>
-                            <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A DRIVER</Button>
-                        </Col>
                         <Col className='cus-item p-3'>
                             <div className='cus-img'>
                                 <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender.png' width="100%" height="100%"/>
@@ -255,9 +249,15 @@ function BecomeCustomer(){
                         </Col>
                         <Col className='cus-item p-3'>
                             <div className='cus-img'>
-                                <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender.png' width="100%" height="100%"/>
+                                <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender-1.png' width="100%" height="100%"/>
                             </div>
-                            <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A DRIVER</Button>
+                            <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A CUSTOMER</Button>
+                        </Col>
+                        <Col className='cus-item p-3'>
+                            <div className='cus-img'>
+                                <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/customer.png' width="100%" height="100%"/>
+                            </div>
+                            <Button variant="warning" className='w-100 my-btn-yellow my-4'>SEND NOW</Button>
                         </Col>
                     </Row>
                 </div>

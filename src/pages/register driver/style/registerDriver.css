@@ -1,0 +1,15 @@
+.dr-btn{
+    background-color: var(--clr-btn-light);
+    color: var(--clr-txt-primary);
+    border: 1px solid #DDDDDD;
+}
+.dr-btn:hover{
+    background-color: var(--clr-btn-light) ;
+    color: var(--clr-txt-primary) ;
+    border: 1px solid #DDDDDD;
+}
+.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
+    color:  var(--clr-txt-primary);
+    background-color:var(--clr-btn-light);
+    border: 1px solid #DDDDDD;
+}

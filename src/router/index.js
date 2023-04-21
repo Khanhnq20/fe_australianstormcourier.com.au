@@ -1,23 +1,46 @@
-import { BrowserRouter, Outlet, Route, Routes, Navigate } from 'react-router-dom';
-import Navigation from '../layout/navigation/component/index';
-import Home from '../pages/home/components/index';
-import { Footer } from '../layout';
-import React from 'react'
+import {
+  createBrowserRouter,
+} from "react-router-dom";
+import { Navigation } from "../layout";
+import { Footer } from "../layout";
+import {Home} from '../pages';
+import React from 'react';
+import Register from "../pages/register driver/component";
 
-export default function Router() {
-  return (
-    <>
-        <BrowserRouter>
-            <Routes>
-              <Route index path="/*" element={<Navigation></Navigation>}></Route>
-            </Routes>
-            <Routes>
-                <Route path='/' element={<Home></Home>}></Route>
-            </Routes>
-            <Routes>
-                <Route path='/*' element={<Footer></Footer>}></Route>
-            </Routes>
-        </BrowserRouter>
-    </>
-  )
-}
+export const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <>
+      <Navigation />
+      <Home />
+      <Footer/>
+    </>,
+    children: [
+      {
+        path: "dash",
+        element: <>
+          <Navigation />
+          <Home />
+        </>
+      },
+    ],
+  },
+  {
+    path: "/register",
+    element: <>
+      <Navigation />
+      <Register />
+    </>,
+    
+    children: [
+      {
+        path: "",
+        element: <>
+          <Navigation />
+          <Home />
+        </>
+      },
+    ],
+  },
+]);
+
