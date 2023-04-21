@@ -22,10 +22,10 @@ export default function Index() {
                     </Nav>
                 </Navbar.Collapse>
                 
-                {/* <div className='nav-ctn-2'>
+                <div className='nav-ctn-2'>
                     <Button variant='warning' className='my-btn-yellow' data-color="primary">Register Driver</Button>
                     <Button variant='warning' className='my-btn-white'>Register Customer</Button>
-                </div> */}
+                </div>
             </Container>
         </Navbar>
     </>
