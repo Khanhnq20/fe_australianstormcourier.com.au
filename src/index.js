@@ -3,11 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Spinner } from 'react-bootstrap';
+import { RouterProvider } from 'react-router-dom';
+import { router } from './router';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <RouterProvider
+      router={router}
+      fallbackElement={<Spinner />}>
+      <App />
+    </RouterProvider>
   </React.StrictMode>
 );
 
