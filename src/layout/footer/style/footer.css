@@ -1,9 +1,9 @@
 .ft-content{
     text-align: center;
-    color: rgba(255, 255, 255, .5);
+    color: var(--clr-txt-primary);
     margin: 0;
     padding: 15px;
 }
 .ft-root{
-    background-color: #5b5b5b;
+    background-color: var(--clr-primary-light);
 }

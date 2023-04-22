@@ -42,7 +42,7 @@
     grid-template-columns: auto auto auto;
 }
 .reg-header{
-    font-weight: 600;
+    font-weight: 800;
 }
 #driver_image_front, #driver_image_back {
     display: none;

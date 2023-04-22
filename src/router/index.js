@@ -1,27 +1,35 @@
 import {
+  Outlet,
   createBrowserRouter,
 } from "react-router-dom";
 import { Navigation } from "../layout";
 import { Footer } from "../layout";
 import {Home} from '../pages';
 import React from 'react';
-import Register from "../pages/register driver/component";
+import RegisterDriver from "../pages/register driver/component";
+import RegisterUser from "../pages/register user/component";
+import Login from "../pages/login/component";
 
 export const router = createBrowserRouter([
   {
-    path: "/",
+    path: "",
     element: <>
       <Navigation />
-      <Home />
+      <Outlet />
       <Footer/>
     </>,
     children: [
       {
-        path: "dash",
-        element: <>
-          <Navigation />
-          <Home />
-        </>
+        path: "",
+        element: <Home></Home>
+      },
+      {
+        path: "registerUser",
+        element:<RegisterUser></RegisterUser>
+      },
+      {
+        path: "login",
+        element:<Login></Login>
       },
     ],
   },
@@ -29,7 +37,7 @@ export const router = createBrowserRouter([
     path: "/register",
     element: <>
       <Navigation />
-      <Register />
+      <RegisterDriver />
     </>,
     
     children: [

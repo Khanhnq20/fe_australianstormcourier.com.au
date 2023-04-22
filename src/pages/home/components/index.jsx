@@ -4,7 +4,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import '../styles/home.css';
 import Button from 'react-bootstrap/Button';
-import "../../../layout/navigation/style/navigation.css"
+import "../../../layout/navigation/style/navigation.css";
 
 function ScrollActive(className){
 }
@@ -31,24 +31,20 @@ export default function Index() {
 function Banner(){
     return(
         <>
-            <div className='ban-background py-4'>
-                <div className='container'>
-                    <Row className='ban-background'>
-                        <Col className='ban-ctn-1 py-4'>
-                            <div className='ban-content fadeLeft'>
-                                <h3 className='ban-txt-header'>AUSTRALIAN STORM COURIER – AS COURIER</h3>
+            <div className='ban-background'>
+                <div className='ban-form-content'>
+                    <div className='w-100 ban-content-2'>
+                        <div className='ban-content fadeLeft'>
+                            <h5 style={{fontSize:'1.250em',fontWeight:'800',color:'white'}}>AS Courier</h5>
+                            <h3 className='ban-txt-header py-3'>GPS Postal <br/>Tracking</h3>
 
-                                <p className='ban-txt'>Australian Storm Courier is a professional 
-                                and equitable delivery company based in Australia who can provide 
-                                standard or same-day deliveries across each city in Australia</p>
-                            </div>
-                        </Col>
-                        <Col className='col-12 col-md-6'>
-                            <div>
-                                <img className='ban-img img-auto-flex' src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender1-1024x1024.png'/>
-                            </div>
-                        </Col>
-                    </Row>
+                            <p className='ban-txt'>Australian Storm Courier is an Australian professional delivery 
+                            company based in Melbourne. We provide fast same-day delivery between Dandenong and Melbourne CBD.</p>
+                        </div>
+                        <div className='ban-img-frame'>
+                            <img className='ban-img img-auto-flex' src='https://tinyurl.com/2j5458ak'/>
+                        </div>  
+                    </div>
                 </div>
             </div>
         </>
