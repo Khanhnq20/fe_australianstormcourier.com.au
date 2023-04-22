@@ -23,8 +23,8 @@ export default function Index() {
                 </Navbar.Collapse>
                 
                 <div className='nav-ctn-2'>
-                    <Button variant='warning' className='my-btn-yellow' data-color="primary">Register Driver</Button>
-                    <Button variant='warning' className='my-btn-white'>Register Customer</Button>
+                   <h6 className='nav-txt-btn'>Login</h6> 
+                   <h6 className='nav-txt-btn'>Register</h6>
                 </div>
             </Container>
         </Navbar>

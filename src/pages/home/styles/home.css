@@ -1,28 +1,49 @@
+
 .ban-background{
     display: flex;
-    height: fit-content;
     animation: sparkle 60s linear infinite;
-}
-.ban-ctn-1{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    position: relative;
+    padding: 120px 0;
+
 }
 
+.ban-form-content{
+    width: 100%;
+}
+.ban-content-2{
+    display: flex ;
+    align-items: center;
+    justify-content: space-between;
+}
+.ban-content-2 img {
+    width: 100%;
+}
+
+.ban-ctn-1{
+    margin-right: 60px;
+}
+.ban-img-frame{
+    display: inline-block;
+}
 .ban-img{
-    max-width: 662px;
+    width: 100%;
+    display: inline-block;
+}
+/* .ban-img{
     transition-duration: 0.6s, 0.6s, 0.6s, 0.3s, 0.6s, 0.6s, 0.3s;
     transition-timing-function: ease, ease, ease, ease, ease, ease, ease;
     transition-delay: 0s, 0s, 0s, 0s, 0s, 0s, 0s;
     transition-property: all;
-}
-.ban-img:hover{
+} */
+/* .ban-img:hover{
     transform: scale(1.1);
-}
+} */
 
 .ban-txt-header{
-    font-size: 1.25em;
-    font-weight: 700;
+    font-size: 3.125em;
+    font-weight: 800;
+    font-family: var(--font-family);
+    line-height: 60.95px;
     color: white;
     text-align: left;
 }
@@ -30,17 +51,22 @@
 .ban-txt{
     color: white;
     text-align: left;
+    font-weight: 500;
 }
 
 .ban-content{
-    margin-left: auto;
     margin-right:0;
+    max-width: 500px;
+    padding-left: 100px;
+    
+    display: inline-block;
+    position: relative;
 }
 
 .ban-background{
-    background-color: var(--clr-btn-warning);
-    background-image: url(	https://australianstormcourier.com.au/wp-content/themes/flatsome3.15/assets/img/effects/sparkle1.png)
-    /* url(https://australianstormcourier.com.au/wp-content/themes/flatsome3.15/assets/img/effects/sparkle2.png); */
+    background-color: var(--clr-primary);
+    /* background-image: url(	https://australianstormcourier.com.au/wp-content/themes/flatsome3.15/assets/img/effects/sparkle1.png)
+    url(https://australianstormcourier.com.au/wp-content/themes/flatsome3.15/assets/img/effects/sparkle2.png); */
 }
 
 .del-img{

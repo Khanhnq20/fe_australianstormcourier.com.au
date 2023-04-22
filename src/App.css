@@ -1,12 +1,11 @@
 :root{
-  --clr-btn-warning: #fcb900;
-  --clr-darker: #EFB103;
-  --clr-btn-light: #ffffff;
+  --clr-primary: #f2a13b;
+  --clr-secondary: #ffffff;
   --clr-txt-primary: rgba(17,17,17,.85);
-  --clr-btn-hover: peru;
+  --clr-light: #FFF4E5;
   --clr-txt-secondary: #666666;
-  --font-size: 14px;
-  --font-family: 'Roboto',sans-serif;
+  --font-size: 15px;
+  --font-family: 'Montserrat',sans-serif;
 }
 
 * {
@@ -25,7 +24,52 @@ body {
   width: 100%;
   height: 100%;
 }
+.my-btn-yellow{
+  color:var(--clr-txt-primary);
+  font-weight: 600;
+  background-color: var(--clr-primary);
+  border: none;
+  width: fit-content;
+  font-size: 0.85em;
+  font-family: var(--font-family);
+  border-radius: 30px;
+  padding: 10px 25px;
+}
+.my-btn-yellow :active{
+  color: var(--clr-txt-primary);
+  background-color: var(--clr-primary);
+  border:none;
+}
+.my-btn-yellow:hover{
+  color:var(--clr-txt-primary);
+  background-color: var(--clr-primary);
+  border: none;
+}
 
+.my-btn-white{
+  color:var(--clr-btn-light);
+  background-color: var(--clr-btn-light);
+  color: var(--clr-btn-warning);
+  border: 1px solid var(--clr-btn-warning);
+  font-weight: 800;
+  width: fit-content;
+  text-transform: uppercase;
+  font-family: var(--font-family);
+  border-radius: 10px;
+  font-size: 0.85em;
+  padding: 7px 12px;
+}
+.my-btn-white:active{
+  color: var(--clr-btn-light);
+  background-color: var(--clr-btn-warning);
+  border-color: var(--clr-btn-light);
+}
+
+.my-btn-white:hover{
+  color: var(--clr-btn-light);
+  background-color: var(--clr-btn-warning);
+  border: 1px solid var(--clr-btn-warning);
+}
 .txt-center{
   text-align: center;
 }
@@ -33,9 +77,25 @@ body {
 .label{
   font-weight: 600;
   font-size: 1.1rem;
-  text-transform: uppercase;
+  display: inline;
 }
-
+.asterisk{
+  color: red;
+  display: inline;
+  font-weight: 1000;
+  padding-left: 3px;
+}
+.eyes-pass{
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+  z-index: 1000;
+  transform: translate(-45%,5%);
+}
+.frame-pass{
+  position: relative;
+}
 @keyframes sparkle {
   0% { 
       background-position: 0px 0px,0px 0px,0px 0px
