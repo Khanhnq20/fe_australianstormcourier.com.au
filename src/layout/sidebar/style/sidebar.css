@@ -1,0 +1,32 @@
+.sbar-root{
+    background-color: white;
+    min-height: 100vh;
+    width: 290px;
+    padding: 15px 25px;
+}
+
+.sbar-header{
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.sbar-txt{
+    font-weight: 600;
+    margin: 0;
+    padding: 0 7px;
+}
+
+.sbar-icon-frame{
+    font-size: 18px;
+}
+.sbar-icon{
+    font-size: 20px;
+    transform: translateY(-1px);
+    margin-right:10px;
+}
+
+.sbar-tab{
+    display: flex;
+    margin: 12px 0;
+    align-items: center;
+}

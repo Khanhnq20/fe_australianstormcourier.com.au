@@ -3,12 +3,11 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import { Link } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
-import Button from 'react-bootstrap/Button';
 import '../style/navigation.css';
 
 export default function Index() {
   return (
-    <>
+    <div className='nav-root'>
         <Navbar bg="light" variant="light" expand="lg">
             <Container className="nav-ctn-1">
                 <Navbar.Brand className="nav-logo-frame" href="#home">
@@ -39,6 +38,6 @@ export default function Index() {
                 </div>
             </Container>
         </Navbar>
-    </>
+    </div>
   )
 }
