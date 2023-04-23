@@ -25,7 +25,7 @@ let registerSchema = yup.object().shape({
     passwordConfirm: yup.string().required("This field is requied").oneOf([yup.ref("password"), null], "Passwords must match")
 })
 
-export default function RegisterUser() {
+export default function Index() {
     const datepicker = useRef();
     const [showPass,setShowPass] = React.useState(false);
     const [showPassC,setShowPassC] = React.useState(false);
