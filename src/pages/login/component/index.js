@@ -1,6 +1,6 @@
 
 import '../../register user/style/registerUser.css';
-import React, { useRef } from 'react'
+import React from 'react'
 import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
@@ -36,7 +36,6 @@ export default function Index() {
             <>   
                 <div className='container p-5'>
                     <div>
-                        {isValid ? "TRUE" : "FALSE"}
                         <div>
                             <h3 className='reg-header txt-center'>Login</h3>
                             <h4 className='reg-txt-u txt-center'>Get started with Us</h4>
@@ -71,6 +70,7 @@ export default function Index() {
                                             placeholder="Enter your Password"
                                             name="password"/>
                                             <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+                                            <div className='override-block'></div>
                                             <div className='eyes-pass'>
                                                 {showPass ? <AiFillEye onClick={showPassHandler}></AiFillEye> 
                                                 : <AiFillEyeInvisible onClick={showPassHandler}></AiFillEyeInvisible>}

@@ -24,13 +24,13 @@ let registerSchema = yup.object().shape({
 
 export default function Index() {
     const [showPass,setShowPass] = React.useState(false);
-    const [showPassC,setShowPassC] = React.useState(false);
+    const [showPassConfirm,setShowPassConfirm] = React.useState(false);
     const [date,setDate] = React.useState(new Date());
     const showPassHandler = () => {
         setShowPass(e=>!e);
     }
-    const showPassCHandler = () => {
-        setShowPassC(e=>!e);
+    const showPassConfirmHandler = () => {
+        setShowPassConfirm(e=>!e);
     }
   return (
 
@@ -96,6 +96,7 @@ export default function Index() {
                                             placeholder="Enter your Password"
                                             name="password"/>
                                             <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+                                            <div className='override-block'></div>
                                             <div className='eyes-pass'>
                                                 {showPass ? <AiFillEye onClick={showPassHandler}></AiFillEye> 
                                                 : <AiFillEyeInvisible onClick={showPassHandler}></AiFillEyeInvisible>}
@@ -109,7 +110,7 @@ export default function Index() {
                                 </div>
                                 <div className='frame-pass'>
                                     <Form.Control
-                                        type={showPassC ? 'text' : 'password'} 
+                                        type={showPassConfirm ? 'text' : 'password'} 
                                         name="passwordConfirm"
                                         placeholder="Enter password again"
                                         isInvalid={touched.passwordConfirm && errors.passwordConfirm}
@@ -117,9 +118,10 @@ export default function Index() {
                                         onBlur={handleBlur}
                                     />
                                     <Form.Control.Feedback type="invalid">{errors.passwordConfirm}</Form.Control.Feedback>
+                                    <div className='override-block'></div>
                                     <div className='eyes-pass'>
-                                        {showPassC ? <AiFillEye onClick={showPassCHandler}></AiFillEye> 
-                                        : <AiFillEyeInvisible onClick={showPassCHandler}></AiFillEyeInvisible>}
+                                        {showPassConfirm ? <AiFillEye onClick={showPassConfirmHandler}></AiFillEye> 
+                                        : <AiFillEyeInvisible onClick={showPassConfirmHandler}></AiFillEyeInvisible>}
                                     </div>
                                 </div>
                             </Form.Group>
