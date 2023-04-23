@@ -6,14 +6,17 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import {AiFillEye,AiFillEyeInvisible} from  'react-icons/ai';
-import {DatePicker} from "antd";
 import {AiFillLock} from 'react-icons/ai';
-import '../style/login.css'
+import '../style/login.css';
 import { Link } from 'react-router-dom';
 
 
+let loginSchema = yup.object().shape({
+    email: yup.string().email('This field must be email type').required("Email is required field"), 
+    password: yup.string().required("This field is requied")
+})
+
 export default function Index() {
-    const [isValidate,setValidate] = React.useState();
     const [showPass,setShowPass] = React.useState(false); 
     const showPassHandler = () => {
         setShowPass(e=>!e);
@@ -21,21 +24,19 @@ export default function Index() {
   return (
 
     <Formik
-    initialValues={{
-        email:'',
-        password:''
+        initialValues={{
+            email:'',
+            password:''
         }}
+        isInitialValid={false}  
+        validationSchema={loginSchema}
     >
-    {({touched, errors, handleSubmit,values}) =>{
-        if(values.email && values.password !== ''){
-            setValidate(false);
-        }else{
-            setValidate(true);
-        }
+    {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
         return(
             <>   
                 <div className='container p-5'>
                     <div>
+                        {isValid ? "TRUE" : "FALSE"}
                         <div>
                             <h3 className='reg-header txt-center'>Login</h3>
                             <h4 className='reg-txt-u txt-center'>Get started with Us</h4>
@@ -43,7 +44,7 @@ export default function Index() {
                         </div>
                         <Form className='form'>
                             <Form.Group className="form-group" >
-                                <div  className='mb-2'>
+                                <div className='mb-2'>
                                     <Form.Label className='label'>Email</Form.Label>
                                     <p className='asterisk'>*</p>
                                 </div>
@@ -51,7 +52,12 @@ export default function Index() {
                                     type="text"
                                     name="email"
                                     placeholder="Enter Your Email"
+                                    onChange={handleChange}
+                                    // isInvalid={touched.email && touched.password && !!errors.email && !!errors.password}
+                                    isInvalid={touched.email && errors.email}
+                                    onBlur={handleBlur}
                                 />
+                                <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group className="form-group">
                                     <div  className='mb-2'>
@@ -61,8 +67,10 @@ export default function Index() {
                                     <div className='frame-pass'>
                                         <Form.Control
                                             type={showPass ? 'text' : 'password'} 
+                                            onChange={handleChange}
                                             placeholder="Enter your Password"
                                             name="password"/>
+                                            <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                                             <div className='eyes-pass'>
                                                 {showPass ? <AiFillEye onClick={showPassHandler}></AiFillEye> 
                                                 : <AiFillEyeInvisible onClick={showPassHandler}></AiFillEyeInvisible>}
@@ -80,13 +88,13 @@ export default function Index() {
                                         <AiFillLock></AiFillLock>
                                     </span>
                                     <span className='log-txt-forgot'>
-                                        <Link className='log-link-forgot' to='/forgot'>
+                                        <Link to='/forgot' className='log-link-forgot'>
                                             Forgot password?
                                         </Link>
                                     </span>
                                 </div>
                             </div>
-                            <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={isValidate} className={`my-btn-yellow my-3`}>Login</Button>
+                            <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={!isValid} className={`my-btn-yellow my-3`}>Login</Button>
                         </Form>
                     </div>
                 </div>
