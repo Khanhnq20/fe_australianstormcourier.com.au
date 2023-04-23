@@ -1,16 +1,13 @@
 
 import '../style/registerUser.css';
-import React, { useRef } from 'react'
+import React from 'react'
 import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
-import Dropdown from 'react-bootstrap/Dropdown';
 import '../../register driver/style/registerDriver.css';
 import Button from 'react-bootstrap/Button';
 import {AiFillEye,AiFillEyeInvisible} from  'react-icons/ai';
-import {SlCalender} from 'react-icons/sl'
 import {DatePicker} from "antd";
-import { isMaxDate } from 'react-calendar/dist/cjs/shared/propTypes';
 
 
 let registerSchema = yup.object().shape({
@@ -26,7 +23,6 @@ let registerSchema = yup.object().shape({
 })
 
 export default function Index() {
-    const datepicker = useRef();
     const [showPass,setShowPass] = React.useState(false);
     const [showPassC,setShowPassC] = React.useState(false);
     const [date,setDate] = React.useState(new Date());
