@@ -1,6 +1,7 @@
 import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
+import { Link } from 'react-router-dom';
 import Navbar from 'react-bootstrap/Navbar';
 import Button from 'react-bootstrap/Button';
 import '../style/navigation.css';
@@ -16,15 +17,25 @@ export default function Index() {
                 <Navbar.Toggle aria-controls="aus-navbar" />
                 <Navbar.Collapse id="aus-navbar">
                     <Nav>
-                        <Nav.Link className='nav-txt' href="#home">HOME</Nav.Link>
-                        <Nav.Link className='nav-txt' href="#features">FEATURES</Nav.Link>
-                        <Nav.Link className='nav-txt' href="#pricing">PRICING</Nav.Link>
+                        <Link className='nav-link' to='/'>
+                            <div className='nav-txt'>Home</div>
+                        </Link>
+                        <Link className='nav-link' to='/'>
+                            <div className='nav-txt'>Features</div>
+                        </Link>
+                        <Link className='nav-link' to='/'>
+                            <div className='nav-txt'>Pricing</div>
+                        </Link>
                     </Nav>
                 </Navbar.Collapse>
                 
                 <div className='nav-ctn-2'>
-                   <h6 className='nav-txt-btn'>Login</h6> 
-                   <h6 className='nav-txt-btn'>Register</h6>
+                    <Link className='nav-link' to='/login'>
+                        <h6 className='nav-txt-btn'>Login</h6> 
+                    </Link>
+                    <Link className='nav-link' to='/registerUser'>
+                        <h6 className='nav-txt-btn'>Register</h6> 
+                    </Link>
                 </div>
             </Container>
         </Navbar>

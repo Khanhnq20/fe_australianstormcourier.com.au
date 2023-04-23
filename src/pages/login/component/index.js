@@ -9,14 +9,11 @@ import {AiFillEye,AiFillEyeInvisible} from  'react-icons/ai';
 import {DatePicker} from "antd";
 import {AiFillLock} from 'react-icons/ai';
 import '../style/login.css'
+import { Link } from 'react-router-dom';
 
 
-let loginSchema = yup.object().shape({
-    email: yup.string().email('This field must be email type').required("Email is required field"), 
-    password: yup.string().required("This field is requied").oneOf([yup.ref("password"), null], "Passwords must match")
-})
-
-export default function Login() {
+export default function Index() {
+    const [isValidate,setValidate] = React.useState();
     const [showPass,setShowPass] = React.useState(false); 
     const showPassHandler = () => {
         setShowPass(e=>!e);
@@ -25,12 +22,16 @@ export default function Login() {
 
     <Formik
     initialValues={{
-        userName:''
+        email:'',
+        password:''
         }}
-        
-    validationSchema={loginSchema}
     >
-    {({touched, errors, handleSubmit, handleChange, handleBlur}) =>{
+    {({touched, errors, handleSubmit,values}) =>{
+        if(values.email && values.password !== ''){
+            setValidate(false);
+        }else{
+            setValidate(true);
+        }
         return(
             <>   
                 <div className='container p-5'>
@@ -50,11 +51,7 @@ export default function Login() {
                                     type="text"
                                     name="email"
                                     placeholder="Enter Your Email"
-                                    isInvalid={touched.email && errors.email}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
                                 />
-                                <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                             </Form.Group>
                             <Form.Group className="form-group">
                                     <div  className='mb-2'>
@@ -64,12 +61,8 @@ export default function Login() {
                                     <div className='frame-pass'>
                                         <Form.Control
                                             type={showPass ? 'text' : 'password'} 
-                                            isInvalid={touched.password && errors.password}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
                                             placeholder="Enter your Password"
                                             name="password"/>
-                                            <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                                             <div className='eyes-pass'>
                                                 {showPass ? <AiFillEye onClick={showPassHandler}></AiFillEye> 
                                                 : <AiFillEyeInvisible onClick={showPassHandler}></AiFillEyeInvisible>}
@@ -87,11 +80,13 @@ export default function Login() {
                                         <AiFillLock></AiFillLock>
                                     </span>
                                     <span className='log-txt-forgot'>
-                                        Forgot password?
+                                        <Link className='log-link-forgot' to='/forgot'>
+                                            Forgot password?
+                                        </Link>
                                     </span>
                                 </div>
                             </div>
-                            {/* <Button variant="warning" className='my-btn-yellow'>Login</Button> */}
+                            <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={isValidate} className={`my-btn-yellow my-3`}>Login</Button>
                         </Form>
                     </div>
                 </div>

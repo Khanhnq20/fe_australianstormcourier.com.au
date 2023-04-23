@@ -15,3 +15,16 @@
     margin-left: 5px;
     color: var(--clr-primary);
 }
+.log-accept{
+    user-select: d;
+}
+.log-reject{
+    user-select: none;
+}
+.log-link-forgot{
+    color: var(--clr-primary);
+    text-decoration: none;
+}
+.log-link-forgot:hover{
+    color: var(--clr-primary);
+}

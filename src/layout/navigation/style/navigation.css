@@ -22,3 +22,6 @@
     size: 16px;
     margin-right: 10px;
 }
+.nav-link{
+    text-decoration: none;
+}
