@@ -34,7 +34,7 @@ export default function Index() {
     {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
         return(
             <>   
-                <div className='container p-5'>
+                <div style={{minHeight:"84vh"}} className='container p-5'>
                     <div>
                         <div>
                             <h3 className='reg-header txt-center'>Login</h3>

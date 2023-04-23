@@ -4,6 +4,8 @@
   --clr-txt-primary: rgba(17,17,17,.85);
   --clr-light: #FFF4E5;
   --clr-txt-secondary: #666666;
+  --clr-bgr-home: #f3f3f3;
+  --clr-input: #fafafa;
   --font-size: 15px;
   --font-family: 'Montserrat',sans-serif;
 }
@@ -218,6 +220,14 @@ input[type="checkbox"]:checked::after{
 }
 input[type="checkbox"]:active{
   background-color: #f2a13b;
+}
+input[type="text"]{
+  background-color: var(--clr-input);
+  padding: 8px 12px;
+}
+input[type="password"]{
+  background-color: var(--clr-input);
+  padding: 8px 12px;
 }
 
 .fr-checkbox input {
