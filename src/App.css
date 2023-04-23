@@ -90,7 +90,7 @@ body {
   right: 0;
   top: 0;
   font-size: 20px;
-  z-index: 1000;
+  z-index: 3;
   transform: translate(-45%,5%);
 }
 .frame-pass{
@@ -266,4 +266,15 @@ input:checked ~ .checkmark {
 .txt-checkbox{
   margin-left: 30px;
   font-weight: 600;
+}
+.override-block{
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  z-index: 2;
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-size: 20px;
+  transform: translate(-45%,40%);
 }
