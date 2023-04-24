@@ -2,9 +2,9 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-import { Navigation } from "../layout";
+import { Navigation, Sidebar } from "../layout";
 import { Footer } from "../layout";
-import {Home,RegisterUser,Login, Forgot, ResetPassword, Homepage} from '../pages';
+import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation,User} from '../pages';
 import React from 'react';
 import RegisterDriver from "../pages/register driver/component";
 
@@ -39,7 +39,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "homepage",
-        element:<Homepage></Homepage>
+        element:<Sidebar></Sidebar>
+      },
+      {
+        path:"information",
+        element: <UserInformation></UserInformation>
       }
     ],
   },
