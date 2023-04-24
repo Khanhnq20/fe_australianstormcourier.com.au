@@ -1,7 +1,9 @@
 .reg-form{
-    box-shadow: 0 1px 3px -2px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
     padding: 20px;
     border-radius: 10px;
+}
+.reg-dr{
+    background-color: var(--clr-input);
 }
 .dr-btn{
     background-color: var(--clr-btn-light);
@@ -11,6 +13,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 8px 12px;
 }
 .dr-btn:hover{
     background-color: var(--clr-btn-light) ;
@@ -22,17 +25,33 @@
     background-color:var(--clr-btn-light);
     border: 1px solid #DDDDDD;
 }
-.img-front{
+.img-front-frame{
     max-height: 300px;
     width: auto;
-    text-align: center;
-    margin: 0 auto;
-    border: 1px dashed black;
     border-radius: 15px;
-    padding: 30px;
+    padding: 20px;
     cursor: pointer;
     object-fit: cover;
     margin-bottom: 20px;
+    position: relative;
+}
+.background-front{
+    background-color: #DDDDDD;
+    opacity: 50%;
+    width: 350px;
+    height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    border-radius: 15px;
+    z-index: 12;
+}
+.img-front{
+    width: 350px;
+    height: 200px;
+    border-radius: 15px;
 }
 .form-group{
     margin-bottom: 15px;
@@ -40,10 +59,16 @@
 .list-vehicle{
     display: grid;
     grid-template-columns: auto auto auto;
+    margin-top: 10px;
 }
 .reg-header{
     font-weight: 800;
 }
 #driver_image_front, #driver_image_back {
     display: none;
+}
+.driving-txt{
+    color: gray;
+    opacity: 70%;
+    font-size: 14px;
 }
