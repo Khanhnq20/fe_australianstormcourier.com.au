@@ -1,0 +1,8 @@
+.ui-email-input{
+    user-select: none;
+}
+.ui-header{
+    display: inline-block;
+    transform: translate(-85%,-25px);
+    font-weight: 600;
+}
