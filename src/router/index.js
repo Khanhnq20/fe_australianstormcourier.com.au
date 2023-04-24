@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import { Navigation, Sidebar } from "../layout";
 import { Footer } from "../layout";
-import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation,User} from '../pages';
+import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation,User, ChangePassword} from '../pages';
 import React from 'react';
 import RegisterDriver from "../pages/register driver/component";
 
@@ -44,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path:"information",
         element: <UserInformation></UserInformation>
+      },
+      {
+        path:"changePassword",
+        element: <ChangePassword></ChangePassword>
       }
     ],
   },

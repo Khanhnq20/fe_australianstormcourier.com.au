@@ -7,6 +7,10 @@
   --clr-bgr-home: #f3f3f3;
   --clr-input: #fafafa;
   --clr-primary-light: #FFF4E5;
+  --clr-mes-success: #EEF5EA;
+  --clr-txt-success: #559B2D;
+  --clr-txt-error:#C50000;
+  --clr-mes-error: #fae6e6;
   --font-size: 15px;
   --font-family: 'Montserrat',sans-serif;
 }
