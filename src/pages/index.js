@@ -7,4 +7,5 @@ export {default as Homepage} from './homepage/component/index';
 export {default as UserInformation} from './user information/component/index';
 export {default as User} from './user/component/index';
 export {default as ChangePassword} from './change password/component/index';
-export {default as RegisterDriver} from './register driver/component/index'
+export {default as RegisterDriver} from './register driver/component/index';
+export {default as Product} from './product/component/index';

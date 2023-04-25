@@ -4,7 +4,7 @@ import {
 } from "react-router-dom";
 import { Navigation, Sidebar } from "../layout";
 import { Footer } from "../layout";
-import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation,User, ChangePassword, RegisterDriver} from '../pages';
+import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation,User, ChangePassword, RegisterDriver, Product} from '../pages';
 import React from 'react';
 
 export const router = createBrowserRouter([
@@ -47,6 +47,10 @@ export const router = createBrowserRouter([
       {
         path:"changePassword",
         element: <ChangePassword></ChangePassword>
+      },
+      {
+        path:"product",
+        element: <Product></Product>
       }
     ],
   },
