@@ -2,10 +2,56 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-import { Navigation, Sidebar } from "../layout";
-import { Footer } from "../layout";
-import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation,User, ChangePassword, RegisterDriver, Product} from '../pages';
+
+import { Navigation, Sidebar,Footer } from "../layout";
+import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword} from '../pages';
+import { AuthValidator } from '../stores'
 import React from 'react';
+
+export const authChildrens = [
+  {
+    path: "register",
+    element: <Outlet></Outlet>,
+    children: [
+      {
+        path: "user",
+        element: <>
+          <RegisterUser></RegisterUser>
+        </>
+      },
+      {
+        path: "driver",
+        element: <>
+          <RegisterDriver />
+        </>
+      }
+    ]
+  },
+  {
+    path: "login",
+    element:<Login></Login>,
+  },
+  {
+    path:"forgot",
+    element:<Forgot></Forgot>
+  },
+  {
+    path: "resetPassword",
+    element:<ResetPassword></ResetPassword>
+  },
+  {
+    path: "homepage",
+    element:<Sidebar></Sidebar>
+  },
+  {
+    path:"information",
+    element: <UserInformation></UserInformation>
+  },
+  {
+    path:"changePassword",
+    element: <ChangePassword></ChangePassword>
+  }
+]
 
 export const router = createBrowserRouter([
   {
@@ -21,36 +67,31 @@ export const router = createBrowserRouter([
         element: <Home></Home>
       },
       {
-        path: "registerUser",
-        element:<RegisterUser></RegisterUser>
+        path: "auth",
+        element: <AuthValidator.LoggedContainer>
+          <Outlet></Outlet>
+        </AuthValidator.LoggedContainer>,
+        children: authChildrens
       },
       {
-        path: "login",
-        element:<Login></Login>,
-      },
-      {
-        path:"forgot",
-        element:<Forgot></Forgot>
-      },
-      {
-        path: "resetPassword",
-        element:<ResetPassword></ResetPassword>
-      },
-      {
-        path: "homepage",
-        element:<Sidebar></Sidebar>
-      },
-      {
-        path:"information",
-        element: <UserInformation></UserInformation>
-      },
-      {
-        path:"changePassword",
-        element: <ChangePassword></ChangePassword>
-      },
-      {
-        path:"product",
-        element: <Product></Product>
+        path: "user",
+        element: <AuthValidator>
+          <Outlet></Outlet>
+        </AuthValidator>,
+        children: [
+          {
+            path: '',
+            element: <>
+              <h2>This is dashboard of user</h2>
+            </>
+          },
+          {
+            path: 'info',
+            element: <>
+              <UserInformation></UserInformation>
+            </>
+          }
+        ]
       }
     ],
   },
@@ -70,6 +111,6 @@ export const router = createBrowserRouter([
         </>
       },
     ],
-  },
+  }
 ]);
 

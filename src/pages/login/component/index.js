@@ -1,6 +1,6 @@
 
 import '../../register user/style/registerUser.css';
-import React from 'react'
+import React, { useContext, useState } from 'react'
 import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
@@ -9,6 +9,7 @@ import {AiFillEye,AiFillEyeInvisible} from  'react-icons/ai';
 import {AiFillLock} from 'react-icons/ai';
 import '../style/login.css';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../../stores';
 
 
 let loginSchema = yup.object().shape({
@@ -18,6 +19,10 @@ let loginSchema = yup.object().shape({
 
 export default function Index() {
     const [showPass,setShowPass] = React.useState(false); 
+    const [
+        state, 
+        funcs
+    ] = useContext(AuthContext);
     const showPassHandler = () => {
         setShowPass(e=>!e);
     }
@@ -26,10 +31,18 @@ export default function Index() {
     <Formik
         initialValues={{
             email:'',
-            password:''
+            password:'',
+            rememberMe: false
         }}
         isInitialValid={false}  
         validationSchema={loginSchema}
+        onSubmit={(values) => {
+            funcs.signin({
+                "UserName": values.email,
+                "Password": values.password,
+                "RememeberMe": values.rememberMe
+            });
+        }}
     >
     {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
         return(
@@ -41,7 +54,7 @@ export default function Index() {
                             <h4 className='reg-txt-u txt-center'>Get started with Us</h4>
                             <p className='txt-center'>Register a new membership.</p>
                         </div>
-                        <Form className='form'>
+                        <Form className='form' onSubmit={handleSubmit}>
                             <Form.Group className="form-group" >
                                 <div className='mb-2'>
                                     <Form.Label className='label'>Email</Form.Label>
@@ -78,7 +91,7 @@ export default function Index() {
                                     </div>
                             </Form.Group>
                             <div className='log-service'>
-                                <label class="fr-checkbox">
+                                <label className="fr-checkbox">
                                     <input type="checkbox"/>
                                     <span className="checkmark"></span>
                                     <span className='txt-checkbox'>Remember me</span>
@@ -94,7 +107,7 @@ export default function Index() {
                                     </span>
                                 </div>
                             </div>
-                            <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={!isValid} className={`my-btn-yellow my-3`}>Login</Button>
+                            <Button type='submit' variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={!isValid} className={`my-btn-yellow my-3`}>Login</Button>
                         </Form>
                     </div>
                 </div>

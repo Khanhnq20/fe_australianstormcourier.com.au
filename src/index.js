@@ -1,18 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+
 import reportWebVitals from './reportWebVitals';
 import { Spinner } from 'react-bootstrap';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
+import { AuthContextComponent } from './stores';
+
+import './index.css';
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <RouterProvider
-    router={router}
-    fallbackElement={<Spinner />}>
-  </RouterProvider>
+  <AuthContextComponent>
+    <RouterProvider
+      router={router}
+      fallbackElement={<Spinner />}>
+    </RouterProvider>
+  </AuthContextComponent>
 );
 
 // If you want to start measuring performance in your app, pass a function
