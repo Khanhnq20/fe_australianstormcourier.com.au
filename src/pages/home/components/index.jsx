@@ -1,31 +1,27 @@
-import React from 'react';
-import Container from 'react-bootstrap/Container';
+import React, { useContext } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import '../styles/home.css';
 import Button from 'react-bootstrap/Button';
 import "../../../layout/navigation/style/navigation.css";
 
-function ScrollActive(className){
-}
-
 export default function Index() {
-  return (
-    <>
-        <div>
-            <Banner></Banner>
-            <Delivery></Delivery>
-            <Rate></Rate>
-            <Notifycation></Notifycation>
-            <Marketing></Marketing>
-            <BecomeCustomer></BecomeCustomer>
-            <Address></Address>
+    return (
+        <>
             <div>
-                <img className='img-auto-flex' src='http://australianstormcourier.com.au/wp-content/uploads/2023/04/city-1536x864.jpg' width={"100%"}/>
+                <Banner></Banner>
+                <Delivery></Delivery>
+                <Rate></Rate>
+                <Notifycation></Notifycation>
+                <Marketing></Marketing>
+                <BecomeCustomer></BecomeCustomer>
+                <Address></Address>
+                <div>
+                    <img className='img-auto-flex' src='http://australianstormcourier.com.au/wp-content/uploads/2023/04/city-1536x864.jpg' width={"100%"}/>
+                </div>
             </div>
-        </div>
-    </>
-  )
+        </>
+    )
 }
 //box four animate fadeLeft
 function Banner(){
