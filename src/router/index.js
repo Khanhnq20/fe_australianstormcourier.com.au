@@ -6,7 +6,6 @@ import {
 import { Navigation, Sidebar,Footer } from "../layout";
 import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword} from '../pages';
 import { AuthValidator } from '../stores'
-
 import React from 'react';
 
 export const authChildrens = [
