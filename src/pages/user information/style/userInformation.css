@@ -3,6 +3,6 @@
 }
 .ui-header{
     display: inline-block;
-    transform: translate(-85%,-25px);
+    position: absolute;
     font-weight: 600;
 }

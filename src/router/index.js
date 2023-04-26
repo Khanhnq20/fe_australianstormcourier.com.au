@@ -2,11 +2,11 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
+
 import { Navigation, Sidebar,Footer } from "../layout";
 import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
-import RegisterDriver from "../pages/register driver/component";
 
 export const authChildrens = [
   {
@@ -96,7 +96,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: "/register",
+    path: "/registerDriver",
     element: <>
       <Navigation />
       <RegisterDriver />

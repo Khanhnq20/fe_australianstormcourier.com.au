@@ -7,14 +7,17 @@ import Form from 'react-bootstrap/Form';
 import Dropdown from 'react-bootstrap/Dropdown';
 import '../style/registerDriver.css';
 import Button from 'react-bootstrap/Button';
+import { Sidebar } from '../../../layout';
+import {RiImageEditFill} from 'react-icons/ri'
 
 
 let registerSchema = yup.object().shape({
     fullName: yup.string().required("Full Name is required field"),
-    phoneNumber: yup.number().typeError("Phone Number must be number").required("Phone Number is required field"),
+    abnNumber: yup.number().typeError("ABN Number must be number").required("ABN Number is required field"),
     email: yup.string().email().required("Email is required field"),
     address: yup.string().required("Full Address is required field"),   
-    abn: yup.number().typeError("ABN must be number").required("ABN is required field"),
+    city: yup.string().required("City is required field"),
+    zipCode: yup.number().typeError("Zip code must be number").required("Zip code is required field"),
     fileImageFront: yup.mixed().required("You haven't import the Image"),
     fileImageBack: yup.mixed().required("You haven't import the Image")
 })
@@ -22,7 +25,7 @@ const vehicles = ['Bicycle','Motorbike','Car(Hatchback)','4x4 Wagon','Van',
                     'SmallTruck (1 - 3 ton)','Scooter','Car (Sedan)','Car (Wagon)',
                     'Ute','Medium Van (1 - 3 ton)','Other'];
 
-export default function Register() {
+function RegisterDriver() {
     const f_driver_img_ipt = useRef();
     const b_driver_img_ipt = useRef();
     const [imgUrlFront,setImgUrlFront] = React.useState();
@@ -38,25 +41,22 @@ export default function Register() {
 
         }}
     >
-    {({touched, errors, handleSubmit, handleChange, handleBlur}) =>{
-        return(
-            <>   
+    {({touched, errors, handleSubmit, handleChange, handleBlur,isValid}) =>{
+        return( 
+            <div>
+                <h3 className='ui-header p-3'>Become driver</h3>
                 <div className='container p-5'>
                     <Row>
-                        <Col sm='12' lg='6'>   
-                            <div className='py-5'>
-                                <img width={'100%'} src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/cv.png' />
-                            </div>
-                        </Col>
                         <Col>
                             <div>
                                 <div>
-                                    <h3 className='reg-header txt-center'>REGISTER DRIVER</h3>
-                                    <p className='txt-center'>Lets get started.</p>
                                 </div>
                                 <Form className='reg-form' onSubmit={handleSubmit}>
                                         <Form.Group className="form-group" >
-                                            <Form.Label className='label'>Full name</Form.Label>
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>Full name</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
                                             <Form.Control
                                                 type="text"
                                                 name="fullName"
@@ -68,31 +68,33 @@ export default function Register() {
                                             <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group className="form-group" >
-                                            <Form.Label className='label'>Phone Number</Form.Label>
-                                            <Form.Control
-                                                type="text"
-                                                name="phoneNumber"
-                                                placeholder="Enter Your Phone Number"
-                                                isInvalid={touched.phoneNumber && errors.phoneNumber}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>Gender</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
+                                            <DropDownGender></DropDownGender>
                                             <Form.Control.Feedback type="invalid">{errors.phoneNumber}</Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group className="form-group" >
-                                            <Form.Label className='label'>Email</Form.Label>
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>ABN Number</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
                                             <Form.Control
                                                 type="text"
-                                                name="email"
-                                                placeholder="Enter Your Email"
-                                                isInvalid={touched.email && errors.email}
+                                                name="abnNumber"
+                                                placeholder="Enter Your Phone Number"
+                                                isInvalid={touched.abnNumber && errors.abnNumber}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                             />
-                                            <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
+                                            <Form.Control.Feedback type="invalid">{errors.abnNumber}</Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group className="form-group" >
-                                            <Form.Label className='label'>Full Address</Form.Label>
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>Address</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
                                             <Form.Control
                                                 type="text"
                                                 name="address"
@@ -104,30 +106,51 @@ export default function Register() {
                                             <Form.Control.Feedback type="invalid">{errors.address}</Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group className="form-group" >
-                                            <Form.Label className='label'>ABN</Form.Label>
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>City</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
                                             <Form.Control
                                                 type="text"
-                                                name="abn"
+                                                name="city"
                                                 placeholder="Enter Your Full Address"
-                                                isInvalid={touched.abn && errors.abn}
+                                                isInvalid={touched.city && errors.city}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                             />
-                                            <Form.Control.Feedback type="invalid">{errors.abn}</Form.Control.Feedback>
+                                            <Form.Control.Feedback type="invalid">{errors.city}</Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group className="form-group" >
-                                            <Form.Label className='label'>GST</Form.Label>
-                                            <DropDownGST></DropDownGST>
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>Zip code</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="zipCode"
+                                                placeholder="Enter Your Zipcode"
+                                                isInvalid={touched.zipCode && errors.zipCode}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors.zipCode}</Form.Control.Feedback>
                                         </Form.Group>
                                         
                                         <Form.Group className="form-group" >
-                                            <Form.Label className='label py-3 mb-0'>Driving License (Front and Back)</Form.Label>
+                                            <div className='mb-2'>
+                                                <Form.Label className='label py-3 mb-2'>Driving License (Front and Back)</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
                                             <div className='front-up'>
                                                 <div>
-                                                    <h5>Front</h5>
+                                                    <h6>Front</h6>
                                                 </div>
-                                                <div className='img-front' onClick={() => f_driver_img_ipt.current.click()}>
-                                                    <img width={'150px'} src={imgUrlFront || 'https://cdn.pixabay.com/photo/2017/11/10/05/24/add-2935429_960_720.png'}/>
+                                                <div className='img-front-frame' onClick={() => f_driver_img_ipt.current.click()}>
+                                                    <div className='background-front'>
+                                                        <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                                        <p className='driving-txt'>Change driving license</p>
+                                                    </div>
+                                                    <img className='img-front' src={imgUrlFront || 'https://tinyurl.com/5ehpcctt'}/>
                                                 </div>
                                                 <input type="file" id="driver_image_front" name="fileFront" ref={f_driver_img_ipt} 
                                                     isInvalid={!!errors.fileImageFront}
@@ -147,10 +170,14 @@ export default function Register() {
                                             </div>
                                             <div className='back-up'>
                                                 <div>
-                                                    <h5>Back</h5>
+                                                    <h6>Back</h6>
                                                 </div>
-                                                <div className='img-front' onClick={() => b_driver_img_ipt.current.click()}>
-                                                    <img width={'150px'} src={imgUrlBack || 'https://cdn.pixabay.com/photo/2017/11/10/05/24/add-2935429_960_720.png'}/>
+                                                <div className='img-front-frame' onClick={() => b_driver_img_ipt.current.click()}>
+                                                    <div className='background-front'>
+                                                        <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                                        <p className='driving-txt'>Change driving license</p>
+                                                    </div>
+                                                    <img className='img-front' src={imgUrlBack || 'https://tinyurl.com/5ehpcctt'}/>
                                                 </div>
                                                 <input type="file" id="driver_image_back" name="fileBack" ref={b_driver_img_ipt} 
                                                         isInvalid={!!errors.fileImageBack}
@@ -172,45 +199,72 @@ export default function Register() {
                                             </div>
                                         </Form.Group>
                                         <Form.Group className="form-group" >
-                                            <Form.Label className='label'>Vehicles</Form.Label>
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>Vehicles</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
                                             <div className='list-vehicle'>
                                                 {vehicles.map((item,index) => {
                                                     return(
                                                         <div key={index}>
-                                                            <Form.Check
-                                                                type={'checkbox'}
-                                                                id={`default-checkbox`}
-                                                                label={item}
-                                                            />
+                                                            <label class="fr-checkbox mb-2">
+                                                                <input type="checkbox"/>
+                                                                <span className="checkmark"></span>
+                                                                <span className='txt-checkbox' style={{fontWeight:'500'}}>{item}</span>
+                                                            </label>
                                                         </div>
                                                     )
                                                 })}
                                             </div>
                                         </Form.Group>
-                                        <Button variant="warning" type="submit" className='w-100 my-btn-yellow my-4'>SUBMIT</Button>
+                                        <Form.Group className="form-group" >
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>Additional Information</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="city"
+                                                as="textarea" rows={3}
+                                                placeholder="Enter Your Additional Information"
+                                                isInvalid={touched.city && errors.city}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors.city}</Form.Control.Feedback>
+                                        </Form.Group>
+                                        <Button type="submit" variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={isValid} className='my-btn-yellow my-2    '>Submit</Button>
                                 </Form>
                             </div>
                         </Col>
                     </Row>
                 </div>
-            </>
+            </div>
     )}}
     </Formik>
   )
 }
 
-function DropDownGST() {
+  function DropDownGender() {
     const [state,setState] = React.useState(true);
     return (
-      <Dropdown>
+      <Dropdown className='reg-dr'>
         <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-            {state === true ? "Yes" : "No"}
+            {state === true ? "Male" : "Female"}
         </Dropdown.Toggle>
   
         <Dropdown.Menu className='w-100'>
-          <Dropdown.Item onClick={()=>setState(true)}>Yes</Dropdown.Item>
-          <Dropdown.Item onClick={() => setState(false)}>No</Dropdown.Item>
+          <Dropdown.Item onClick={()=>setState(true)}>Male</Dropdown.Item>
+          <Dropdown.Item onClick={() => setState(false)}>Female</Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
     );
   }
+
+  export default function Index(){
+    return(
+        <Sidebar>
+            <RegisterDriver></RegisterDriver>
+        </Sidebar>
+    )
+}
