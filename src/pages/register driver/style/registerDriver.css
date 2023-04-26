@@ -25,16 +25,6 @@
     background-color:var(--clr-btn-light);
     border: 1px solid #DDDDDD;
 }
-.img-front-frame{
-    max-height: 300px;
-    width: auto;
-    border-radius: 15px;
-    padding: 20px;
-    cursor: pointer;
-    object-fit: cover;
-    margin-bottom: 20px;
-    position: relative;
-}
 .background-front{
     background-color: #DDDDDD;
     opacity: 50%;
@@ -47,11 +37,6 @@
     position: absolute;
     border-radius: 15px;
     z-index: 12;
-}
-.img-front{
-    width: 350px;
-    height: 200px;
-    border-radius: 15px;
 }
 .list-vehicle{
     display: grid;

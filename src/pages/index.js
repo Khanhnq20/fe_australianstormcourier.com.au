@@ -9,3 +9,4 @@ export {default as User} from './user/component/index';
 export {default as ChangePassword} from './change password/component/index';
 export {default as RegisterDriver} from './register driver/component/index';
 export {default as Product} from './product/component/index';
+export {default as ProductDetail} from './product details/component/index';
