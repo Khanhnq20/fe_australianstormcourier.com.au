@@ -11,6 +11,8 @@
   --clr-txt-success: #559B2D;
   --clr-txt-error:#C50000;
   --clr-mes-error: #fae6e6;
+  --clr-content-light: #CCEFFC;
+  --clr-txt-light:#00AFEF;
   --font-size: 15px;
   --font-family: 'Montserrat',sans-serif;
 }
@@ -32,25 +34,25 @@ body {
   height: 100%;
 }
 .my-btn-yellow{
-  color:var(--clr-txt-primary);
-  font-weight: 600;
-  background-color: var(--clr-primary);
-  border: none;
-  width: fit-content;
-  font-size: 0.85em;
-  font-family: var(--font-family);
-  border-radius: 30px;
-  padding: 10px 25px;
+  color:var(--clr-txt-primary) !important;
+  font-weight: 600 !important;
+  background-color: var(--clr-primary) !important;
+  border: none !important;
+  width: fit-content !important;
+  font-size: 0.85em !important;
+  font-family: var(--font-family) !important;
+  border-radius: 30px !important;
+  padding: 10px 25px !important;
 }
 .my-btn-yellow :active{
-  color: var(--clr-txt-primary);
-  background-color: var(--clr-primary);
-  border:none;
+  color: var(--clr-txt-primary) !important;
+  background-color: var(--clr-primary) !important;
+  border:none !important;
 }
 .my-btn-yellow:hover{
-  color:var(--clr-txt-primary);
-  background-color: var(--clr-primary);
-  border: none;
+  color:var(--clr-txt-primary) !important;
+  background-color: var(--clr-primary) !important;
+  border: none!important;
 }
 .txt-center{
   text-align: center;
@@ -275,4 +277,36 @@ input:checked ~ .checkmark {
 }
 .form-group{
   margin-bottom: 15px;
+}
+.dr-btn{
+  background-color: var(--clr-input) !important;
+  color: var(--clr-txt-primary) !important;
+  border: 1px solid #DDDDDD !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+}
+.dr-btn:hover{
+  background-color: var(--clr-btn-light) ;
+  color: var(--clr-txt-primary) ;
+  border: 1px solid #DDDDDD;
+}
+.reg-dr{
+  background-color: var(--clr-input);
+}
+.img-front-frame{
+  max-height: 300px;
+  width: auto;
+  border-radius: 15px;
+  padding: 20px;
+  cursor: pointer;
+  object-fit: cover;
+  margin-bottom: 20px;
+  position: relative;
+}
+.img-front{
+  width: 350px;
+  height: 200px;
+  border-radius: 15px;
 }
