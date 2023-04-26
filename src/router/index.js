@@ -2,9 +2,8 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-
 import { Navigation, Sidebar,Footer } from "../layout";
-import {Home,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword} from '../pages';
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, Product, ProductDetail} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
 
@@ -50,7 +49,8 @@ export const authChildrens = [
   {
     path:"changePassword",
     element: <ChangePassword></ChangePassword>
-  }
+  },
+
 ]
 
 export const router = createBrowserRouter([
@@ -75,9 +75,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: <AuthValidator>
+        element: <>
           <Outlet></Outlet>
-        </AuthValidator>,
+        </>,
         children: [
           {
             path: '',
@@ -90,6 +90,21 @@ export const router = createBrowserRouter([
             element: <>
               <UserInformation></UserInformation>
             </>
+          },  
+          {
+            path:"product",
+            element: <Outlet></Outlet>,
+            children:[{
+              path:"",
+              element: <Product></Product> 
+            },
+            {
+              path: 'detail',
+              element: <>
+                <ProductDetail></ProductDetail>
+              </>
+              
+            }]
           }
         ]
       }
