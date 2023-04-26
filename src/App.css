@@ -8,11 +8,13 @@
   --clr-input: #fafafa;
   --clr-primary-light: #FFF4E5;
   --clr-mes-success: #EEF5EA;
+  --clr-btn-gray: #EAEAEA;
   --clr-txt-success: #559B2D;
   --clr-txt-error:#C50000;
   --clr-mes-error: #fae6e6;
   --clr-content-light: #CCEFFC;
   --clr-txt-light:#00AFEF;
+  --clr-pop-up:'#999999';
   --font-size: 15px;
   --font-family: 'Montserrat',sans-serif;
 }
@@ -52,6 +54,48 @@ body {
 .my-btn-yellow:hover{
   color:var(--clr-txt-primary) !important;
   background-color: var(--clr-primary) !important;
+  border: none!important;
+}
+.my-btn-gray{
+  color: var(--clr-txt-primary) !important;
+  font-weight: 600 !important;
+  background-color: var(--clr-btn-gray) !important;
+  border: none !important;
+  width: fit-content !important;
+  font-size: 0.85em !important;
+  font-family: var(--font-family) !important;
+  border-radius: 30px !important;
+  padding: 10px 25px !important;
+}
+.my-btn-gray :active{
+  color: var(--clr-txt-primary) !important;
+  background-color: var(--clr-btn-gray) !important;
+  border:none !important;
+}
+.my-btn-gray:hover{
+  color:var(--clr-txt-primary) !important;
+  background-color: var(--clr-btn-gray) !important;
+  border: none!important;
+}
+.my-btn-red{
+  color:white !important;
+  font-weight: 600 !important;
+  background-color: var(--clr-txt-error) !important;
+  border: none !important;
+  width: fit-content !important;
+  font-size: 0.85em !important;
+  font-family: var(--font-family) !important;
+  border-radius: 30px !important;
+  padding: 10px 25px !important;
+}
+.my-btn-red :active{
+  color: white !important;
+  background-color: var(--clr-txt-error) !important;
+  border:none !important;
+}
+.my-btn-red:hover{
+  color:white !important;
+  background-color: var(--clr-txt-error) !important;
   border: none!important;
 }
 .txt-center{
@@ -309,4 +353,11 @@ input:checked ~ .checkmark {
   width: 350px;
   height: 200px;
   border-radius: 15px;
+}
+.rate-pop-up > div{
+  width:fit-content ;
+  padding: 20px;
+}
+.rate-pop-up > div> div{
+  padding: 10px;
 }
