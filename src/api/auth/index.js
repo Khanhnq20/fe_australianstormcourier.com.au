@@ -9,8 +9,8 @@ const constraints = {
     LOCAL_KEY_2: "ractoken",
     // URL of API endpoints
     signin: "signin",
-    signupUser: "signupUser",
-    signupDriver: "signupDriver",
+    signupUser: "register/user",
+    signupDriver: "register/driver",
     getAccount: "account",
     refreshToken: "refresh",
     signout: "signout",

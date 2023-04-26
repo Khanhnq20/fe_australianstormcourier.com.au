@@ -29,11 +29,14 @@ export default function Register() {
     const [imgUrlBack,setImgUrlBack] = React.useState();
   return (
     <Formik
-    initialValues={{
-        fullName:''
+        initialValues={{
+            fullName:''
         }}
-        
-    validationSchema={registerSchema}
+            
+        validationSchema={registerSchema}
+        onSubmit={(values) =>{
+
+        }}
     >
     {({touched, errors, handleSubmit, handleChange, handleBlur}) =>{
         return(
@@ -51,7 +54,7 @@ export default function Register() {
                                     <h3 className='reg-header txt-center'>REGISTER DRIVER</h3>
                                     <p className='txt-center'>Lets get started.</p>
                                 </div>
-                                <Form className='reg-form'>
+                                <Form className='reg-form' onSubmit={handleSubmit}>
                                         <Form.Group className="form-group" >
                                             <Form.Label className='label'>Full name</Form.Label>
                                             <Form.Control
@@ -184,7 +187,7 @@ export default function Register() {
                                                 })}
                                             </div>
                                         </Form.Group>
-                                        <Button variant="warning" className='w-100 my-btn-yellow my-4'>SUBMIT</Button>
+                                        <Button variant="warning" type="submit" className='w-100 my-btn-yellow my-4'>SUBMIT</Button>
                                 </Form>
                             </div>
                         </Col>

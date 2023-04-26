@@ -1,5 +1,6 @@
 import React, { createContext, useEffect } from 'react'
 import {authConstraints, authInstance, config} from '../../api'
+import { toast } from 'react-toastify';
 export const AuthContext = createContext();
 
 export default function Index({children}) {
@@ -53,11 +54,16 @@ export default function Index({children}) {
         },
     
         signupUser(body){
+
             authInstance.post([authConstraints.root, authConstraints.signupUser].join("/"), body).then(response =>{
                 setState(i =>({
                     ...i,
                     accountInfo: response.data
                 }));
+
+                toast.success(`You have registered account successfully, please goto "Signin" to join us`, {
+                });
+                
             }).catch(err =>{
                 setState(i => ({
                     ...i,
