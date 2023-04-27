@@ -5,6 +5,27 @@
     font-weight: 600;
     border-radius: 20px;
 }
+.order-content-light-yellow{
+    background-color: var(--clr-primary-light);
+    color: var(--clr-primary);
+    padding: 0px 10px;
+    font-weight: 600;
+    border-radius: 20px;
+}
+.order-content-light-red{
+    background-color: var(--clr-mes-error);
+    color: var(--clr-txt-error);
+    padding: 0px 10px;
+    font-weight: 600;
+    border-radius: 20px;
+}
+.order-content-light{
+    background-color: var(--clr-content-success);
+    color: var(--clr-txt-success);
+    padding: 0px 10px;
+    font-weight: 600;
+    border-radius: 20px;
+}
 .order-letter-form{
     text-align: center;
 }
@@ -12,4 +33,167 @@
     max-width: 560px;
     margin: 0 auto;
     
+}
+/* step process bar */
+/* .step-wizard {
+    display: flex;
+    gap: 20px;
+    position: relative;
+}
+.step-wizard-list{
+    padding: 0;
+    display: flex;
+    gap: 50px;
+    flex-direction: column;
+    margin-bottom: 0;
+}
+
+.step-wizard-item{
+    display: flex;
+    position: relative;
+}
+.step-wizard-item + .step-wizard-item:after{
+    content: "";
+    position: absolute;
+    left: 15px;
+    transform: translateX(-50%);
+    top: -65px;
+    background: var(--clr-process);
+    width: 8px;
+    height: 70px;
+    transform: translateX(-50%);
+}
+
+.progress-count{
+    height: 30px;
+    width:30px;
+    display: flex;
+    background-color: var(--clr-process);
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 600;
+    position: relative;
+    z-index:10;
+}
+.progress-count:after{
+}
+.progress-count:before{
+    content: "";
+    height: 17px;
+    background-color: #fff;
+    border-radius: 50%;;
+    width: 17px;
+    position: absolute;
+}
+
+.current-item ~ .step-wizard-item .progress-label{
+    opacity: 0.5;
+}
+.current-item .progress-count:after{
+    background: #fff;
+    border: 2px solid #21d4fd;
+}
+.current-item .progress-count{
+    color: #21d4fd;
+} */
+
+/* .process-line{
+    width: 8px;
+    background-color: var(--clr-primary);
+    transform: translate(-50px,1px);
+    z-index: 2;
+    position: absolute;
+}
+.progress-count:before{
+    height: 30px;
+    width:30px;
+    display: flex;
+    background-color: var(--clr-primary);
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 600;
+    position: relative;
+    z-index:10;
+}
+.progress-count:before{
+    content: "";
+    height: 17px;
+    background-color: #fff;
+    border-radius: 50%;;
+    width: 17px;
+    position: absolute;
+}
+.process-form-active{
+    display: flex;
+    flex-direction: column;
+    gap:50px;
+    transform: translate(-11px,-1px);
+}
+
+
+.progresst-count[data-active="true"] {
+
+} */
+
+.order-progress {
+    position: relative;
+    background-color: transparent;
+    text-decoration: none;
+    padding-left: 0;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+}
+
+.order-progress-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    opacity: 0.5;
+}
+
+.progress-circle {
+    border-radius: 100%;
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    box-shadow: inset 0 0 0 5px var(--clr-content-success);
+    background-color: rgb(255, 255, 255);
+    position: relative;
+    z-index: 1;
+}
+
+.order-progress-item:not(:first-child) > .progress-circle::after{
+    content: '';
+    display: block;
+    width: 5px;
+    height: 50px;
+    background-color: var(--clr-content-success);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 100%;
+    z-index: -1;
+}
+
+.order-progress-item[data-active="true"] {
+    opacity: 1;
+    cursor: pointer;
+}
+
+.order-progress-item[data-active="true"] > .progress-circle {
+    box-shadow: inset 0 0 0 5px var(--clr-primary);
+}
+
+.order-progress-item[data-active="true"]:not(:first-child) > .progress-circle::after {
+    background-color: var(--clr-primary);
+}
+.progress-txt-header{
+    font-size: 14px;
+}
+.progress-label{
+    display: block;
+    transform: translateY(17px);
 }
