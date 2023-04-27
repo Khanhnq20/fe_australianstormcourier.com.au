@@ -15,7 +15,7 @@
   --clr-mes-error: #fae6e6;
   --clr-content-light: #CCEFFC;
   --clr-txt-light:#00AFEF;
-  --clr-pop-up:'#999999';
+  --clr-process: #DEDEDE;
   --font-size: 15px;
   --font-family: 'Montserrat',sans-serif;
 }
@@ -236,7 +236,10 @@ to{
   animation-fill-mode:both;
   -webkit-animation-fill-mode:both;
 }
-
+textarea {
+  background-color: var(--clr-input);
+  padding: 8px 12px;
+}
 input[type="checkbox"]:checked{
   background-color: #f2a13b;
 }
