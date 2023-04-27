@@ -12,6 +12,7 @@ const constraints = {
     signupUser: "register/user",
     signupDriver: "register/driver",
     getAccount: "account",
+    updateUser: "update/user",
     refreshToken: "refresh",
     signout: "signout",
     test: "test/authorizedUser",

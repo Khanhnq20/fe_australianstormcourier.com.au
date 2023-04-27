@@ -129,6 +129,30 @@ export default function Index({children}) {
         }
     }
 
+    const accountActions = {
+        updateProfile(body, userId) {
+            return authInstance.post([authConstraints.root, authConstraints.updateUser].join("/"), body, {
+                params: {
+                    userId
+                },
+                headers: {
+                    "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+                }
+            }).then(response =>{
+                if(response?.userInfo && response.successed){
+                    setState(i => ({
+                        ...i,
+                        accountInfo: response.userInfo
+                    }));
+
+                    toast.success("Updated user information");
+                }
+            }).catch(err =>{
+
+            });
+        }
+    }
+
     useEffect(() =>{
         setState(i =>{
             const newAccessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
@@ -144,6 +168,7 @@ export default function Index({children}) {
             state,
             {
                 ...funcs,
+                ...accountActions,
                 setGState: setState
             }
         ]

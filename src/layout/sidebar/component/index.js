@@ -26,7 +26,7 @@ export default function Index({children}) {
                       className={({isActive,isPending}) =>{
                           return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
                       }}
-                      to={'/dashboard'}>
+                      to={'/user/dashboard'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
@@ -36,7 +36,7 @@ export default function Index({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/information'}>
+                          to={'/user/info'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>

@@ -3,7 +3,7 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import { Navigation, Sidebar,Footer } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, Product, ProductDetail} from '../pages';
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, Product, ProductDetail, Homepage} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
 
@@ -75,14 +75,14 @@ export const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: <>
+        element: <AuthValidator>
           <Outlet></Outlet>
-        </>,
+        </AuthValidator>,
         children: [
           {
-            path: '',
+            path: 'dashboard',
             element: <>
-              <h2>This is dashboard of user</h2>
+              <Homepage></Homepage>
             </>
           },
           {

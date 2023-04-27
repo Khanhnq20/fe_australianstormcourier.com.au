@@ -44,7 +44,7 @@ AuthValidator.LoggedContainer = function LoggedContainer({children}) {
         </Container>);
     
     if(authState.isLogged)
-        return <Navigate to={"/user"} replace={true}></Navigate>;
+        return <Navigate to={"/user/dashboard"} replace={true}></Navigate>;
 
     return children;
 }
