@@ -22,13 +22,6 @@
     font-weight: 600;
     min-width: 170px;
 }
-.product-content-light{
-    background-color: var(--clr-content-light);
-    color: var(--clr-txt-light);
-    padding: 0px 10px;
-    font-weight: 600;
-    border-radius: 20px;
-}
 .product-rate-form{
     display: flex;
     align-items: center;

@@ -1,5 +1,5 @@
 import React from 'react'
-import { PopUp, Sidebar } from '../../../layout'
+import {  Sidebar } from '../../../layout'
 import { Col, Row } from 'react-bootstrap';
 import '../style/productDetail.css';
 import Form from 'react-bootstrap/Form';
@@ -163,7 +163,7 @@ function ProductDetail(){
                                           </div>
                                       </div>
                                     </Form.Group>
-                                    <Button variant="warning" onClick={() => setModalShow(true)} className='my-btn-yellow'>Register</Button>
+                                    <Button variant="warning" onClick={() => setModalShow(true)} className='my-btn-yellow'>Recommend delivery</Button>
                                     <PopUpCenteredModal
                                       show={modalShow}
                                       onHide={() => setModalShow(false)}

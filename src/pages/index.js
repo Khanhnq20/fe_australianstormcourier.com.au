@@ -10,3 +10,7 @@ export {default as ChangePassword} from './change password/component/index';
 export {default as RegisterDriver} from './register driver/component/index';
 export {default as Product} from './product/component/index';
 export {default as ProductDetail} from './product details/component/index';
+export {default as EmailCheck} from './confirm/component/index';
+export {default as Order} from './order/component/index';
+export {default as OrderDetail} from './order detail/component/index';
+export {default as OrderProcessDetail} from './order process detail/component/index';

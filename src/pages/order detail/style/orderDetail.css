@@ -1,0 +1,15 @@
+.order-content-light{
+    background-color: var(--clr-content-success);
+    color: var(--clr-txt-success);
+    padding: 0px 10px;
+    font-weight: 600;
+    border-radius: 20px;
+}
+.order-letter-form{
+    text-align: center;
+}
+.order-txt-letter{
+    max-width: 560px;
+    margin: 0 auto;
+    
+}
