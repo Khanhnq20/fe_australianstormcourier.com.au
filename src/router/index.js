@@ -3,7 +3,7 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import { Navigation, Sidebar,Footer } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, Product, ProductDetail} from '../pages';
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, Product, ProductDetail, EmailCheck, Homepage, Order, OrderDetail, OrderProcessDetail} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
 
@@ -15,8 +15,22 @@ export const authChildrens = [
       {
         path: "user",
         element: <>
-          <RegisterUser></RegisterUser>
-        </>
+          <Outlet></Outlet>
+        </>,
+        children:[
+          {
+            path: "",
+            element: <>
+              <RegisterUser></RegisterUser>
+            </>
+          },
+          {
+            path: "confirm",
+            element: <>
+              <EmailCheck></EmailCheck>
+            </>
+          }
+        ]
       },
       {
         path: "driver",
@@ -82,7 +96,7 @@ export const router = createBrowserRouter([
           {
             path: '',
             element: <>
-              <h2>This is dashboard of user</h2>
+              <Homepage></Homepage>
             </>
           },
           {
@@ -104,26 +118,60 @@ export const router = createBrowserRouter([
                 <ProductDetail></ProductDetail>
               </>
               
-            }]
+            },
+          
+          ]
           }
         ]
       }
     ],
   },
   {
-    path: "/registerDriver",
+    path: "/driver",
     element: <>
       <Navigation />
-      <RegisterDriver />
+      <Outlet></Outlet>
     </>,
-    
     children: [
       {
         path: "",
         element: <>
-          <Navigation />
-          <Home />
+          <RegisterDriver />
         </>
+      },
+      {
+        path: "order",
+        element: <>
+          <Outlet></Outlet>
+        </>,
+        children:[
+          {
+            path: "",
+            element: <>
+              <Order></Order>
+            </>
+          },
+          {
+            path: "detail",
+            element: <>
+              <Outlet></Outlet>
+            </>,
+            children:[
+              {
+                path: "",
+                element: <>
+                  <OrderDetail></OrderDetail>
+                </>
+              },
+              {
+                path: "process",
+                element: <>
+                  <OrderProcessDetail></OrderProcessDetail>
+                </>
+              },
+            ]
+          },
+        ]
       },
     ],
   }

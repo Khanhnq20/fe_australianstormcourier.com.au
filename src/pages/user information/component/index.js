@@ -33,10 +33,10 @@ function UserInformation() {
     {({touched, errors, handleSubmit, handleChange, handleBlur,values}) =>{
         return(
             <>   
+                <h3 className='ui-header p-2'>Information</h3>
                 <div className='container p-5'>
                     <div>
                         <div>
-                            <h3 className='ui-header'>Information</h3>
                         </div>
                         <Form className='form'>
                             <Form.Group className="form-group" >
