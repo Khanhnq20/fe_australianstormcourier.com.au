@@ -22,13 +22,6 @@
     font-weight: 600;
     min-width: 170px;
 }
-.product-content-light{
-    background-color: var(--clr-content-light);
-    color: var(--clr-txt-light);
-    padding: 0px 10px;
-    font-weight: 600;
-    border-radius: 20px;
-}
 .product-rate-form{
     display: flex;
     align-items: center;
@@ -43,4 +36,19 @@
     font-weight: 600;
     border-bottom: 2px solid var(--clr-bgr-home);
     padding-bottom: 20px;
+}
+.rate-pop-up-ct{
+    text-align: center;
+}
+.rate-pop-up-icon{
+    font-size: 60px;
+}
+.rate-icon-form{
+    padding: 15px;
+    border-radius: 50%;
+    width: fit-content;
+    margin: 0 auto;
+    background-color: #F3CCCC;
+    color: #C50000;
+    margin-bottom: 15px;
 }

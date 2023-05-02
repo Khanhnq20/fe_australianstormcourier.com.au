@@ -4,7 +4,6 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import { Sidebar } from '../../../layout';
 import Button from 'react-bootstrap/Button';
-import '../style/product.css';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
@@ -69,7 +68,8 @@ function Product() {
         initialValues={{
             id:'',
             from:'',
-            fullName:'',
+            fullNameSender:'',
+            fullNameDriver:'',
             to:''
         }} 
         validationSchema={loginSchema}
@@ -112,11 +112,11 @@ function Product() {
                                         </Form.Group>
                                         <Form.Group>
                                             <div className='mb-2'>
-                                                <Form.Label className='label'>Name</Form.Label>
+                                                <Form.Label className='label'>Full name sender</Form.Label>
                                             </div>
                                             <Form.Control
                                                 type="text"
-                                                name="fullName"
+                                                name="fullNameSender"
                                                 placeholder="Enter Full Name"
                                                 isInvalid={touched.fullName && errors.fullName}
                                                 onChange={handleChange}
@@ -140,9 +140,17 @@ function Product() {
                                         </Form.Group>
                                         <Form.Group>
                                             <div className='mb-2'>
-                                                <Form.Label className='label'>Status</Form.Label>
+                                                <Form.Label className='label'>Full name driver</Form.Label>
                                             </div>
-                                            <DropDownStatus></DropDownStatus>
+                                            <Form.Control
+                                                type="text"
+                                                name="fullNameDriver"
+                                                placeholder="Enter Full Name"
+                                                isInvalid={touched.fullName && errors.fullName}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                         </Form.Group>
                                     </div>
                                     <div>

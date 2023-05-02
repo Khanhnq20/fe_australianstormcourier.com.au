@@ -31,17 +31,37 @@ export default function Index({children}) {
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
                           <p className='sbar-txt'>Dashboard</p>
-                        </NavLink>
-                        <NavLink  
-                          className={({isActive}) =>{
-                            return isActive  ? 'sbar-link-active' : 'sbar-link'
-                          }}
-                          to={'/user/info'}>
-                          <div className='sbar-icon-frame'>
-                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
-                          </div>
-                          <p className='sbar-txt'>Information</p>
-                        </NavLink>
+                      </NavLink>
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/info'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>Information</p>
+                      </NavLink>
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/driver'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>Driver</p>
+                      </NavLink>
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/sender'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>Sender</p>
+                      </NavLink>
                     </div>
                   </div>
                 </div>

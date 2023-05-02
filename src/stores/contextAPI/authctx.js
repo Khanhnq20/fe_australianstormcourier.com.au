@@ -120,6 +120,16 @@ export default function Index({children}) {
             });
         },
 
+        changePassword(){
+            authInstance.post([authConstraints.root, authConstraints.forgetPwd].join("/")).then(response =>{
+
+            }).catch(err =>{
+
+            });
+        },
+
+
+
         test(){
             authInstance.get([authConstraints.root, authConstraints.test].join("/")).then(response =>{
 

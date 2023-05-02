@@ -14,6 +14,7 @@ const constraints = {
     getAccount: "account",
     updateUser: "update/user",
     refreshToken: "refresh",
+    changePwd: "update/password",
     signout: "signout",
     test: "test/authorizedUser",
     getAccessToken: () => localStorage.getItem(constraints.LOCAL_KEY)

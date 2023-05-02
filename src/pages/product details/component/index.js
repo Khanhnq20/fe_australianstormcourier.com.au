@@ -1,5 +1,5 @@
 import React from 'react'
-import { Sidebar } from '../../../layout'
+import {  Sidebar } from '../../../layout'
 import { Col, Row } from 'react-bootstrap';
 import '../style/productDetail.css';
 import Form from 'react-bootstrap/Form';
@@ -7,12 +7,15 @@ import { Formik } from 'formik';
 import {FaPenSquare} from 'react-icons/fa';
 import Button from 'react-bootstrap/Button';
 import * as yup from 'yup';
+import {AiOutlineFileExclamation} from 'react-icons/ai'
+import Modal from 'react-bootstrap/Modal';
 
 let rateSchema = yup.object().shape({
   rate: yup.number().typeError("Rate must be number").required("Rate is required field")
 })
 
 function ProductDetail(){
+  const [modalShow, setModalShow] = React.useState(false);
     return(
         <div>
             <div>
@@ -160,7 +163,11 @@ function ProductDetail(){
                                           </div>
                                       </div>
                                     </Form.Group>
-                                    <Button variant="warning" className='my-btn-yellow'>Register</Button>
+                                    <Button variant="warning" onClick={() => setModalShow(true)} className='my-btn-yellow'>Recommend delivery</Button>
+                                    <PopUpCenteredModal
+                                      show={modalShow}
+                                      onHide={() => setModalShow(false)}
+                                    />
                                 </Form>
                               )
                             }}
@@ -173,11 +180,40 @@ function ProductDetail(){
         </div>
     )
 }
-
-export default function Index() {
+function PopUpCenteredModal(props) {
   return (
+    <Modal
+      {...props}
+      className='rate-pop-up'
+      size="lg"
+      aria-labelledby="contained-modal-title-vcenter"
+      centered
+    >
+      <div>
+        <Modal.Body className='rate-pop-up-ct'>
+          <div className='rate-icon-form'>
+            <AiOutlineFileExclamation className='rate-pop-up-icon'></AiOutlineFileExclamation>
+          </div>
+          <h4>Are you sure?</h4>
+          <p className='m-0'>
+            Are you sure you want "Cancel delivery request"
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <div style={{margin:'0 auto'}}>
+            <Button className='my-btn-red mx-2' style={{background:'#EAEAEA'}} onClick={props.onHide}>Oke</Button>
+            <Button className='my-btn-gray mx-2' style={{background:'#EAEAEA'}} onClick={props.onHide}>Close</Button>
+          </div>
+        </Modal.Footer>
+      </div>
+    </Modal>
+  );
+}
+export default function Index() {
+  return (<>
     <Sidebar>
         <ProductDetail></ProductDetail>
     </Sidebar>
+  </>
   )
 }
