@@ -1,0 +1,43 @@
+.nav-auth-form{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 25px;
+}
+.nav-auth-icon-notify{
+    font-size: 25px;
+    color: #4e4e4e;
+    cursor: pointer;
+}
+.nav-avatar{
+    background: none !important; 
+    color: none !important;
+    border: none !important;
+    padding: 0 !important;
+    width: 40px !important;
+    box-shadow: none !important;
+}
+.nav-avatar-img{
+    margin: 0;
+    padding: 0;
+    border-radius: 50%;
+}
+.nav-auth{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+.nav-menu{
+    transform: translate(-70%,25px);
+    border-radius: none;
+}
+.nav-menu-topic{
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    gap: 10px;
+}
+.nav-menu-topic-icon {
+    font-size: 16px;
+}
