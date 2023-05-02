@@ -11,3 +11,20 @@
     display: flex;
     gap: 25px;
 }
+.license-form{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ececec;
+    padding: 7px 10px;
+    border: 1px solid rgb(194, 191, 191);
+    border-radius: 5px;
+    cursor: pointer;
+}
+.license-icon{
+    font-size: 26px;
+}
+.license-info-form{
+    display: flex;
+    gap: 30px;
+}

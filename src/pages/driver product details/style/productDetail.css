@@ -8,6 +8,7 @@
 .product-label{
     font-weight: 600;
     min-width: 200px;
+    text-align: left;
 }
 .product-content{
 

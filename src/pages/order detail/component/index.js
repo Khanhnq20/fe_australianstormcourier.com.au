@@ -173,34 +173,6 @@ function Process({children}){
             </p>  
             <div>
               <section class="step-wizard">
-                {/* <ul class="step-wizard-list">
-                  <li class="step-wizard-item current-item">
-                      <span class="progress-count"></span>
-                      <span class="progress-label">Billing Info</span>
-                  </li>
-                  <li class="step-wizard-item">
-                      <span class="progress-count"></span>
-                      <span class="progress-label">Payment Method</span>
-                  </li>
-                  <li class="step-wizard-item">
-                      <span class="progress-count"></span>
-                      <span class="progress-label">Payment Method</span>
-                  </li>
-                  <li class="step-wizard-item">
-                      <span class="progress-count"></span>
-                      <span class="progress-label">Payment Method</span>
-                  </li>
-                </ul> */}
-
-                {/* <span className={'process-line'}>
-                  <span className='process-form-active'>
-                    <div class="progress-count"></div>
-                    <div class="progress-count"></div>
-                    <div class="progress-count" data-active={true}></div>
-                    <div class="progress-count"></div>
-                  </span>
-                </span> */}
-
                 <ul className='order-progress'>
                   {stepTemplate.map((template,index) =>{
                     return (<li className='order-progress-item' key={index} data-active={index <= active}>

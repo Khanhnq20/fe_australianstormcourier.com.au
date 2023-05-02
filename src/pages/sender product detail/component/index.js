@@ -12,6 +12,8 @@ import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import {RiImageEditFill} from 'react-icons/ri';
+import {BsFillPersonVcardFill} from 'react-icons/bs';
+import Modal from 'react-bootstrap/Modal';
 
 function ProductDetail(){
     const [post,setPost] = React.useState([]);
@@ -260,7 +262,8 @@ function ProductDetail(){
               </Col>
             </Row>
           </div>
-          <ProductEdit></ProductEdit>
+          {/* <ProductEdit></ProductEdit> */}
+          <Driver></Driver>
         </div>
     )
 }
@@ -435,6 +438,263 @@ function DropDownStatus() {
       </Dropdown>
     );
   }
+
+function Driver({children}){
+    const [active,setActive] = React.useState(1);
+    const [modalShow, setModalShow] = React.useState(false);
+    const [stepTemplate, setTemplate] = React.useState([
+      "Prepare", "Ordering", "Delivering", "Completed"
+    ]);
+    return(
+        <div>
+            <div>
+                <div className='product-label-info'>
+                    <p className='product-label-fit'>
+                    Status
+                    </p>
+                    <p className='content-yellow'>
+                    In processing
+                    </p>
+                </div>
+                <div className='product-label-info'>
+                    <p className='product-label-fit'>
+                    Driver
+                    </p>
+                    <p>
+                    Tymothy
+                    </p>
+                </div>
+                <div className='product-label-info'>
+                    <p className='product-label-fit'>
+                    Driving license
+                    </p>
+                    <div className="license-form" onClick={() => setModalShow(true)}>
+                        <BsFillPersonVcardFill className='license-icon'></BsFillPersonVcardFill>
+                        <p className='m-0'>Tymothy</p>
+                    </div>
+                </div>
+                <PopUpCenteredModal
+                    show={modalShow}
+                    onHide={() => setModalShow(false)}
+                />
+                <div className='product-label-info' style={{alignItems:'unset'}}>
+                    <p className='product-label-fit py-2'>
+                    Process
+                    </p>  
+                    <div>
+                    <section class="step-wizard">
+                        <ul className='order-progress'>
+                        {stepTemplate.map((template,index) =>{
+                            return (<li className='order-progress-item' key={index} data-active={index <= active}>
+                            <div class="progress-circle"></div>
+                            <div class="progress-label">
+                                <h2 className='progress-txt-header'>
+                                {template}
+                                </h2>
+                                <p>At 9PM, the driver requested to deliver the good</p>
+                            </div>
+                            </li>)
+                        })}
+                        
+                        </ul>
+                    </section>
+                    </div>
+                </div>
+                <div className='product-label-info' style={{alignItems:'unset'}}>
+                    <p className='product-label-fit py-2'>
+                    Process
+                    </p> 
+                    {/* <GoogleMapReact
+                    defaultCenter={this.props.center}
+                    defaultZoom={this.props.zoom}
+                    yesIWantToUseGoogleMapApiInternals
+                    onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+                    >
+                    <AnyReactComponent
+                        lat={59.955413}
+                        lng={30.337844}
+                        text="My Marker"
+                    />
+                    </GoogleMapReact> */}
+                </div>
+                <div className='product-label-info py-3' style={{alignItems:'unset'}}>
+                    <p className='product-label-fit py-1'>
+                    Delivery pictures
+                    </p>
+                    <div>
+                        <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                            <div className='background-front'>
+                                <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
+                                <p className='driving-txt'>view image</p>
+                            </div>
+                            <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+function PopUpCenteredModal(props) {
+  return (
+    <>
+        <Modal
+        {...props}
+        closeButton
+        size="xl"
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        >
+        <Modal.Header closeButton>
+        </Modal.Header>
+        <div>
+            <Modal.Body className='p-4'>
+            <Row className='license-info-form'>
+                <Col>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            ID
+                        </p>
+                        <p className='product-content'>
+                            00001
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Username
+                        </p>
+                        <p className='product-content'>
+                            Tymothy
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Phone number
+                        </p>
+                        <p className='product-content'>
+                            012345678
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Full Name
+                        </p>
+                        <p className='product-content'>
+                            Tymothy
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Email
+                        </p>
+                        <p className='product-content'>
+                            Tymothy@gmail.com
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            ABNnumber
+                        </p>
+                        <p className='product-content'>
+                            12325
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Address
+                        </p>
+                        <p className='product-content'>
+                            123 Newyork
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            City
+                        </p>
+                        <p className='product-content'>
+                            Newyork
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Driving license
+                        </p>
+                        <img width={"400px"} src='https://tinyurl.com/3p5vmunz'/>
+                    </div>
+                </Col>
+                <Col>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            State
+                        </p>
+                        <p className='product-content'>
+                            American
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Zipcode
+                        </p>
+                        <p className='product-content'>
+                            555000
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Vehicles
+                        </p>
+                        <p className='product-content' style={{wordWrap:"break-word",maxWidth:'200px'}}>
+                            Motorbike,Car(Hatchback),4x4Wagon,Van,Medium Van(1-3 ton), Other
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                        Status
+                        </p>
+                        <p className='content-green'>
+                        Actived
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Birthday
+                        </p>
+                        <p className='product-content'>
+                            22/02/1991
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Gender
+                        </p>
+                        <p className='product-content'>
+                            Male
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Additional Information
+                        </p>
+                        <p className='product-content'>
+                            Additional Information
+                        </p>
+                    </div>
+                    <div className='product-label-info'>
+                        <p className='product-label'>
+                            Review
+                        </p>
+                        <p className='product-content'>
+                            Loadding....
+                        </p>
+                    </div>
+                </Col>
+            </Row>
+            </Modal.Body>
+        </div>
+        </Modal>
+    </>
+  );
+}
 export default function Index() {
   return (<>
     <Sidebar>
