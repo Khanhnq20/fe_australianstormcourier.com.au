@@ -1,0 +1,13 @@
+.sender-product-title{
+    display: flex;
+    justify-content: space-between;
+}
+.product-edit-icon{
+    margin-right: 5px;
+    color: white;
+    transform: translateY(-1px);
+}
+.sender-action{
+    display: flex;
+    gap: 25px;
+}

@@ -1,31 +1,4 @@
-.order-content-light{
-    background-color: var(--clr-content-success);
-    color: var(--clr-txt-success);
-    padding: 0px 10px;
-    font-weight: 600;
-    border-radius: 20px;
-}
-.order-content-light-yellow{
-    background-color: var(--clr-primary-light);
-    color: var(--clr-primary);
-    padding: 0px 10px;
-    font-weight: 600;
-    border-radius: 20px;
-}
-.order-content-light-red{
-    background-color: var(--clr-mes-error);
-    color: var(--clr-txt-error);
-    padding: 0px 10px;
-    font-weight: 600;
-    border-radius: 20px;
-}
-.order-content-light{
-    background-color: var(--clr-content-success);
-    color: var(--clr-txt-success);
-    padding: 0px 10px;
-    font-weight: 600;
-    border-radius: 20px;
-}
+
 .order-letter-form{
     text-align: center;
 }

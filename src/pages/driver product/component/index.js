@@ -12,7 +12,7 @@ import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
 
 
-let loginSchema = yup.object().shape({
+let driverSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field"), 
     password: yup.string().required("This field is requied")
 })
@@ -72,7 +72,7 @@ function Product() {
             fullName:'',
             to:''
         }} 
-        validationSchema={loginSchema}
+        validationSchema={driverSchema}
     >
     {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
         return(

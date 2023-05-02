@@ -2,8 +2,8 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-import { Navigation, Sidebar,Footer } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, Product, ProductDetail, EmailCheck, Homepage, Order, OrderDetail, OrderProcessDetail} from '../pages';
+import { Navigation, Sidebar,Footer, NavAuth } from "../layout";
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Homepage, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
 
@@ -71,7 +71,7 @@ export const router = createBrowserRouter([
   {
     path: "",
     element: <>
-      <Navigation />
+      <NavAuth />
       <Outlet />
       <Footer/>
     </>,
@@ -110,16 +110,41 @@ export const router = createBrowserRouter([
             element: <Outlet></Outlet>,
             children:[{
               path:"",
-              element: <Product></Product> 
+              element: <DriverProduct></DriverProduct> 
             },
             {
               path: 'detail',
               element: <>
-                <ProductDetail></ProductDetail>
+                <DriverProductDetail></DriverProductDetail>
               </>
               
+            }
+          ]
+          },
+          {
+            path: 'sender',
+            element: <>
+              <Outlet></Outlet>
+            </>,
+            children:[{
+              path:"",
+              element: <SenderDashBoard></SenderDashBoard>
             },
-          
+            {
+              path:"product",
+              element: <Outlet></Outlet>,
+              children:[
+                {
+                path:"",
+                element: <SenderProduct></SenderProduct>
+                }
+                ,
+                {
+                path:"detail",
+                element: <SenderProductDetail></SenderProductDetail>
+              }
+            ]
+            }
           ]
           }
         ]

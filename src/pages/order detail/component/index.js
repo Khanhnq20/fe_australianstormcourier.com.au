@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 function OrderDetail(){
     const [process,setProcess] = React.useState(false);
@@ -88,7 +89,7 @@ function OrderDetail(){
                             <p className='product-label-fit'>
                               Status
                             </p>
-                            <p className='order-content-light'>
+                            <p className='content-green'>
                               Looking for a driver
                             </p>
                         </div>
@@ -162,7 +163,7 @@ function Process({children}){
             <p className='product-label-fit'>
               Status
             </p>
-            <p className='order-content-light-yellow'>
+            <p className='content-yellow'>
               In processing
             </p>
         </div>
@@ -262,7 +263,7 @@ function StatusFail(){
         <p className='product-label-fit'>
           Status
         </p>
-        <p className='order-content-light-red'>
+        <p className='content-red'>
           Fail
         </p>
      </div>
