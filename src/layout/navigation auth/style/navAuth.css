@@ -33,7 +33,7 @@
     border-radius: none;
 }
 .nav-menu-topic{
-    display: flex;
+    display: flex !important;
     justify-content: start;
     align-items: center;
     gap: 10px;
