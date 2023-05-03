@@ -1,6 +1,6 @@
 .nav-auth-form{
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     align-items: center;
     gap: 25px;
 }
@@ -11,11 +11,13 @@
 }
 .nav-avatar{
     background: none !important; 
-    color: none !important;
     border: none !important;
     padding: 0 !important;
     width: 40px !important;
     box-shadow: none !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px;
 }
 .nav-avatar-img{
     margin: 0;
@@ -29,7 +31,7 @@
     width: 100%;
 }
 .nav-menu{
-    transform: translate(-70%,25px);
+    transform: translate(-21%,25px);
     border-radius: none;
 }
 .nav-menu-topic{
@@ -40,4 +42,10 @@
 }
 .nav-menu-topic-icon {
     font-size: 16px;
+}
+.avatar-form{
+    margin-right: 20px;
+}
+.user-name{
+    margin: 0;
 }

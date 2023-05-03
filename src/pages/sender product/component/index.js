@@ -9,6 +9,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
+import { NavLink } from 'react-router-dom';
 
 
 let senderSchema = yup.object().shape({
@@ -147,13 +148,81 @@ function Product() {
                                     <div>
                                         <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
                                             <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
-                                            Search</Button>
+                                            Search
+                                        </Button>
+                                        <NavLink to={'post'}>
+                                            <Button variant='warning' className={`my-btn-yellow my-4 product-btn-search mx-4`}>Create product</Button>
+                                        </NavLink>
                                     </div>
                                 </Form>
                             </div>
                         </div>
-                        
-
+                        <div>
+                            <div className='pg-rows'>
+                                <p className='m-0'>Show</p>
+                                <div>
+                                    <Dropdown className='reg-dr' style={{width:'fit-content'}}>
+                                        <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
+                                            {rows}
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            {row.map((item,index) => {
+                                                return(
+                                                    <Dropdown.Item key={index} onClick={()=>setRows(item)}>{item}</Dropdown.Item>
+                                                )
+                                            })}
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </div>
+                                <p className='m-0'>Rows</p>
+                            </div>
+                            {paginatedPost?.length === 0 ? (<div className='txt-center'>
+                                    <h5>No Data Found</h5>
+                                </div>) :
+                                (<>
+                                    <Table striped bordered >
+                                        <thead>
+                                            <tr>
+                                                <th>id</th>
+                                                <th>First Name</th>
+                                                <th>Last Name</th>
+                                            </tr>
+                                        </thead> 
+                                            <tbody>
+                                                {
+                                                    paginatedPost?.map((post,index) =>{
+                                                        return (
+                                                            <tr key={index}>
+                                                                <td>{post.id}</td>
+                                                                <td>{post.userId}</td>
+                                                                <td>{post.title}</td>
+                                                            </tr>
+                                                        )
+                                                    })
+                                                }
+                                            </tbody>
+                                    </Table>
+                                    <Pagination className='pg-form w-100'>
+                                        <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/>
+                                        <Pagination.Prev onClick={()=>previous(currentPage)} className='pg-first' />
+                                        {pageCount.map((item,index) => {
+                                            return (
+                                                <div>
+                                                    <div key={index}>
+                                                        <Pagination.Item 
+                                                        className={item === currentPage ? "pg-no pg-active" : "pg-no"}
+                                                        onClick={()=>pagination(item)}
+                                                        >{item}</Pagination.Item>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                        <Pagination.Next onClick={()=>next(currentPage)} className='pg-first' />
+                                        <Pagination.Last onClick={last} className='pg-first'/>
+                                    </Pagination>
+                                </>)
+                                }
+                        </div>
                     </div>
             </>
     )}}

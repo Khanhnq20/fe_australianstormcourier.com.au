@@ -1,6 +1,6 @@
 .sbar-root{
     background-color: white;
-    min-height: 100vh;
+    min-height: calc(90vh - 50px);
     width: 290px;
 }
 
@@ -52,4 +52,48 @@
 .sbar-link-active:hover{
     color: var(--clr-primary);
     text-decoration: none;
+}
+.h-root{
+    background-color: var(--clr-bgr-home);
+}
+.h-del-frame{
+    padding: 10px;
+    border: 1px dashed var(--clr-txt-secondary);
+    border-radius: 10px;
+    flex-grow: 1;
+}
+.h-content-frame{
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    max-height: 77vh;
+    overflow: scroll;
+}
+.h-content{
+    display: flex;
+    gap: 20px;
+}
+.h-ctn{
+    flex-grow: 1;
+    padding: 25px;
+}
+.h-form{
+    display: flex;
+}
+.h-header{
+    font-size: 23px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+.h-header-content{
+    text-align: center;
+    padding: 5px;
+}
+.h-txt-header{
+    font-weight: 600;
+}
+.user-name{
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }

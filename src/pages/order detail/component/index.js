@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Formik } from 'formik';
 import * as yup from 'yup';
-import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 function OrderDetail(){
     const [process,setProcess] = React.useState(false);
@@ -257,7 +256,7 @@ function StatusFail(){
                       <Form.Control
                           type={'text'} 
                           as="textarea" rows={3}
-                          style={{position:'relative'}}
+                          style={{position:'relative',background:'#fafafa'}}
                           isInvalid={touched.reason && errors.reason}
                           onChange={handleChange}
                           onBlur={handleBlur}
