@@ -17,3 +17,4 @@ export {default as OrderProcessDetail} from './order process detail/component/in
 export {default as SenderDashBoard} from './register sender/component/index';
 export {default as SenderProduct} from './sender product/component/index';
 export {default as SenderProductDetail} from './sender product detail/component/index';
+export {default as CreateProduct} from './create product/component/index'

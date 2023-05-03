@@ -52,7 +52,7 @@ export default function Index() {
                         <div>
                             <h3 className='reg-header txt-center'>Login</h3>
                             <h4 className='reg-txt-u txt-center'>Get started with Us</h4>
-                            <p className='txt-center'>Register a new membership.</p>
+                            <p className='txt-center'>Login to continue to Australianstormcourier.</p>
                         </div>
                         <Form className='form' onSubmit={handleSubmit}>
                             <Form.Group className="form-group" >
