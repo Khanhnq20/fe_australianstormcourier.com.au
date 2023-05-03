@@ -9,10 +9,12 @@ const constraints = {
     LOCAL_KEY_2: "ractoken",
     // URL of API endpoints
     signin: "signin",
-    signupUser: "signupUser",
-    signupDriver: "signupDriver",
+    signupUser: "register/user",
+    signupDriver: "register/driver",
     getAccount: "account",
+    updateUser: "update/user",
     refreshToken: "refresh",
+    changePwd: "update/password",
     signout: "signout",
     test: "test/authorizedUser",
     getAccessToken: () => localStorage.getItem(constraints.LOCAL_KEY)

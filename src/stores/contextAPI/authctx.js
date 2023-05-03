@@ -1,5 +1,6 @@
 import React, { createContext, useEffect } from 'react'
 import {authConstraints, authInstance, config} from '../../api'
+import { toast } from 'react-toastify';
 export const AuthContext = createContext();
 
 export default function Index({children}) {
@@ -53,11 +54,16 @@ export default function Index({children}) {
         },
     
         signupUser(body){
+
             authInstance.post([authConstraints.root, authConstraints.signupUser].join("/"), body).then(response =>{
                 setState(i =>({
                     ...i,
                     accountInfo: response.data
                 }));
+
+                toast.success(`You have registered account successfully, please goto "Signin" to join us`, {
+                });
+                
             }).catch(err =>{
                 setState(i => ({
                     ...i,
@@ -78,6 +84,11 @@ export default function Index({children}) {
                     error: err
                 }));
             });
+        },
+
+        signout(){
+            localStorage.removeItem(authConstraints.LOCAL_KEY);
+            localStorage.removeItem(authConstraints.LOCAL_KEY_2);
         },
 
         getAccount(){
@@ -114,6 +125,14 @@ export default function Index({children}) {
             });
         },
 
+        changePassword(){
+            authInstance.post([authConstraints.root, authConstraints.forgetPwd].join("/")).then(response =>{
+
+            }).catch(err =>{
+
+            });
+        },
+
         test(){
             authInstance.get([authConstraints.root, authConstraints.test].join("/")).then(response =>{
 
@@ -121,6 +140,31 @@ export default function Index({children}) {
 
             });
         }
+    }
+
+    const accountActions = {
+        updateProfile(body, userId) {
+            return authInstance.post([authConstraints.root, authConstraints.updateUser].join("/"), body, {
+                params: {
+                    userId
+                },
+                headers: {
+                    "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+                }
+            }).then(response =>{
+                if(response?.userInfo && response.successed){
+                    setState(i => ({
+                        ...i,
+                        accountInfo: response.userInfo
+                    }));
+
+                    toast.success("Updated user information");
+                }
+            }).catch(err =>{
+
+            });
+        },
+        changePassword(body, userId){}
     }
 
     useEffect(() =>{
@@ -138,6 +182,7 @@ export default function Index({children}) {
             state,
             {
                 ...funcs,
+                ...accountActions,
                 setGState: setState
             }
         ]

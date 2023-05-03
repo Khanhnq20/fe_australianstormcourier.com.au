@@ -3,9 +3,12 @@ import '../style/sidebar.css';
 import {AiOutlineDashboard,AiOutlineIdcard,AiOutlineCar} from 'react-icons/ai';
 import {User} from '../../../pages'
 import { NavLink } from 'react-router-dom';
+
+import { AuthValidator, ShouldRenderComponent } from '../../../stores';
 import {BiPackage,BiBox} from 'react-icons/bi';
 import {FiShoppingCart} from 'react-icons/fi';
 import {TfiDashboard} from 'react-icons/tfi'
+
 
 
 export default function Index({children}) {
@@ -25,46 +28,54 @@ export default function Index({children}) {
                   </div>
                   <div>
                     <div>
+                    {/* 1. User Dashboard */}
                       <NavLink 
                       className={({isActive,isPending}) =>{
                           return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
                       }}
-                      to={'/dashboard'}>
+                      to={'/user/dashboard'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
                           </div>
                           <p className='sbar-txt'>Dashboard</p>
-                        </NavLink>
+                      </NavLink>
+                      {/* 2. User Information */}
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/info'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>Information</p>
+                      </NavLink>
+                      {/* 3. Driver */}
+                      <ShouldRenderComponent roles={["Driver"]}>
                         <NavLink  
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/information'}>
+                          to={'/driver'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
-                          <p className='sbar-txt'>Information</p>
-                        </NavLink>
-                        <NavLink  
-                          className={({isActive}) =>{
-                            return isActive  ? 'sbar-link-active' : 'sbar-link'
-                          }}
-                          to={'/information'}>
-                          <div className='sbar-icon-frame'>
-                            <AiOutlineCar className="sbar-icon"></AiOutlineCar>
-                          </div>
                           <p className='sbar-txt'>Driver</p>
                         </NavLink>
+                      </ShouldRenderComponent>
+                      {/* 4. Sender */}
+                      <ShouldRenderComponent roles={["Sender"]}>
                         <NavLink  
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/information'}>
+                          to={'/sender'}>
                           <div className='sbar-icon-frame'>
-                            <BiBox className="sbar-icon"></BiBox>
+                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
                           <p className='sbar-txt'>Sender</p>
                         </NavLink>
+                      </ShouldRenderComponent>
                     </div>
                   </div>
                 </div>
