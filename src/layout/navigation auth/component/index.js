@@ -1,5 +1,4 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
 import { Link } from 'react-router-dom';
 import { Navbar } from 'react-bootstrap';
 import {AiFillBell} from 'react-icons/ai';
@@ -54,7 +53,7 @@ function AvatarUserDropDown() {
         <Dropdown.Menu className='nav-menu'>
             <Dropdown.Item className='nav-menu-topic'>
                 <AiFillUnlock className='nav-menu-topic-icon'></AiFillUnlock>
-                <Link to={`/personal`}style={{textDecoration: "none",color:"black"}}>
+                <Link to={`/user/password`}style={{textDecoration: "none",color:"black"}}>
                     Change Password
                 </Link>
             </Dropdown.Item>

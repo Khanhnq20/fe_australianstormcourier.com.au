@@ -31,11 +31,14 @@ function RegisterDriver() {
     const [imgUrlBack,setImgUrlBack] = React.useState();
   return (
     <Formik
-    initialValues={{
-        fullName:''
+        initialValues={{
+            fullName:''
         }}
-        
-    validationSchema={registerSchema}
+            
+        validationSchema={registerSchema}
+        onSubmit={(values) =>{
+
+        }}
     >
     {({touched, errors, handleSubmit, handleChange, handleBlur,isValid}) =>{
         return( 
@@ -47,7 +50,7 @@ function RegisterDriver() {
                             <div>
                                 <div>
                                 </div>
-                                <Form className='form p-4'>
+                                <Form className='reg-form' onSubmit={handleSubmit}>
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label'>Full name</Form.Label>
@@ -230,7 +233,7 @@ function RegisterDriver() {
                                             />
                                             <Form.Control.Feedback type="invalid">{errors.city}</Form.Control.Feedback>
                                         </Form.Group>
-                                        <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={isValid} className='my-btn-yellow my-2    '>Submit</Button>
+                                        <Button type="submit" variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={isValid} className='my-btn-yellow my-2    '>Submit</Button>
                                 </Form>
                             </div>
                         </Col>

@@ -3,7 +3,7 @@ import {AuthContext} from './authctx';
 import { Navigate } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 
-function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"]}) {
+function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], invalidLink="/auth/login"}) {
     const [authState, {
         getAccount
     }] = useContext(AuthContext);
@@ -25,7 +25,7 @@ function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"]}) 
     if(hasPermited) 
         return children;
 
-    return (<Navigate to={"/auth/login"}></Navigate>);
+    return (<Navigate to={invalidLink}></Navigate>);
 }
 
 AuthValidator.LoggedContainer = function LoggedContainer({children}) {
@@ -44,7 +44,7 @@ AuthValidator.LoggedContainer = function LoggedContainer({children}) {
         </Container>);
     
     if(authState.isLogged)
-        return <Navigate to={"/user"} replace={true}></Navigate>;
+        return <Navigate to={"/user/dashboard"} replace={true}></Navigate>;
 
     return children;
 }
