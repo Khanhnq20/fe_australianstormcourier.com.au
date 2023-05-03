@@ -143,9 +143,7 @@ function UserInformation() {
 export default function Index(){
     return(
         <div>
-            <Sidebar>
-                <UserInformation></UserInformation>
-            </Sidebar>
+            <UserInformation></UserInformation>
         </div>
     )
 }

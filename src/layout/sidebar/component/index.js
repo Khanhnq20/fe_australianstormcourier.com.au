@@ -8,7 +8,7 @@ import {FiShoppingCart} from 'react-icons/fi';
 import {TfiDashboard} from 'react-icons/tfi'
 
 
-export default function Index({children}) {
+function UserSideBar({children}) {
   const [active,setActive] = React.useState(false);
   function handleActive(){
     setActive(true);
@@ -240,3 +240,5 @@ function SenderSideBar({children}) {
     </div>
   )
 }
+
+export {UserSideBar,DriverSideBar,SenderSideBar};

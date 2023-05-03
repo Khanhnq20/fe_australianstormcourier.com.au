@@ -1,5 +1,4 @@
 import React from 'react'
-import { Sidebar } from '../../../layout'
 import { Col, Row } from 'react-bootstrap';
 import '../style/orderDetail.css';
 import Button from 'react-bootstrap/Button';
@@ -275,9 +274,7 @@ function StatusFail(){
 }
 export default function Index() {
   return (<>
-    <Sidebar>
         <OrderDetail></OrderDetail>
-    </Sidebar>
   </>
   )
 }

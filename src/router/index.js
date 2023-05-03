@@ -2,8 +2,8 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-import { Navigation, Sidebar,Footer, NavAuth } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Homepage, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, CreateProduct} from '../pages';
+import { Navigation,Footer, NavAuth, UserSideBar, SenderSideBar } from "../layout";
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, CreateProduct, User} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
 
@@ -53,10 +53,6 @@ export const authChildrens = [
     element:<ResetPassword></ResetPassword>
   },
   {
-    path: "homepage",
-    element:<Sidebar></Sidebar>
-  },
-  {
     path:"information",
     element: <UserInformation></UserInformation>
   },
@@ -64,7 +60,6 @@ export const authChildrens = [
     path:"changePassword",
     element: <ChangePassword></ChangePassword>
   },
-
 ]
 
 export const router = createBrowserRouter([
@@ -72,7 +67,7 @@ export const router = createBrowserRouter([
     path: "",
     element: <>
       <NavAuth />
-      <Outlet />
+        <Outlet />
       <Footer/>
     </>,
     children: [
@@ -90,13 +85,15 @@ export const router = createBrowserRouter([
       {
         path: "user",
         element: <>
-          <Outlet></Outlet>
+          <UserSideBar>
+            <Outlet></Outlet>
+          </UserSideBar>
         </>,
         children: [
           {
             path: '',
             element: <>
-              <Homepage></Homepage>
+              <User></User>
             </>
           },
           {
@@ -124,7 +121,9 @@ export const router = createBrowserRouter([
           {
             path: 'sender',
             element: <>
-              <Outlet></Outlet>
+              <SenderSideBar>
+                <Outlet></Outlet>
+              </SenderSideBar>
             </>,
             children:[{
               path:"",
