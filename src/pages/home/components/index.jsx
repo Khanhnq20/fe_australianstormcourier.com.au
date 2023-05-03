@@ -54,7 +54,7 @@ function Delivery(){
                 <div className='container'>
                     <Row>
                         <Col className='del-content py-4'>
-                                <h3 className='card-header'>DELIVERY SERVICES</h3>
+                                <h3 className='card-header py-4'>DELIVERY SERVICES</h3>
                                 <p>
                                 If you need assistance with parcel deliveries, we can help! We can assist with deliveries of all 
                                 sizes whether personal or business related. AS Courier provides package delivery and same-day courier 
@@ -91,7 +91,7 @@ function Rate(){
                             </div>
                         </Col>
                         <Col className='del-content py-4'>
-                                <h3 className='card-header'>CHOOSE YOUR OWN RATES</h3>
+                                <h3 className='card-header py-4'>CHOOSE YOUR OWN RATES</h3>
                                 <p>
                                     You decide your own rates and dates and our drivers can accept your jobs or offer a different rate. 
                                     We offer you the flexibility to choose your favourite drivers and rates.
@@ -112,7 +112,7 @@ function Notifycation(){
                 <div className='container'>
                     <Row>
                         <Col className='del-content py-4'>
-                                <h3 className='card-header'>WHY DRIVER FOR AUSTRALIAN STORM COURIER?</h3>
+                                <h3 className='card-header py-4'>WHY DRIVER FOR AUSTRALIAN STORM COURIER?</h3>
                                 <p>
                                 We offer job flexibility and choice. You get to decide what jobs are best suited for you, 
                                 and get paid for it! At Australian Storm Courier, we understand the importance of a 
@@ -141,7 +141,7 @@ function Marketing(){
                 <div className='container py-4'>
                     <Row>
                         <Col className='py-4'>
-                            <h3 className='mar-txt-header'>WHY CHOOSE US?</h3>
+                            <h3 className='mar-txt-header py-2'>WHY CHOOSE US?</h3>
                             <p className='mar-txt'>Need to send something on time? Contact us now. Over 100 businesses trust 
                                 Australian Storm Courier. Whether it’s small parcels or large pallets, we’re 
                                 here for you anytime to get these shipments where they need to be.</p>  

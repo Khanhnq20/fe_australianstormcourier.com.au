@@ -3,7 +3,7 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import { Navigation, Sidebar,Footer, NavAuth } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Homepage, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail} from '../pages';
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Homepage, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, CreateProduct} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
 
@@ -142,7 +142,11 @@ export const router = createBrowserRouter([
                 {
                 path:"detail",
                 element: <SenderProductDetail></SenderProductDetail>
-              }
+                },
+                {
+                  path:"post",
+                  element:<CreateProduct></CreateProduct>
+                },
             ]
             }
           ]

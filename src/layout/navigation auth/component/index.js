@@ -6,7 +6,8 @@ import {AiFillBell} from 'react-icons/ai';
 import Dropdown from 'react-bootstrap/Dropdown';
 import '../style/navAuth.css';
 import {AiFillUnlock,AiOutlineSetting} from 'react-icons/ai';
-import {FiLogOut} from 'react-icons/fi'
+import {FiLogOut,FiChevronDown} from 'react-icons/fi';
+import {BsChevronDown} from 'react-icons/bs'
 
 export default function Index() {
     return (
@@ -37,7 +38,7 @@ function AvatarUserDropDown() {
         // const navigate = useNavigate();
     return (
     <Dropdown>
-        <Dropdown.Toggle className='nav-avatar' id="dropdown-basic">
+        <Dropdown.Toggle className='nav-avatar' style={{marginRight:'60px'}} id="dropdown-basic">
             <img
             className='nav-avatar-img'
             height="40px"
@@ -45,8 +46,11 @@ function AvatarUserDropDown() {
             src="https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg"
             
             />
+            <div className='user-name'>
+                <p style={{color:'#666666',margin:'0'}}>Tymothy</p>
+                <BsChevronDown  style={{color:'black'}}></BsChevronDown>
+            </div>
         </Dropdown.Toggle>
-
         <Dropdown.Menu className='nav-menu'>
             <Dropdown.Item className='nav-menu-topic'>
                 <AiFillUnlock className='nav-menu-topic-icon'></AiFillUnlock>

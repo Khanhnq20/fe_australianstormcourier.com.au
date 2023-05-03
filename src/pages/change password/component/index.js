@@ -38,11 +38,9 @@ function ChangePassword() {
     {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
         return(
             <>   
+                <h3 className='ui-header p-2'>Information</h3>
                 <div className='container p-5'>
                     <div>
-                        <div>
-                            <h3 style={{display:'inline-block',transform:'translate(-50%,-30px)',fontWeight:'600'}}>Change password</h3>
-                        </div>
                         <Form className='form'>
                         <Message.Error>Error</Message.Error>
                             <Form.Group className="form-group">
