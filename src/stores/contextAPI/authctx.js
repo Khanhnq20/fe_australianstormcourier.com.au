@@ -86,6 +86,11 @@ export default function Index({children}) {
             });
         },
 
+        signout(){
+            localStorage.removeItem(authConstraints.LOCAL_KEY);
+            localStorage.removeItem(authConstraints.LOCAL_KEY_2);
+        },
+
         getAccount(){
             authInstance.get([authConstraints.root, authConstraints.getAccount].join("/"), {
                 headers: {
@@ -128,8 +133,6 @@ export default function Index({children}) {
             });
         },
 
-
-
         test(){
             authInstance.get([authConstraints.root, authConstraints.test].join("/")).then(response =>{
 
@@ -160,7 +163,8 @@ export default function Index({children}) {
             }).catch(err =>{
 
             });
-        }
+        },
+        changePassword(body, userId){}
     }
 
     useEffect(() =>{

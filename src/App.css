@@ -13,9 +13,9 @@
   --clr-content-success: #EEF5EA;
   --clr-txt-error:#C50000;
   --clr-mes-error: #fae6e6;
-  --clr-content-light: #CCEFFC;
-  --clr-txt-light:#00AFEF;
-  --clr-pop-up:'#999999';
+  --clr-content-blue: #CCEFFC;
+  --clr-txt-blue:#00AFEF;
+  --clr-process: #DEDEDE;
   --font-size: 15px;
   --font-family: 'Montserrat',sans-serif;
 }
@@ -35,6 +35,9 @@ body {
 .img-auto-flex {
   width: 100%;
   height: 100%;
+}
+.btn-edit {
+  color: White !important;
 }
 .my-btn-yellow{
   color:var(--clr-txt-primary) !important;
@@ -56,6 +59,29 @@ body {
   color:var(--clr-txt-primary) !important;
   background-color: var(--clr-primary) !important;
   border: none!important;
+}
+.my-btn-yellow {
+  color: white !important;
+  font-weight: 600 !important;
+  background-color: var(--clr-primary) !important;
+  border: none !important;
+  width: fit-content !important;
+  font-size: 0.85em !important;
+  font-family: var(--font-family) !important;
+  border-radius: 30px !important;
+  padding: 10px 25px !important;
+}
+
+.my-btn-yellow :active {
+  color: white !important;
+  background-color: var(--clr-primary) !important;
+  border: none !important;
+}
+
+.my-btn-yellow:hover {
+  color: white !important;
+  background-color: var(--clr-primary) !important;
+  border: none !important;
 }
 .my-btn-gray{
   color: var(--clr-txt-primary) !important;
@@ -236,7 +262,10 @@ to{
   animation-fill-mode:both;
   -webkit-animation-fill-mode:both;
 }
-
+textarea {
+  background-color: var(--clr-input);
+  padding: 8px 12px;
+}
 input[type="checkbox"]:checked{
   background-color: #f2a13b;
 }
@@ -365,4 +394,44 @@ input:checked ~ .checkmark {
 }
 a{
   cursor: pointer;
+}
+.content-green {
+  background-color: var(--clr-content-success);
+  color: var(--clr-txt-success);
+  padding: 0px 10px;
+  font-weight: 600;
+  border-radius: 20px;
+  width: fit-content;
+}
+.content-yellow {
+  background-color: var(--clr-primary-light);
+  color: var(--clr-primary);
+  padding: 0px 10px;
+  font-weight: 600;
+  border-radius: 20px;
+    width: fit-content;
+}
+.content-red {
+  background-color: var(--clr-mes-error);
+  color: var(--clr-txt-error);
+  padding: 0px 10px;
+  font-weight: 600;
+  border-radius: 20px;
+    width: fit-content;
+}
+.content-blue {
+  background-color: var(--clr-content-blue);
+  color: var(--clr-txt-blue);
+  padding: 0px 10px;
+  font-weight: 600;
+  border-radius: 20px;
+    width: fit-content;
+}
+.txt-success{
+  color: var(--clr-txt-success);
+  font-weight: 600;
+}
+.txt-error {
+  color: var(--clr-txt-error);
+  font-weight: 600;
 }

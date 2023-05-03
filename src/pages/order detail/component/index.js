@@ -3,9 +3,14 @@ import { Sidebar } from '../../../layout'
 import { Col, Row } from 'react-bootstrap';
 import '../style/orderDetail.css';
 import Button from 'react-bootstrap/Button';
-import { NavLink } from 'react-router-dom';
+import Form from 'react-bootstrap/Form';
+import { Formik } from 'formik';
+import * as yup from 'yup';
+import { GoogleMap, useJsApiLoader } from '@react-google-maps/api';
 
 function OrderDetail(){
+    const [process,setProcess] = React.useState(false);
+
     return(
         <div>
             <div>
@@ -84,7 +89,7 @@ function OrderDetail(){
                             <p className='product-label-fit'>
                               Status
                             </p>
-                            <p className='order-content-light'>
+                            <p className='content-green'>
                               Looking for a driver
                             </p>
                         </div>
@@ -110,6 +115,8 @@ function OrderDetail(){
             <Row>
               <p className='product-content-title my-3'>Order</p>
               <Col>
+                  {
+                    process ? <Process>{2}</Process> : 
                   <div className='order-letter-form py-4'>
                     <div>
                         <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -132,12 +139,11 @@ function OrderDetail(){
                         </p>
                     </div>
                     <div style={{margin:'0 auto'}}>
-                      <NavLink to='/driver/order/detail/process'>
-                        <Button className='my-btn-yellow mx-2'>Start</Button>
-                      </NavLink>
+                      <Button className='my-btn-yellow mx-2' onClick={()=>{setProcess(e=>!e)}}>Start</Button>
                       <Button className='my-btn-gray mx-2'>False</Button>
                     </div>
                   </div>
+                  }
               </Col>
             </Row>
           </div>
@@ -145,6 +151,129 @@ function OrderDetail(){
     )
 }
 
+function Process({children}){
+    const [active,setActive] = React.useState(1);
+    const [stepTemplate, setTemplate] = React.useState([
+      "Prepare", "Ordering", "Delivering", "Completed"
+    ]);
+
+    return(
+      <div>
+          <div className='product-label-info'>
+            <p className='product-label-fit'>
+              Status
+            </p>
+            <p className='content-yellow'>
+              In processing
+            </p>
+        </div>
+        <div className='product-label-info' style={{alignItems:'unset'}}>
+            <p className='product-label-fit py-2'>
+              Process
+            </p>  
+            <div>
+              <section class="step-wizard">
+                <ul className='order-progress'>
+                  {stepTemplate.map((template,index) =>{
+                    return (<li className='order-progress-item' key={index} data-active={index <= active}>
+                      <div class="progress-circle"></div>
+                      <div class="progress-label">
+                          <h2 className='progress-txt-header'>
+                          {template}
+                          </h2>
+                          <p>At 9PM, the driver requested to deliver the good</p>
+                      </div>
+                    </li>)
+                  })}
+                  
+                </ul>
+             </section>
+            </div>
+        </div>
+        <div className='product-label-info' style={{alignItems:'unset'}}>
+            <p className='product-label-fit py-2'>
+              Process
+            </p> 
+            {/* <GoogleMapReact
+              defaultCenter={this.props.center}
+              defaultZoom={this.props.zoom}
+              yesIWantToUseGoogleMapApiInternals
+              onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+            >
+              <AnyReactComponent
+                lat={59.955413}
+                lng={30.337844}
+                text="My Marker"
+              />
+            </GoogleMapReact> */}
+        </div>
+        <div className='product-label-info py-3' style={{alignItems:'unset'}}>
+            <p className='product-label-fit py-1'>
+              Delivery pictures
+            </p>
+            <div>
+                <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                    <div className='background-front'>
+                        <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
+                        <p className='driving-txt'>view image</p>
+                    </div>
+                    <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
+                </div>
+            </div>
+        </div>
+      </div>
+    )
+}
+
+let rateSchema = yup.object().shape({
+  reason: yup.string().required("Rate is required field")
+})
+function StatusFail(){
+  return(
+    <div>
+      <div className='product-label-info'>
+        <p className='product-label-fit'>
+          Status
+        </p>
+        <p className='content-red'>
+          Fail
+        </p>
+     </div>
+     <Formik
+      initialValues={{
+        reason:''
+      }}
+      validationSchema={rateSchema}
+    >
+      {({touched, errors, handleSubmit, handleChange, handleBlur}) =>{
+        return(
+          <Form>
+              <Form.Group className="form-group">
+                <div  className='mb-2'>
+                    <Form.Label className='product-label-fit my-0'>Reason fail</Form.Label>
+                </div>
+                <div className='product-rate-form'>
+                    <div className='frame-pass' style={{flexGrow:'1'}}>
+                      <Form.Control
+                          type={'text'} 
+                          as="textarea" rows={3}
+                          style={{position:'relative'}}
+                          isInvalid={touched.reason && errors.reason}
+                          onChange={handleChange}
+                          onBlur={handleBlur}
+                          placeholder="Fill rate (rate must be number)"
+                          name="rate"/>
+                    </div>
+                </div>
+              </Form.Group>
+              <Button variant="warning" className='my-btn-yellow'>Submit</Button>
+          </Form>
+        )
+      }}
+    </Formik>
+    </div>
+  )
+}
 export default function Index() {
   return (<>
     <Sidebar>

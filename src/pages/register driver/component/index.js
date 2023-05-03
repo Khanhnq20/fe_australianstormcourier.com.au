@@ -224,6 +224,7 @@ function RegisterDriver() {
                                             </div>
                                             <Form.Control
                                                 type="text"
+                                                style={{background:'#fafafa'}}
                                                 name="city"
                                                 as="textarea" rows={3}
                                                 placeholder="Enter Your Additional Information"

@@ -94,7 +94,7 @@ function ProductDetail(){
                             <p className='product-label-fit'>
                               Status
                             </p>
-                            <p className='product-content-light'>
+                            <p className='content-blue'>
                               Looking for a driver
                             </p>
                         </div>
@@ -122,7 +122,7 @@ function ProductDetail(){
                           <p className='product-label-fit'>
                             Status
                           </p>
-                          <p className='product-content-light'>
+                          <p className='content-blue'>
                             Looking for a driver
                           </p>
                       </div>
