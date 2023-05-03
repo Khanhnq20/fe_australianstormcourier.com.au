@@ -3,6 +3,7 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 
+
 import { Navigation, Sidebar, Footer } from "../layout";
 import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Homepage, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, CreateProduct} from '../pages';
 import { AuthValidator } from '../stores'
@@ -54,10 +55,6 @@ export const authChildrens = [
     element:<ResetPassword></ResetPassword>
   },
   {
-    path: "homepage",
-    element:<Sidebar></Sidebar>
-  },
-  {
     path:"information",
     element: <UserInformation></UserInformation>
   },
@@ -71,6 +68,7 @@ export const userChildrens = [
   {
     path: 'dashboard',
     element: <>
+
       <Homepage></Homepage>
     </>
   },
@@ -84,6 +82,7 @@ export const userChildrens = [
     path:"product",
     element: <Outlet></Outlet>,
     children:[
+
       {
         path: "",
         element: <DriverProduct></DriverProduct> 

@@ -247,8 +247,6 @@ function DropDownStatus() {
   }
 export default function Index(){
     return(
-        <Sidebar>
             <Product></Product>
-        </Sidebar>
     )
 }

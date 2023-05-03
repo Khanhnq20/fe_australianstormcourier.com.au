@@ -2,7 +2,6 @@ import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import React,{ useRef } from 'react'
-import { Sidebar } from "../../../layout";
 import {RiImageEditFill} from 'react-icons/ri';
 import Dropdown from 'react-bootstrap/Dropdown';
 let productSchema = yup.object().shape({
@@ -231,8 +230,6 @@ function DropDownStatus() {
 
 export default function Index(){
     return(
-        <Sidebar>
             <ProductCreate></ProductCreate>
-        </Sidebar>
     )
 }

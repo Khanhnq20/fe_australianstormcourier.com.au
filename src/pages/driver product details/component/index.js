@@ -211,9 +211,7 @@ function PopUpCenteredModal(props) {
 }
 export default function Index() {
   return (<>
-    <Sidebar>
         <ProductDetail></ProductDetail>
-    </Sidebar>
   </>
   )
 }

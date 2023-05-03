@@ -7,7 +7,6 @@ import Form from 'react-bootstrap/Form';
 import Dropdown from 'react-bootstrap/Dropdown';
 import '../style/registerDriver.css';
 import Button from 'react-bootstrap/Button';
-import { Sidebar } from '../../../layout';
 import {RiImageEditFill} from 'react-icons/ri'
 
 
@@ -264,8 +263,6 @@ function RegisterDriver() {
 
   export default function Index(){
     return(
-        <Sidebar>
             <RegisterDriver></RegisterDriver>
-        </Sidebar>
     )
 }
