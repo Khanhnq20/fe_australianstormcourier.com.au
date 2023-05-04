@@ -10,6 +10,7 @@
     "axios": "^1.3.6",
     "bootstrap": "^5.2.3",
     "formik": "^2.2.9",
+<<<<<<< HEAD
   
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
@@ -62,6 +63,8 @@
     "bootstrap": "^5.2.3",
     "formik": "^2.2.9",
     "object-to-formdata": "^4.4.2",
+=======
+>>>>>>> 1564202c2700ac9b43db67476dd01a674e1df352
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-calendar": "^4.2.1",

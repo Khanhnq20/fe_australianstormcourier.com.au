@@ -287,6 +287,7 @@ input[type="password"]{
   background-color: var(--clr-input);
   padding: 8px 12px;
   border: 1px solid var(--clr-txt-secondary);
+<<<<<<< HEAD
 }
 input[type="checkbox"]{
   cursor: pointer;
@@ -297,6 +298,8 @@ span.checkmark{
 
 select {
   cursor: pointer;
+=======
+>>>>>>> 1564202c2700ac9b43db67476dd01a674e1df352
 }
 
 .fr-checkbox input {

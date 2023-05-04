@@ -51,6 +51,13 @@ export const authChildrens = [
     element:<Forgot></Forgot>
   },
   {
+<<<<<<< HEAD
+=======
+    path: "password",
+    element:<ResetPassword></ResetPassword>
+  },
+  {
+>>>>>>> 1564202c2700ac9b43db67476dd01a674e1df352
     path:"information",
     element: <UserInformation></UserInformation>
   },
