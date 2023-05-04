@@ -8,6 +8,7 @@ import { Navigation, Footer, DriverSideBar, SenderSideBar, UserSideBar } from ".
 import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
+import { NavAuth } from "../layout";
 
 export const authChildrens = [
   {
@@ -190,7 +191,7 @@ export const router = createBrowserRouter([
   {
     path: "",
     element: <>
-      <Navigation />
+      <NavAuth />
       <Outlet />
       <Footer/>
     </>,

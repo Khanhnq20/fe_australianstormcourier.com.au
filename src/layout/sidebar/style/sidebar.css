@@ -98,3 +98,20 @@
     align-items: center;
     gap: 10px;
 }
+.path a{
+    text-decoration: none;
+    color: var(--clr-primary);
+    font-size: 20px;
+    text-transform: capitalize;
+    font-weight: 500;
+} 
+.path a:hover{
+    text-decoration: none;
+    color: var(--clr-primary);
+} 
+.active-link a{
+    color: var(--clr-txt-primary) ;
+}
+.active-link a:hover{
+    color: var(--clr-txt-primary) ;
+}

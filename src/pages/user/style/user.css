@@ -1,0 +1,6 @@
+.h-content-user{
+    display: flex;
+    gap: 25px;
+    flex-wrap: wrap;
+    padding:0 10px;
+}

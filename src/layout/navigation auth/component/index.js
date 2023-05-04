@@ -12,7 +12,7 @@ export default function Index() {
     return (
         <div className='nav-root'>
             <Navbar bg="light" variant="light" expand="lg">
-                <div className="nav-auth px-5">
+                <div className="nav-auth px-1">
                     <Navbar.Brand className="nav-logo-frame" href="/">
                         <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" width="50px"/>
                     </Navbar.Brand>
@@ -37,7 +37,7 @@ function AvatarUserDropDown() {
         // const navigate = useNavigate();
     return (
     <Dropdown>
-        <Dropdown.Toggle className='nav-avatar' style={{marginRight:'60px'}} id="dropdown-basic">
+        <Dropdown.Toggle className='nav-avatar' id="dropdown-basic">
             <img
             className='nav-avatar-img'
             height="40px"
@@ -46,8 +46,8 @@ function AvatarUserDropDown() {
             
             />
             <div className='user-name'>
-                <p style={{color:'#666666',margin:'0'}}>Tymothy</p>
-                <BsChevronDown  style={{color:'black'}}></BsChevronDown>
+                <p className='txt-name' style={{color:'#666666',margin:'0'}}>Tymothy</p>
+                <BsChevronDown className='icon-down'  style={{color:'black'}}></BsChevronDown>
             </div>
         </Dropdown.Toggle>
         <Dropdown.Menu className='nav-menu'>
