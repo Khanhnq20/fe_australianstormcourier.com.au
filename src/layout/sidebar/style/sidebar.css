@@ -66,8 +66,7 @@
     background-color: white;
     border-radius: 10px;
     padding: 20px;
-    max-height: 77vh;
-    overflow: scroll;
+    min-height: 77vh;
 }
 .h-content{
     display: flex;
@@ -75,7 +74,9 @@
 }
 .h-ctn{
     flex-grow: 1;
-    padding: 25px;
+    padding: 20px 25px 0 25px;
+    overflow-y: scroll;
+    height: 85vh;
 }
 .h-form{
     display: flex;

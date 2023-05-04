@@ -281,10 +281,12 @@ input[type="checkbox"]:active{
 input[type="text"]{
   background-color: var(--clr-input);
   padding: 8px 12px;
+  border: 1px solid var(--clr-txt-secondary);
 }
 input[type="password"]{
   background-color: var(--clr-input);
   padding: 8px 12px;
+  border: 1px solid var(--clr-txt-secondary);
 }
 input[type="checkbox"]{
   cursor: pointer;

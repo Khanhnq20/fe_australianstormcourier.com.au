@@ -3,8 +3,9 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 
-import { Navigation, Sidebar, Footer } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Homepage, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, CreateProduct} from '../pages';
+
+import { Navigation, Footer, DriverSideBar, SenderSideBar, UserSideBar } from "../layout";
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
 
@@ -50,10 +51,6 @@ export const authChildrens = [
     element:<Forgot></Forgot>
   },
   {
-    path: "homepage",
-    element:<Sidebar></Sidebar>
-  },
-  {
     path:"information",
     element: <UserInformation></UserInformation>
   },
@@ -65,9 +62,9 @@ export const authChildrens = [
 
 export const userChildrens = [
   {
-    path: 'dashboard',
+    path: '',
     element: <>
-      <Homepage></Homepage>
+      <User></User>
     </>
   },
   {
@@ -129,8 +126,16 @@ export const senderChildrens = [
       {
         path:"detail",
         element: <SenderProductDetail></SenderProductDetail>
+      },
+      {
+        path:"post",
+        element: <CreateProduct></CreateProduct>
       }
     ]
+  },
+  {
+    path:"info",
+    element: <SenderInfo></SenderInfo>
   }
 ];
 
@@ -201,23 +206,29 @@ export const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: <AuthValidator roles={["User"]}>
-          <Outlet></Outlet>
-        </AuthValidator>,
+        element: <>
+          <UserSideBar>
+            <Outlet></Outlet>
+          </UserSideBar>
+        </>,
         children: userChildrens
       },
       {
         path: "driver",
         element: <AuthValidator roles={["Driver"]}>
-          <Outlet></Outlet>
+          <DriverSideBar>
+            <Outlet></Outlet>
+          </DriverSideBar>
         </AuthValidator>,
         children: driverChildrens
       },
       {
         path: 'sender',
-        element: <AuthValidator roles={["Sender"]}>
-          <Outlet></Outlet>
-        </AuthValidator>,
+        element: <>
+          <SenderSideBar>
+            <Outlet></Outlet>
+          </SenderSideBar>
+        </>,
         children: senderChildrens
       }
     ]

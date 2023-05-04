@@ -169,9 +169,7 @@ function DashBoardSender() {
 // }
 export default function Index(){
     return(
-        <Sidebar>
             <DashBoardSender></DashBoardSender>
-        </Sidebar>
     )
 }
 

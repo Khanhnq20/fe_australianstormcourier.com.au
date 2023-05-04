@@ -1,5 +1,4 @@
 import React from 'react'
-import { Sidebar } from '../../../layout'
 import { Col, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import { NavLink } from 'react-router-dom';
@@ -116,9 +115,7 @@ function OrderDetail(){
 
 export default function Index() {
   return (<>
-    <Sidebar>
         <OrderDetail></OrderDetail>
-    </Sidebar>
   </>
   )
 }

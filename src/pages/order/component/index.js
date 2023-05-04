@@ -2,7 +2,6 @@ import React from 'react';
 import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
-import { Sidebar } from '../../../layout';
 import Button from 'react-bootstrap/Button';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -252,8 +251,6 @@ function DropDownStatus() {
   }
 export default function Index(){
     return(
-        <Sidebar>
             <Product></Product>
-        </Sidebar>
     )
 }

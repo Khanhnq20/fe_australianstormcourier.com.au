@@ -6,7 +6,6 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import '../style/registerDriver.css';
 import Button from 'react-bootstrap/Button';
-import { Sidebar } from '../../../layout';
 import {RiImageEditFill} from 'react-icons/ri'
 import { AuthContext } from '../../../stores';
 import {serialize} from 'object-to-formdata';
@@ -351,8 +350,6 @@ function RegisterDriver() {
 
   export default function Index(){
     return(
-        <Sidebar>
             <RegisterDriver></RegisterDriver>
-        </Sidebar>
     )
 }

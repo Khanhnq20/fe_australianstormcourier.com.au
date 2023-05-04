@@ -119,8 +119,6 @@ function ChangePassword() {
 
 export default function Index(){
     return(
-        <Sidebar>
             <ChangePassword></ChangePassword>
-        </Sidebar>
     )
 }
