@@ -4,7 +4,6 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import {DatePicker} from "antd";
-import '../style/userInformation.css'
 import { AuthContext } from '../../../stores';
 
 let registerSchema = yup.object().shape({
@@ -15,7 +14,7 @@ let registerSchema = yup.object().shape({
     address: yup.string().required("Full Address is required field"),   
 })
 
-function UserInformation() {
+function SenderInformation() {
     const [date,setDate] = React.useState(new Date());
     const [authState, {updateProfile}] = React.useContext(AuthContext);
 
@@ -158,7 +157,7 @@ function UserInformation() {
 export default function Index(){
     return(
         <div>
-            <UserInformation></UserInformation>
+            <SenderInformation></SenderInformation>
         </div>
     )
 }

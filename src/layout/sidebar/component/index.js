@@ -33,7 +33,7 @@ function UserSideBar({children}) {
                       className={({isActive,isPending}) =>{
                           return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
                       }}
-                      to={'/user/dashboard'}>
+                      to={'/user'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
                           </div>
@@ -109,9 +109,9 @@ function DriverSideBar({children}) {
     <div>
       <div className='h-root'>
             <div>
-                <div className='h-form'>
+              <div className='h-form'>
                     <span>
-                    <div className='sbar-root'>
+                <div className='sbar-root'>
                   <div className='sbar-header'>
                       <div>MENU</div>
                   </div>
@@ -212,7 +212,7 @@ function SenderSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/information'}>
+                          to={'/sender/info'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
@@ -222,7 +222,7 @@ function SenderSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/information'}>
+                          to={'/sender/product'}>
                           <div className='sbar-icon-frame'>
                             <BiPackage className="sbar-icon"></BiPackage>
                           </div>
