@@ -128,7 +128,13 @@ body {
 .txt-center{
   text-align: center;
 }
+::-ms-input-placeholder { /* Microsoft Edge */
+  color:    #6C757D !important;
+}
 
+::placeholder { /* Most modern browsers support this now. */
+  color:    #6C757D !important;
+}
 .label{
   font-weight: 600;
   font-size: 1.1rem;

@@ -15,14 +15,15 @@
     padding: 0 !important;
     width: 40px !important;
     box-shadow: none !important;
-    display: flex !important;
-    align-items: center !important;
+    vertical-align: middle !important;
     gap: 10px;
+    width: fit-content !important;
 }
 .nav-avatar-img{
     margin: 0;
     padding: 0;
     border-radius: 50%;
+    display: inline-block;
 }
 .nav-auth{
     display: flex;
@@ -47,5 +48,16 @@
     margin-right: 20px;
 }
 .user-name{
+    display: inline-block;
     margin: 0;
+    flex-grow: 1;
+}
+.txt-name{
+    display: inline-block;
+    color: #6666;
+    margin: 0;
+    padding: 0 10px;
+}
+.nav-logo-frame{
+    padding-left: 20px;
 }

@@ -173,7 +173,8 @@ export default function Index() {
                                         <DatePicker 
                                             name='date'
                                             onChange={e => setDate(e)}
-                                            style={{display:"block",width:'100%'}}/>
+                                            className='date-input'
+                                            style={{display:"block",width:'100%',border:'1px solid #66666 !important'}}/>
                                     </div>
                                     <Form.Control.Feedback type="invalid">{errors.date}</Form.Control.Feedback>
                                 </Form.Group>
