@@ -50,10 +50,6 @@ export const authChildrens = [
     element:<Forgot></Forgot>
   },
   {
-    path: "password",
-    element:<ResetPassword></ResetPassword>
-  },
-  {
     path: "homepage",
     element:<Sidebar></Sidebar>
   },
@@ -62,8 +58,8 @@ export const authChildrens = [
     element: <UserInformation></UserInformation>
   },
   {
-    path:"changePassword",
-    element: <ChangePassword></ChangePassword>
+    path:"reset",
+    element: <ResetPassword></ResetPassword>
   },
 ]
 

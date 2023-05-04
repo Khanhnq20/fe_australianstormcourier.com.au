@@ -5,15 +5,18 @@ export const AuthContext = createContext();
 
 export default function Index({children}) {
     const [state,setState] = React.useState({
-        accessToken: localStorage.getItem(authConstraints.LOCAL_KEY),
+        accessToken: "",
         accountInfo: null,
         driverInfo: null,
         senderInfo: null,
         loading: true,
         error: [],
         isLogged: false,
-        roles: []
+        roles: [],
+        vehicles: []
     });
+
+    const hasMounted = React.useRef(false);    
 
     const funcs = {
         saveAccessToken(accessToken, refreshToken){
@@ -54,16 +57,9 @@ export default function Index({children}) {
         },
     
         signupUser(body){
-
             authInstance.post([authConstraints.root, authConstraints.signupUser].join("/"), body).then(response =>{
-                setState(i =>({
-                    ...i,
-                    accountInfo: response.data
-                }));
-
                 toast.success(`You have registered account successfully, please goto "Signin" to join us`, {
                 });
-                
             }).catch(err =>{
                 setState(i => ({
                     ...i,
@@ -73,11 +69,29 @@ export default function Index({children}) {
         },
     
         signupDriver(body){
-            authInstance.post([authConstraints.root, authConstraints.signupDriver].join("/"), body).then(response =>{
+            authInstance.post([authConstraints.root, authConstraints.signupDriver].join("/"), body, {
+                headers: { "Authorization": [config.AuthenticationSchema, state.accessToken].join(" ")}
+            }).then(response =>{
+                if(response.data?.successed){
+                    toast.success(`You have become driver successfully`, {
+                    });
+                }
+            }).catch(err =>{
                 setState(i =>({
                     ...i,
-                    driverInfo: response.data
+                    error: err
                 }));
+            });
+        },
+
+        signupSender(body){
+            authInstance.post([authConstraints.root, authConstraints.signupSender].join("/"), body,{
+                headers: { "Authorization": [config.AuthenticationSchema, state.accessToken].join(" ")}
+            }).then(response =>{
+                if(response?.data?.successed){
+                    toast.success(`You have become sender successfully`, {
+                    });
+                }
             }).catch(err =>{
                 setState(i =>({
                     ...i,
@@ -89,6 +103,18 @@ export default function Index({children}) {
         signout(){
             localStorage.removeItem(authConstraints.LOCAL_KEY);
             localStorage.removeItem(authConstraints.LOCAL_KEY_2);
+
+            setState(i => ({
+                ...i,
+                accessToken: localStorage.getItem(authConstraints.LOCAL_KEY),
+                accountInfo: null,
+                driverInfo: null,
+                error: null,
+                isLogged: false,
+                loading: false,
+                roles: null,
+                senderInfo: null
+            }));
         },
 
         getAccount(){
@@ -96,7 +122,8 @@ export default function Index({children}) {
                 headers: {
                     "Authorization": [config.AuthenticationSchema, state.accessToken].join(" ")
                 }
-            }).then(response =>{
+            })
+            .then(response =>{
                 setState(i => ({
                     ...i,
                     accountInfo: response.data,
@@ -133,6 +160,29 @@ export default function Index({children}) {
             });
         },
 
+        getAllVehicles(){
+            return authInstance
+                .get([authConstraints.root, authConstraints.vehicles].join("/"))
+                .then(response =>{
+                    if(response?.data?.vehicles){
+                        setState(i => ({
+                            ...i,
+                            vehicles: response?.data?.vehicles
+                        }));
+                    }
+                }).catch(err =>{
+                    setState(i =>({
+                        ...i,
+                        error: err,
+                    }));
+                }).finally(() =>{
+                    setState(i =>({
+                        ...i,
+                        loading: false
+                    }));
+                });
+        },
+
         test(){
             authInstance.get([authConstraints.root, authConstraints.test].join("/")).then(response =>{
 
@@ -144,37 +194,71 @@ export default function Index({children}) {
 
     const accountActions = {
         updateProfile(body, userId) {
+            setState(i =>({
+                ...i,
+                loading: true,
+            }));
+
             return authInstance.post([authConstraints.root, authConstraints.updateUser].join("/"), body, {
                 params: {
                     userId
                 },
                 headers: {
-                    "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+                    "Authorization": [config.AuthenticationSchemax, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
                 }
             }).then(response =>{
-                if(response?.userInfo && response.successed){
+                if(!!response.data?.userInfo && !!response.data?.successed){
                     setState(i => ({
                         ...i,
-                        accountInfo: response.userInfo
+                        accountInfo: response.data.userInfo
                     }));
 
-                    toast.success("Updated user information");
+                    toast.success("Updated user information", {
+                    });
                 }
             }).catch(err =>{
-
+                toast.error(err.response);
+            }).finally(() =>{
+                setState(i =>({
+                    ...i,
+                    loading: false
+                }));
             });
         },
-        changePassword(body, userId){}
+        changePassword(body, userId){
+            
+        }
     }
 
+    useEffect(() => {
+        console.log('mounted', hasMounted.current);
+
+        if(hasMounted.current && state.accountInfo == null && !state.isLogged){
+            funcs.getAccount();
+        }
+    }, [state.accessToken]);
+
     useEffect(() =>{
-        setState(i =>{
+        var hasLoggedIn = !!localStorage.getItem(authConstraints.LOCAL_KEY);
+
+        if(hasLoggedIn && !hasMounted.current){
             const newAccessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
-            return {
-                ...i, 
-                accessToken: newAccessToken
-            };
-        });
+            console.log("new access token: " + newAccessToken);
+            hasMounted.current = true;
+            
+            setState(i =>{
+                return {
+                    ...i, 
+                    accessToken: newAccessToken
+                };
+            });
+        }
+
+        funcs.getAllVehicles();
+
+        return () =>{
+            hasMounted.current = false;
+        }
     },[]);
 
     return (

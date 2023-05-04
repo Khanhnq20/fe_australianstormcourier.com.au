@@ -35,7 +35,7 @@ import { AuthContext } from '../../../stores';
 export default function Index() {
     const [state] = useContext(AuthContext);
 
-    if(!!state?.accountInfo)
+    if(state.isLogged)
         return <NavAuth></NavAuth>
 
     return (

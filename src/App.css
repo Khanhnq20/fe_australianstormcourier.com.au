@@ -286,6 +286,16 @@ input[type="password"]{
   background-color: var(--clr-input);
   padding: 8px 12px;
 }
+input[type="checkbox"]{
+  cursor: pointer;
+}
+span.checkmark{
+  cursor: pointer;
+}
+
+select {
+  cursor: pointer;
+}
 
 .fr-checkbox input {
   position: absolute;

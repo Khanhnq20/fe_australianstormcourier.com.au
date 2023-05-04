@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar } from 'react-bootstrap';
 import {AiFillBell} from 'react-icons/ai';
@@ -7,6 +7,7 @@ import '../style/navAuth.css';
 import {AiFillUnlock,AiOutlineSetting} from 'react-icons/ai';
 import {FiLogOut,FiChevronDown} from 'react-icons/fi';
 import {BsChevronDown} from 'react-icons/bs'
+import { AuthContext } from '../../../stores/contextAPI/authctx';
 
 export default function Index() {
     return (
@@ -32,21 +33,21 @@ export default function Index() {
 }
 
 function AvatarUserDropDown() {
-        // const {userID, logout} = useAthContext();
-        // const [state,functions] = useCartContext();
-        // const navigate = useNavigate();
+    const [{accountInfo},{
+        signout
+    }] = useContext(AuthContext);
+
     return (
     <Dropdown>
         <Dropdown.Toggle className='nav-avatar' style={{marginRight:'60px'}} id="dropdown-basic">
             <img
-            className='nav-avatar-img'
-            height="40px"
-            weight="40px"
-            src="https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg"
-            
+                className='nav-avatar-img'
+                height="40px"
+                weight="40px"
+                src="https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg"
             />
             <div className='user-name'>
-                <p style={{color:'#666666',margin:'0'}}>Tymothy</p>
+                <p style={{color:'#666666',margin:'0'}}>{accountInfo?.name || accountInfo?.username}</p>
                 <BsChevronDown  style={{color:'black'}}></BsChevronDown>
             </div>
         </Dropdown.Toggle>
@@ -64,7 +65,7 @@ function AvatarUserDropDown() {
                 </Link>
             </Dropdown.Item>
 
-            <Dropdown.Item className='nav-menu-topic'>
+            <Dropdown.Item className='nav-menu-topic' onClick={signout}>
                 <FiLogOut className='nav-menu-topic-icon'></FiLogOut>
                 <div>   
                     Log out

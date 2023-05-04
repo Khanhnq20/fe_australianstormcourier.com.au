@@ -4,13 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 
 function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], invalidLink="/auth/login"}) {
-    const [authState, {
-        getAccount
-    }] = useContext(AuthContext);
-
-    useEffect(() =>{
-        getAccount();
-    }, [authState.accessToken]);
+    const [authState] = useContext(AuthContext);
 
     let hasPermited = authState.isLogged && authState.accountInfo?.roles?.some(e => roles.includes(e));
 
@@ -30,10 +24,6 @@ function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], i
 
 AuthValidator.LoggedContainer = function LoggedContainer({children}) {
     const [authState, {getAccount}] = useContext(AuthContext);
-
-    useEffect(() =>{
-        getAccount();
-    }, [authState.accessToken]);
 
     if(authState.loading) 
         return (<Container>

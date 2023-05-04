@@ -1,6 +1,8 @@
 import React from 'react'
 
 import Button from 'react-bootstrap/Button';
+import { Link } from 'react-router-dom';
+
 export default function () {
   return (
     <div>
@@ -129,7 +131,9 @@ export default function () {
                             </defs>
                         </svg>
                     </div>
-                    <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-3`}>Become Driver</Button>
+                    <Link to="/user/register/driver">
+                        <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-3`}>Become Driver</Button>
+                    </Link>
                 </div>
                 <div className='txt-center h-del-frame'>
                     <div className='mb-2'>
@@ -635,7 +639,9 @@ export default function () {
                             </defs>
                         </svg>
                     </div>
-                    <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-3`}>Become Sender</Button>
+                    <Link to="/user/register/sender">
+                        <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-3`}>Become Sender</Button>
+                    </Link>
                 </div>
             </div>
         </div>

@@ -1,37 +1,23 @@
 import axios from "axios";
 import config from '../config';
+import { authInstance } from "../auth";
 
 const constraints = {
-    root: "/api/auth",
+    root: "/api/sender",
     // Local storage key of access token
     LOCAL_KEY: "actoken",
     // Local storage key of refresh token 
     LOCAL_KEY_2: "ractoken",
     // URL of API endpoints
-    signin: "signin",
-    signout: "signout",
-
-    signupUser: "register/user",
-    signupDriver: "register/driver",
-    signupSender: "register/sender",
-
-    updateUser: "update/user",
-    changePwd: "update/password",
-
-    vehicles: "vehicles",
-    getAccount: "account",
-    refreshToken: "refresh",
-
-    test: "test/authorizedUser",
+    
     getAccessToken: () => localStorage.getItem(constraints.LOCAL_KEY)
 }
 
-
-export const authInstance = axios.create({
+export const senderInstance = axios.create({
     baseURL: config.APIHost,
 });
 
-authInstance.interceptors.response.use(response =>{
+senderInstance.interceptors.response.use(response =>{
     return response;
 }, error =>{
     if(error.response.code === ""){
