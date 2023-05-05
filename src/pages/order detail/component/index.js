@@ -226,6 +226,7 @@ function Process({children}){
 let rateSchema = yup.object().shape({
   reason: yup.string().required("Rate is required field")
 })
+
 function StatusFail(){
   return(
     <div>
@@ -272,6 +273,7 @@ function StatusFail(){
     </div>
   )
 }
+
 export default function Index() {
   return (<>
         <OrderDetail></OrderDetail>

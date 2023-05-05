@@ -51,13 +51,10 @@ export const authChildrens = [
     element:<Forgot></Forgot>
   },
   {
-<<<<<<< HEAD
-=======
     path: "password",
     element:<ResetPassword></ResetPassword>
   },
   {
->>>>>>> 1564202c2700ac9b43db67476dd01a674e1df352
     path:"information",
     element: <UserInformation></UserInformation>
   },
@@ -69,7 +66,7 @@ export const authChildrens = [
 
 export const userChildrens = [
   {
-    path: '',
+    path: 'dashboard',
     element: <>
       <User></User>
     </>
@@ -154,6 +151,10 @@ export const driverChildrens = [
     </>
   },
   {
+    path: "product",
+    element: <DriverProduct></DriverProduct>
+  },
+  {
     path: "order",
     element: <>
       <Outlet></Outlet>
@@ -166,7 +167,7 @@ export const driverChildrens = [
         </>
       },
       {
-        path: "detail",
+        path: "detail/{id}",
         element: <>
           <Outlet></Outlet>
         </>,
@@ -213,11 +214,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: <>
+        element: <AuthValidator roles={["User"]}>
           <UserSideBar>
             <Outlet></Outlet>
           </UserSideBar>
-        </>,
+        </AuthValidator>,
         children: userChildrens
       },
       {
@@ -231,11 +232,11 @@ export const router = createBrowserRouter([
       },
       {
         path: 'sender',
-        element: <>
+        element: <AuthValidator roles={["Sender"]}>
           <SenderSideBar>
             <Outlet></Outlet>
           </SenderSideBar>
-        </>,
+        </AuthValidator>,
         children: senderChildrens
       }
     ]

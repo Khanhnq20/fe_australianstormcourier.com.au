@@ -25,6 +25,8 @@ export default function Index({children}) {
 
             localStorage.setItem(authConstraints.LOCAL_KEY, accessToken);
             localStorage.setItem(authConstraints.LOCAL_KEY_2, refreshToken);
+
+            this.getAccount();
         },
 
         signin(body) {
@@ -58,8 +60,13 @@ export default function Index({children}) {
     
         signupUser(body){
             authInstance.post([authConstraints.root, authConstraints.signupUser].join("/"), body).then(response =>{
-                toast.success(`You have registered account successfully, please goto "Signin" to join us`, {
-                });
+                if(!!response?.successed){
+                    toast.success(`You have registered account successfully, please goto "Signin" to join us`, {
+                    });
+                }
+                else{
+                    toast.error("");
+                }
             }).catch(err =>{
                 setState(i => ({
                     ...i,
@@ -120,7 +127,7 @@ export default function Index({children}) {
         getAccount(){
             authInstance.get([authConstraints.root, authConstraints.getAccount].join("/"), {
                 headers: {
-                    "Authorization": [config.AuthenticationSchema, state.accessToken].join(" ")
+                    "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
                 }
             })
             .then(response =>{
@@ -231,7 +238,6 @@ export default function Index({children}) {
     }
 
     useEffect(() => {
-        console.log('mounted', hasMounted.current);
 
         if(hasMounted.current && state.accountInfo == null && !state.isLogged){
             funcs.getAccount();
@@ -243,7 +249,6 @@ export default function Index({children}) {
 
         if(hasLoggedIn && !hasMounted.current){
             const newAccessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
-            console.log("new access token: " + newAccessToken);
             hasMounted.current = true;
             
             setState(i =>{

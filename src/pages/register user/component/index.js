@@ -6,13 +6,14 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import '../../register driver/style/registerDriver.css';
 import Button from 'react-bootstrap/Button';
-import {AiFillEye,AiFillEyeInvisible} from  'react-icons/ai';
-import {DatePicker} from "antd";
+import { AiFillEye,AiFillEyeInvisible } from  'react-icons/ai';
+import { DatePicker } from "antd";
 import { AuthContext } from '../../../stores';
 
 
 let registerSchema = yup.object().shape({
-    userName: yup.string().required("Full Name is required field"),
+    userName: yup.string().required("Full Name is required field").matches(
+        /^(?!\s+$).*/, "User name field contain only blankspaces"),
     phone: yup.string().typeError("Phone Number must be number").required("Phone Number is required field"),
     email: yup.string().email().required("Email is required field"),
     address: yup.string().required("Full Address is required field"),   
@@ -43,8 +44,7 @@ export default function Index() {
                 confirmPassword: '',
                 phone: '',
                 address:''
-            }}
-                
+            }}  
             validationSchema={registerSchema}
             onSubmit={(values) =>{
                 signupUser(values);
@@ -69,7 +69,7 @@ export default function Index() {
                                     <Form.Control
                                         type="text"
                                         name="userName"
-                                        placeholder="Enter Your Full Name"
+                                        placeholder="Enter Your UserName"
                                         isInvalid={touched.userName && errors.userName}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
