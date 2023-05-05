@@ -140,6 +140,7 @@ function UserInformation() {
                                     <div className='frame-pass'>
                                         <DatePicker 
                                             name='date'
+                                            className='date-input'
                                             onChange={e => setDate(e)}
                                             style={{display:"block",width:'100%'}}/>
                                     </div>
