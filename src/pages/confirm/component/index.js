@@ -1,10 +1,20 @@
 import React from 'react';
 import '../style/emailCheck.css'
+import { NavLink } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
 
 export default function Index() {
   return (
     <div className='em-root'>
         <div className='em-form'>
+            <div className='em-title'>
+                <h3 className='txt-center mb-4'>
+                    Thanks for your register!
+                </h3>
+                <h4>
+                    Your account will be certain by Admin. Please wait in a few minutes.
+                </h4>
+            </div>
             <div>
                 <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M4.375 52.5H135.625V135.625H4.375V52.5Z" fill="#78A0D4"/>
@@ -25,6 +35,12 @@ export default function Index() {
                     Please click on the verification link included in the email
                 </p>
             </div>
+            <NavLink to={'/auth/login'}>
+                <Button variant='warning' className={`my-btn-yellow my-4 product-btn-search mx-4`}>Go to Sign in</Button>
+            </NavLink>
+        </div>
+        <div>
+
         </div>
     </div>
   )
