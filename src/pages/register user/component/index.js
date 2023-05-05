@@ -164,7 +164,7 @@ export default function Index() {
                                     />
                                     <Form.Control.Feedback type="invalid">{errors.address}</Form.Control.Feedback>
                                 </Form.Group>
-                                <Form.Group className="form-group" >
+                                {/* <Form.Group className="form-group" >
                                     <div className='mb-2'>
                                         <Form.Label className='label'>Birthday</Form.Label>
                                         <p className='asterisk'>*</p>
@@ -177,7 +177,7 @@ export default function Index() {
                                             style={{display:"block",width:'100%',border:'1px solid #66666 !important'}}/>
                                     </div>
                                     <Form.Control.Feedback type="invalid">{errors.date}</Form.Control.Feedback>
-                                </Form.Group>
+                                </Form.Group> */}
                                 <Button type="submit" variant="warning" className='my-btn-yellow'>Register</Button>
                             </Form>
                         </div>

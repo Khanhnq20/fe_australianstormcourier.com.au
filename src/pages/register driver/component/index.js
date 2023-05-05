@@ -13,7 +13,7 @@ import {AiFillEye,AiFillEyeInvisible} from  'react-icons/ai';
 
 let registerSchema = yup.object().shape({
     userName: yup.string().required("User Name is required field"),
-    phone: yup.string().typeError("Phone Number must be number").required("Phone Number is required field"),
+    phone: yup.string().required("Phone Number is required field"),
     email: yup.string().email().required("Email is required field"),  
     password: yup.string().required("This field is requied").matches(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
