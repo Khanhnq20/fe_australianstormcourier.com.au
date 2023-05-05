@@ -5,7 +5,7 @@ import {
 
 
 import { Navigation, Footer, DriverSideBar, SenderSideBar, UserSideBar } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct} from '../pages';
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct, DriverInfo} from '../pages';
 import { AuthValidator } from '../stores'
 import React from 'react';
 import { NavAuth } from "../layout";
@@ -152,6 +152,12 @@ export const driverChildrens = [
     </>
   },
   {
+    path:"info",
+    element:<>
+      <DriverInfo></DriverInfo>
+    </>
+  },
+  {
     path: "order",
     element: <>
       <Outlet></Outlet>
@@ -220,11 +226,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "driver",
-        element: <AuthValidator roles={["Driver"]}>
+        element: <>
           <DriverSideBar>
             <Outlet></Outlet>
           </DriverSideBar>
-        </AuthValidator>,
+        </>,
         children: driverChildrens
       },
       {
