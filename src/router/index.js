@@ -2,12 +2,12 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-
-
 import { Navigation, Footer, DriverSideBar, UserSideBar } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct, DriverInfo, PaymentComponents} from '../pages';
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, EmailCheck, CreateProduct, PaymentComponents} from '../pages';
 import { AuthValidator, OrderContextComponent } from '../stores'
 import React from 'react';
+import { userChildrens } from "./user";
+import { driverChildrens } from "./driver";
 
 
 export const authChildrens = [
@@ -65,102 +65,6 @@ export const authChildrens = [
   },
 ]
 
-export const userChildrens = [
-  {
-    path: 'info',
-    element: <>
-      <UserInformation></UserInformation>
-    </>
-  },  
-  {
-    path:"product",
-    element: <Outlet></Outlet>,
-    children:[
-      {
-        path: "",
-        element: <DriverProduct></DriverProduct> 
-      },
-      {
-        path: 'detail',
-        element: <>
-          <DriverProductDetail></DriverProductDetail>
-        </>
-      },      
-      {
-        path: "post",
-        element: <CreateProduct></CreateProduct>
-      }
-    ]
-  },
-  {
-    path: "password",
-    element: <ChangePassword></ChangePassword>
-  },
-  {
-    path: "order",
-    element: <Outlet></Outlet>,
-    children: [
-      {
-        path: "list",
-        element: <Order></Order>
-      },
-    ]
-  },
-  {
-    path: "history",
-    element: <>
-      <h1>Order History Pages</h1>
-    </>
-  }
-];
-
-export const driverChildrens = [
-  {
-    path: "offer",
-    element: <DriverProduct></DriverProduct>
-  },
-  {
-    path:"info",
-    element:<>
-      <DriverInfo></DriverInfo>
-    </>
-  },
-  {
-    path: "order",
-    element: <>
-      <Outlet></Outlet>
-    </>,
-    children:[
-      {
-        path: "",
-        element: <>
-          <Order></Order>
-        </>
-      },
-      {
-        path: "detail/{id}",
-        element: <>
-          <Outlet></Outlet>
-        </>,
-        children:[
-          {
-            path: "",
-            element: <>
-              <OrderDetail></OrderDetail>
-            </>
-          },
-          {
-            path: "process",
-            element: <>
-              <OrderProcessDetail></OrderProcessDetail>
-            </>
-          },
-        ]
-      },
-    ]
-  },
-];
-
 export const paymentChildrens = [
   {
     path: "checkout",
@@ -183,9 +87,9 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "",
-        element: <AuthValidator.LoggedContainer>
+        element: <>
           <Home></Home>
-        </AuthValidator.LoggedContainer>
+        </>
       },
       {
         path: "auth",
@@ -196,13 +100,13 @@ export const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: <AuthValidator roles={["User"]}>
+        element: <>
           <OrderContextComponent>
             <UserSideBar>
               <Outlet></Outlet>
             </UserSideBar>
           </OrderContextComponent>
-        </AuthValidator>,
+        </>,
         children: userChildrens
       },
       {
