@@ -10,6 +10,7 @@ import {AiFillLock} from 'react-icons/ai';
 import '../style/login.css';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../stores';
+import { Message } from '../../../layout';
 
 
 let loginSchema = yup.object().shape({
@@ -18,11 +19,9 @@ let loginSchema = yup.object().shape({
 })
 
 export default function Index() {
-    const [showPass,setShowPass] = React.useState(false); 
-    const [
-        state, 
-        funcs
+    const [authState, funcs
     ] = useContext(AuthContext);
+    const [showPass,setShowPass] = React.useState(false); 
     const showPassHandler = () => {
         setShowPass(e=>!e);
     }
@@ -55,6 +54,11 @@ export default function Index() {
                             <p className='txt-center'>Login to continue to Australianstormcourier.</p>
                         </div>
                         <Form className='form' onSubmit={handleSubmit}>
+
+                            {authState?.errors?.map?.(error =>(<Message.Error>
+                                {error || error?.message || null}
+                            </Message.Error>))}
+
                             <Form.Group className="form-group" >
                                 <div className='mb-2'>
                                     <Form.Label className='label'>Email</Form.Label>
@@ -101,7 +105,7 @@ export default function Index() {
                                         <AiFillLock></AiFillLock>
                                     </span>
                                     <span className='log-txt-forgot'>
-                                        <Link to='/forgot' className='log-link-forgot'>
+                                        <Link to='/auth/forgot' className='log-link-forgot'>
                                             Forgot password?
                                         </Link>
                                     </span>

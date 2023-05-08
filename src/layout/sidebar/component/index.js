@@ -4,7 +4,6 @@ import {AiOutlineDashboard,AiOutlineIdcard} from 'react-icons/ai';
 import {User} from '../../../pages'
 import { NavLink, useLocation } from 'react-router-dom';
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap';
-import { ShouldRenderComponent } from '../../../stores';
 import {BiPackage} from 'react-icons/bi';
 import {FiShoppingCart} from 'react-icons/fi';
 
@@ -22,18 +21,40 @@ function UserSideBar({children}) {
                   </div>
                   <div>
                     <div>
-                    {/* 1. User Dashboard */}
-                      <NavLink 
-                      className={({isActive,isPending}) =>{
-                          return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
-                      }}
-                      to={'/user'}>
-                          <div className='sbar-icon-frame'>
-                            <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
-                          </div>
-                          <p className='sbar-txt'>Dashboard</p>
+                      {/* 1. Order */}
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/order/list'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>My Order</p>
                       </NavLink>
-                      {/* 2. User Information */}
+                      {/* 2. Create new order */}
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/product/post'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>Create new Order</p>
+                      </NavLink>
+                      {/* 3. History */}
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/history'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>History</p>
+                      </NavLink>
+                      {/* 4. User information */}
                       <NavLink  
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link-active' : 'sbar-link'
@@ -44,32 +65,6 @@ function UserSideBar({children}) {
                         </div>
                         <p className='sbar-txt'>Information</p>
                       </NavLink>
-                      {/* 3. Driver */}
-                      <ShouldRenderComponent roles={["Driver"]}>
-                        <NavLink  
-                          className={({isActive}) =>{
-                            return isActive  ? 'sbar-link-active' : 'sbar-link'
-                          }}
-                          to={'/driver'}>
-                          <div className='sbar-icon-frame'>
-                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
-                          </div>
-                          <p className='sbar-txt'>Driver</p>
-                        </NavLink>
-                      </ShouldRenderComponent>
-                      {/* 4. Sender */}
-                      <ShouldRenderComponent roles={["Sender"]}>
-                        <NavLink  
-                          className={({isActive}) =>{
-                            return isActive  ? 'sbar-link-active' : 'sbar-link'
-                          }}
-                          to={'/sender'}>
-                          <div className='sbar-icon-frame'>
-                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
-                          </div>
-                          <p className='sbar-txt'>Sender</p>
-                        </NavLink>
-                      </ShouldRenderComponent>
                     </div>
                   </div>
                 </div>
@@ -111,7 +106,7 @@ function DriverSideBar({children}) {
                           className={({isActive,isPending}) =>{
                               return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/dashboard'}>
+                          to={'/user/dashboard'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
                           </div>
@@ -121,7 +116,7 @@ function DriverSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/information'}>
+                          to={'/user/info'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
@@ -131,7 +126,7 @@ function DriverSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/information'}>
+                          to={'/driver/product'}>
                           <div className='sbar-icon-frame'>
                             <BiPackage className="sbar-icon"></BiPackage>
                           </div>
@@ -141,7 +136,7 @@ function DriverSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/information'}>
+                          to={'/driver/order'}>
                           <div className='sbar-icon-frame'>
                             <FiShoppingCart className="sbar-icon"></FiShoppingCart>
                           </div>
@@ -188,7 +183,7 @@ function SenderSideBar({children}) {
                           className={({isActive,isPending}) =>{
                               return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/dashboard'}>
+                          to={'/user/dashboard'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
                           </div>
@@ -198,7 +193,7 @@ function SenderSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/sender/info'}>
+                          to={'/user/info'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
@@ -208,7 +203,7 @@ function SenderSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/sender/product'}>
+                          to={'/user/product'}>
                           <div className='sbar-icon-frame'>
                             <BiPackage className="sbar-icon"></BiPackage>
                           </div>

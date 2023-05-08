@@ -4,13 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 
 function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], invalidLink="/auth/login"}) {
-    const [authState, {
-        getAccount
-    }] = useContext(AuthContext);
-
-    useEffect(() =>{
-        getAccount();
-    }, [authState.accessToken]);
+    const [authState] = useContext(AuthContext);
 
     let hasPermited = authState.isLogged && authState.accountInfo?.roles?.some(e => roles.includes(e));
 
@@ -28,12 +22,8 @@ function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], i
     return (<Navigate to={invalidLink}></Navigate>);
 }
 
-AuthValidator.LoggedContainer = function LoggedContainer({children}) {
-    const [authState, {getAccount}] = useContext(AuthContext);
-
-    useEffect(() =>{
-        getAccount();
-    }, [authState.accessToken]);
+AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink=null}) {
+    const [authState] = useContext(AuthContext);
 
     if(authState.loading) 
         return (<Container>
@@ -44,7 +34,10 @@ AuthValidator.LoggedContainer = function LoggedContainer({children}) {
         </Container>);
     
     if(authState.isLogged)
-        return <Navigate to={"/user/dashboard"} replace={true}></Navigate>;
+        return <Navigate to={invalidLink || 
+        authState?.accountInfo?.roles?.includes?.("User") && "/user/product" || 
+        authState?.accountInfo?.roles?.includes?.("Driver") && "/driver/order"} 
+        replace={true}></Navigate>;
 
     return children;
 }
