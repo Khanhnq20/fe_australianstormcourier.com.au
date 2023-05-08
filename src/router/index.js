@@ -5,7 +5,7 @@ import {
 
 
 import { Navigation, Footer, DriverSideBar, UserSideBar } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct, DriverInfo, PaymentComponents} from '../pages';
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct, DriverInfo, PaymentComponents, ErrorPages} from '../pages';
 import { AuthValidator, OrderContextComponent } from '../stores'
 import React from 'react';
 
@@ -172,6 +172,21 @@ export const paymentChildrens = [
   }
 ]
 
+export const errorChildrens = [
+  {
+    path: "400",
+    element: <ErrorPages.BadRequest></ErrorPages.BadRequest>
+  },
+  {
+    path: "404",
+    element: <ErrorPages.NotFound></ErrorPages.NotFound>
+  },
+  {
+    path: "500",
+    element: <ErrorPages.BrokenServer></ErrorPages.BrokenServer>
+  }
+]
+
 export const router = createBrowserRouter([
   {
     path: "",
@@ -232,6 +247,11 @@ export const router = createBrowserRouter([
         path: 'payment',
         element: <Outlet></Outlet>,
         children: paymentChildrens,
+      },
+      {
+        path: 'error',
+        element: <Outlet></Outlet>,
+        children: errorChildrens
       }
     ]
   }

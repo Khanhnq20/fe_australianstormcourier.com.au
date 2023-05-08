@@ -203,15 +203,20 @@ export default function Index({children}) {
                     }));
                 }
             }).catch(err =>{
-                setState(i =>({
-                    ...i,
-                    errors: [err],
-                    isLogged: false,
-                    tasks: {
-                        ...i.tasks,
-                        [authConstraints.getAccount] : taskStatus.Failed
-                    }
-                }));
+                if(err.message === "Network Error"){
+                    window.location.replace("/error/500");
+                }
+                else{
+                    setState(i =>({
+                        ...i,
+                        errors: [err.message],
+                        isLogged: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.getAccount] : taskStatus.Failed
+                        }
+                    }));
+                }
             }).finally(() =>{
                 setState(i =>({
                     ...i,

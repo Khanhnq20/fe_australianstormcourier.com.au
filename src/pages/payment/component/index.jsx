@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Container, Spinner } from 'react-bootstrap'
 import { Elements } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
@@ -8,33 +8,42 @@ import { authConstraints, authInstance } from '../../../api';
 function Index() {
   const [loading, setLoading] = useState(true);
   const [clientSecret, setClientSecret] = useState('');
+  const [error, setError] = useState("");
+  const loadTime = useRef(3);
   // const [publicKey, setPublicKey] = useState('');
   const stripePromise = loadStripe('pk_test_51N51n2Kfaw4OxeNdkCYEy1jHKnu75OPWTdJCe81kCggm0d6cfEj1IGBe9drdfpFrIjlxvR3p86sRloCxxwMPnOGd00PAqfO2dH');
 
   React.useEffect(() =>{
-    authInstance.post([authConstraints.paymentRoot, authConstraints.getStripeIntent].join("/"), {
-      params: {
-        amount: 45848,
-        orderId: 1
-      }
-    }).then(response =>{
-      if(!!response.data?.successed){
-        console.log(response.data);
-        
-        setClientSecret(response.data?.clientSecrete);
-        // setPublicKey(response.data?.publicKey);
-      }
-      else if(response?.error){
-        console.log(response.error)
-      }
-    }).catch(error =>{
-      console.log(error)
-    }).finally(() =>{
-      setLoading(false);
-    });
+
+    function tryGettingClientSecret() {
+      authInstance.post([authConstraints.paymentRoot, authConstraints.getStripeIntent].join("/"), {
+        params: {
+          amount: 45848,
+          orderId: 1
+        }
+      }).then(response =>{
+        if(!!response.data?.successed){
+          setClientSecret(response.data?.clientSecrete);
+        }
+        else if(response?.error){
+          
+        }
+      }).catch(error =>{
+        if(loadTime.current > 0){
+          loadTime.current--;
+        }
+        tryGettingClientSecret();
+      }).finally(() =>{
+        setLoading(false);
+      });
+    }
   },[]);
 
   if(loading) return <Spinner></Spinner>
+
+  if(!clientSecret){
+    return <>Server has broken</>
+  }
 
   return (
     <Container>

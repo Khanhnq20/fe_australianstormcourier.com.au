@@ -79,6 +79,16 @@ authInstance.interceptors.response.use(response =>{
     if(error?.response?.status === 401){
         return tryingToRefresh(3, error);
     }
+    if(error?.response?.status === 400){
+        window.location.replace("/error/400");
+    }
+    if(error?.response?.status === 404){
+        window.location.replace("/error/404");
+    }
+    if(error?.response?.status === 500){
+        window.location.replace("/error/500");
+    }
+
     return Promise.reject(error);
 });
 

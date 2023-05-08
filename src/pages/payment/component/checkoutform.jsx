@@ -1,6 +1,5 @@
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useState } from "react";
-import { Spinner } from "react-bootstrap";
 import { authConstraints } from "../../../api";
 import { Message } from "../../../layout";
 import { useNavigate } from "react-router-dom";
@@ -32,7 +31,7 @@ const CheckoutForm = () => {
             },
         });
   
-        if (result.error) {
+        if (result?.error) {
           // Show error to your customer (for example, payment details incomplete)
           setError(result.error.message);
         } else {
