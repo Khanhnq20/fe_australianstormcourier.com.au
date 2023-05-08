@@ -22,7 +22,7 @@ function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], i
     return (<Navigate to={invalidLink}></Navigate>);
 }
 
-AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink="/user/dashboard"}) {
+AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink=null}) {
     const [authState] = useContext(AuthContext);
 
     if(authState.loading) 
@@ -34,7 +34,10 @@ AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink=
         </Container>);
     
     if(authState.isLogged)
-        return <Navigate to={invalidLink} replace={true}></Navigate>;
+        return <Navigate to={invalidLink || 
+        authState?.accountInfo?.roles?.includes?.("User") && "/user/product" || 
+        authState?.accountInfo?.roles?.includes?.("Driver") && "/driver/order"} 
+        replace={true}></Navigate>;
 
     return children;
 }

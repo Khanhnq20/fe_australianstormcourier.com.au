@@ -1,19 +1,19 @@
 import React, { createContext, useEffect } from 'react'
 import {authConstraints, authInstance, config} from '../../api'
 import { toast } from 'react-toastify';
+import taskStatus from './taskStatus';
 export const AuthContext = createContext();
 
 export default function Index({children}) {
     const [state,setState] = React.useState({
         accessToken: "",
         accountInfo: null,
-        driverInfo: null,
-        senderInfo: null,
         loading: true,
-        error: [],
         isLogged: false,
-        roles: [],
-        vehicles: []
+        vehicles: [],
+        packageTypes: [],
+        errors: [],
+        tasks: {}
     });
 
     const hasMounted = React.useRef(false);    
@@ -30,9 +30,14 @@ export default function Index({children}) {
         },
 
         signin(body) {
+            this.clearErrors();
             setState(i =>({
                 ...i,
-                loading: true
+                loading: true,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.signin] : taskStatus.Inprogress
+                }
             }));
             authInstance.post([authConstraints.root, authConstraints.signin].join("/"), body).then(response =>{
                 if(response?.data?.token?.accessToken && response?.data?.token?.refreshToken){
@@ -42,13 +47,27 @@ export default function Index({children}) {
                     this.saveAccessToken(accessToken, refreshToken);
                     setState(i => ({
                         ...i,
-                        accessToken: accessToken
+                        accessToken: accessToken,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.signin] : taskStatus.Completed
+                        }
                     }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        errors: [...i.errors, response.data]
+                    }))
                 }
             }).catch(err =>{
                 setState(i => ({
                     ...i,
-                    error: err
+                    errors: err,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.signin] : taskStatus.Failed
+                    }
                 }));
             }).finally(() =>{
                 setState(i =>({
@@ -57,54 +76,86 @@ export default function Index({children}) {
                 }))
             });
         },
-    
+
         signupUser(body){
+            setState(i =>({
+                ...i,
+                loading: true,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.signupUser] : taskStatus.Inprogress
+                }
+            }));
             authInstance.post([authConstraints.root, authConstraints.signupUser].join("/"), body).then(response =>{
-                if(!!response?.successed){
-                    toast.success(`You have registered account successfully, please goto "Signin" to join us`, {
-                    });
+                if(!!response.data?.successed){
+                    toast.success(`You have registered account successfully, please goto "Signin" to join us`, {});
                 }
-                else{
-                    toast.error("");
-                }
+                    setState(i =>({
+                        ...i,
+                        errors: [...response.data.registeredErrors, ...response.data.assingedToRoleErrors],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.signupUser] : taskStatus.Completed
+                        }
+                    }));
+
             }).catch(err =>{
-                setState(i => ({
+                if(err?.response){
+                    setState(i => ({
+                        ...i,
+                        errors: [err?.response],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.signupUser] : taskStatus.Failed
+                        }
+                    }));
+                }
+            }).finally(() =>{
+                setState(i =>({
                     ...i,
-                    error: err
+                    loading: false
                 }));
             });
         },
     
         signupDriver(body){
-            authInstance.post([authConstraints.root, authConstraints.signupDriver].join("/"), body, {
-                headers: { "Authorization": [config.AuthenticationSchema, state.accessToken].join(" ")}
-            }).then(response =>{
-                if(response.data?.successed){
-                    toast.success(`You have become driver successfully`, {
-                    });
+            setState(i =>({
+                ...i,
+                loading: true,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.signupDriver] : taskStatus.Inprogress
                 }
+            }));
+            authInstance.post([authConstraints.root, authConstraints.signupDriver].join("/"), body).then(response =>{
+                if(!!response.data?.successed){
+                    toast.success(`You have become driver successfully`, {});
+                } 
+                    setState(i =>({
+                        ...i,
+                        errors: [...response.data?.registeredErrors, ...response.data?.assingedToRoleErrors],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.signupDriver] : taskStatus.Completed
+                        }
+                    }));
             }).catch(err =>{
+                if(err){
+                    setState(i =>({
+                        ...i,
+                        errors: [err],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.signupDriver] : taskStatus.Failed
+                        }
+                    }));
+                }
+            }).finally(() =>{
                 setState(i =>({
                     ...i,
-                    error: err
-                }));
-            });
-        },
-
-        signupSender(body){
-            authInstance.post([authConstraints.root, authConstraints.signupSender].join("/"), body,{
-                headers: { "Authorization": [config.AuthenticationSchema, state.accessToken].join(" ")}
-            }).then(response =>{
-                if(response?.data?.successed){
-                    toast.success(`You have become sender successfully`, {
-                    });
-                }
-            }).catch(err =>{
-                setState(i =>({
-                    ...i,
-                    error: err
-                }));
-            });
+                    loading: false
+                }))
+            });;
         },
 
         signout(){
@@ -116,7 +167,7 @@ export default function Index({children}) {
                 accessToken: localStorage.getItem(authConstraints.LOCAL_KEY),
                 accountInfo: null,
                 driverInfo: null,
-                error: null,
+                errors: null,
                 isLogged: false,
                 loading: false,
                 roles: null,
@@ -125,37 +176,47 @@ export default function Index({children}) {
         },
 
         getAccount(){
+            setState(i =>({
+                ...i,
+                loading: true,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.getAccount] : taskStatus.Inprogress
+                }
+            }));
             authInstance.get([authConstraints.root, authConstraints.getAccount].join("/"), {
                 headers: {
                     "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
                 }
             })
             .then(response =>{
-                setState(i => ({
-                    ...i,
-                    accountInfo: response.data,
-                    isLogged: true,
-                    roles: response.roles
-                }));
+                if(response?.data){
+                    setState(i => ({
+                        ...i,
+                        accountInfo: response.data,
+                        isLogged: true,
+                        roles: response.roles,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.getAccount] : taskStatus.Completed
+                        }
+                    }));
+                }
             }).catch(err =>{
                 setState(i =>({
                     ...i,
-                    error: err,
-                    isLogged: false
+                    errors: [err],
+                    isLogged: false,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.getAccount] : taskStatus.Failed
+                    }
                 }));
             }).finally(() =>{
                 setState(i =>({
                     ...i,
-                    loading: false
+                    loading: false,
                 }));
-            });
-        },
-    
-        refreshToken(){
-            authInstance.get([authConstraints.root, authConstraints.refreshToken].join("/")).then(response =>{
-
-            }).catch(err =>{
-
             });
         },
 
@@ -180,22 +241,35 @@ export default function Index({children}) {
                 }).catch(err =>{
                     setState(i =>({
                         ...i,
-                        error: err,
-                    }));
-                }).finally(() =>{
-                    setState(i =>({
-                        ...i,
-                        loading: false
+                        errors: [err],
                     }));
                 });
         },
 
-        test(){
-            authInstance.get([authConstraints.root, authConstraints.test].join("/")).then(response =>{
-
-            }).catch(err =>{
-
-            });
+        getAllPackgeTypes(){
+            return authInstance
+                .get([authConstraints.root, authConstraints.packageTypes].join("/"))
+                .then(response =>{
+                    if(response?.data?.packageTypes){
+                        setState(i => ({
+                            ...i,
+                            packageTypes: response?.data?.packageTypes
+                        }));
+                    }
+                }).catch(err =>{
+                    setState(i =>({
+                        ...i,
+                        errors: [err],
+                    }));
+                });
+        },
+        
+        clearErrors(){
+            setState(i =>({
+                ...i,
+                errors: [],
+                tasks: {}
+            }));
         }
     }
 
@@ -238,9 +312,14 @@ export default function Index({children}) {
     }
 
     useEffect(() => {
-
-        if(hasMounted.current && state.accountInfo == null && !state.isLogged){
+        if(!!hasMounted.current && !state.isLogged){
             funcs.getAccount();
+        }
+        else{
+            setState(i => ({
+                ...i,
+                loading: false
+            }));
         }
     }, [state.accessToken]);
 
@@ -260,6 +339,7 @@ export default function Index({children}) {
         }
 
         funcs.getAllVehicles();
+        funcs.getAllPackgeTypes();
 
         return () =>{
             hasMounted.current = false;

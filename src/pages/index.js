@@ -18,3 +18,5 @@ export {default as SenderProduct} from './sender product/component/index';
 export {default as SenderProductDetail} from './sender product detail/component/index';
 export {default as CreateProduct} from './create product/component/index';
 export {default as SenderInfo} from './sender information/component/index';
+export {default as DriverInfo} from './driver information/component/index';
+export * as PaymentComponents from './payment';

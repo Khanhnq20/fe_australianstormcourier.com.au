@@ -4,6 +4,7 @@ import Col from 'react-bootstrap/Col';
 import '../styles/home.css';
 import Button from 'react-bootstrap/Button';
 import "../../../layout/navigation/style/navigation.css";
+import { Link } from 'react-router-dom';
 
 export default function Index() {
     return (
@@ -61,7 +62,9 @@ function Delivery(){
                                 services within each city in Australia. We cater to households and businesses; specialising in providing 
                                 final mile delivery solutions for eCommerce businesses and online traders.
                                 </p>
-                                <Button variant="warning" className='my-btn-yellow'>BECOME A CUSTOMER</Button>
+                                <Link to="/auth/register/user">
+                                    <Button variant="warning" className='my-btn-yellow'>BECOME A CUSTOMER</Button>
+                                </Link>
                         </Col>
                         <Col className='col-12 col-md-6'>
                             <div>
@@ -96,7 +99,9 @@ function Rate(){
                                     You decide your own rates and dates and our drivers can accept your jobs or offer a different rate. 
                                     We offer you the flexibility to choose your favourite drivers and rates.
                                 </p>
-                                <Button variant="warning" className='my-btn-yellow'>SEND NOW</Button>
+                                <Link to="/anonymous/order">
+                                    <Button variant="warning" className='my-btn-yellow'>SEND NOW</Button>
+                                </Link>
                         </Col>
                     </Row>
                 </div>
@@ -118,7 +123,9 @@ function Notifycation(){
                                 and get paid for it! At Australian Storm Courier, we understand the importance of a 
                                 balanced lifestyle. Connect with us here to start delivering
                                 </p>
-                                <Button variant="warning" className='my-btn-yellow'>BECOME A DRIVER</Button>
+                                <Link to="/auth/register/driver">
+                                    <Button variant="warning" className='my-btn-yellow'>BECOME A DRIVER</Button>
+                                </Link>
                         </Col>
                         <Col className='col-12 col-md-6'>
                             <div>
@@ -242,19 +249,25 @@ function BecomeCustomer(){
                             <div className='cus-img'>
                                 <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender.png' width="100%" height="100%"/>
                             </div>
+                            <Link to="/auth/register/driver">
                             <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A DRIVER</Button>
+                            </Link>
                         </Col>
                         <Col className='cus-item p-3'>
                             <div className='cus-img'>
                                 <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender-1.png' width="100%" height="100%"/>
                             </div>
+                            <Link to="/auth/register/user">
                             <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A CUSTOMER</Button>
+                            </Link>
                         </Col>
                         <Col className='cus-item p-3'>
                             <div className='cus-img'>
                                 <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/customer.png' width="100%" height="100%"/>
                             </div>
+                            <Link to="/anonymous/order">
                             <Button variant="warning" className='w-100 my-btn-yellow my-4'>SEND NOW</Button>
+                            </Link>
                         </Col>
                     </Row>
                 </div>

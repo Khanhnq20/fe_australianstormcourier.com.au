@@ -1,21 +1,14 @@
 import React from 'react'
 import '../style/sidebar.css';
-import {AiOutlineDashboard,AiOutlineIdcard,AiOutlineCar} from 'react-icons/ai';
+import {AiOutlineDashboard,AiOutlineIdcard} from 'react-icons/ai';
 import {User} from '../../../pages'
-import { NavLink } from 'react-router-dom';
-
-import { AuthValidator, ShouldRenderComponent } from '../../../stores';
-import {BiPackage,BiBox} from 'react-icons/bi';
+import { NavLink, useLocation } from 'react-router-dom';
+import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap';
+import {BiPackage} from 'react-icons/bi';
 import {FiShoppingCart} from 'react-icons/fi';
-import {TfiDashboard} from 'react-icons/tfi'
 
 
 function UserSideBar({children}) {
-
-  const [active,setActive] = React.useState(false);
-  function handleActive(){
-    setActive(true);
-  }
   return (
     <div>
       <div className='h-root'>
@@ -28,18 +21,40 @@ function UserSideBar({children}) {
                   </div>
                   <div>
                     <div>
-                    {/* 1. User Dashboard */}
-                      <NavLink 
-                      className={({isActive,isPending}) =>{
-                          return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
-                      }}
-                      to={'/user/dashboard'}>
-                          <div className='sbar-icon-frame'>
-                            <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
-                          </div>
-                          <p className='sbar-txt'>Dashboard</p>
+                      {/* 1. Order */}
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/order/list'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>My Order</p>
                       </NavLink>
-                      {/* 2. User Information */}
+                      {/* 2. Create new order */}
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/product/post'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>Create new Order</p>
+                      </NavLink>
+                      {/* 3. History */}
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/history'}>
+                        <div className='sbar-icon-frame'>
+                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                        </div>
+                        <p className='sbar-txt'>History</p>
+                      </NavLink>
+                      {/* 4. User information */}
                       <NavLink  
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link-active' : 'sbar-link'
@@ -50,32 +65,6 @@ function UserSideBar({children}) {
                         </div>
                         <p className='sbar-txt'>Information</p>
                       </NavLink>
-                      {/* 3. Driver */}
-                      <ShouldRenderComponent roles={["Driver"]}>
-                        <NavLink  
-                          className={({isActive}) =>{
-                            return isActive  ? 'sbar-link-active' : 'sbar-link'
-                          }}
-                          to={'/driver/product'}>
-                          <div className='sbar-icon-frame'>
-                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
-                          </div>
-                          <p className='sbar-txt'>Driver</p>
-                        </NavLink>
-                      </ShouldRenderComponent>
-                      {/* 4. Sender */}
-                      <ShouldRenderComponent roles={["Sender"]}>
-                        <NavLink  
-                          className={({isActive}) =>{
-                            return isActive  ? 'sbar-link-active' : 'sbar-link'
-                          }}
-                          to={'/sender/product'}>
-                          <div className='sbar-icon-frame'>
-                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
-                          </div>
-                          <p className='sbar-txt'>Sender</p>
-                        </NavLink>
-                      </ShouldRenderComponent>
                     </div>
                   </div>
                 </div>
@@ -86,7 +75,7 @@ function UserSideBar({children}) {
                         </div>
                         <div className='h-ctn-inner'>
                             <div className='h-header'>
-                                Home
+                                <Breadcrumbs></Breadcrumbs>
                             </div>
                             <div className='h-content-frame'>
                                 {children || <User></User> }
@@ -101,10 +90,6 @@ function UserSideBar({children}) {
 }
 
 function DriverSideBar({children}) {
-  const [active,setActive] = React.useState(false);
-  function handleActive(){
-    setActive(true);
-  }
   return (
     <div>
       <div className='h-root'>
@@ -167,7 +152,7 @@ function DriverSideBar({children}) {
                         </div>
                         <div className='h-ctn-inner'>
                             <div className='h-header'>
-                                Home
+                                <Breadcrumbs></Breadcrumbs>
                             </div>
                             <div className='h-content-frame'>
                                 {children || <User></User> }
@@ -182,10 +167,6 @@ function DriverSideBar({children}) {
 }
 
 function SenderSideBar({children}) {
-  const [active,setActive] = React.useState(false);
-  function handleActive(){
-    setActive(true);
-  }
   return (
     <div>
       <div className='h-root'>
@@ -222,7 +203,7 @@ function SenderSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/sender/product'}>
+                          to={'/user/product'}>
                           <div className='sbar-icon-frame'>
                             <BiPackage className="sbar-icon"></BiPackage>
                           </div>
@@ -238,7 +219,7 @@ function SenderSideBar({children}) {
                         </div>
                         <div className='h-ctn-inner'>
                             <div className='h-header'>
-                                Home
+                                <Breadcrumbs></Breadcrumbs>
                             </div>
                             <div className='h-content-frame'>
                                 {children || <User></User> }
@@ -252,4 +233,26 @@ function SenderSideBar({children}) {
   )
 }
 
+function Breadcrumbs() {
+  const location = useLocation();
+  const pathList = location.pathname.split('/')
+  .filter(crumb => !!crumb);
+
+  const pathLinks = pathList.reduce((pre,curr) => {
+    return [...pre , pre + "/" + curr];
+  }, []);
+
+  return (
+    <Breadcrumb>
+      {pathList
+        .map((crumb,index) => {
+          return(
+            <BreadcrumbItem className={pathLinks[index] === location.pathname ? "path active-link" : "path" } key={crumb} href={pathLinks[index]}>
+              {crumb}
+            </BreadcrumbItem>
+          )
+      })}
+    </Breadcrumb>
+  );
+}
 export {UserSideBar,DriverSideBar,SenderSideBar};

@@ -2,3 +2,12 @@
 .reg-txt-u{
     color: var(--clr-primary);
 }
+.date-input{
+    border: 1px solid var(--clr-txt-secondary);
+    padding: 8px 12px;
+    color:gray;
+    background-color: var(--clr-input) !important;
+}
+.date-input input{
+    font-size: 15px !important;
+}

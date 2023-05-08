@@ -1,59 +1,74 @@
 import React, { createContext, useEffect } from 'react'
-import {authConstraints} from '../../api'
+import {authConstraints, authInstance, config} from '../../api'
+import taskStatus from './taskStatus';
 
 export const OrderContext = createContext();
 
 export default function Index({children}) {
     const [state,setState] = React.useState({
-        accessToken: "",
-        accountInfo: null,
-        driverInfo: null,
-        senderInfo: null,
-        loading: true,
-        error: [],
-        isLogged: false,
-        roles: [],
-        vehicles: []
+        loading: false,
+        errors: [],
+        orders: [],
+        tasks: {}
     });
 
-    const hasMounted = React.useRef(false);    
-
     const funcs = {
-        
+        getJobAvailables(){
+
+        },
+        postOrder(body){
+            setState(i =>({
+                ...i,
+                loading: true,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.getAccount] : taskStatus.Inprogress
+                }
+            }));
+
+            authInstance.post([authConstraints.userRoot, authConstraints.postOrder].join("/"),body, {
+                headers: {
+                    "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                }
+            }).then(response =>{
+                console.log(response);
+                if(response?.data?.newOrders){
+                    setState(i => ({
+                        ...i,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.postOrder] : taskStatus.Completed
+                        }
+                    }));
+                }
+            }).catch(err =>{
+                setState(i =>({
+                    ...i,
+                    errors: [err],
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.postOrder] : taskStatus.Failed
+                    }
+                }));
+            }).finally(() =>{
+                setState(i =>({
+                    ...i,
+                    loading: false,
+                }));
+            });
+        },
     }
 
-    const accountActions = {
+    const actions = {
         
     }
 
     useEffect(() => {
 
-        if(hasMounted.current && state.accountInfo == null && !state.isLogged){
-            funcs.getAccount();
-        }
-    }, [state.accessToken]);
+    }, []);
 
     useEffect(() =>{
-        var hasLoggedIn = !!localStorage.getItem(authConstraints.LOCAL_KEY);
-
-        if(hasLoggedIn && !hasMounted.current){
-            const newAccessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
-            console.log("new access token: " + newAccessToken);
-            hasMounted.current = true;
-            
-            setState(i =>{
-                return {
-                    ...i, 
-                    accessToken: newAccessToken
-                };
-            });
-        }
-
-        funcs.getAllVehicles();
-
-        return () =>{
-            hasMounted.current = false;
-        }
+        
     },[]);
 
     return (
@@ -61,7 +76,7 @@ export default function Index({children}) {
             state,
             {
                 ...funcs,
-                ...accountActions,
+                ...actions,
                 setGState: setState
             }
         ]

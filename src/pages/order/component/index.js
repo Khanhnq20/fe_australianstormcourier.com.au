@@ -234,21 +234,6 @@ function Product() {
   )
 }
 
-function DropDownStatus() {
-    const [state,setState] = React.useState(true);
-    return (
-      <Dropdown className='reg-dr'>
-        <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-            {state === true ? "Looking for driver" : "Done"}
-        </Dropdown.Toggle>
-  
-        <Dropdown.Menu className='w-100'>
-          <Dropdown.Item onClick={()=>setState(true)}>Looking for driver</Dropdown.Item>
-          <Dropdown.Item onClick={() => setState(false)}>Done</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    );
-  }
 export default function Index(){
     return(
             <Product></Product>

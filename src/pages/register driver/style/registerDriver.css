@@ -54,3 +54,15 @@
     opacity: 70%;
     font-size: 14px;
 }
+.step2-show{
+    display: block;
+}
+.step2-hide{
+    display: none;
+}
+.step1-show{
+    display: block;
+}
+.step1-hide{
+    display: none;
+}

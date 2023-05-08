@@ -4,10 +4,11 @@ import {
 } from "react-router-dom";
 
 
-import { Navigation, Footer, DriverSideBar, SenderSideBar, UserSideBar } from "../layout";
-import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct} from '../pages';
-import { AuthValidator } from '../stores'
+import { Navigation, Footer, DriverSideBar, UserSideBar } from "../layout";
+import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, ChangePassword, DriverProduct, DriverProductDetail, EmailCheck, Order, OrderDetail, OrderProcessDetail, SenderDashBoard, SenderProduct, SenderProductDetail, User, SenderInfo, CreateProduct, DriverInfo, PaymentComponents} from '../pages';
+import { AuthValidator, OrderContextComponent } from '../stores'
 import React from 'react';
+
 
 export const authChildrens = [
   {
@@ -66,12 +67,6 @@ export const authChildrens = [
 
 export const userChildrens = [
   {
-    path: 'dashboard',
-    element: <>
-      <User></User>
-    </>
-  },
-  {
     path: 'info',
     element: <>
       <UserInformation></UserInformation>
@@ -90,69 +85,45 @@ export const userChildrens = [
         element: <>
           <DriverProductDetail></DriverProductDetail>
         </>
-      }
-    ]
-  },
-  {
-    path: "register",
-    element: <Outlet />,
-    children: [
+      },      
       {
-        path: "driver",
-        element: <RegisterDriver></RegisterDriver>
-      },
-      {
-        path: "sender",
-        element: <SenderDashBoard></SenderDashBoard>
+        path: "post",
+        element: <CreateProduct></CreateProduct>
       }
     ]
   },
   {
     path: "password",
     element: <ChangePassword></ChangePassword>
-  }
-];
-
-export const senderChildrens = [
-  {
-    path:"",
-    element: <SenderDashBoard></SenderDashBoard>
   },
   {
-    path:"product",
+    path: "order",
     element: <Outlet></Outlet>,
-    children:[
+    children: [
       {
-        path:"",
-        element: <SenderProduct></SenderProduct>
-      }
-        ,
-      {
-        path:"detail",
-        element: <SenderProductDetail></SenderProductDetail>
+        path: "list",
+        element: <Order></Order>
       },
-      {
-        path:"post",
-        element: <CreateProduct></CreateProduct>
-      }
     ]
   },
   {
-    path:"info",
-    element: <SenderInfo></SenderInfo>
+    path: "history",
+    element: <>
+      <h1>Order History Pages</h1>
+    </>
   }
 ];
 
 export const driverChildrens = [
   {
-    path: "",
-    element: <>
-      <RegisterDriver />
-    </>
+    path: "offer",
+    element: <DriverProduct></DriverProduct>
   },
   {
-    path: "product",
-    element: <DriverProduct></DriverProduct>
+    path:"info",
+    element:<>
+      <DriverInfo></DriverInfo>
+    </>
   },
   {
     path: "order",
@@ -190,6 +161,17 @@ export const driverChildrens = [
   },
 ];
 
+export const paymentChildrens = [
+  {
+    path: "checkout",
+    element: <PaymentComponents.Payment></PaymentComponents.Payment>,
+    children: [
+      {path: "success", element: <PaymentComponents.SuccessPayment></PaymentComponents.SuccessPayment>},
+      {path: "failed", element: <PaymentComponents.FailurePayment></PaymentComponents.FailurePayment>}
+    ]
+  }
+]
+
 export const router = createBrowserRouter([
   {
     path: "",
@@ -215,29 +197,41 @@ export const router = createBrowserRouter([
       {
         path: "user",
         element: <AuthValidator roles={["User"]}>
-          <UserSideBar>
-            <Outlet></Outlet>
-          </UserSideBar>
+          <OrderContextComponent>
+            <UserSideBar>
+              <Outlet></Outlet>
+            </UserSideBar>
+          </OrderContextComponent>
         </AuthValidator>,
         children: userChildrens
       },
       {
         path: "driver",
         element: <AuthValidator roles={["Driver"]}>
-          <DriverSideBar>
-            <Outlet></Outlet>
-          </DriverSideBar>
+          <OrderContextComponent>
+            <DriverSideBar>
+              <Outlet></Outlet>
+            </DriverSideBar>
+          </OrderContextComponent>
         </AuthValidator>,
         children: driverChildrens
       },
       {
-        path: 'sender',
-        element: <AuthValidator roles={["Sender"]}>
-          <SenderSideBar>
-            <Outlet></Outlet>
-          </SenderSideBar>
-        </AuthValidator>,
-        children: senderChildrens
+        path: "anonymous",
+        element: <>
+          <Outlet></Outlet>
+        </>,
+        children: [
+          {
+            path: "order",
+            element: <CreateProduct></CreateProduct>
+          }
+        ]
+      },
+      {
+        path: 'payment',
+        element: <Outlet></Outlet>,
+        children: paymentChildrens,
       }
     ]
   }
