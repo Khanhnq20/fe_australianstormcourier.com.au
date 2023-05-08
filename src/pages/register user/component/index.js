@@ -64,9 +64,9 @@ export default function Index() {
                                 <p className='txt-center'>Register a new membership.</p>
                             </div>
                             <Form className='form' onSubmit={handleSubmit}>
-{authState?.errors?.map?.(error =>(<Message.Error>
+{/* {authState?.errors?.map?.(error =>(<Message.Error>
     {error}
-</Message.Error>))}
+</Message.Error>))} */}
                                 <Form.Group className="form-group" >
                                     <div className='mb-2'>
                                         <Form.Label className='label'>User name</Form.Label>
