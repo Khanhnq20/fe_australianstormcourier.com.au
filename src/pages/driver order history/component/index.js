@@ -3,18 +3,15 @@ import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import '../style/product.css';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
 import { Col, Row } from 'react-bootstrap';
-import { ImCross } from 'react-icons/im';
-import { FcAcceptDatabase } from 'react-icons/fc';
 
 
-let driverSchema = yup.object().shape({
+let loginSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field"), 
     password: yup.string().required("This field is requied")
 })
@@ -31,7 +28,7 @@ function Product() {
             setPost(res.data);
             setPagiantedPost(post.slice(0,pageSize)); 
         })
-    },[rows])
+    },[rows]);
     const pages = post ? Math.ceil(post?.length/pageSize) : 0;
     const pageCount = [...Array(pages+1).keys()].slice(1);
     function pagination(pageNo){
@@ -67,18 +64,18 @@ function Product() {
         }
     }
     return (
-    <Formik
-        initialValues={{
-            id:'',
-            from:'',
-            fullName:'',
-            to:''
-        }} 
-        validationSchema={driverSchema}
-    >
-    {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
-        return(
-            <>   
+        <Formik
+            initialValues={{
+                id:'',
+                from:'',
+                fullNameSender:'',
+                fullNameDriver:'',
+                to:''
+            }} 
+            validationSchema={loginSchema}
+        >
+        {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
+            return(
                 <div>
                     <div className='p-3'>
                         <div>
@@ -114,11 +111,11 @@ function Product() {
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>Name</Form.Label>
+                                            <Form.Label className='label'>Full name sender</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
-                                            name="fullName"
+                                            name="fullNameSender"
                                             placeholder="Enter Full Name"
                                             isInvalid={touched.fullName && errors.fullName}
                                             onChange={handleChange}
@@ -142,9 +139,17 @@ function Product() {
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>Status</Form.Label>
+                                            <Form.Label className='label'>Date</Form.Label>
                                         </div>
-                                        <DropDownStatus></DropDownStatus>
+                                        <Form.Control
+                                            type="text"
+                                            name="fullNameDriver"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
                                 </div>
                                 <div>
@@ -155,7 +160,7 @@ function Product() {
                             </Form>
                         </div>
                     </div>
-                    
+                        
                     <div>
                         <div className='pg-rows'>
                             <p className='m-0'>Show</p>
@@ -182,10 +187,10 @@ function Product() {
                                 <Table striped bordered >
                                     <thead>
                                         <tr>
-                                            <th>Order Id</th>
+                                            <th>Id</th>
+                                            <th>Order Name</th>
                                             <th>Delivery Location</th>
                                             <th>Delivery Destination</th>
-                                            <th>Action</th>
                                         </tr>
                                     </thead> 
                                         <tbody>
@@ -197,14 +202,6 @@ function Product() {
                                                             <td>{post.userId}</td>
                                                             <td>{post.title}</td>
                                                             <td>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <Button variant='success'>Accept</Button>
-                                                                    </Col>
-                                                                    <Col>
-                                                                        <Button variant='danger'>Deny</Button>
-                                                                    </Col>
-                                                                </Row>
                                                             </td>
                                                         </tr>
                                                     )
@@ -233,30 +230,14 @@ function Product() {
                             </>)
                             }
                     </div>
-                </div>
-            </>
-    )}}
-    </Formik>
+                </div>)
+        }}
+        </Formik>
   )
 }
 
-function DropDownStatus() {
-    const [state,setState] = React.useState(true);
-    return (
-      <Dropdown className='reg-dr'>
-        <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-            {state === true ? "Looking for driver" : "Done"}
-        </Dropdown.Toggle>
-  
-        <Dropdown.Menu className='w-100'>
-          <Dropdown.Item onClick={()=>setState(true)}>Looking for driver</Dropdown.Item>
-          <Dropdown.Item onClick={() => setState(false)}>Done</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    );
-  }
 export default function Index(){
     return(
-            <Product></Product>
+        <Product></Product>
     )
 }

@@ -7,6 +7,7 @@ import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap';
 import {BiPackage} from 'react-icons/bi';
 import {FiShoppingCart} from 'react-icons/fi';
 import {TbPackages} from 'react-icons/tb';
+import {TbTruckDelivery} from 'react-icons/tb'
 
 
 function UserSideBar({children}) {
@@ -107,17 +108,17 @@ function DriverSideBar({children}) {
                           className={({isActive,isPending}) =>{
                               return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/user/dashboard'}>
+                          to={'/driver/offer'}>
                           <div className='sbar-icon-frame'>
-                            <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
+                            <TbPackages className="sbar-icon"></TbPackages>
                           </div>
-                          <p className='sbar-txt'>Dashboard</p>
+                          <p className='sbar-txt'>Job Availables</p>
                       </NavLink>
                       <NavLink  
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/user/info'}>
+                          to={'/driver/info'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
@@ -127,11 +128,11 @@ function DriverSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/driver/product'}>
+                          to={'/driver/history'}>
                           <div className='sbar-icon-frame'>
-                            <BiPackage className="sbar-icon"></BiPackage>
+                            <TbTruckDelivery className="sbar-icon"></TbTruckDelivery>
                           </div>
-                          <p className='sbar-txt'>Product</p>
+                          <p className='sbar-txt'>Order History</p>
                       </NavLink>
                       <NavLink  
                           className={({isActive}) =>{
@@ -167,7 +168,7 @@ function DriverSideBar({children}) {
   )
 }
 
-function SenderSideBar({children}) {
+function AdminSideBar({children}) {
   return (
     <div>
       <div className='h-root'>
@@ -184,31 +185,41 @@ function SenderSideBar({children}) {
                           className={({isActive,isPending}) =>{
                               return isPending ? "sbar-link" : isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/user/dashboard'}>
+                          to={'info'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
                           </div>
-                          <p className='sbar-txt'>Dashboard</p>
+                          <p className='sbar-txt'>Infomation</p>
                       </NavLink>
                       <NavLink  
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/user/info'}>
+                          to={'drivers'}>
                           <div className='sbar-icon-frame'>
                             <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
-                          <p className='sbar-txt'>Information</p>
+                          <p className='sbar-txt'>Accept Driver</p>
                       </NavLink>
                       <NavLink  
-                          className={({isActive}) =>{
-                            return isActive  ? 'sbar-link-active' : 'sbar-link'
-                          }}
-                          to={'/user/product'}>
-                          <div className='sbar-icon-frame'>
-                            <BiPackage className="sbar-icon"></BiPackage>
-                          </div>
-                          <p className='sbar-txt'>Product</p>
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/product'}>
+                        <div className='sbar-icon-frame'>
+                          <BiPackage className="sbar-icon"></BiPackage>
+                        </div>
+                        <p className='sbar-txt'>Orders</p>
+                      </NavLink>
+                      <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link-active' : 'sbar-link'
+                        }}
+                        to={'/user/product'}>
+                        <div className='sbar-icon-frame'>
+                          <BiPackage className="sbar-icon"></BiPackage>
+                        </div>
+                        <p className='sbar-txt'>Invoices</p>
                       </NavLink>
                     </div>
                   </div>
@@ -256,4 +267,4 @@ function Breadcrumbs() {
     </Breadcrumb>
   );
 }
-export {UserSideBar,DriverSideBar,SenderSideBar};
+export {UserSideBar,DriverSideBar,AdminSideBar};

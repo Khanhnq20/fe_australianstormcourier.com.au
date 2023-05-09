@@ -125,6 +125,27 @@ body {
   background-color: var(--clr-txt-error) !important;
   border: none!important;
 }
+.my-btn-green{
+  color:white !important;
+  font-weight: 600 !important;
+  background-color: var(--clr-txt-success) !important;
+  border: none !important;
+  width: fit-content !important;
+  font-size: 0.85em !important;
+  font-family: var(--font-family) !important;
+  border-radius: 30px !important;
+  padding: 10px 25px !important;
+}
+.my-btn-green :active{
+  color: white !important;
+  background-color: var(--clr-txt-success) !important;
+  border:none !important;
+}
+.my-btn-green:hover{
+  color:white !important;
+  background-color: var(--clr-txt-success) !important;
+  border: none!important;
+}
 .txt-center{
   text-align: center;
 }
