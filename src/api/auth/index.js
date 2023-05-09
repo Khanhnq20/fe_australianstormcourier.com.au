@@ -30,6 +30,9 @@ const constraints = {
     postStripeIntent: "intent",
     postCheckoutStripe: "checkout",
 
+    getUserOrders: "order",
+    getUserOrderHistory: "history",
+
     test: "test/authorizedUser",
     getAccessToken: () => localStorage.getItem(constraints.LOCAL_KEY)
 }
@@ -83,6 +86,7 @@ authInstance.interceptors.response.use(response =>{
         window.location.replace("/error/400");
     }
     if(error?.response?.status === 404){
+        console.log(error);
         window.location.replace("/error/404");
     }
     if(error?.response?.status === 500){

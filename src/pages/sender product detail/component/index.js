@@ -1,4 +1,4 @@
-import React,{ useRef } from 'react'
+import React,{ useEffect, useRef } from 'react'
 import {  Sidebar } from '../../../layout'
 import { Col, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
@@ -14,6 +14,7 @@ import Form from 'react-bootstrap/Form';
 import {RiImageEditFill} from 'react-icons/ri';
 import {BsFillPersonVcardFill} from 'react-icons/bs';
 import Modal from 'react-bootstrap/Modal';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function ProductDetail(){
     const [post,setPost] = React.useState([]);
@@ -29,6 +30,7 @@ function ProductDetail(){
             setPagiantedPost(post.slice(0,pageSize)); 
         })
     },[rows])
+
     const pages = post ? Math.ceil(post?.length/pageSize) : 0;
     const pageCount = [...Array(pages+1).keys()].slice(1);
     function pagination(pageNo){
@@ -63,12 +65,13 @@ function ProductDetail(){
             setPagiantedPost(paginatedPostt);
         }
     }
+
     return(
         <div>
             <div>
-              <p className='product-detail-header'>Details</p>
+                <p className='product-detail-header'>Details</p>
             </div>
-          <div>
+        <div>
             <div>
                 <div className='sender-product-title'>
                     <p className='product-content-title mb-3'>Product Information</p>
@@ -81,80 +84,80 @@ function ProductDetail(){
             </div>
             <Row className='product-form-content'>
                 <Col>
-                  <div className='product-form-info'>
-                      <div>
+                <div className='product-form-info'>
+                    <div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                              ID
+                                ID
                             </p>
                             <p className='product-content'>
-                              00001
+                                00001
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                              Name
+                                Name
                             </p>
                             <p className='product-content'>
-                              Ansel
+                                Ansel
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                              Quality
+                                Quality
                             </p>
                             <p className='product-content'>
-                              07731158000
+                                07731158000
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                              From
+                                From
                             </p>
                             <p className='product-content'>
-                              Anselm@gmail.com
+                                Anselm@gmail.com
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                              To
+                                To
                             </p>
                             <p className='product-content'>
-                              189795
+                                189795
                             </p>
                         </div>
-                      </div>
-                  </div>
+                    </div>
+                </div>
                 </Col>
                 <Col>
                     <div>
-                      <div className='product-label-info'>
+                        <div className='product-label-info'>
                             <p className='product-label-fit'>
-                              Starting shipping rates
+                                Starting shipping rates
                             </p>
                             <p className='product-content'>
-                              300$
+                                300$
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label-fit'>
-                              Selected shipping rates
+                                Selected shipping rates
                             </p>
                             <p className='product-content'>
-                              06785634545$
+                                06785634545$
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label-fit'>
-                              Status
+                                Status
                             </p>
                             <p className='content-green'>
-                              Actived
+                                Actived
                             </p>
                         </div>
                         <div className='product-label-info'  style={{alignItems:'unset'}}>
                             <p className='product-label-fit'>
-                              Product pictures
+                                Product pictures
                             </p>
                             <div>
                                 <div className='img-front-frame'  style={{padding:'10px 0 '}}>
@@ -170,20 +173,20 @@ function ProductDetail(){
                 </Col>
             </Row>
             <Row>
-              <Col>
-                  <div className='py-4'>
+                <Col>
+                    <div className='py-4'>
                     <div className='product-label-info my' >
-                          <p className='product-label-fit'>
+                            <p className='product-label-fit'>
                             Status
-                          </p>
-                          <p className='content-blue'>
+                            </p>
+                            <p className='content-blue'>
                             Looking for a driver
-                          </p>
-                      </div>
-                      <div>
-                          <p style={{fontWeight:'600'}}>The driver requested delivery</p>
-                      </div>
-                      <div>
+                            </p>
+                        </div>
+                        <div>
+                            <p style={{fontWeight:'600'}}>The driver requested delivery</p>
+                        </div>
+                        <div>
                         <div>
                             <div className='pg-rows'>
                                 <p className='m-0'>Show</p>
@@ -257,20 +260,22 @@ function ProductDetail(){
                                 </>)
                                 }
                         </div>
-                      </div>
-                  </div>
-              </Col>
+                        </div>
+                    </div>
+                </Col>
             </Row>
-          </div>
+        </div>
           {/* <ProductEdit></ProductEdit> */}
           <Driver></Driver>
         </div>
     )
 }
+
 let productSchema = yup.object().shape({
     shippingRates: yup.string().required("Selected shipper rates is required field"),
     phoneNumber: yup.number().typeError("Phone Number must be number").required("Phone Number is required field"),
-})
+});
+
 function ProductEdit(){
     const product_img_ipt = useRef();
     const [imgUrlBack,setImgUrlBack] = React.useState();
@@ -423,6 +428,7 @@ function ProductEdit(){
     </Formik>
     )
 }
+
 function DropDownStatus() {
     const [state,setState] = React.useState(true);
     return (
@@ -437,7 +443,7 @@ function DropDownStatus() {
         </Dropdown.Menu>
       </Dropdown>
     );
-  }
+}
 
 function Driver({children}){
     const [active,setActive] = React.useState(1);
@@ -535,6 +541,7 @@ function Driver({children}){
         </div>
     )
 }
+
 function PopUpCenteredModal(props) {
   return (
     <>
@@ -695,9 +702,22 @@ function PopUpCenteredModal(props) {
     </>
   );
 }
+
 export default function Index() {
-  return (<>
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() =>{
+        if(location?.state){
+            console.log(location.state);
+        }
+        else {
+            navigate("/user/order/list");
+        }
+    });
+
+    return (<>
         <ProductDetail></ProductDetail>
-  </>
+    </>
   )
 }

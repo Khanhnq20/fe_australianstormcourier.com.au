@@ -34,9 +34,12 @@ AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink=
         </Container>);
     
     if(authState.isLogged)
-        return <Navigate to={invalidLink || 
-        authState?.accountInfo?.roles?.includes?.("User") && "/user/product" || 
-        authState?.accountInfo?.roles?.includes?.("Driver") && "/driver/order"} 
+        return <Navigate to={
+            invalidLink || 
+            authState?.accountInfo?.roles?.includes?.("User") && "/user/order/list" || 
+            authState?.accountInfo?.roles?.includes?.("Driver") && "/driver/order" || 
+            -1
+        }
         replace={true}></Navigate>;
 
     return children;

@@ -1,6 +1,7 @@
 import React, { createContext, useEffect } from 'react'
 import {authConstraints, authInstance, config} from '../../api'
 import taskStatus from './taskStatus';
+import { toast } from 'react-toastify';
 
 export const OrderContext = createContext();
 
@@ -31,16 +32,22 @@ export default function Index({children}) {
                     "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
                 }
             }).then(response =>{
-                console.log(response);
                 if(response?.data?.newOrders){
                     setState(i => ({
                         ...i,
                         tasks: {
                             ...i.tasks,
                             [authConstraints.postOrder] : taskStatus.Completed
-                        }
+                        },
                     }));
                 }
+
+                setState(i =>({
+                    ...i,
+                    loading: false
+                }));
+
+                toast.success("Post successfully");
             }).catch(err =>{
                 setState(i =>({
                     ...i,
@@ -48,13 +55,10 @@ export default function Index({children}) {
                     tasks: {
                         ...i.tasks,
                         [authConstraints.postOrder] : taskStatus.Failed
-                    }
+                    },
+                    loading: false
                 }));
-            }).finally(() =>{
-                setState(i =>({
-                    ...i,
-                    loading: false,
-                }));
+                toast.error("Post failed");
             });
         },
     }
@@ -66,10 +70,6 @@ export default function Index({children}) {
     useEffect(() => {
 
     }, []);
-
-    useEffect(() =>{
-        
-    },[]);
 
     return (
         <OrderContext.Provider value={[

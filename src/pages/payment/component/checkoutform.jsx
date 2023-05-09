@@ -44,10 +44,11 @@ const CheckoutForm = () => {
     };
   
     return (
-      <form onSubmit={handleSubmit}>
+      
+      <form className="container-fit p-3" onSubmit={handleSubmit}>
         <Message.Error>{error}</Message.Error>
         <PaymentElement />
-        <button disabled={!stripe}>Submit</button>
+        <button className="my-btn-yellow my-3" disabled={!stripe}>Submit</button>
       </form>
     )
   };

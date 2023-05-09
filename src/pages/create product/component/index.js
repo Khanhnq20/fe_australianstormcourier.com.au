@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import React,{ useContext, useRef } from 'react'
 import {RiImageEditFill, RiPictureInPicture2Fill} from 'react-icons/ri';
-import { Button, Col, InputGroup, Row } from "react-bootstrap";
+import { Button, Col, InputGroup, Modal, Row, Spinner } from "react-bootstrap";
 import { AuthContext, OrderContext } from "../../../stores";
 import moment from 'moment';
 import { serialize } from "object-to-formdata";
@@ -46,7 +46,7 @@ let orderSchema = yup.object().shape({
             quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
             startingRate: yup.number().positive().required("Starting Rate is required field"),
-            selectedRate: yup.number().positive().nullable(),
+            // selectedRate: yup.number().positive().nullable(),
             packageType: yup.string().required("Package Type is required field"),
             productPictures: yup.array().min(1)
                 .test(
@@ -350,10 +350,18 @@ function OrderCreation(){
             const {touched, errors,setFieldValue, handleSubmit, handleChange, handleBlur,values} = formProps;
             return(   
                 <div className='p-3'>
+                    <Modal show={orderState.loading} 
+                        size="lg"
+                        backdrop="static"
+                        keyboard={false}
+                        centered>
+                        <Modal.Body className="text-center">
+                            <Spinner className="mb-2"></Spinner> 
+                            <h2>Please waiting for us</h2>
+                            <p>We are handling your request, <b style={{color: "red"}}>Don't close your device</b></p>
+                        </Modal.Body>
+                    </Modal>
                     <Form onSubmit={handleSubmit}>
-                        <div>
-                            <pre>{JSON.stringify(values, 4, 4)}</pre>
-                        </div>
                         <div 
                             // className='form-order'
                         >

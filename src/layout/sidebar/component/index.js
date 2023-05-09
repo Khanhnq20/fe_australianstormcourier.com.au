@@ -1,11 +1,12 @@
 import React from 'react'
 import '../style/sidebar.css';
-import {AiOutlineDashboard,AiOutlineIdcard} from 'react-icons/ai';
+import {AiOutlineDashboard,AiOutlineIdcard,AiOutlineHistory} from 'react-icons/ai';
 import {User} from '../../../pages'
 import { NavLink, useLocation } from 'react-router-dom';
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap';
 import {BiPackage} from 'react-icons/bi';
 import {FiShoppingCart} from 'react-icons/fi';
+import {TbPackages} from 'react-icons/tb';
 
 
 function UserSideBar({children}) {
@@ -28,7 +29,7 @@ function UserSideBar({children}) {
                         }}
                         to={'/user/order/list'}>
                         <div className='sbar-icon-frame'>
-                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                          <TbPackages className="sbar-icon"></TbPackages>
                         </div>
                         <p className='sbar-txt'>My Order</p>
                       </NavLink>
@@ -39,7 +40,7 @@ function UserSideBar({children}) {
                         }}
                         to={'/user/product/post'}>
                         <div className='sbar-icon-frame'>
-                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                          <BiPackage className="sbar-icon"></BiPackage>
                         </div>
                         <p className='sbar-txt'>Create new Order</p>
                       </NavLink>
@@ -50,7 +51,7 @@ function UserSideBar({children}) {
                         }}
                         to={'/user/history'}>
                         <div className='sbar-icon-frame'>
-                          <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                          <AiOutlineHistory className="sbar-icon"></AiOutlineHistory>
                         </div>
                         <p className='sbar-txt'>History</p>
                       </NavLink>
