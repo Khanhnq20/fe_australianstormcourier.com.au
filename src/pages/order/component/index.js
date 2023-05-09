@@ -8,6 +8,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
+import { Col, Row } from 'react-bootstrap';
 
 
 let loginSchema = yup.object().shape({
@@ -27,7 +28,7 @@ function Product() {
             setPost(res.data);
             setPagiantedPost(post.slice(0,pageSize)); 
         })
-    },[rows])
+    },[rows]);
     const pages = post ? Math.ceil(post?.length/pageSize) : 0;
     const pageCount = [...Array(pages+1).keys()].slice(1);
     function pagination(pageNo){
@@ -63,179 +64,188 @@ function Product() {
         }
     }
     return (
-    <Formik
-        initialValues={{
-            id:'',
-            from:'',
-            fullNameSender:'',
-            fullNameDriver:'',
-            to:''
-        }} 
-        validationSchema={loginSchema}
-    >
-    {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
-        return(
-            <>   
+        <Formik
+            initialValues={{
+                id:'',
+                from:'',
+                fullNameSender:'',
+                fullNameDriver:'',
+                to:''
+            }} 
+            validationSchema={loginSchema}
+        >
+        {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
+            return(
                 <div>
-                        <div className='p-3'>
-                            <div>
-                                <Form>
-                                    <div className='form-order'>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>ID</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="id"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>From</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="from"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Full name sender</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="fullNameSender"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>To</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="to"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Full name driver</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="fullNameDriver"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                    </div>
-                                    <div>
-                                        <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
-                                            <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
-                                            Search</Button>
-                                    </div>
-                                </Form>
-                            </div>
-                        </div>
-                        
+                    <div className='p-3'>
                         <div>
-                            <div className='pg-rows'>
-                                <p className='m-0'>Show</p>
-                                <div>
-                                    <Dropdown className='reg-dr' style={{width:'fit-content'}}>
-                                        <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
-                                            {rows}
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            {row.map((item,index) => {
-                                                return(
-                                                    <Dropdown.Item key={index} onClick={()=>setRows(item)}>{item}</Dropdown.Item>
-                                                )
-                                            })}
-                                        </Dropdown.Menu>
-                                    </Dropdown>
+                            <Form>
+                                <div className='form-order'>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>ID</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="id"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>From</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="from"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Full name sender</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="fullNameSender"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>To</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="to"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Full name driver</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="fullNameDriver"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
                                 </div>
-                                <p className='m-0'>Rows</p>
-                            </div>
-                            {paginatedPost?.length === 0 ? (<div className='txt-center'>
-                                    <h5>No Data Found</h5>
-                                </div>) :
-                                (<>
-                                    <Table striped bordered >
-                                        <thead>
-                                            <tr>
-                                                <th>id</th>
-                                                <th>First Name</th>
-                                                <th>Last Name</th>
-                                            </tr>
-                                        </thead> 
-                                            <tbody>
-                                                {
-                                                    paginatedPost?.map((post,index) =>{
-                                                        return (
-                                                            <tr key={index}>
-                                                                <td>{post.id}</td>
-                                                                <td>{post.userId}</td>
-                                                                <td>{post.title}</td>
-                                                            </tr>
-                                                        )
-                                                    })
-                                                }
-                                            </tbody>
-                                    </Table>
-                                    <Pagination className='pg-form w-100'>
-                                        <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/>
-                                        <Pagination.Prev onClick={()=>previous(currentPage)} className='pg-first' />
-                                        {pageCount.map((item,index) => {
-                                            return (
-                                                <div>
-                                                    <div key={index}>
-                                                        <Pagination.Item 
-                                                        className={item === currentPage ? "pg-no pg-active" : "pg-no"}
-                                                        onClick={()=>pagination(item)}
-                                                        >{item}</Pagination.Item>
-                                                    </div>
-                                                </div>
-                                            )
-                                        })}
-                                        <Pagination.Next onClick={()=>next(currentPage)} className='pg-first' />
-                                        <Pagination.Last onClick={last} className='pg-first'/>
-                                    </Pagination>
-                                </>)
-                                }
+                                <div>
+                                    <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
+                                        <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
+                                        Search</Button>
+                                </div>
+                            </Form>
                         </div>
                     </div>
-            </>
-    )}}
-    </Formik>
+                        
+                    <div>
+                        <div className='pg-rows'>
+                            <p className='m-0'>Show</p>
+                            <div>
+                                <Dropdown className='reg-dr' style={{width:'fit-content'}}>
+                                    <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
+                                        {rows}
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        {row.map((item,index) => {
+                                            return(
+                                                <Dropdown.Item key={index} onClick={()=>setRows(item)}>{item}</Dropdown.Item>
+                                            )
+                                        })}
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </div>
+                            <p className='m-0'>Rows</p>
+                        </div>
+                        {paginatedPost?.length === 0 ? (<div className='txt-center'>
+                                <h5>No Data Found</h5>
+                            </div>) :
+                            (<>
+                                <Table striped bordered >
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Order Name</th>
+                                            <th>Product</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead> 
+                                        <tbody>
+                                            {
+                                                paginatedPost?.map((post,index) =>{
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td>{post.id}</td>
+                                                            <td>{post.userId}</td>
+                                                            <td>{post.title}</td>
+                                                            <td>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <Button variant='success'>Accept</Button>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <Button variant='danger'>Deny</Button>
+                                                                    </Col>
+                                                                </Row>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                </Table>
+                                <Pagination className='pg-form w-100'>
+                                    <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/>
+                                    <Pagination.Prev onClick={()=>previous(currentPage)} className='pg-first' />
+                                    {pageCount.map((item,index) => {
+                                        return (
+                                            <div>
+                                                <div key={index}>
+                                                    <Pagination.Item 
+                                                    className={item === currentPage ? "pg-no pg-active" : "pg-no"}
+                                                    onClick={()=>pagination(item)}
+                                                    >{item}</Pagination.Item>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                    <Pagination.Next onClick={()=>next(currentPage)} className='pg-first' />
+                                    <Pagination.Last onClick={last} className='pg-first'/>
+                                </Pagination>
+                            </>)
+                            }
+                    </div>
+                </div>)
+        }}
+        </Formik>
   )
 }
 
 export default function Index(){
     return(
-            <Product></Product>
+        <Product></Product>
     )
 }

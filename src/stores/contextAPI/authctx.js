@@ -6,10 +6,13 @@ export const AuthContext = createContext();
 
 export default function Index({children}) {
     const [state,setState] = React.useState({
-        accessToken: "",
-        accountInfo: null,
+        accessToken: "",    
+        // accountInfo: null,
+        accountInfo: {
+            roles: ['User', 'Driver']
+        },
         loading: true,
-        isLogged: false,
+        isLogged: true,
         vehicles: [],
         packageTypes: [],
         errors: [],

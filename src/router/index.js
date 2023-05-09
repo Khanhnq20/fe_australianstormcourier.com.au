@@ -2,12 +2,13 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-import { Navigation, Footer, DriverSideBar, UserSideBar } from "../layout";
+import { Navigation, Footer, DriverSideBar, UserSideBar, AdminSideBar } from "../layout";
 import {Home,RegisterDriver,RegisterUser,Login, Forgot, ResetPassword, UserInformation, EmailCheck, CreateProduct, PaymentComponents} from '../pages';
 import { AuthValidator, OrderContextComponent } from '../stores'
 import React from 'react';
 import { userChildrens } from "./user";
 import { driverChildrens } from "./driver";
+import { adminChildrens } from "./admin";
 
 
 export const authChildrens = [
@@ -119,6 +120,17 @@ export const router = createBrowserRouter([
           </OrderContextComponent>
         </AuthValidator>,
         children: driverChildrens
+      },
+      {
+        path: "admin",
+        element: <>
+          <OrderContextComponent>
+            <AdminSideBar>
+              <Outlet></Outlet>
+            </AdminSideBar>
+          </OrderContextComponent>
+        </>,
+        children: adminChildrens
       },
       {
         path: "anonymous",
