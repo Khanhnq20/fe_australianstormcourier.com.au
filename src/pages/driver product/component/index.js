@@ -86,21 +86,7 @@ function Product() {
                                 <div className='form-order'>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>ID</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="id"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>From</Form.Label>
+                                            <Form.Label className='label'>Pick up</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
@@ -114,21 +100,7 @@ function Product() {
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>Name</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="fullName"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>To</Form.Label>
+                                            <Form.Label className='label'>Destination</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
@@ -139,12 +111,6 @@ function Product() {
                                             onBlur={handleBlur}
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Status</Form.Label>
-                                        </div>
-                                        <DropDownStatus></DropDownStatus>
                                     </Form.Group>
                                 </div>
                                 <div>
@@ -183,8 +149,8 @@ function Product() {
                                     <thead>
                                         <tr>
                                             <th>Order Id</th>
-                                            <th>Delivery Location</th>
-                                            <th>Delivery Destination</th>
+                                            <th>Pick up</th>
+                                            <th>Destination</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead> 
