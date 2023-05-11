@@ -6,9 +6,11 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap';
 import {BiPackage} from 'react-icons/bi';
 import {FiShoppingCart} from 'react-icons/fi';
-import {TbPackages} from 'react-icons/tb';
+import {TbPackages,TbReportMoney} from 'react-icons/tb';
 import {TbTruckDelivery} from 'react-icons/tb';
 import {FaBars,FaTimes} from 'react-icons/fa';
+import {BsPersonCheck} from 'react-icons/bs';
+import {HiOutlineUserGroup} from 'react-icons/hi'
 
 
 function UserSideBar({children}) {
@@ -190,7 +192,7 @@ function AdminSideBar({children}) {
                           }}
                           to={'info'}>
                           <div className='sbar-icon-frame'>
-                            <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
+                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard  >
                           </div>
                           <p className='sbar-txt'>Infomation</p>
                       </NavLink>
@@ -200,9 +202,19 @@ function AdminSideBar({children}) {
                           }}
                           to={'drivers'}>
                           <div className='sbar-icon-frame'>
-                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                            <BsPersonCheck className="sbar-icon"></BsPersonCheck>
                           </div>
                           <p className='sbar-txt'>Accept Driver</p>
+                      </NavLink>
+                      <NavLink  
+                          className={({isActive}) =>{
+                            return isActive  ? 'sbar-link-active' : 'sbar-link'
+                          }}
+                          to={'drivers'}>
+                          <div className='sbar-icon-frame'>
+                            <HiOutlineUserGroup className="sbar-icon"></HiOutlineUserGroup>
+                          </div>
+                          <p className='sbar-txt'>User Management</p>
                       </NavLink>
                       <NavLink  
                         className={({isActive}) =>{
@@ -220,7 +232,7 @@ function AdminSideBar({children}) {
                         }}
                         to={'/user/product'}>
                         <div className='sbar-icon-frame'>
-                          <BiPackage className="sbar-icon"></BiPackage>
+                          <TbReportMoney className="sbar-icon"></TbReportMoney>
                         </div>
                         <p className='sbar-txt'>Invoices</p>
                       </NavLink>

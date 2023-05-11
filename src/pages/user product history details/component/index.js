@@ -1,9 +1,10 @@
 import React from 'react'
-import { Col, Row } from 'react-bootstrap';
+import { Col, FloatingLabel, Row } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import '../style/productHistoryDetail.css'
 
 function OrderDetail(){
     const [process,setProcess] = React.useState(false);
@@ -182,6 +183,7 @@ function Process({children}){
                 </div>
             </div>
         </div>
+        <Comment></Comment>
       </div>
     )
 }
@@ -237,6 +239,157 @@ function StatusFail(){
   )
 }
 
+
+function Comment() {
+  const [rating, setRating] = React.useState(0);
+  const [hoverRating, setHoverRating] = React.useState(0);
+  const [evaluate,setEvaluate] = React.useState();
+  const [comment, setComment] = React.useState("");;
+  const [user,setUser] = React.useState({});
+  const [error,setError] = React.useState();
+  // const locationParams = useParams();
+  // const {userID} = useAthContext();
+  const Star = ({ starId, rating, onMouseEnter, onMouseLeave, onClick }) => {
+    let styleClass = "star-rating-blank";
+    if (rating >= starId) {
+      styleClass = "star-rating-filled";
+    }
+   
+    return (
+      <div
+        className="star"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onClick={onClick}
+      >
+        <svg
+          height="30px"
+          width="30px"
+          class={styleClass}
+          viewBox="0 0 25 23"
+          data-rating="1"
+        >
+          <polygon
+            stroke-width="0"
+            points="9.9, 1.1, 3.3, 21.78, 19.8, 8.58, 0, 8.58, 16.5, 21.78"
+          />
+        </svg>
+      </div>
+    );
+  };
+  const handleChange = (e) =>{
+  setComment(e.target.value);
+  console.log(e.target.value);
+}
+
+// const handleSubmit = () =>{
+//   console.log(locationParams?.id)
+//   if(!comment){
+//       setError("Enter somethings to comment");
+//   }
+//   if(rating === 0){
+//       setError("Pls rating")
+//   }else if(locationParams?.id){
+//       const {id} = locationParams;
+//       setError("");
+//       commentProduct(comment,rating,user?.name,user?.email,id).then(()=>{
+//           var data = {
+//               content : comment,
+//               rate : rating,
+//               author : user?.name,
+//               emailAth: user?.email
+//           }
+//           setEvaluate(o =>[...o, data]);
+//           setRating(0);
+//           toast.success("Successful evaluation!")
+//       })
+//   }
+// }
+const stars = [1, 2, 3, 4, 5];
+
+return (<>
+  {evaluate?.map((item,index) =>{
+      return(
+          <div key={index}>
+              <div class="header">
+                  <img
+                      style={{margin:0,padding:0}}
+                      height="45px"
+                      weight="45px"
+                      src="https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg"
+                      
+                  />
+                  <div>
+                      <p style={{fontWeight:"600"}}>{item.author}</p>
+                      <p style={{fontSize:"13px",marginTop:"5px"}}>{item.emailAth}</p>
+                  </div>
+                  <div style={{display:"flex",transform:"translate(40%)"}}>
+                      {stars.map((star, i) => (
+                      <Star
+                      key={i}
+                      starId={i}
+                      rating={item.rate}
+                      />
+                      ))}
+                  </div>
+              </div>
+              <div>
+                  <p style={{margin:"12px 5px"}}>{item.content}</p>
+              </div>
+          </div>
+      )
+  })}
+  {/* commentFormSubmit */}
+  <Form>
+      <div className="comment__form">
+      <div class="header">
+          <img 
+              style={{margin:0,padding:0}}
+              height="45px"
+              weight="45px"
+              src="https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg"
+              
+          />
+          <div>
+              <p style={{fontWeight:"600"}}>{user?.name || "Guest"}</p>
+              <p style={{fontSize:"13px",marginTop:"5px"}}>{user?.email || "Loading"}</p>
+          </div>
+      </div>
+      <div style={{display:"flex"}}>
+          {stars.map((i) => (
+          <Star
+              key={i}
+              starId={i}
+              rating={hoverRating || rating}
+              onMouseEnter={() => setHoverRating(i)}
+              onMouseLeave={() => setHoverRating(0)}
+              onClick={() => setRating(i)}
+          />
+          ))}
+      </div>
+              <Form.Group className="" >
+                  <div>
+                      <FloatingLabel
+                          controlId="floatingTextarea"
+                          label="Comment"
+                          className="mb-3"
+                      >
+                      <Form.Control
+                          as="textarea" 
+                          name="comment"
+                          
+                          onChange={handleChange}
+                          />
+                      </FloatingLabel>
+                  </div>
+                  {error && <p style={{color:"red"}}>{error}</p>}
+              </Form.Group>
+              <Button className='my-btn-yellow'>Review</Button>
+      </div>
+  </Form>
+</>
+);
+}
 export default function Index() {
   return (<>
         <OrderDetail></OrderDetail>
