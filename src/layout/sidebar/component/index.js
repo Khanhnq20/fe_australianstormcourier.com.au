@@ -6,8 +6,11 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {Breadcrumb, BreadcrumbItem} from 'react-bootstrap';
 import {BiPackage} from 'react-icons/bi';
 import {FiShoppingCart} from 'react-icons/fi';
-import {TbPackages} from 'react-icons/tb';
-import {TbTruckDelivery} from 'react-icons/tb'
+import {TbPackages,TbReportMoney} from 'react-icons/tb';
+import {TbTruckDelivery} from 'react-icons/tb';
+import {FaBars,FaTimes} from 'react-icons/fa';
+import {BsPersonCheck} from 'react-icons/bs';
+import {HiOutlineUserGroup} from 'react-icons/hi'
 
 
 function UserSideBar({children}) {
@@ -92,15 +95,17 @@ function UserSideBar({children}) {
 }
 
 function DriverSideBar({children}) {
+  const [toggle,setToggle] = React.useState(false);
   return (
-    <div>
+    <div className='container-define'>
       <div className='h-root'>
-            <div>
-              <div className='h-form'>
-                    <span>
-                <div className='sbar-root'>
+          <div>
+            <div className='h-form'>
+              <span className={toggle ? 'sbar-root-show' : 'sbar-root'}>
+                <div>
                   <div className='sbar-header'>
                       <div>MENU</div>
+                      <FaTimes className='sbar-times' onClick={()=>{setToggle(false)}}></FaTimes>
                   </div>
                   <div>
                     <div>
@@ -130,9 +135,9 @@ function DriverSideBar({children}) {
                           }}
                           to={'/driver/history'}>
                           <div className='sbar-icon-frame'>
-                            <TbTruckDelivery className="sbar-icon"></TbTruckDelivery>
+                            <AiOutlineHistory className="sbar-icon"></AiOutlineHistory>
                           </div>
-                          <p className='sbar-txt'>Order History</p>
+                          <p className='sbar-txt'>History</p>
                       </NavLink>
                       <NavLink  
                           className={({isActive}) =>{
@@ -142,7 +147,7 @@ function DriverSideBar({children}) {
                           <div className='sbar-icon-frame'>
                             <FiShoppingCart className="sbar-icon"></FiShoppingCart>
                           </div>
-                          <p className='sbar-txt'>Order</p>
+                          <p className='sbar-txt'>Your Actived Job</p>
                       </NavLink>
                     </div>
                   </div>
@@ -150,10 +155,10 @@ function DriverSideBar({children}) {
                     </span>
                     <span className='h-ctn'>
                         <div className=''>
-
                         </div>
                         <div className='h-ctn-inner'>
                             <div className='h-header'>
+                                <FaBars className='sbar-toggle' onClick={()=>{setToggle(true)}}></FaBars>
                                 <Breadcrumbs></Breadcrumbs>
                             </div>
                             <div className='h-content-frame'>
@@ -172,10 +177,10 @@ function AdminSideBar({children}) {
   return (
     <div>
       <div className='h-root'>
-            <div>
-                <div className='h-form'>
-                    <span>
-                    <div className='sbar-root'>
+          <div>
+            <div className='h-form'>
+              <span>
+                <div className='sbar-root'>
                   <div className='sbar-header'>
                       <div>MENU</div>
                   </div>
@@ -187,7 +192,7 @@ function AdminSideBar({children}) {
                           }}
                           to={'info'}>
                           <div className='sbar-icon-frame'>
-                            <AiOutlineDashboard className="sbar-icon"></AiOutlineDashboard>
+                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard  >
                           </div>
                           <p className='sbar-txt'>Infomation</p>
                       </NavLink>
@@ -197,9 +202,19 @@ function AdminSideBar({children}) {
                           }}
                           to={'drivers'}>
                           <div className='sbar-icon-frame'>
-                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
+                            <BsPersonCheck className="sbar-icon"></BsPersonCheck>
                           </div>
                           <p className='sbar-txt'>Accept Driver</p>
+                      </NavLink>
+                      <NavLink  
+                          className={({isActive}) =>{
+                            return isActive  ? 'sbar-link-active' : 'sbar-link'
+                          }}
+                          to={'drivers'}>
+                          <div className='sbar-icon-frame'>
+                            <HiOutlineUserGroup className="sbar-icon"></HiOutlineUserGroup>
+                          </div>
+                          <p className='sbar-txt'>User Management</p>
                       </NavLink>
                       <NavLink  
                         className={({isActive}) =>{
@@ -217,29 +232,29 @@ function AdminSideBar({children}) {
                         }}
                         to={'/user/product'}>
                         <div className='sbar-icon-frame'>
-                          <BiPackage className="sbar-icon"></BiPackage>
+                          <TbReportMoney className="sbar-icon"></TbReportMoney>
                         </div>
                         <p className='sbar-txt'>Invoices</p>
                       </NavLink>
                     </div>
                   </div>
                 </div>
-                    </span>
-                    <span className='h-ctn'>
-                        <div className=''>
+              </span>
+              <span className='h-ctn'>
+                  <div className=''>
 
-                        </div>
-                        <div className='h-ctn-inner'>
-                            <div className='h-header'>
-                                <Breadcrumbs></Breadcrumbs>
-                            </div>
-                            <div className='h-content-frame'>
-                                {children || <User></User> }
-                            </div>
-                        </div>
-                    </span>
-                </div>
+                  </div>
+                  <div className='h-ctn-inner'>
+                      <div className='h-header'>
+                          <Breadcrumbs></Breadcrumbs>
+                      </div>
+                      <div className='h-content-frame'>
+                          {children || <User></User> }
+                      </div>
+                  </div>
+              </span>
             </div>
+          </div>
         </div>
     </div>
   )
