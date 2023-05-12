@@ -14,15 +14,17 @@ import {HiOutlineUserGroup} from 'react-icons/hi'
 
 
 function UserSideBar({children}) {
+  const [toggle,setToggle] = React.useState(false);
   return (
     <div>
       <div className='h-root'>
             <div>
                 <div className='h-form'>
-                    <span>
-                    <div className='sbar-root'>
+                    <span className={toggle ? 'sbar-root show' : 'sbar-root'}>
+                <div style={{minWidth:'290px'}}>
                   <div className='sbar-header'>
                       <div>MENU</div>
+                      <FaTimes className='sbar-times' onClick={()=>{setToggle(false)}}></FaTimes>
                   </div>
                   <div>
                     <div>
@@ -80,6 +82,7 @@ function UserSideBar({children}) {
                         </div>
                         <div className='h-ctn-inner'>
                             <div className='h-header'>
+                                <FaBars className='sbar-toggle' onClick={()=>{setToggle(true)}}></FaBars>
                                 <Breadcrumbs></Breadcrumbs>
                             </div>
                             <div className='h-content-frame'>
@@ -101,8 +104,8 @@ function DriverSideBar({children}) {
       <div className='h-root'>
           <div>
             <div className='h-form'>
-              <span className={toggle ? 'sbar-root-show' : 'sbar-root'}>
-                <div>
+              <span className={toggle ? 'sbar-root show' : 'sbar-root'}>
+                <div style={{minWidth:'200px'}}>
                   <div className='sbar-header'>
                       <div>MENU</div>
                       <FaTimes className='sbar-times' onClick={()=>{setToggle(false)}}></FaTimes>
@@ -171,18 +174,20 @@ function DriverSideBar({children}) {
         </div>
     </div>
   )
-}
+}  
 
 function AdminSideBar({children}) {
+  const [toggle,setToggle] = React.useState(false);
   return (
-    <div>
+    <div className='container-define'>
       <div className='h-root'>
           <div>
             <div className='h-form'>
-              <span>
-                <div className='sbar-root'>
+              <span className={toggle ? 'sbar-root show' : 'sbar-root'}>
+                <div style={{minWidth:'200px'}}>
                   <div className='sbar-header'>
                       <div>MENU</div>
+                      <FaTimes className='sbar-times' onClick={()=>{setToggle(false)}}></FaTimes>
                   </div>
                   <div>
                     <div>
@@ -200,7 +205,7 @@ function AdminSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'drivers'}>
+                          to={'accept'}>
                           <div className='sbar-icon-frame'>
                             <BsPersonCheck className="sbar-icon"></BsPersonCheck>
                           </div>
@@ -210,7 +215,7 @@ function AdminSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'drivers'}>
+                          to={'user'}>
                           <div className='sbar-icon-frame'>
                             <HiOutlineUserGroup className="sbar-icon"></HiOutlineUserGroup>
                           </div>
@@ -220,7 +225,7 @@ function AdminSideBar({children}) {
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link-active' : 'sbar-link'
                         }}
-                        to={'/user/product'}>
+                        to={'orders'}>
                         <div className='sbar-icon-frame'>
                           <BiPackage className="sbar-icon"></BiPackage>
                         </div>
@@ -246,6 +251,7 @@ function AdminSideBar({children}) {
                   </div>
                   <div className='h-ctn-inner'>
                       <div className='h-header'>
+                        <FaBars className='sbar-toggle' onClick={()=>{setToggle(true)}}></FaBars>
                           <Breadcrumbs></Breadcrumbs>
                       </div>
                       <div className='h-content-frame'>
