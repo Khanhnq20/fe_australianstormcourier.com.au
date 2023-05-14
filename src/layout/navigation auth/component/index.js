@@ -91,7 +91,6 @@ function AvatarUserDropDown() {
                     Setting
                 </Link>
             </Dropdown.Item>
-
             <Dropdown.Item className='nav-menu-topic' onClick={signout}>
                 <FiLogOut className='nav-menu-topic-icon'></FiLogOut>
                 <div>   
