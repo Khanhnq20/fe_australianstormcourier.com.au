@@ -1,9 +1,9 @@
+
 import React from 'react';
 import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import '../style/driverProduct.css';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
@@ -83,31 +83,37 @@ function Product() {
                                 <div className='form-order'>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>Pick up</Form.Label>
+                                            <Form.Label className='label'>ID</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
-                                            name="from"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            name="id"
+                                            placeholder="Enter Driver's ID"
                                             onChange={handleChange}
-                                            onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>Destination</Form.Label>
+                                            <Form.Label className='label'>User Name</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
-                                            name="to"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            name="userName"
+                                            placeholder="Enter User Name"
                                             onChange={handleChange}
-                                            onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Email</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="email"
+                                            placeholder="Enter Driver's Email"
+                                            onChange={handleChange}
+                                        />
                                     </Form.Group>
                                 </div>
                                 <div>
@@ -145,9 +151,9 @@ function Product() {
                                 <Table striped bordered >
                                     <thead>
                                         <tr>
-                                            <th>Order Id</th>
-                                            <th>Pick up</th>
-                                            <th>Destination</th>
+                                            <th>Id</th>
+                                            <th>User Name</th>
+                                            <th>Full Name</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead> 
@@ -161,6 +167,9 @@ function Product() {
                                                             <td>{post.title}</td>
                                                             <td>
                                                                 <Row>
+                                                                     <Col>
+                                                                        <Button>Detail</Button>
+                                                                    </Col>
                                                                     <Col>
                                                                         <Button variant='success'>Accept</Button>
                                                                     </Col>
@@ -203,21 +212,6 @@ function Product() {
   )
 }
 
-function DropDownStatus() {
-    const [state,setState] = React.useState(true);
-    return (
-      <Dropdown className='reg-dr'>
-        <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-            {state === true ? "Looking for driver" : "Done"}
-        </Dropdown.Toggle>
-  
-        <Dropdown.Menu className='w-100'>
-          <Dropdown.Item onClick={()=>setState(true)}>Looking for driver</Dropdown.Item>
-          <Dropdown.Item onClick={() => setState(false)}>Done</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    );
-  }
 export default function Index(){
     return(
             <Product></Product>

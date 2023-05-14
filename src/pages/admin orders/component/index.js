@@ -3,13 +3,15 @@ import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import '../style/driverProduct.css';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
 import { Col, Row } from 'react-bootstrap';
+import { ImCross } from 'react-icons/im';
+import { FcAcceptDatabase } from 'react-icons/fc';
+
 
 let driverSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field"), 

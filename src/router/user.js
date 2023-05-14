@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { ChangePassword, CreateProduct, DriverProduct, Order, UserInformation, UserProductHistory, UserProductHistoryDetails } from "../pages";
+import { ChangePassword, CreateProduct, Order, UserInformation, UserProductHistory, UserProductHistoryDetails } from "../pages";
 
 export const userChildrens = [
     {

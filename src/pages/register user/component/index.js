@@ -55,7 +55,7 @@ export default function Index() {
         >
         {({values, touched, errors, handleSubmit, handleChange, handleBlur}) =>{
             return(
-                <>   
+                <div className='reg-user'>   
                     <div className='container p-5'>
                         <div>
                             <div>
@@ -184,7 +184,7 @@ export default function Index() {
                             </Form>
                         </div>
                     </div>
-                </>
+                </div>
         )}}
         </Formik>
     )

@@ -1,18 +1,56 @@
 .sbar-root{
+    display: block;
     background-color: white;
-    width: 290px;
-    height: 100%;
+    width: 250px;
+    min-height: calc(90vh - 50px);
+    position: relative;
+    transition: all 140ms ease-in-out;
+}
+.sbar-root .sbar-text{
+    opacity: 0;
+}
+.hide{
+    width: 70px;
+    min-height: calc(90vh - 50px);
+}
+.form-label{
+    width: 70px;
+    overflow: hidden;
 }
 .sbar-toggle{
     margin-bottom: 10px;
-    display: none;
+    position: absolute;
+    cursor: pointer;
+    right: 0;
+    background-color: white;
+    border-radius: 50%;
+    top: 0;
+    font-size: 25px;
+    color: var(--clr-primary);
+    transform: translate(50%,50%);
+    transition: all 400ms ease-in-out;
 }
-.sbar-times{
+.txt-hide{
     display: none;
+    opacity: 0;
+}
+.right{
+    transform:translate(50%,50%) rotate(180deg);
 }
 @media only screen and (max-width: 768px) {
-.sbar-root{
+.hide{
+    width: 16px;
+    min-height: calc(90vh - 45px);
+}
+.hide .sbar-title{
     display: none;
+}
+.hide .form-label{
+    display: none;
+}
+.sbar-root{
+    position: absolute;
+    z-index: 20;
 }
 .sbar-times{
     display: block;
@@ -23,32 +61,31 @@
     display: block;
     cursor: pointer;
 }
-.sbar-root-show{
+.show{
     display: block;
     background-color: white;
     min-height: calc(90vh - 50px);
+    width: 290px;
     position: absolute;
     z-index: 20;
-    width: 290px;
 }
-.sbar-root-show::after{
-    content: '';
+.hero{
     background-color: black !important;
     width: 100vw;
     display: block;
     min-height: calc(90vh - 50px);
     position: fixed;
-    top: 96px;
-    left: 290px;
-    z-index: -1;
+    z-index: 10;
     opacity: 0.5;
 }
 }
-
+.breadcrumb-link ol{
+    margin: 0;
+}
 .sbar-header{
     font-size: 14px;
     font-weight: 600;
-    padding: 15px 25px;
+    padding: 15px 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -57,7 +94,9 @@
 .sbar-txt{
     font-weight: 600;
     margin: 0;
-    padding: 0 7px;
+    padding: 0 20px;
+    white-space: nowrap;
+    transition: all 0.4s ease;
 }
 
 .sbar-icon-frame{
@@ -82,18 +121,12 @@
     text-decoration: none;
     color: var(--clr-txt-primary);
 }
-.sbar-link-active{
-    color: var(--clr-primary);
-    text-decoration: none;
+.active{
     background-color: var(--clr-primary-light);
     color: var(--clr-primary);
-    display: flex;
-    margin: 12px 0;
-    align-items: center;
     border-left: 4px solid var(--clr-primary);
-    padding: 10px 20px;
 }
-.sbar-link-active:hover{
+.active:hover{
     color: var(--clr-primary);
     text-decoration: none;
 }

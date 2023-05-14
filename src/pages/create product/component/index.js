@@ -137,6 +137,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                         </div>
                         <Form.Control
                             type="number"
+                            className="product-form-input"
                             min={0}
                             max={10}
                             name="orderItems[0].quantity"
@@ -171,7 +172,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                 </Col>
             </Row>
             {/* Product Pictures & Shipping Rate & PackageType */}
-            <Row>
+            <Row className="form-img-rate">
                 {/* Product pictures */}
                 <Col>
                     <Form.Group className="mb-3">
@@ -183,7 +184,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                             <FieldArray name={`orderItems[${index}].productPictures`} 
                                 render={(arrayHelpers) =>{
                                 return (<>
-                                    <Row>
+                                    <Row style={{flexDirection:'column'}}>
                                         <>
                                         {
                                             values?.orderItems?.[index]?.productPictures?.map?.((picture,index) =>{

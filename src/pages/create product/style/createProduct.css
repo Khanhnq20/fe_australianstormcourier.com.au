@@ -1,4 +1,22 @@
 .pickup-post{
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto;
     gap: 25px;
+}
+.pickup-post input{
+    min-width: 170px !important;
+}
+.form-img-rate{
+    display: grid;
+    grid-template-columns: auto auto;
+}
+@media only screen and (max-width:768px) {
+.pickup-post{
+    grid-template-columns: auto;
+}
+}
+@media only screen and (max-width:1094px){
+.form-img-rate{
+    grid-template-columns: auto;
+}
 }

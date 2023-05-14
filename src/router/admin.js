@@ -1,13 +1,55 @@
 import { Outlet } from "react-router";
-import { AcceptDriver, AdminInformation, ChangePassword, CreateProduct, Order, UserInformation, UserProductHistory, UserProductHistoryDetails } from "../pages";
+import { AcceptDriver, AdminInformation, AdminOrderDetail, ChangePassword, CreateProduct, DriverInfo, Order, TotalOrder, UserInformation, UserManagement, UserProductHistory, UserProductHistoryDetails } from "../pages";
 
 export const adminChildrens = [
+  {
+    path: 'accept',
+    element: <>
+      <Outlet></Outlet>
+    </>,
+    children:[
     {
-      path: 'accept',
+      path:'',
+      element: <AcceptDriver></AcceptDriver>
+    }
+    , 
+    {
+      path: "detail/{id}",
+      element: <DriverInfo></DriverInfo>
+    }]
+  },
+    {
+      path: 'user',
       element: <>
-        <AcceptDriver></AcceptDriver>
-      </>
-    },  
+        <Outlet></Outlet>
+      </>,
+      children:[
+      {
+        path:'',
+        element: <UserManagement></UserManagement>
+      }
+      , 
+      {
+        path: "detail/{id}",
+        element: <UserInformation></UserInformation>
+      }]
+    },
+    {
+      path: 'orders',
+      element: <>
+        <Outlet></Outlet>
+      </>,
+      children:[
+      {
+        path:'',
+        element: <TotalOrder></TotalOrder>
+      }
+      , 
+      {
+        path: "detail",
+        element: <AdminOrderDetail></AdminOrderDetail>
+      }]
+    },
     {
       path:"info",
       element: <AdminInformation></AdminInformation>,

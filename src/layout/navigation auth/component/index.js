@@ -10,25 +10,52 @@ import {BsChevronDown} from 'react-icons/bs'
 import { AuthContext } from '../../../stores/contextAPI/authctx';
 
 export default function Index() {
+    const [notify,setNotify] = React.useState(false);
     return (
         <div className='nav-root'>
-            <Navbar bg="light" variant="light" expand="lg">
-                <div className="nav-auth px-1">
-                    <Navbar.Brand className="nav-logo-frame" href="/">
-                        <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" width="50px"/>
-                    </Navbar.Brand>
-                    
-                    <div className='nav-auth-form'>
-                        <div className='nav-notification'>
-                            <AiFillBell className='nav-auth-icon-notify'></AiFillBell>
-                        </div>
-                        <div>
-                            <AvatarUserDropDown></AvatarUserDropDown>
+            <div className='nav-form'>
+                <Navbar bg="light" variant="light" expand="lg">
+                    <div className="nav-auth px-1">
+                        <Navbar.Brand className="nav-logo-frame" href="/">
+                            <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" width="50px"/>
+                        </Navbar.Brand>
+                        
+                        <div className='nav-auth-form'>
+                            <div className='nav-notification'>
+                                <AiFillBell onClick={()=>{setNotify(e=>!e)}} className='nav-auth-icon-notify'></AiFillBell>
+                                {notify ? <Notification></Notification> : <></>}
+                            </div>
+                            <div>
+                                <AvatarUserDropDown></AvatarUserDropDown>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </Navbar>
+                </Navbar>
+            </div>
         </div>
+    )
+}
+function Notification(){
+    return(
+        <>
+            <div className='notify-form'>
+                <div className='notify-header'>
+                    <p>Notify</p>
+                </div>
+                <div className='notify-form-content'>
+                    <div>
+                        <p className='notify-title'>Title</p>
+                    </div>
+                    <div>
+                        <p>
+                        Since Bootstrap is developed to be mobile first, 
+                        we use a handful of media queries to create sensible 
+                        breakpoints for our layouts and interfaces.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </>
     )
 }
 
@@ -64,7 +91,6 @@ function AvatarUserDropDown() {
                     Setting
                 </Link>
             </Dropdown.Item>
-
             <Dropdown.Item className='nav-menu-topic' onClick={signout}>
                 <FiLogOut className='nav-menu-topic-icon'></FiLogOut>
                 <div>   
