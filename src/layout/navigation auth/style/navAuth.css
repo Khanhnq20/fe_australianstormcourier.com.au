@@ -12,12 +12,13 @@
     cursor: pointer;
 }
 .nav-avatar{
+    display: flex !important;
     background: none !important; 
     border: none !important;
     padding: 0 !important;
     width: 40px !important;
     box-shadow: none !important;
-    vertical-align: middle !important;
+    align-items: center !important;
     gap: 10px;
     width: fit-content !important;
 }
@@ -50,9 +51,8 @@
     margin-right: 20px;
 }
 .user-name{
-    display: inline-block;
+    display: flex;
     margin: 0;
-    flex-grow: 1;
 }
 .txt-name{
     display: inline-block;
