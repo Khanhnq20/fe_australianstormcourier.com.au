@@ -23,3 +23,7 @@ export * as PaymentComponents from './payment';
 export * as ErrorPages from './errors';
 export {default as UserProductHistory} from './user product history/component/index';
 export {default as UserProductHistoryDetails} from './user product history details/component/index';
+export {default as DriverHistory} from './driver order history/component/index';
+export {default as AcceptDriver} from './accept driver/component/index';
+export {default as AdminInformation} from './admin infomation/component/index';
+export {default as DriverActiveOrder} from './driver active order/component';

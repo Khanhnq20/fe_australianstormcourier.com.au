@@ -3,14 +3,18 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-import { Navigation, Footer, DriverSideBar, UserSideBar } from "../layout";
+import { Navigation, Footer, DriverSideBar, UserSideBar, AdminSideBar } from "../layout";
 import { Home, CreateProduct } from '../pages';
+
 import { AuthValidator, OrderContextComponent } from '../stores'
+
 import { authChildrens } from './auth';
 import { userChildrens } from "./user";
 import { driverChildrens } from "./driver";
 import { errorChildrens } from './error';
 import { paymentChildrens } from './payment';
+import { adminChildrens } from "./admin";
+
 
 export const router = createBrowserRouter([
   {
@@ -57,16 +61,15 @@ export const router = createBrowserRouter([
         children: driverChildrens
       },
       {
-        path: "anonymous",
+        path: "admin",
         element: <>
-          <Outlet></Outlet>
+          <OrderContextComponent>
+            <AdminSideBar>
+              <Outlet></Outlet>
+            </AdminSideBar>
+          </OrderContextComponent>
         </>,
-        children: [
-          {
-            path: "order",
-            element: <CreateProduct></CreateProduct>
-          }
-        ]
+        children: adminChildrens
       },
       {
         path: 'payment',

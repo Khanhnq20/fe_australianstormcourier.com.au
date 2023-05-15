@@ -15,8 +15,19 @@ export default function Index({children}) {
 
     const funcs = {
         getJobAvailables(){
-
+            return authInstance.get([authConstraints.driverRoot, authConstraints.getDriverJobs].join(" "), {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                }
+            })
+            .then(response =>{
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+            });
         },
+
         postOrder(body){
             setState(i =>({
                 ...i,
@@ -40,14 +51,14 @@ export default function Index({children}) {
                             [authConstraints.postOrder] : taskStatus.Completed
                         },
                     }));
+                    toast.success("Post successfully");
                 }
 
+                toast.error(response?.data?.error);
                 setState(i =>({
                     ...i,
                     loading: false
                 }));
-
-                toast.success("Post successfully");
             }).catch(err =>{
                 setState(i =>({
                     ...i,
@@ -61,22 +72,46 @@ export default function Index({children}) {
                 toast.error("Post failed");
             });
         },
+
+        postDriverOffer(body){
+            return authInstance.post([authConstraints.driverRoot, authConstraints.postDriverOffers].join("/"), body, {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                }
+            })
+            .then(response =>{
+                console.log(response);
+                toast.success("Post offer successfully");
+            })
+            .catch(error => {
+                setState(i => ({
+                    ...i,
+                    errors: [error.message] 
+                }));
+                toast.error(error.message);
+            });
+        },
+
+        getActiveOrders(){
+            return authInstance.get([authConstraints.driverRoot, authConstraints.getDriverActiveOrders].join("/"), {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                }
+            })
+            .then(response =>{
+                console.log(response);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        },
     }
-
-    const actions = {
-        
-    }
-
-    useEffect(() => {
-
-    }, []);
 
     return (
         <OrderContext.Provider value={[
             state,
             {
                 ...funcs,
-                ...actions,
                 setGState: setState
             }
         ]

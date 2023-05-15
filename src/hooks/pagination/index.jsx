@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 export function usePagination(props) {
-    const { fetchingAPIInstance, propToGetItem, propToGetTotalPage, amountPerPage = 10, startingPage = 1, totalPages = 1} = props;
+    const { fetchingAPIInstance, propToGetItem, propToGetTotalPage, amountPerPage = 10, startingPage = 0, totalPages, deps = []} = props;
     // min page : 1, max page : inifinite
     const [currentPage, setCurrentPage] = useState(startingPage);
     const [perPageAmount, setPerPageAmount] = useState(amountPerPage);
@@ -9,6 +9,7 @@ export function usePagination(props) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [items, setItems] = useState([]);
+    const [resultNumber, setResultNumber] = useState(0);
 
     useEffect(() => {
         setLoading(true);
@@ -21,7 +22,7 @@ export function usePagination(props) {
             }
 
             if(propToGetTotalPage){
-                setTotal(response?.data?.[propToGetTotalPage]);
+                setResultNumber(response?.data?.[propToGetTotalPage]);
             }
         }).catch(error =>{
             setError(error?.message || "");
@@ -29,11 +30,14 @@ export function usePagination(props) {
             setLoading(false);
         });
 
-    }, [currentPage]);
+    }, [currentPage, propToGetTotalPage, ...deps]);
 
     useEffect(() => {
-        setTotal(totalPages);
-    }, [props]);
+        if(resultNumber){
+            const total = Math.ceil(resultNumber / perPageAmount);
+            setTotal(total);
+        }
+    }, [props, resultNumber]);
 
     function nextPage(){
         setCurrentPage(c => total < 1 ? 1 : c > total - 1 ? 1 : c + 1);
@@ -42,7 +46,6 @@ export function usePagination(props) {
     function prevPage(){
         setCurrentPage(c => total < 1 ? 1 : c < total + 1 ? totalPages : c - 1);
     }
-
 
     return {
         currentPage,

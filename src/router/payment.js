@@ -1,11 +1,12 @@
+import { Outlet } from "react-router-dom";
 import { PaymentComponents } from "../pages";
 
 export const paymentChildrens = [
     {
       path: "checkout",
-      element: <PaymentComponents.Payment></PaymentComponents.Payment>,
+      element: <Outlet></Outlet>,
       children: [
-        {path: "success", element: <PaymentComponents.SuccessPayment></PaymentComponents.SuccessPayment>},
+        {path: "return", element: <PaymentComponents.SuccessPayment></PaymentComponents.SuccessPayment>},
         {path: "failed", element: <PaymentComponents.FailurePayment></PaymentComponents.FailurePayment>}
       ]
     }

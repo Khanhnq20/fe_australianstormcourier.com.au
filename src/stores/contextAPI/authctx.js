@@ -6,7 +6,8 @@ export const AuthContext = createContext();
 
 export default function Index({children}) {
     const [state,setState] = React.useState({
-        accessToken: "",
+        accessToken: "",    
+        // accountInfo: null,
         accountInfo: null,
         loading: true,
         isLogged: false,
@@ -199,12 +200,22 @@ export default function Index({children}) {
                         tasks: {
                             ...i.tasks,
                             [authConstraints.getAccount] : taskStatus.Completed
-                        }
+                        },
+                        loading: false
                     }));
                 }
             }).catch(err =>{
                 if(err.message === "Network Error"){
-                    window.location.replace("/error/500");
+                    setState(i =>({
+                        ...i,
+                        errors: ["Network Error"],
+                        isLogged: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.getAccount] : taskStatus.Failed
+                        },
+                        loading: false
+                    }));
                 }
                 else{
                     setState(i =>({
@@ -214,14 +225,10 @@ export default function Index({children}) {
                         tasks: {
                             ...i.tasks,
                             [authConstraints.getAccount] : taskStatus.Failed
-                        }
+                        },
+                        loading: false
                     }));
                 }
-            }).finally(() =>{
-                setState(i =>({
-                    ...i,
-                    loading: false,
-                }));
             });
         },
 
@@ -290,7 +297,7 @@ export default function Index({children}) {
                     userId
                 },
                 headers: {
-                    "Authorization": [config.AuthenticationSchemax, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+                    "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
                 }
             }).then(response =>{
                 if(!!response.data?.userInfo && !!response.data?.successed){
@@ -311,36 +318,68 @@ export default function Index({children}) {
                 }));
             });
         },
+        updateDriverProfile(body){
+            setState(i =>({
+                ...i,
+                loading: true,
+            }));
+
+            return authInstance.post([authConstraints.root, authConstraints.updateDriver].join("/"), body, {
+                headers: {
+                    "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+                }
+            }).then(response =>{
+                if(!!response.data?.userInfo && !!response.data?.successed){
+                    setState(i => ({
+                        ...i,
+                        accountInfo: response.data.userInfo,
+                        loading: false
+                    }));
+
+                    toast.success("Updated user information", {
+                    });
+                }
+            }).catch(err =>{
+                setState(i =>({
+                    ...i,
+                    loading: false
+                }));
+                toast.error(err.response);
+            });
+        },
         changePassword(body, userId){
             
         }
     }
 
     useEffect(() => {
-        if(!!hasMounted.current && !state.isLogged){
-            funcs.getAccount();
+        if(state.accessToken === "noaccesstoken"){
+            return;
         }
-        else{
-            setState(i => ({
-                ...i,
-                loading: false
-            }));
+        if(hasMounted.current && !state.isLogged){
+            funcs.getAccount();
         }
     }, [state.accessToken]);
 
     useEffect(() =>{
-        var hasLoggedIn = !!localStorage.getItem(authConstraints.LOCAL_KEY);
-
-        if(hasLoggedIn && !hasMounted.current){
-            const newAccessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
+        const newAccessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
+        
+        if(!hasMounted.current){
             hasMounted.current = true;
             
             setState(i =>{
                 return {
                     ...i, 
-                    accessToken: newAccessToken
+                    accessToken: newAccessToken || "noaccesstoken"
                 };
             });
+        }
+
+        if(!newAccessToken){
+            setState(i =>({
+                ...i,
+                loading: false
+            }));
         }
 
         funcs.getAllVehicles();

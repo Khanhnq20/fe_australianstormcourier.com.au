@@ -3,11 +3,8 @@ import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import {DatePicker} from "antd";
-import '../style/userInformation.css'
 import { AuthContext } from '../../../stores';
 import { Col, Row } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 
 let registerSchema = yup.object().shape({
     fullName: yup.string().required("Full Name is required field"),
@@ -17,85 +14,59 @@ let registerSchema = yup.object().shape({
     address: yup.string().required("Full Address is required field"),   
 })
 
-function UserInformation() {
+function AdminInformation() {
     const [date,setDate] = React.useState(new Date());
     const [authState, {updateProfile}] = React.useContext(AuthContext);
 
     return (
         <div>
-            
+            <h3 className='ui-header'>Information</h3>
             <Row>
                 <Col>
-                    <h3 className='ui-header'>Information</h3>
                     <div style={{padding:'35px'}}>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                                Full Name
+                              Full Name
                             </p>
                             <p className='product-content'>
-                                {authState?.accountInfo?.name}
+                              07731158000
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                                User name
+                              User name
                             </p>
                             <p className='product-content'>
-                                {authState?.accountInfo?.username}
+                              07731158000
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                                Email
+                              Email
                             </p>
                             <p className='product-content'>
-                                {authState?.accountInfo?.email}
+                              turly@gmail.com
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                                Phone number
+                              Phone number
                             </p>
                             <p className='product-content'>
-                            {authState?.accountInfo?.phoneNumber}
+                              07731158000
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                                Confirmed phone number
+                              Address
                             </p>
                             <p className='product-content'>
-                                {authState?.accountInfo?.phoneNumberConfirmed ? <span>Confirmed</span> : <span>Not confirmed</span>}
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label'>
-                                Address
-                            </p>
-                            <p className='product-content'>
-                                {authState?.accountInfo?.address}
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label'>
-                                ABN Number
-                            </p>
-                            <p className='product-content'>
-                                {authState?.accountInfo?.abnNumber || <Link>Not yet</Link>}
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label'>
-                                Authorized account type
-                            </p>
-                            <p className='product-content'>
-                                {authState?.accountInfo?.roles?.[0]}
+                              07731158000
                             </p>
                         </div>
                     </div>    
                 </Col>
                 <Col>
-                    <h3 className='ui-header'>Edit Information</h3>
                     <Formik
                         initialValues={{
                             id: authState?.accountInfo?.id,
@@ -120,7 +91,7 @@ function UserInformation() {
                     {({touched, errors, handleSubmit, handleChange, handleBlur,values}) =>{
                         return(
                             <>   
-                                <div>
+                                <div className='p-2'>
                                     <div>
                                         <div>
                                         </div>
@@ -223,7 +194,7 @@ function UserInformation() {
 export default function Index(){
     return(
         <div>
-            <UserInformation></UserInformation>
+            <AdminInformation></AdminInformation>
         </div>
     )
 }

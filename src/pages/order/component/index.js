@@ -246,7 +246,6 @@ let loginSchema = yup.object().shape({
 // }
 
 function UserOrders() {
-    const [totalPages, setTotalPages] = useState(1);
     const {
         currentPage,
         perPageAmount,
@@ -267,15 +266,12 @@ function UserOrders() {
         propToGetItem: "results",
         propToGetTotalPage: "total",
         amountPerPage: 10,
-        startingPage: 1,
-        totalPages: totalPages
+        startingPage: 0,
+        totalPages: 1
     });
-
-
     const rows = [10,15,20,25,30,35,40];
 
     React.useEffect(()=>{
-        
 
     },[]);
 
@@ -285,19 +281,18 @@ function UserOrders() {
     }
 
     return (
-    <Formik
-        initialValues={{
-            id:'',
-            from:'',
-            fullNameSender:'',
-            fullNameDriver:'',
-            to:''
-        }} 
-        validationSchema={loginSchema}
-    >
-    {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
-        return(
-            <>   
+        <Formik
+            initialValues={{
+                id:'',
+                from:'',
+                fullNameSender:'',
+                fullNameDriver:'',
+                to:''
+            }} 
+            validationSchema={loginSchema}
+        >
+        {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
+            return(<>
                 <div>
                     <div className='p-3'>
                         <div>
@@ -413,18 +408,20 @@ function UserOrders() {
                                         <tr>
                                             <th>Order Id</th>
                                             <th>Item Name</th>
-                                            <th>Deliverable Location</th>
-                                            <th>Deliverable Destination</th>
+                                            <th>Pickup Location</th>
+                                            <th>Destination</th>
                                             <th>Posted At</th>
                                             <th>Expected date</th>
                                             <th>Expected time frame</th>
                                             <th>Status</th>
+                                            <th>Vehicles</th>
+                                            <th>Offer Amount</th>
                                             <th>Actions</th>
                                         </tr>
                                     </thead> 
                                     <tbody>
                                         {
-                                            items?.slice(currentPage, currentPage + perPageAmount).map((post,index) =>{
+                                            items?.slice((currentPage - 1) * perPageAmount, perPageAmount * (1 + currentPage)).map((post,index) =>{
                                                 return (
                                                     <tr key={index}>
                                                         <td>{post?.id}</td>
@@ -447,6 +444,10 @@ function UserOrders() {
                                                         <td>{!!post?.deliveredDate ? moment(post?.deliveredDate).format("DD-MM-YYYY") : ""}</td>
                                                         <td>{post?.timeFrame}</td>
                                                         <td>{post?.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</td>
+                                                        <td>{post?.vehicles?.map?.(v => {
+                                                            return <p>{v}</p>
+                                                        })}</td>
+                                                        <td>{post?.offerNumber}</td>
                                                         <td>
                                                             <Row>
                                                                 <Col>
@@ -483,14 +484,12 @@ function UserOrders() {
                                     <Pagination.Next onClick={nextPage} className='pg-first' />
                                     {/* <Pagination.Last onClick={last} className='pg-first'/> */}
                                 </Pagination>
-                            </>)
-                            }
+                            </>)}
                     </div>
                 </div>
-            </>
-    )}}
-    </Formik>
-  )
+            </>)}}
+        </Formik>
+    )
 }
 
 export default function Index(){
