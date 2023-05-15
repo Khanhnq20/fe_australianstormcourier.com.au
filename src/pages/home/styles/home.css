@@ -1,10 +1,8 @@
-
 .ban-background{
     display: flex;
     animation: sparkle 60s linear infinite;
     position: relative;
     padding: 120px 0;
-
 }
 
 .ban-form-content{
