@@ -43,7 +43,7 @@ export default function Index() {
             });
         }}
     >
-    {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
+    {({touched, errors, handleSubmit, handleChange, handleBlur, isValid}) =>{
         return(
             <>   
                 <div style={{minHeight:"84vh"}} className='container p-5'>
@@ -55,9 +55,12 @@ export default function Index() {
                         </div>
                         <Form className='form' onSubmit={handleSubmit}>
 
-                            {authState?.errors?.map?.(error =>(<Message.Error>
-                                {error || error?.message || null}
-                            </Message.Error>))}
+                            {authState?.errors?.map?.(error =>{
+                                console.log(error);
+                                return (<Message.Error>
+                                    {error || error?.message || <p></p>}
+                                </Message.Error>);
+                            })}
 
                             <Form.Group className="form-group" >
                                 <div className='mb-2'>

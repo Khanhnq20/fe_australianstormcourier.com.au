@@ -1,225 +1,302 @@
-import React from 'react';
-import { Formik } from "formik";
+import '../style/product.css';
+import React, { useContext, useState } from 'react';
+import { Formik, yupToFormErrors } from "formik";
 import * as yup from 'yup';
-import Form from 'react-bootstrap/Form';
-import Button from 'react-bootstrap/Button';
-import '../style/driverProduct.css';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
-import axios from 'axios';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
-import { Col, Row } from 'react-bootstrap';
+import { Col, Row, Spinner, Form, Button, Modal, InputGroup } from 'react-bootstrap';
+import { ImCross } from 'react-icons/im';
+import { FcAcceptDatabase } from 'react-icons/fc';
+import { usePagination } from '../../../hooks';
+import { authConstraints, authInstance, config } from '../../../api';
+import moment, { utc } from 'moment';
+import { Link } from 'react-router-dom';
+import { AuthContext, OrderContext } from '../../../stores';
+
 
 let driverSchema = yup.object().shape({
-    email: yup.string().email('This field must be email type').required("Email is required field"), 
-    password: yup.string().required("This field is requied")
+    driverId: yup.string().nullable(),
+    ratePrice: yup.number().moreThan(5).required(),
+    orderId: yup.string().required(),
+    createdAt: yup.date().required(),
 })
 function Product() {
-    const [post,setPost] = React.useState([]);
-    const [paginatedPost,setPagiantedPost] = React.useState([]);
-    const [currentPage,setCurrentPage] = React.useState(1);
-    const [rows,setRows] = React.useState(10);
-    const row = [10,15,20,25,30,35,40];
-    const pageSize=rows;
+    const [authState] = useContext(AuthContext);
+    const [_,{postDriverOffer}] = useContext(OrderContext);
 
-    React.useEffect(()=>{
-        axios.get('https://jsonplaceholder.typicode.com/todos').then((res)=>{
-            setPost(res.data);
-            setPagiantedPost(post.slice(0,pageSize)); 
-        })
-    },[rows])
-    const pages = post ? Math.ceil(post?.length/pageSize) : 0;
-    const pageCount = [...Array(pages+1).keys()].slice(1);
-    function pagination(pageNo){
-        setCurrentPage(pageNo);
-        const startIndex = (pageNo -1 ) * pageSize;
-        const paginatedPostt = post?.slice(startIndex,startIndex+pageSize);
-        setPagiantedPost(paginatedPostt);
+    const rows = [5,10,15,20,25,30,35,40];
+    const {
+        currentPage,
+        perPageAmount,
+        total,
+        loading,
+        error,
+        items,
+        nextPage,
+        prevPage,
+        setCurrent,
+        setPerPageAmount
+     } = usePagination({
+        fetchingAPIInstance: authInstance.get([authConstraints.driverRoot, authConstraints.getDriverJobs].join("/"), {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+            }
+        }),
+        propToGetItem: "results",
+        propToGetTotalPage: "total",
+        amountPerPage: rows[0],
+        startingPage: 0,
+        totalPages: 1
+    });
+    
+
+    if(loading){
+        return <Spinner></Spinner>
     }
-    function first(){
-        setCurrentPage(1);
-        const paginatedPostt = post?.slice(0,pageSize);
-        setPagiantedPost(paginatedPostt);
-    }
-    function last(){
-        setCurrentPage(pages);
-        const paginatedPostt = post?.slice(-pageSize);
-        setPagiantedPost(paginatedPostt);
-    }
-    function next(pageNo){
-        if(currentPage !== pages){
-            setCurrentPage(e => e+1);
-            const startIndex = pageNo * pageSize;
-            const paginatedPostt = post?.slice(startIndex,startIndex+pageSize);
-            setPagiantedPost(paginatedPostt);
-        }
-    }
-    function previous(pageNo){
-        if(currentPage !== 1){
-            setCurrentPage(e => e-1);
-            const startIndex = (pageNo-2) * pageSize;
-            const paginatedPostt = post?.slice(startIndex,startIndex+pageSize);
-            setPagiantedPost(paginatedPostt);
-        }
-    }
+
+    if(error) return <pre>{JSON.stringify(error, 4, 4)}</pre>
+
     return (
-    <Formik
-        initialValues={{
-            id:'',
-            from:'',
-            fullName:'',
-            to:''
-        }} 
-        validationSchema={driverSchema}
-    >
-    {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
-        return(
-            <>   
-                <div>
-                    <div className='p-3'>
-                        <div>
-                            <Form>
-                                <div className='form-order'>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Pick up</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="from"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Destination</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="to"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                </div>
-                                <div>
-                                    <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
-                                        <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
-                                        Search</Button>
-                                </div>
-                            </Form>
+        <div>
+            <div className='p-3'>
+                <div className='form-order'>
+                    <Form.Group>
+                        <div className='mb-2'>
+                            <Form.Label className='label'>From</Form.Label>
                         </div>
-                    </div>
-                    
-                    <div>
-                        <div className='pg-rows'>
-                            <p className='m-0'>Show</p>
-                            <div>
-                                <Dropdown className='reg-dr' style={{width:'fit-content'}}>
-                                    <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
-                                        {rows}
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu>
-                                        {row.map((item,index) => {
-                                            return(
-                                                <Dropdown.Item key={index} onClick={()=>setRows(item)}>{item}</Dropdown.Item>
-                                            )
-                                        })}
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                            </div>
-                            <p className='m-0'>Rows</p>
+                        <Form.Control
+                            type="text"
+                            name="from"
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <div className='mb-2'>
+                            <Form.Label className='label'>Name</Form.Label>
                         </div>
-                        {paginatedPost?.length === 0 ? (<div className='txt-center'>
-                                <h5>No Data Found</h5>
-                            </div>) :
-                            (<>
-                                <Table striped bordered >
-                                    <thead>
-                                        <tr>
-                                            <th>Order Id</th>
-                                            <th>Pick up</th>
-                                            <th>Destination</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead> 
-                                        <tbody>
-                                            {
-                                                paginatedPost?.map((post,index) =>{
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td>{post.id}</td>
-                                                            <td>{post.userId}</td>
-                                                            <td>{post.title}</td>
-                                                            <td>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <Button variant='success'>Accept</Button>
-                                                                    </Col>
-                                                                    <Col>
-                                                                        <Button variant='danger'>Deny</Button>
-                                                                    </Col>
-                                                                </Row>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })
-                                            }
-                                        </tbody>
-                                </Table>
-                                <Pagination className='pg-form w-100'>
-                                    <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/>
-                                    <Pagination.Prev onClick={()=>previous(currentPage)} className='pg-first' />
-                                    {pageCount.map((item,index) => {
-                                        return (
-                                            <div>
-                                                <div key={index}>
-                                                    <Pagination.Item 
-                                                    className={item === currentPage ? "pg-no pg-active" : "pg-no"}
-                                                    onClick={()=>pagination(item)}
-                                                    >{item}</Pagination.Item>
-                                                </div>
-                                            </div>
-                                        )
-                                    })}
-                                    <Pagination.Next onClick={()=>next(currentPage)} className='pg-first' />
-                                    <Pagination.Last onClick={last} className='pg-first'/>
-                                </Pagination>
-                            </>)
-                            }
-                    </div>
+                        <Form.Control
+                            type="text"
+                            name="fullName"
+                        />
+                    </Form.Group>
+                    <Form.Group>
+                        <div className='mb-2'>
+                            <Form.Label className='label'>To</Form.Label>
+                        </div>
+                        <Form.Control
+                            type="text"
+                            name="to"
+                        />
+                    </Form.Group>
                 </div>
-            </>
-    )}}
-    </Formik>
-  )
+                <div>
+                    <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
+                        <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
+                        Search</Button>
+                </div>
+            </div>
+            
+            <div>
+                <div className='pg-rows'>
+                    <p className='m-0'>Show</p>
+                    <Dropdown className='reg-dr' style={{width:'fit-content'}}>
+                        <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
+                            {perPageAmount}
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                            {rows.map((item,index) => {
+                                return(
+                                    <Dropdown.Item key={index} onClick={()=>setPerPageAmount(item)}>{item}</Dropdown.Item>
+                                )
+                            })}
+                        </Dropdown.Menu>
+                    </Dropdown>
+                    <p className='m-0'>Rows</p>
+                </div>
+                
+                {items?.length === 0 ? 
+                    (<div className='txt-center'>
+                        <h5>No Data Found</h5>
+                    </div>) :
+                    (<>
+                        <div style={{maxWidth: '100%', overflowX: "scroll" }}>
+                            <Table striped bordered >
+                                <thead>
+                                    <tr>
+                                        <th>Order Id</th>
+                                        <th style={{
+                                            minWidth: '320px'
+                                        }}>Item Name</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Deliverable Location</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Deliverable Destination</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Posted At</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Expected date</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Expected time frame</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Expected vehicles</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Status</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Sender Offer</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Required Vehicles</th>
+                                        <th style={{
+                                            minWidth: '140px'
+                                        }}>Actions</th>
+                                    </tr>
+                                </thead> 
+                                <tbody>
+                                    {
+                                        items?.slice(currentPage * perPageAmount, perPageAmount * (1 + currentPage)).map((post,index) =>{
+                                            return (
+                                                <tr key={index}>
+                                                    <td>{post?.id}</td>
+                                                    <td>
+                                                        <Row>
+                                                            <Col sm="5">
+                                                                <>
+                                                                    <img src={post?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
+                                                                </>
+                                                            </Col>
+                                                            <Col sm="7">
+                                                                <b>{post?.orderItems?.[0]?.itemName}</b>
+                                                            </Col>
+                                                        </Row>
+                                                    </td>
+                                                    <td>{post?.sendingLocation}</td>
+                                                    <td>{post?.destination}</td>
+                                                    <td>{!!post?.createdDate ? moment(post?.createdDate).format("DD-MM-YYYY") : ""}</td>
+                                                    <td>{!!post?.deliveredDate ? moment(post?.deliveredDate).format("DD-MM-YYYY") : ""}</td>
+                                                    <td>{post?.timeFrame}</td>
+                                                    <td><>
+                                                        {post?.vehicles?.map?.(str => {
+                                                            return <li>{str}</li>
+                                                        })}
+                                                    </>
+                                                    </td>
+                                                    <td>{post?.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</td>
+                                                    <td>{post?.orderItems?.reduce?.((i,c) => i + c?.startingRate,0)} aud</td>
+                                                    <td>{post?.vehicles?.join(" - ")}</td>
+                                                    <td>
+                                                        <Formik
+                                                            initialValues={{
+                                                                driverId: authState?.accountInfo?.id,
+                                                                ratePrice: post?.selectedRate,
+                                                                orderId: post?.id,
+                                                                createdAt: new moment(),
+                                                                show: false
+                                                            }} 
+                                                            validationSchema={driverSchema}
+                                                            onSubmit={values =>{
+                                                                postDriverOffer(values);
+                                                            }}
+                                                        >
+                                                        {({touched, errors, values, handleSubmit, handleChange, handleBlur, setValues, setFieldValue, isValid}) =>{
+                                                            return (
+                                                                <>
+                                                                    <Row style={{flexWrap: 'wrap'}}>
+                                                                        <Col sm="12" className='mb-2'>
+                                                                            <Button className="w-100" variant='success' onClick={() =>{
+                                                                                const body = {
+                                                                                    ...values,
+                                                                                    ratePrice: post?.orderItems?.[0]?.startingRate
+                                                                                };
+                                                                                
+                                                                                postDriverOffer(body);
+                                                                            }}>
+                                                                                Accept
+                                                                            </Button>
+                                                                        </Col>
+                                                                        <Col sm="12">
+                                                                            <Button className="w-100" variant='warning' onClick={() => setValues(v => ({...v, show: !v.show}))}>
+                                                                                My Offer
+                                                                            </Button>
+                                                                        </Col>
+                                                                    </Row>
+                                                                    {values.show && (
+                                                                        <Form onSubmit={handleSubmit}>
+                                                                            <Form.Group>
+                                                                                <InputGroup className="my-3">
+                                                                                    <Form.Control name="ratePrice" 
+                                                                                        onChange={(e) =>{
+                                                                                            setFieldValue(e.target.name, Number(e.target.value), true);
+                                                                                        }}
+                                                                                        isInvalid={touched.ratePrice && !!errors?.ratePrice}
+                                                                                        onBlur={handleBlur}
+                                                                                        aria-label="RatePrice"
+                                                                                        aria-describedby="aud"
+                                                                                    ></Form.Control>
+                                                                                    <InputGroup.Text id="aud">$</InputGroup.Text>
+                                                                                    <Form.Control.Feedback type="invalid">{errors?.ratePrice}</Form.Control.Feedback>
+                                                                                </InputGroup>
+                                                                                <Button className='w-100' type="submit">Send My Offer</Button>
+                                                                            </Form.Group>
+                                                                        </Form>
+                                                                    )}
+                                                                </>
+                                                        )}}
+                                                        </Formik>
+                                                    </td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
+                            </Table>
+                        </div>
+                        <Pagination className='pg-form w-100'>
+                            <Pagination.Prev onClick={prevPage} className='pg-first' />
+                            {Array.from(Array(5).keys()).map((item,index) => {
+                                return (
+                                    <div key={index}>
+                                        <Pagination.Item 
+                                        className={item === currentPage ? "pg-no pg-active" : "pg-no"}
+                                        onClick={()=>setCurrent(item)}
+                                        >{item + 1}</Pagination.Item>
+                                    </div>
+                                )
+                            })}
+                            <Pagination.Next onClick={nextPage} className='pg-first' />
+                        </Pagination>
+                    </>)}
+            </div>
+        </div>
+    )
 }
 
 function DropDownStatus() {
     const [state,setState] = React.useState(true);
     return (
-      <Dropdown className='reg-dr'>
-        <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-            {state === true ? "Looking for driver" : "Done"}
-        </Dropdown.Toggle>
-  
-        <Dropdown.Menu className='w-100'>
-          <Dropdown.Item onClick={()=>setState(true)}>Looking for driver</Dropdown.Item>
-          <Dropdown.Item onClick={() => setState(false)}>Done</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
+        <Dropdown className='reg-dr'>
+            <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
+                {state === true ? "Looking for driver" : "Done"}
+            </Dropdown.Toggle>
+    
+            <Dropdown.Menu className='w-100'>
+                <Dropdown.Item onClick={()=>setState(true)}>Looking for driver</Dropdown.Item>
+                <Dropdown.Item onClick={() => setState(false)}>Done</Dropdown.Item>
+            </Dropdown.Menu>
+        </Dropdown>
     );
-  }
+}
+
 export default function Index(){
     return(
-            <Product></Product>
+        <Product></Product>
     )
 }

@@ -1,75 +1,303 @@
-import React,{ useRef } from 'react'
-import {  Sidebar } from '../../../layout'
-import { Col, Row } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
+import React,{ useEffect, useRef } from 'react'
+import { Col, Container, Row, Spinner, Button, Dropdown, Table, Form, Pagination,Modal } from 'react-bootstrap';
 import '../style/senderProductDetail.css';
 import {TfiPencilAlt} from 'react-icons/tfi';
-import Dropdown from 'react-bootstrap/Dropdown';
-import axios from 'axios';
-import Table from 'react-bootstrap/Table';
-import Pagination from 'react-bootstrap/Pagination';
+import {MdPayment} from 'react-icons/md';
 import { Formik } from "formik";
 import * as yup from 'yup';
-import Form from 'react-bootstrap/Form';
 import {RiImageEditFill} from 'react-icons/ri';
 import {BsFillPersonVcardFill} from 'react-icons/bs';
-import Modal from 'react-bootstrap/Modal';
+import { BiCheckDouble } from 'react-icons/bi';
+import { Navigate, useSearchParams } from 'react-router-dom';
+import moment from 'moment';
+import { toast } from 'react-toastify';
+import { authConstraints, authInstance, config } from '../../../api';
+import { usePagination } from '../../../hooks';
+import { PaymentComponents } from '../..';
 
 function ProductDetail(){
-    const [post,setPost] = React.useState([]);
-    const [paginatedPost,setPagiantedPost] = React.useState([]);
-    const [currentPage,setCurrentPage] = React.useState(1);
-    const [rows,setRows] = React.useState(10);
-    const row = [10,15,20,25,30,35,40];
-    const pageSize=rows;
+    const [result, setResult] = React.useState(null);
+    const [loading, setLoading] = React.useState(true);
+    const [popupLoading, setPopupLoading] = React.useState(false);
+    const [error, setError] = React.useState("");
+    const [show, setShow] = React.useState(false);
+    const [clientSecret, setClientSecret] = React.useState("");
+    const rows = [5,10,15,20,25,30,35,40];
+    const [searchParams] = useSearchParams();
+    const {
+        currentPage,
+        perPageAmount,
+        total,
+        loading: offerLoading,
+        error: offerError,
+        items,
+        nextPage,
+        prevPage,
+        setCurrent,
+        setPerPageAmount
+    } = usePagination({
+        fetchingAPIInstance: authInstance.get([authConstraints.userRoot, authConstraints.getOrderOffers].join("/"), {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+            },
+            params: {
+                orderId: searchParams.get(keyquery)
+            }
+        }),
+        propToGetItem: "result",
+        deps: [result],
+        propToGetTotalPage: "total",
+        amountPerPage: rows[0],
+        startingPage: 1,
+        totalPages: 1
+    });
 
-    React.useEffect(()=>{
-        axios.get('https://jsonplaceholder.typicode.com/todos').then((res)=>{
-            setPost(res.data);
-            setPagiantedPost(post.slice(0,pageSize)); 
+    useEffect(() =>{
+        getOrderInfo();
+    }, [searchParams]);
+
+    function getOrderInfo(){
+        setLoading(true);
+        authInstance.get([authConstraints.userRoot, authConstraints.getAllOrderInfo].join('/'), {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+            },
+            params: {
+                orderId: searchParams.get(keyquery)
+            }
+        }).then(response =>{
+            if(response?.data?.successed){
+                setResult(response?.data?.result);
+            }
+            setLoading(false);
+        }).catch(error =>{
+            if(error.message === "Axios Error" && error.code === 403){
+                setError("Forbiden");
+                toast.error("Forbiden");
+            }
+            setLoading(false);
+        });
+    }
+
+    function acceptDriver(driverId) {
+        setLoading(true);
+        authInstance.put([authConstraints.userRoot, authConstraints.acceptDriverOffer].join("/"), null, {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+            },
+            params: {
+                orderId: searchParams.get(keyquery),
+                driverId: driverId,
+            }
         })
-    },[rows])
-    const pages = post ? Math.ceil(post?.length/pageSize) : 0;
-    const pageCount = [...Array(pages+1).keys()].slice(1);
-    function pagination(pageNo){
-        setCurrentPage(pageNo);
-        const startIndex = (pageNo -1 ) * pageSize;
-        const paginatedPostt = post?.slice(startIndex,startIndex+pageSize);
-        setPagiantedPost(paginatedPostt);
+        .then(response =>{
+            if(response?.data?.successed && response.data?.result){
+                const {orderId, driverId} = response.data?.result;
+                createOrderPayment(orderId,driverId);
+            }
+            setLoading(false);
+        })
+        .catch(error => {
+            toast.error(error?.message);
+            setError(error?.message);
+            setLoading(false);
+        });
     }
-    function first(){
-        setCurrentPage(1);
-        const paginatedPostt = post?.slice(0,pageSize);
-        setPagiantedPost(paginatedPostt);
+
+    function createOrderPayment(orderId, driverId){
+        setPopupLoading(true);
+        return authInstance.post([authConstraints.userRoot, authConstraints.postCheckoutIntentSessions].join("/"), null, {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+            },
+            params: {
+                orderId,
+                driverId
+            }
+        }).then(response =>{
+            if(response.data?.successed){
+                setShow(true);
+                const {clientSecrete} = response?.data;
+                setClientSecret(clientSecrete);
+            }
+            setPopupLoading(false);
+        }).catch(error =>{
+            setShow(false);
+            setPopupLoading(false);
+        });
     }
-    function last(){
-        setCurrentPage(pages);
-        const paginatedPostt = post?.slice(-pageSize);
-        setPagiantedPost(paginatedPostt);
+
+    if(loading) 
+        return (<Container>
+            <Spinner></Spinner>
+        </Container>);
+
+    if(error === "Forbiden"){
+        return (<Navigate to="/user/order"></Navigate>);
     }
-    function next(pageNo){
-        if(currentPage !== pages){
-            setCurrentPage(e => e+1);
-            const startIndex = pageNo * pageSize;
-            const paginatedPostt = post?.slice(startIndex,startIndex+pageSize);
-            setPagiantedPost(paginatedPostt);
-        }
-    }
-    function previous(pageNo){
-        if(currentPage !== 1){
-            setCurrentPage(e => e-1);
-            const startIndex = (pageNo-2) * pageSize;
-            const paginatedPostt = post?.slice(startIndex,startIndex+pageSize);
-            setPagiantedPost(paginatedPostt);
-        }
-    }
+
     return(
         <div>
             <div>
-              <p className='product-detail-header'>Details</p>
+                <p className='product-detail-header'>Details</p>
             </div>
-          <div>
+
             <div>
+                {/* Delivery Information */}
+                <div className='sender-product-title'>
+                    <p className='product-content-title mb-3'>Delivery Information</p>
+                </div>
+                <Row className='product-form-content'>
+                    <Col>
+                        <div className='product-form-info'>
+                            <div>
+                                <div className='product-label-info'>
+                                    <p className='product-label'>
+                                        ID
+                                    </p>
+                                    <p className='product-content'>
+                                        {"000000".substring(0, 6 - result?.id?.toString().length) + result?.id}
+                                    </p>
+                                </div>
+                                <div className='product-label-info'>
+                                    <p className='product-label'>
+                                        Sender Name
+                                    </p>
+                                    <p className='product-content'>
+                                        {result?.sender?.name}
+                                    </p>
+                                </div>
+                                <div className='product-label-info'>
+                                    <p className='product-label'>
+                                        Phone number
+                                    </p>
+                                    <p className='product-content'>
+                                        {result?.sender?.phoneNumber}
+                                    </p>
+                                </div>
+                                <div className='product-label-info'>
+                                    <p className='product-label'>
+                                        From
+                                    </p>
+                                    <p className='product-content'>
+                                        {result?.sendingLocation}
+                                    </p>
+                                </div>
+                                <div className='product-label-info'>
+                                    <p className='product-label'>
+                                        To
+                                    </p>
+                                    <p className='product-content'>
+                                        {result?.destination}
+                                    </p>
+                                </div>
+                                <div className='product-label-info'>
+                                    <p className='product-label'>
+                                        Receiver Name
+                                    </p>
+                                    <p className='product-content'>
+                                        {result?.receiverName || "Provide now"}
+                                    </p>
+                                </div>
+                                <div className='product-label-info'>
+                                    <p className='product-label'>
+                                        Receiver Phone
+                                    </p>
+                                    <p className='product-content'>
+                                        {result?.receiverPhone}
+                                    </p>
+                                </div>
+                                <div className='product-label-info'>
+                                    <p className='product-label'>
+                                        Posted Date
+                                    </p>
+                                    <p className='product-content'>
+                                        {new moment(result?.createdDate).format('YYYY-MM-DD HH : mm : ss')}
+                                    </p>
+                                </div>
+                                <div className='product-label-info' style={{alignItems: 'flex-start'}}>
+                                    <p className='product-label'>
+                                        Vehicles
+                                    </p>
+                                    <div className='product-content'>
+                                        {result.vehicles.map((str,idx) =>{
+                                            return <p key={idx}>- {str}</p>
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </Col>
+                    <Col>
+                        <div>
+                            <div className='product-label-info'>
+                                <p className='product-label-fit'>
+                                    Starting shipping rates
+                                </p>
+                                <p className='product-content'>
+                                    {result?.orderItems?.[0]?.startingRate} AUD
+                                </p>
+                            </div>
+                            <div className='product-label-info'>
+                                <p className='product-label-fit'>
+                                    Selected shipping rates
+                                </p>
+                                <p className='product-content'>
+                                {result?.orderItems?.[0]?.selectedRate} AUD
+                                </p>
+                            </div>
+                            <div className='product-label-info'>
+                                <p className='product-label-fit'>
+                                    Status
+                                </p>
+                                
+                                {result?.status === "WaitingForPayment" || result?.status === "Paid" ? (
+                                    <p className="content-red">
+                                        Closed
+                                    </p>
+                                ): result?.status !== "Cancelled" ? (
+                                    <p className='content-green'>
+                                        Opening
+                                    </p>
+                                ): (
+                                    <p className='content-red'>
+                                        Not available
+                                    </p>
+                                )}
+                            </div>
+                            <div className='product-label-info'  style={{alignItems:'unset'}}>
+                                <p className='product-label-fit'>
+                                    Delivery Images
+                                </p>
+                                <div>
+                                    <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                                        <div className='background-front'>
+                                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.deliverdItemImages?.split("[space]")?.length || 0}</div>
+                                            <p className='driving-txt'>view image</p>
+                                        </div>
+                                        <img className='img-front' src={result?.deliverdItemImages?.split?.("[space]")?.[0]}/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='product-label-info'  style={{alignItems:'unset'}}>
+                                <p className='product-label-fit'>
+                                    Received Images
+                                </p>
+                                <div>
+                                    <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                                        <div className='background-front'>
+                                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.receivedItemImages?.split("[space]")?.length || 0}</div>
+                                            <p className='driving-txt'>view image</p>
+                                        </div>
+                                        <img className='img-front' src={result?.receivedItemImages?.split?.("[space]")?.[0]}/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </Col>
+                </Row>
+
+                {/* Product Information */}
                 <div className='sender-product-title'>
                     <p className='product-content-title mb-3'>Product Information</p>
                     <div>
@@ -78,199 +306,260 @@ function ProductDetail(){
                             Edit</Button>
                     </div>
                 </div>
-            </div>
-            <Row className='product-form-content'>
-                <Col>
-                  <div className='product-form-info'>
-                      <div>
-                        <div className='product-label-info'>
-                            <p className='product-label'>
-                              ID
-                            </p>
-                            <p className='product-content'>
-                              00001
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label'>
-                              Name
-                            </p>
-                            <p className='product-content'>
-                              Ansel
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label'>
-                              Quality
-                            </p>
-                            <p className='product-content'>
-                              07731158000
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label'>
-                              From
-                            </p>
-                            <p className='product-content'>
-                              Anselm@gmail.com
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label'>
-                              To
-                            </p>
-                            <p className='product-content'>
-                              189795
-                            </p>
-                        </div>
-                      </div>
-                  </div>
-                </Col>
-                <Col>
-                    <div>
-                      <div className='product-label-info'>
-                            <p className='product-label-fit'>
-                              Starting shipping rates
-                            </p>
-                            <p className='product-content'>
-                              300$
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label-fit'>
-                              Selected shipping rates
-                            </p>
-                            <p className='product-content'>
-                              06785634545$
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label-fit'>
-                              Status
-                            </p>
-                            <p className='content-green'>
-                              Actived
-                            </p>
-                        </div>
-                        <div className='product-label-info'  style={{alignItems:'unset'}}>
-                            <p className='product-label-fit'>
-                              Product pictures
-                            </p>
-                            <div>
-                                <div className='img-front-frame'  style={{padding:'10px 0 '}}>
-                                    <div className='background-front'>
-                                        <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
-                                        <p className='driving-txt'>view image</p>
+                {result?.orderItems?.map?.((item,index) =>{
+                    return (
+                        <Row className='product-form-content' key={index + 1}>
+                            <Col>
+                                <div className='product-form-info'>
+                                    <div>
+                                        <div className='product-label-info'>
+                                            <p className='product-label'>
+                                                Item Name
+                                            </p>
+                                            <p className='product-content'>
+                                                {item.itemName}
+                                            </p>
+                                        </div>
+                                        <div className='product-label-info'>
+                                            <p className='product-label'>
+                                                Charcode
+                                            </p>
+                                            <p className='product-content'>
+                                                {"000000".substring(0, 6 - item.itemCharCode.toString().length) + item.itemCharCode}
+                                            </p>
+                                        </div>
+                                        <div className='product-label-info'>
+                                            <p className='product-label'>
+                                                Note
+                                            </p>
+                                            <p className='product-content'>
+                                                {item.itemDescription}
+                                            </p>
+                                        </div>
+                                        <div className='product-label-info'>
+                                            <p className='product-label'>
+                                                Quantity
+                                            </p>
+                                            <p className='product-content'>
+                                                {item.quantity}
+                                            </p>
+                                        </div>
+                                        <div className='product-label-info'>
+                                            <p className='product-label'>
+                                                Weight
+                                            </p>
+                                            <p className='product-content'>
+                                                {item?.weight} Kilograms
+                                            </p>
+                                        </div>
+                                        <div className='product-label-info'>
+                                            <p className='product-label'>
+                                                Package Type
+                                            </p>
+                                            <p className='product-content'>
+                                                {item.packageType}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                </Col>
-            </Row>
-            <Row>
-              <Col>
-                  <div className='py-4'>
-                    <div className='product-label-info my' >
-                          <p className='product-label-fit'>
-                            Status
-                          </p>
-                          <p className='content-blue'>
-                            Looking for a driver
-                          </p>
-                      </div>
-                      <div>
-                          <p style={{fontWeight:'600'}}>The driver requested delivery</p>
-                      </div>
-                      <div>
-                        <div>
-                            <div className='pg-rows'>
-                                <p className='m-0'>Show</p>
+                            </Col>
+                            <Col>
                                 <div>
-                                    <Dropdown className='reg-dr' style={{width:'fit-content'}}>
-                                        <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
-                                            {rows}
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            {row.map((item,index) => {
-                                                return(
-                                                    <Dropdown.Item key={index} onClick={()=>setRows(item)}>{item}</Dropdown.Item>
-                                                )
-                                            })}
-                                        </Dropdown.Menu>
-                                    </Dropdown>
+                                    <div className='product-label-info'>
+                                        <p className='product-label-fit'>
+                                            Starting shipping rates
+                                        </p>
+                                        <p className='product-content'>
+                                            {item.startingRate} AUD
+                                        </p>
+                                    </div>
+                                    <div className='product-label-info'>
+                                        <p className='product-label-fit'>
+                                            Selected shipping rates
+                                        </p>
+                                        <p className='product-content'>
+                                        {item.selectedRate} AUD
+                                        </p>
+                                    </div>
+                                    <div className='product-label-info'  style={{alignItems:'unset'}}>
+                                        <p className='product-label-fit'>
+                                            Product pictures
+                                        </p>
+                                        <div>
+                                            <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                                                <div className='background-front'>
+                                                    <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.orderItems?.[0]?.itemImages?.split("[space]")?.length}</div>
+                                                    <p className='driving-txt'>view image</p>
+                                                </div>
+                                                <img className='img-front' src={item.itemImages?.split?.("[space]")?.[0]}/>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <p className='m-0'>Rows</p>
+                            </Col>
+                        </Row>
+                    )
+                })}
+
+                {/* Order Status */}
+                <Row>
+                    <Col>
+                        <div className='py-4'>
+                        <div className='product-label-info my' >
+                                <p className='product-label-fit'>
+                                    Status
+                                </p>
+                                <p className='content-blue'>
+                                    {result.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}
+                                </p>
                             </div>
-                            {paginatedPost?.length === 0 ? (<div className='txt-center'>
-                                    <h5>No Data Found</h5>
-                                </div>) :
-                                (<>
-                                    <Table striped bordered >
-                                        <thead>
-                                            <tr>
-                                                <th>Driver</th>
-                                                <th>Rate</th>
-                                                <th>Status</th>
-                                                <th>Action</th>
-                                            </tr>
-                                        </thead> 
+                            <div>
+                                <p style={{fontWeight:'600'}}>The driver requested {result?.offerNumber} offers</p>
+                            </div>
+                            <div>
+                                <div className='pg-rows'>
+                                    <p className='m-0'>Show</p>
+                                    <div>
+                                        <Dropdown className='reg-dr' style={{width:'fit-content'}}>
+                                            <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
+                                                {perPageAmount}
+                                            </Dropdown.Toggle>
+                                            <Dropdown.Menu>
+                                                {rows.map((item,index) => {
+                                                    return(
+                                                        <Dropdown.Item key={index} onClick={()=> setCurrent(item)}>{item}</Dropdown.Item>
+                                                    )
+                                                })}
+                                            </Dropdown.Menu>
+                                        </Dropdown>
+                                    </div>
+                                    <p className='m-0'>Rows</p>
+                                </div>
+                                {items.length === 0 ? (<div className='txt-center'>
+                                        <h5>No Data Found</h5>
+                                    </div>) :
+                                    (<>
+                                        <Table bordered >
+                                            <thead>
+                                                <tr>
+                                                    <th>ID</th>
+                                                    <th style={{minWidth: '150px'}}>Rate</th>
+                                                    <th>Status</th>
+                                                    <th>Sent at</th>
+                                                    <th>Driver Vehicles</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead> 
                                             <tbody>
                                                 {
-                                                    paginatedPost?.map((post,index) =>{
+                                                    items?.map?.((post,index) =>{
                                                         return (
                                                             <tr key={index}>
-                                                                <td>{post.id}</td>
-                                                                <td>{post.userId}</td>
-                                                                <td>
-                                                                    <div className='content-green'>Received</div>
+                                                                <td>{"000000".substring(0, 6 - (index + 1)?.toString().length) + (index + 1)}
                                                                 </td>
-                                                                <td className='sender-action'>
-                                                                    <div className='txt-success'>Accept</div>
-                                                                    <div className='txt-error'>Cancel</div>
+                                                                <td>
+                                                                    <Row>
+                                                                        <Col>ShipFee:</Col>
+                                                                        <Col>{post?.ratePrice}</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>GST:</Col>
+                                                                        <Col>10%</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>Freight:</Col>
+                                                                        <Col>10%</Col>
+                                                                    </Row>
+                                                                    <Row>
+                                                                        <Col>Total</Col>
+                                                                        <Col>{(post?.ratePrice * (1 + 0.1 + 0.1)).toFixed(2)}</Col>
+                                                                    </Row>
+                                                                </td>
+                                                                <td>
+                                                                    {<div className={post.status === 'Accepted' ? 'content-green' : post.status === 'Denied' ? 'content-danger' : 'content-yellow'}>{post.status}</div>}
+                                                                </td>
+                                                                <td>{new moment(post?.createdDate).format("DD/MM/YYYY")}</td>
+                                                                <td>
+                                                                    {post.driverVehicles.join(" - ")}
+                                                                </td>
+                                                                <td className='sender-action justify-content-center'>
+                                                                    {(result.status === "Paid" && post.driverId === result?.driverId) ? 
+                                                                        (<p className='content-green'>Accepted</p>) :
+                                                                    (!!result?.driverId && post.driverId !== result?.driverId) ? 
+                                                                        (<p className='content-yellow text-center'>Your package had been delivered</p>) :
+                                                                    (result.status === "WaitingForPayment") ? 
+                                                                        (<div className='txt-success' onClick={() => createOrderPayment(result?.id, post?.driverId)}>
+                                                                            <div style={{
+                                                                                cursor: 'pointer',
+                                                                                fontSize: '1.4rem',
+                                                                            }}>
+                                                                                <p>
+                                                                                    <MdPayment></MdPayment><span className='ms-auto' style={{fontSize: '1rem'}}>Checkout Now</span>
+                                                                                </p>
+                                                                            </div>
+                                                                        </div>) :
+                                                                        (<div className='txt-success' onClick={() => acceptDriver(post?.driverId)}>
+                                                                            <div style={{
+                                                                                borderRadius: '50%',
+                                                                                width: '30px',
+                                                                                height: '30px',
+                                                                                fontSize: '1rem',
+                                                                                cursor: 'pointer'
+                                                                            }}>
+                                                                                <BiCheckDouble></BiCheckDouble>
+                                                                            </div>
+                                                                        </div>)
+                                                                    }
                                                                 </td>
                                                             </tr>
                                                         )
                                                     })
                                                 }
                                             </tbody>
-                                    </Table>
-                                    <Pagination className='pg-form w-100'>
-                                        <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/>
-                                        <Pagination.Prev onClick={()=>previous(currentPage)} className='pg-first' />
-                                        {pageCount.map((item,index) => {
-                                            return (
-                                                <div>
-                                                    <div key={index}>
-                                                        <Pagination.Item 
-                                                        className={item === currentPage ? "pg-no pg-active" : "pg-no"}
-                                                        onClick={()=>pagination(item)}
-                                                        >{item}</Pagination.Item>
+                                        </Table>
+                                        <Pagination className='pg-form w-100'>
+                                            {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
+                                            <Pagination.Prev onClick={() =>{}} className='pg-first' />
+                                            {/* {pageCount.map((item,index) => {
+                                                return (
+                                                    <div>
+                                                        <div key={index}>
+                                                            <Pagination.Item 
+                                                            className={item === currentPage ? "pg-no pg-active" : "pg-no"}
+                                                            onClick={()=>{}}
+                                                            >{item}</Pagination.Item>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )
-                                        })}
-                                        <Pagination.Next onClick={()=>next(currentPage)} className='pg-first' />
-                                        <Pagination.Last onClick={last} className='pg-first'/>
-                                    </Pagination>
-                                </>)
-                                }
+                                                )
+                                            })} */}
+                                            <Pagination.Next onClick={()=>{}} className='pg-first' />
+                                            {/* <Pagination.Last onClick={last} className='pg-first'/> */}
+                                        </Pagination>
+                                    </>)
+                                    }
+                            </div>
                         </div>
-                      </div>
-                  </div>
-              </Col>
-            </Row>
-          </div>
-          {/* <ProductEdit></ProductEdit> */}
-          <Driver></Driver>
+                    </Col>
+                </Row>
+            </div>
+            
+            <PaymentPopup 
+                show={show} 
+                onHide={() => setShow(false)} 
+                clientSecret={clientSecret}
+                loading={popupLoading}
+            ></PaymentPopup>
+
+            {result?.driverId && result?.status === "Paid" && <Driver></Driver>}
         </div>
     )
 }
+
 let productSchema = yup.object().shape({
     shippingRates: yup.string().required("Selected shipper rates is required field"),
     phoneNumber: yup.number().typeError("Phone Number must be number").required("Phone Number is required field"),
-})
+});
+
 function ProductEdit(){
     const product_img_ipt = useRef();
     const [imgUrlBack,setImgUrlBack] = React.useState();
@@ -423,6 +712,7 @@ function ProductEdit(){
     </Formik>
     )
 }
+
 function DropDownStatus() {
     const [state,setState] = React.useState(true);
     return (
@@ -437,7 +727,7 @@ function DropDownStatus() {
         </Dropdown.Menu>
       </Dropdown>
     );
-  }
+}
 
 function Driver({children}){
     const [active,setActive] = React.useState(1);
@@ -447,96 +737,95 @@ function Driver({children}){
     ]);
     return(
         <div>
-            <div>
-                <div className='product-label-info'>
-                    <p className='product-label-fit'>
-                    Status
-                    </p>
-                    <p className='content-yellow'>
-                    In processing
-                    </p>
+            <div className='product-label-info'>
+                <p className='product-label-fit'>
+                Status
+                </p>
+                <p className='content-yellow'>
+                In processing
+                </p>
+            </div>
+            <div className='product-label-info'>
+                <p className='product-label-fit'>
+                Driver
+                </p>
+                <p>
+                Tymothy
+                </p>
+            </div>
+            <div className='product-label-info'>
+                <p className='product-label-fit'>
+                Driving license
+                </p>
+                <div className="license-form" onClick={() => setModalShow(true)}>
+                    <BsFillPersonVcardFill className='license-icon'></BsFillPersonVcardFill>
+                    <p className='m-0'>Tymothy</p>
                 </div>
-                <div className='product-label-info'>
-                    <p className='product-label-fit'>
-                    Driver
-                    </p>
-                    <p>
-                    Tymothy
-                    </p>
-                </div>
-                <div className='product-label-info'>
-                    <p className='product-label-fit'>
-                    Driving license
-                    </p>
-                    <div className="license-form" onClick={() => setModalShow(true)}>
-                        <BsFillPersonVcardFill className='license-icon'></BsFillPersonVcardFill>
-                        <p className='m-0'>Tymothy</p>
-                    </div>
-                </div>
-                <PopUpCenteredModal
-                    show={modalShow}
-                    onHide={() => setModalShow(false)}
-                />
-                <div className='product-label-info' style={{alignItems:'unset'}}>
-                    <p className='product-label-fit py-2'>
-                    Process
-                    </p>  
-                    <div>
-                    <section class="step-wizard">
-                        <ul className='order-progress'>
-                        {stepTemplate.map((template,index) =>{
-                            return (<li className='order-progress-item' key={index} data-active={index <= active}>
-                            <div class="progress-circle"></div>
-                            <div class="progress-label">
-                                <h2 className='progress-txt-header'>
-                                {template}
-                                </h2>
-                                <p>At 9PM, the driver requested to deliver the good</p>
-                            </div>
-                            </li>)
-                        })}
-                        
-                        </ul>
-                    </section>
-                    </div>
-                </div>
-                <div className='product-label-info' style={{alignItems:'unset'}}>
-                    <p className='product-label-fit py-2'>
-                    Process
-                    </p> 
-                    {/* <GoogleMapReact
-                    defaultCenter={this.props.center}
-                    defaultZoom={this.props.zoom}
-                    yesIWantToUseGoogleMapApiInternals
-                    onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-                    >
-                    <AnyReactComponent
-                        lat={59.955413}
-                        lng={30.337844}
-                        text="My Marker"
-                    />
-                    </GoogleMapReact> */}
-                </div>
-                <div className='product-label-info py-3' style={{alignItems:'unset'}}>
-                    <p className='product-label-fit py-1'>
-                    Delivery pictures
-                    </p>
-                    <div>
-                        <div className='img-front-frame'  style={{padding:'10px 0 '}}>
-                            <div className='background-front'>
-                                <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
-                                <p className='driving-txt'>view image</p>
-                            </div>
-                            <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
+            </div>
+            <PopUpCenteredModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+            />
+            <div className='product-label-info' style={{alignItems:'unset'}}>
+                <p className='product-label-fit py-2'>
+                Process
+                </p>  
+                <div>
+                <section className="step-wizard">
+                    <ul className='order-progress'>
+                    {stepTemplate.map((template,index) =>{
+                        return (<li className='order-progress-item' key={index} data-active={index <= active}>
+                        <div className="progress-circle"></div>
+                        <div className="progress-label">
+                            <h2 className='progress-txt-header'>
+                            {template}
+                            </h2>
+                            <p>At 9PM, the driver requested to deliver the good</p>
                         </div>
+                        </li>)
+                    })}
+                    
+                    </ul>
+                </section>
+                </div>
+            </div>
+            <div className='product-label-info' style={{alignItems:'unset'}}>
+                <p className='product-label-fit py-2'>
+                Process
+                </p> 
+                {/* <GoogleMapReact
+                defaultCenter={this.props.center}
+                defaultZoom={this.props.zoom}
+                yesIWantToUseGoogleMapApiInternals
+                onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
+                >
+                <AnyReactComponent
+                    lat={59.955413}
+                    lng={30.337844}
+                    text="My Marker"
+                />
+                </GoogleMapReact> */}
+            </div>
+            <div className='product-label-info py-3' style={{alignItems:'unset'}}>
+                <p className='product-label-fit py-1'>
+                Delivery pictures
+                </p>
+                <div>
+                    <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                        <div className='background-front'>
+                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
+                            <p className='driving-txt'>view image</p>
+                        </div>
+                        <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
                     </div>
                 </div>
             </div>
         </div>
     )
 }
+
 function PopUpCenteredModal(props) {
-  return (
+    return (
     <>
         <Modal
         {...props}
@@ -695,9 +984,36 @@ function PopUpCenteredModal(props) {
     </>
   );
 }
+
+function PaymentPopup({show,onHide,clientSecret,loading,...props}){
+    return (<>
+        <Modal
+            show={show}
+            onHide={onHide}
+            closeButton
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+            >
+            <Modal.Header closebutton>
+            </Modal.Header>
+            <Modal.Body className='p-4'>
+                <PaymentComponents.Payment clientSecret={clientSecret}></PaymentComponents.Payment>
+            </Modal.Body>
+        </Modal>
+    </>)
+}
+
+const keyquery = "orderid";
+
 export default function Index() {
-  return (<>
+    const [searchParams] = useSearchParams();
+
+    if(!searchParams.has(keyquery) || !searchParams.get(keyquery)){
+        return <Navigate to="/user/order/list"></Navigate>
+    }
+
+    return (<>
         <ProductDetail></ProductDetail>
-  </>
+    </>
   )
 }

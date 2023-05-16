@@ -254,7 +254,8 @@ function RegisterDriver() {
                                             />
                                             <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                         </Form.Group>
-{/* ABN Number */}
+                                        
+                                        {/* ABN Number */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label'>ABN Number</Form.Label>
@@ -379,7 +380,7 @@ function RegisterDriver() {
                                                 />
                                             </div>
                                         </Form.Group>
-{/* Vehicles */}
+                                        {/* Vehicles */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label'>Vehicles</Form.Label>
