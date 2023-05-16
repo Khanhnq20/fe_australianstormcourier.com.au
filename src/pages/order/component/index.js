@@ -257,7 +257,7 @@ function UserOrders() {
         prevPage,
         setCurrent,
         setPerPageAmount
-     } = usePagination({
+    } = usePagination({
         fetchingAPIInstance: authInstance.get([authConstraints.userRoot, authConstraints.getUserOrders].join("/"), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
@@ -428,9 +428,7 @@ function UserOrders() {
                                                         <td>
                                                         <Row>
                                                             <Col sm="4">
-                                                                <div style={{width: "120px"}}>
                                                                     <img src={post?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
-                                                                </div>
                                                             </Col>
                                                             <Col sm="8">
                                                                 <b>{post?.orderItems?.[0]?.itemName}</b>

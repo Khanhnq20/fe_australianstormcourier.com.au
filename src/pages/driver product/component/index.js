@@ -154,6 +154,9 @@ function Product() {
                                         }}>Sender Offer</th>
                                         <th style={{
                                             minWidth: '140px'
+                                        }}>Required Vehicles</th>
+                                        <th style={{
+                                            minWidth: '140px'
                                         }}>Actions</th>
                                     </tr>
                                 </thead> 
@@ -188,6 +191,7 @@ function Product() {
                                                     </td>
                                                     <td>{post?.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</td>
                                                     <td>{post?.orderItems?.reduce?.((i,c) => i + c?.startingRate,0)} aud</td>
+                                                    <td>{post?.vehicles?.join(" - ")}</td>
                                                     <td>
                                                         <Formik
                                                             initialValues={{
