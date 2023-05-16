@@ -1,10 +1,11 @@
 import { FieldArray, Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
-import React,{ useContext, useRef } from 'react'
+import React,{ useContext, useRef, useState } from 'react'
 import {RiImageEditFill} from 'react-icons/ri';
 import { Button, Col, InputGroup, Modal, Row, Spinner } from "react-bootstrap";
 import { AuthContext, OrderContext } from "../../../stores";
+import '../style/createProduct.css'
 import moment from 'moment';
 import { dotnetFormDataSerialize } from "../../../ultitlies";
 
@@ -139,6 +140,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                         </div>
                         <Form.Control
                             type="number"
+                            className="product-form-input"
                             min={0}
                             max={10}
                             name="orderItems[0].quantity"
@@ -174,6 +176,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
             </Row>
             {/* Product Pictures & Shipping Rate & PackageType & Vehicles*/}
             <Row>
+
                 {/* Product pictures */}
                 <Col>
                     <Form.Group className="mb-3">
@@ -185,7 +188,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                             <FieldArray name={`orderItems[${index}].productPictures`} 
                                 render={(arrayHelpers) =>{
                                 return (<>
-                                    <Row>
+                                    <Row style={{flexDirection:'column'}}>
                                         <>
                                         {
                                             values?.orderItems?.[index]?.productPictures?.map?.((picture,index) =>{
@@ -266,6 +269,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                     {/* <Form.Group className="mb-3">
                         <div className='mb-2'>
                             <Form.Label className='label'>Selected shipper rates</Form.Label>
+                            <p className='asterisk'>*</p>
                         </div>
                         <Form.Control
                             type="number"
@@ -330,12 +334,27 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
 function OrderCreation(){
     const [authState] = useContext(AuthContext);
     const [orderState, {postOrder}] = useContext(OrderContext);
+    const [address,setAddress] = useState(
+        {
+            houseNumber:'',
+            street:'',
+            region:'',
+            state:''
+        }
+    );
+    function handleAddress(e){
+        const { name, value } = e.target;
+        setAddress(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    }
 
     return(
         <Formik
             initialValues={{
                 senderId: authState.accountInfo?.id,
-                sendingLocation:'',
+                sendingLocation: [address?.houseNumber, address?.street, address?.region, address?.state].join(' '),
                 destination:'',
                 receiverName: '',
                 receiverPhone: '',
@@ -356,6 +375,7 @@ function OrderCreation(){
                     }
                 ]
             }} 
+            enableReinitialize={true}
             validationSchema={orderSchema}
             onSubmit={(values) =>{
                 const handledObjects = {
@@ -401,17 +421,43 @@ function OrderCreation(){
                                     {/* Sending Location */}
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>From</Form.Label>
+                                            <Form.Label className='label'>Pick Up</Form.Label>
                                             <p className='asterisk'>*</p>
                                         </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="sendingLocation"
-                                            placeholder="Enter sending location"
-                                            isInvalid={touched.form && errors.from}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
+                                        <div className="pickup-post">
+                                            <Form.Control
+                                                type="text"
+                                                name="houseNumber"
+                                                placeholder="Your house number"
+                                                isInvalid={touched.form && errors.from}
+                                                onChange={handleAddress}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control
+                                                type="text"
+                                                name="street"
+                                                placeholder="Your street"
+                                                isInvalid={touched.form && errors.from}
+                                                onChange={handleAddress}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control
+                                                type="text"
+                                                name="region"
+                                                placeholder="Your region"
+                                                isInvalid={touched.form && errors.from}
+                                                onChange={(e)=>handleAddress(e)}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control
+                                                type="text"
+                                                name="state"
+                                                placeholder="Your state"
+                                                isInvalid={touched.form && errors.from}
+                                                onChange={(e)=>handleAddress(e)}
+                                                onBlur={handleBlur}
+                                            />
+                                        </div>
                                         <Form.Control.Feedback type="invalid">{errors.from}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
@@ -419,7 +465,7 @@ function OrderCreation(){
                                     {/* Destination */}
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>To</Form.Label>
+                                            <Form.Label className='label'>Destination</Form.Label>
                                             <p className='asterisk'>*</p>
                                         </div>
                                         <Form.Control

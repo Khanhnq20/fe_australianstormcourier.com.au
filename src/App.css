@@ -32,8 +32,9 @@ body {
   font-family: var(--font-family);
 }
 
-.container-fit{
-  min-height: calc(100vh - 96px - 104px);
+.container-define{
+  min-height: calc(100vh - 96px - 54px);
+
 }
 .img-auto-flex {
   width: 100%;
@@ -321,6 +322,9 @@ input[type="password"]{
 input[type="checkbox"]{
   cursor: pointer;
 }
+input{
+  min-width: 200px !important;
+}
 span.checkmark{
   cursor: pointer;
 }
@@ -414,16 +418,16 @@ input:checked ~ .checkmark {
 }
 .img-front-frame{
   max-height: 300px;
-  width: auto;
+  max-width: 350px;
   border-radius: 15px;
-  padding: 20px;
+  padding: 20px 0;
   cursor: pointer;
   object-fit: cover;
   margin-bottom: 20px;
   position: relative;
 }
 .img-front{
-  width: 350px;
+  width: 100%;
   height: 200px;
   border-radius: 15px;
 }

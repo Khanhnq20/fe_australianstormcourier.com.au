@@ -33,9 +33,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "auth",
-        element: <AuthValidator.LoggedContainer>
+        element: <>
           <Outlet></Outlet>
-        </AuthValidator.LoggedContainer>,
+        </>,
         children: authChildrens
       },
       {

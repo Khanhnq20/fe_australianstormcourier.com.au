@@ -1,0 +1,22 @@
+.star-rating-filled {
+    fill: var(--clr-primary);
+}
+
+.star-rating-blank {
+    fill: #d8d8d8;
+}
+.comment__form{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding:15px;
+}
+.header{
+    display: flex;
+    gap:15px;
+    align-items: center;
+}
+
+.comment__form p{
+    margin: 0;
+}

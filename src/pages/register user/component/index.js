@@ -8,7 +8,7 @@ import '../../register driver/style/registerDriver.css';
 import Button from 'react-bootstrap/Button';
 import { AiFillEye,AiFillEyeInvisible } from  'react-icons/ai';
 import { AuthContext } from '../../../stores';
-import { Message } from '../../../layout';
+import { CustomSpinner } from '../../../layout';
 
 
 let registerSchema = yup.object().shape({
@@ -55,7 +55,7 @@ export default function Index() {
         >
         {({values, touched, errors, handleSubmit, handleChange, handleBlur}) =>{
             return(
-                <>   
+                <div className='reg-user'>  
                     <div className='container p-5'>
                         <div>
                             <div>
@@ -184,7 +184,7 @@ export default function Index() {
                             </Form>
                         </div>
                     </div>
-                </>
+                </div>
         )}}
         </Formik>
     )
