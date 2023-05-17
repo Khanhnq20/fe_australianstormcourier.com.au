@@ -24,7 +24,7 @@ Message.Success = function ({children,...rest}){
 
 Message.Error = function ({children,...rest}){
     return(
-        <div className='mes-error   ' {...rest}>
+        <div className='mes-error' {...rest}>
             <BsExclamationCircle></BsExclamationCircle>
             <div>
                 {children}

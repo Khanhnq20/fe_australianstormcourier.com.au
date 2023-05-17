@@ -1,53 +1,29 @@
-import React, { useState } from 'react'
-import { Container, Spinner } from 'react-bootstrap'
-// import { Elements } from '@stripe/react-stripe-js';
-// import { loadStripe } from '@stripe/stripe-js';
+import React from 'react'
+import { Container } from 'react-bootstrap'
+import { Elements } from '@stripe/react-stripe-js';
+import { loadStripe } from '@stripe/stripe-js';
 import CheckoutForm from './checkoutform';
-import { authConstraints, authInstance } from '../../../api';
+import { config } from '../../../api';
+import { Navigate } from 'react-router-dom';
 
-function Index() {
-  const [loading, setLoading] = useState(true);
-  const [clientSecret, setClientSecret] = useState('');
-  // const [publicKey, setPublicKey] = useState('');
-  // const stripePromise = loadStripe('pk_test_51N51n2Kfaw4OxeNdkCYEy1jHKnu75OPWTdJCe81kCggm0d6cfEj1IGBe9drdfpFrIjlxvR3p86sRloCxxwMPnOGd00PAqfO2dH');
-
-  // React.useEffect(() =>{
-  //   authInstance.post([authConstraints.paymentRoot, authConstraints.getStripeIntent].join("/"), {
-  //     params: {
-  //       amount: 45848,
-  //       orderId: 1
-  //     }
-  //   }).then(response =>{
-  //     if(!!response.data?.successed){
-  //       console.log(response.data);
-        
-  //       setClientSecret(response.data?.clientSecrete);
-  //       // setPublicKey(response.data?.publicKey);
-  //     }
-  //     else if(response?.error){
-  //       console.log(response.error)
-  //     }
-  //   }).catch(error =>{
-  //     console.log(error)
-  //   }).finally(() =>{
-  //     setLoading(false);
-  //   });
-  // },[]);
-
-  // if(loading) return <Spinner></Spinner>
+function Index({clientSecret,checkoutServerAPI, ...props}) {
+  const stripePromise = loadStripe(config.StripePublicKey);
+  
+  if(!clientSecret){
+    return (<Navigate to="/error/404">
+    </Navigate>)
+  }
 
   return (
     <Container>
-      <h2 className="mb-2">Thanh toán tại đây</h2>
-
-      {/* <Elements
-        // stripe={stripePromise} 
-        // options={{
-        //   clientSecret: clientSecret
-        // }}
+      <Elements
+        stripe={stripePromise} 
+        options={{
+          clientSecret: clientSecret,
+        }}
       >
-        <CheckoutForm />
-      </Elements> */}
+        <CheckoutForm clientSecret={clientSecret} checkoutServerAPI={checkoutServerAPI}/>
+      </Elements>
     </Container>
   )
 }

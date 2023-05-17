@@ -1,22 +1,59 @@
-import React from 'react'
-import { Col, Row } from 'react-bootstrap';
+import React, { useEffect } from 'react'
+import { Col, Container, Row, Spinner } from 'react-bootstrap';
 import '../style/orderDetail.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { Formik } from 'formik';
 import * as yup from 'yup';
+import { Navigate, useParams } from 'react-router-dom';
+import { authConstraints, authInstance, config } from '../../../api';
 
 function OrderDetail(){
     const [process,setProcess] = React.useState(false);
+    const [result, setResult] = React.useState(null);
+    const [loading,setLoading] = React.useState(true);
+    const [error, setError] = React.useState("");
+    const {id} = useParams();
+
+    useEffect(() =>{
+      setLoading(true);
+      authInstance.get([authConstraints.driverRoot, authConstraints.getAllOrderInfo].join('/'), {
+        headers: {
+          'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+        },
+        params: {
+          orderId: id
+        }
+      }).then(response =>{
+        if(response.data?.successed){
+          setResult(response.data?.result);
+        }
+        setLoading(false);
+      }).catch(error =>{
+        if(error.message === "Axios Error" && error.code === 403){
+          setError("Forbiden");
+        }
+        setLoading(false);
+      });
+    }, [id]);
+
+    if(loading) return (
+    <Container>
+      <Spinner></Spinner>
+    </Container>);
+
+    if(error === "Forbiden"){
+      return (<Navigate to="/driver/order"></Navigate>);
+    }
 
     return(
         <div>
-            <div>
-              <p className='product-detail-header'>Details</p>
-            </div>
+          <div>
+            <p className='product-detail-header'>Details</p>
+          </div>
           <div>
             <div>
-              <p className='product-content-title mb-3'>Product Information</p>
+              <p className='product-content-title mb-3'>Order Information</p>
             </div>
             <Row className='product-form-content'>
                 <Col>
@@ -27,15 +64,15 @@ function OrderDetail(){
                               ID
                             </p>
                             <p className='product-content'>
-                              00001
+                              {"000000".substring(0, 6 - result?.order?.id?.toString().length) + result?.order?.id}
                             </p>
                         </div>
                         <div className='product-label-info'>
                             <p className='product-label'>
-                              Username
+                              Sender Full Name
                             </p>
                             <p className='product-content'>
-                              Ansel
+                              {result?.sender?.name}
                             </p>
                         </div>
                         <div className='product-label-info'>
@@ -43,7 +80,7 @@ function OrderDetail(){
                               Phone number
                             </p>
                             <p className='product-content'>
-                              07731158000
+                              {result?.sender?.phoneNumber}
                             </p>
                         </div>
                         <div className='product-label-info'>
@@ -51,7 +88,7 @@ function OrderDetail(){
                               Email
                             </p>
                             <p className='product-content'>
-                              Anselm@gmail.com
+                            {result?.sender?.email}
                             </p>
                         </div>
                         <div className='product-label-info'>
@@ -59,7 +96,23 @@ function OrderDetail(){
                               ABNnumber
                             </p>
                             <p className='product-content'>
-                              189795
+                              {result?.sender?.abnNumber}
+                            </p>
+                        </div>
+                        <div className='product-label-info'>
+                            <p className='product-label'>
+                              Receiver Full Name
+                            </p>
+                            <p className='product-content'>
+                              {result?.order?.receiverName}
+                            </p>
+                        </div>
+                        <div className='product-label-info'>
+                            <p className='product-label'>
+                              Phone number
+                            </p>
+                            <p className='product-content'>
+                              {result?.order?.receiverPhone}
                             </p>
                         </div>
                       </div>
@@ -69,18 +122,10 @@ function OrderDetail(){
                     <div>
                       <div className='product-label-info'>
                             <p className='product-label-fit'>
-                              Starting shipping rates
+                              Total
                             </p>
                             <p className='product-content'>
-                              300$
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label-fit'>
-                              Selected shipping rates
-                            </p>
-                            <p className='product-content'>
-                              06785634545$
+                              {result?.order?.total} AUD
                             </p>
                         </div>
                         <div className='product-label-info'>
@@ -88,15 +133,7 @@ function OrderDetail(){
                               Status
                             </p>
                             <p className='content-green'>
-                              Looking for a driver
-                            </p>
-                        </div>
-                        <div className='product-label-info'>
-                            <p className='product-label-fit'>
-                              Gender
-                            </p>
-                            <p className='product-content'>
-                              male
+                              {result?.order?.status}
                             </p>
                         </div>
                         <div className='product-label-info'>
@@ -104,7 +141,7 @@ function OrderDetail(){
                               Additional Information
                             </p>
                             <p className='product-content'>
-                              Additional Information
+                              {result?.order?.adInfo}
                             </p>
                         </div>
                     </div>
@@ -237,8 +274,8 @@ function StatusFail(){
         <p className='content-red'>
           Fail
         </p>
-     </div>
-     <Formik
+    </div>
+    <Formik
       initialValues={{
         reason:''
       }}
@@ -275,8 +312,12 @@ function StatusFail(){
 }
 
 export default function Index() {
-  return (<>
-        <OrderDetail></OrderDetail>
-  </>
-  )
+  const params = useParams();
+
+  if(params?.id){
+    return (<>
+      <OrderDetail></OrderDetail>
+    </>)
+  }
+  return <Navigate to="/driver/order"></Navigate>
 }

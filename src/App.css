@@ -31,8 +31,10 @@ html {
 body {
   font-family: var(--font-family);
 }
+
 .container-define{
   min-height: calc(100vh - 96px - 54px);
+
 }
 .img-auto-flex {
   width: 100%;

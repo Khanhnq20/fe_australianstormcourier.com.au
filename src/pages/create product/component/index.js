@@ -2,12 +2,11 @@ import { FieldArray, Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import React,{ useContext, useRef, useState } from 'react'
-import {RiImageEditFill, RiPictureInPicture2Fill} from 'react-icons/ri';
-import { Button, Col, InputGroup, Row } from "react-bootstrap";
+import {RiImageEditFill} from 'react-icons/ri';
+import { Button, Col, InputGroup, Modal, Row, Spinner } from "react-bootstrap";
 import { AuthContext, OrderContext } from "../../../stores";
-import moment from 'moment';
 import '../style/createProduct.css'
-import { serialize } from "object-to-formdata";
+import moment from 'moment';
 import { dotnetFormDataSerialize } from "../../../ultitlies";
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
@@ -20,6 +19,8 @@ let orderSchema = yup.object().shape({
     senderId: yup.string().required(),
     sendingLocation: yup.string().required(),
     destination: yup.string().required(),
+    receiverName: yup.string().nullable(),
+    receiverPhone: yup.string().required(),
     deliverableDate: yup.date().required(),
     timeFrame: yup.string()
         .test(
@@ -39,6 +40,7 @@ let orderSchema = yup.object().shape({
                 return end.diff(start) > 0; 
             }
         ),
+    vehicles: yup.array().of(yup.string()).min(1),
     orderItems: yup.array().of(
         yup.object().shape({
             itemName: yup.string().required("Item Name is required field"),
@@ -47,7 +49,7 @@ let orderSchema = yup.object().shape({
             quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
             startingRate: yup.number().positive().required("Starting Rate is required field"),
-            selectedRate: yup.number().positive().nullable(),
+            // selectedRate: yup.number().positive().nullable(),
             packageType: yup.string().required("Package Type is required field"),
             productPictures: yup.array().min(1)
                 .test(
@@ -71,7 +73,8 @@ let orderSchema = yup.object().shape({
                     }
                 ),
         })
-    )
+    ),
+    
 });
 
 function ItemCreation({index, touched, errors, values, handleChange, handleBlur, isValid}){
@@ -171,8 +174,9 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                     </Form.Group>
                 </Col>
             </Row>
-            {/* Product Pictures & Shipping Rate & PackageType */}
-            <Row className="form-img-rate">
+            {/* Product Pictures & Shipping Rate & PackageType & Vehicles*/}
+            <Row>
+
                 {/* Product pictures */}
                 <Col>
                     <Form.Group className="mb-3">
@@ -242,7 +246,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                     </Form.Group>
                 </Col>
                 
-                {/* Shipping Rate & Package Type */}
+                {/* Shipping Rate & Package Type & Vehicles */}
                 <Col>
                     {/* Start shipping rate */}
                     <Form.Group className="mb-3">
@@ -262,7 +266,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                         <Form.Control.Feedback type="invalid">{errors?.startingRate}</Form.Control.Feedback>
                     </Form.Group>
                     {/* Selected shipping rate */}
-                    <Form.Group className="mb-3">
+                    {/* <Form.Group className="mb-3">
                         <div className='mb-2'>
                             <Form.Label className='label'>Selected shipper rates</Form.Label>
                             <p className='asterisk'>*</p>
@@ -277,7 +281,29 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                             onBlur={handleBlur}
                         />
                         <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.selectedRate}</Form.Control.Feedback>
+                    </Form.Group> */}
+
+                    {/* Vehicles */}
+                    <Form.Group className="form-group" >
+                        <div className='mb-2'>
+                            <Form.Label className='label'>Vehicles</Form.Label>
+                            <p className='asterisk'>*</p>
+                        </div>
+                        <div className='list-vehicle'>
+                            {authState.vehicles.map((item,index) => {
+                                return(
+                                    <div key={index}>
+                                        <label class="fr-checkbox mb-2">
+                                            <input type="checkbox" name="vehicles" value={item?.id} onChange={handleChange} onBlur={handleBlur}/>
+                                            <span className="checkmark"></span>
+                                            <span className='txt-checkbox' style={{fontWeight:'500'}}>{item?.name}</span>
+                                        </label>
+                                    </div>
+                                )
+                            })}
+                        </div>
                     </Form.Group>
+
                     {/* Package Type */}
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
@@ -328,10 +354,13 @@ function OrderCreation(){
         <Formik
             initialValues={{
                 senderId: authState.accountInfo?.id,
-                sendingLocation: [address?.houseNumber, address?.street, address?.region, address?.state].join(' '),
+                sendingLocation: [address?.houseNumber, address?.street, address?.region, address?.state].join('-'),
                 destination:'',
+                receiverName: '',
+                receiverPhone: '',
                 deliverableDate: Date.now(),
                 timeFrame: '-',
+                vehicles: [],
                 orderItems: [
                     {
                         itemName: '',
@@ -369,10 +398,19 @@ function OrderCreation(){
             const {touched, errors,setFieldValue, handleSubmit, handleChange, handleBlur,values} = formProps;
             return(   
                 <div className='p-3'>
+                    <pre>{JSON.stringify()}</pre>
+                    <Modal show={orderState.loading} 
+                        size="lg"
+                        backdrop="static"
+                        keyboard={false}
+                        centered>
+                        <Modal.Body className="text-center">
+                            <Spinner className="mb-2"></Spinner> 
+                            <h2>Please waiting for us</h2>
+                            <p>We are handling your request, <b style={{color: "red"}}>Don't close your device</b></p>
+                        </Modal.Body>
+                    </Modal>
                     <Form onSubmit={handleSubmit}>
-                        <div>
-                            <pre>{JSON.stringify(values, 4, 4)}</pre>
-                        </div>
                         <div 
                             // className='form-order'
                         >
@@ -443,9 +481,44 @@ function OrderCreation(){
                                     </Form.Group>
                                 </Col>
                             </Row>
+                            {/* Receiver Information */}
+                            <h4 className="my-3">Receiver</h4>
+                            <Row>
+                                <Col>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Receiver Name</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="receiverName"
+                                            placeholder=""
+                                            isInvalid={touched.receiverName && !!errors?.receiverName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors?.receiverName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                </Col>
+                                <Col>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Receiver Phone</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="receiverPhone"
+                                            placeholder=""
+                                            isInvalid={touched.receiverPhone && !!errors?.receiverPhone}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors?.receiverPhone}</Form.Control.Feedback>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
                             {/* Delivery Date */}
-                            <h3 className="my-3">Delivery Capable</h3>
-
+                            <h3 className="my-3">Delivery Capability</h3>
                             <Row>
                                 <Col>
                                     {/* Deliverable Date */}
@@ -506,6 +579,7 @@ function OrderCreation(){
                                     </Form.Group>
                                 </Col>
                             </Row>
+
                             {/* OrderItems */}
                             <h3 className="my-3">Item Information</h3>
 
