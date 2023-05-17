@@ -1,0 +1,37 @@
+.prevent{
+    min-height: calc(90vh - 54px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-60px);
+}
+.clock-logo{
+    border: 10px solid var(--clr-primary);
+    padding: 20px;
+    width: 160px;
+    margin-bottom: 20px;
+    height: 160px;
+    border-radius: 50%;
+    color: var(--clr-primary);
+    animation: icolor infinite 8s;
+}
+@keyframes icolor{
+    0%{
+        color: white;
+    }
+    20%{
+        color: var(--clr-primary);
+    }
+    40%{
+        color: white;
+    }
+    60%{
+        color: var(--clr-primary);
+    }
+    80%{
+        color: white;
+    }
+    100%{
+        color: var(--clr-primary);
+    }
+}

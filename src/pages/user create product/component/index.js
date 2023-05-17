@@ -1,13 +1,14 @@
 import { FieldArray, Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
-import React,{ useContext, useRef, useState } from 'react'
+import React,{ useContext, useEffect, useRef, useState } from 'react'
 import {RiImageEditFill} from 'react-icons/ri';
 import { Button, Col, InputGroup, Modal, Row, Spinner } from "react-bootstrap";
 import { AuthContext, OrderContext } from "../../../stores";
 import '../style/createProduct.css'
 import moment from 'moment';
 import { dotnetFormDataSerialize } from "../../../ultitlies";
+import Barcode from "react-barcode";
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -44,11 +45,11 @@ let orderSchema = yup.object().shape({
     orderItems: yup.array().of(
         yup.object().shape({
             itemName: yup.string().required("Item Name is required field"),
-            itemCharCode: yup.number().required("Item CharCode is required field"), 
+            itemBarcode: yup.number().required("Item Barcode is required field"), 
             itemDescription: yup.string().nullable(),
             quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
-            startingRate: yup.number().positive().required("Starting Rate is required field"),
+            startingRate: yup.number().positive().required("Preference rate is required field"),
             // selectedRate: yup.number().positive().nullable(),
             packageType: yup.string().required("Package Type is required field"),
             productPictures: yup.array().min(1)
@@ -80,7 +81,13 @@ let orderSchema = yup.object().shape({
 function ItemCreation({index, touched, errors, values, handleChange, handleBlur, isValid}){
     const product_img_ipt = useRef();
     const [authState] = useContext(AuthContext);
-
+    const [barcode,setBarcode] = useState();
+    useEffect(()=>{
+        const max = 999999;
+        const min = 100000;
+        var randnum = Math.floor(Math.random() * (max - min + 1) + min);
+        setBarcode(randnum)
+    },[])
     return (
         <>
             {/* Item Name  */}
@@ -102,18 +109,10 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
             {/* Item CharCode  */}
             <Form.Group className="mb-3">
                 <div className='mb-2'>
-                    <Form.Label className='label'>CharCode</Form.Label>
+                    <Form.Label className='label'>Barcode</Form.Label>
                     <p className='asterisk'>*</p>
                 </div>
-                <Form.Control
-                    type="text"
-                    name="orderItems[0].itemCharCode"
-                    placeholder="Enter CharCode"
-                    isInvalid={touched.itemCharCode && errors.itemCharCode}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                />
-                <Form.Control.Feedback type="invalid">{errors.itemCharCode}</Form.Control.Feedback>
+                <Barcode value={barcode}></Barcode>
             </Form.Group>
             {/* Item Description  */}
             <Form.Group className="mb-3">
@@ -123,6 +122,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                 <Form.Control
                     as="textarea"
                     row="3"
+                    placeholder="Enter product description"
                     name="orderItems[0].itemDescription"
                     isInvalid={touched?.itemDescription && !!errors?.itemDescription}
                     onChange={handleChange}
@@ -251,7 +251,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                     {/* Start shipping rate */}
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
-                            <Form.Label className='label'>Starting shipper rates</Form.Label>
+                            <Form.Label className='label'>Preference Rate</Form.Label>
                             <p className='asterisk'>*</p>
                         </div>
                         <Form.Control
@@ -336,10 +336,12 @@ function OrderCreation(){
     const [orderState, {postOrder}] = useContext(OrderContext);
     const [address,setAddress] = useState(
         {
-            houseNumber:'',
-            street:'',
-            region:'',
-            state:''
+            unitNumber:'',
+            streetNumber:'',
+            streetName:'',
+            suburb:'',
+            state:'',
+            postcode:''
         }
     );
     function handleAddress(e){
@@ -354,7 +356,7 @@ function OrderCreation(){
         <Formik
             initialValues={{
                 senderId: authState.accountInfo?.id,
-                sendingLocation: [address?.houseNumber, address?.street, address?.region, address?.state].join('-'),
+                sendingLocation: [address?.unitNumber, address?.streetNumber,address?.streetName, address?.suburd, address?.state,address?.postcode].join('-'),
                 destination:'',
                 receiverName: '',
                 receiverPhone: '',
@@ -364,7 +366,7 @@ function OrderCreation(){
                 orderItems: [
                     {
                         itemName: '',
-                        itemCharCode: '', 
+                        itemBarcode: '', 
                         itemDescription: '',
                         quantity: 0,
                         weight: 0,
@@ -426,26 +428,34 @@ function OrderCreation(){
                                             <p className='asterisk'>*</p>
                                         </div>
                                         <div className="pickup-post">
-                                            <Form.Control
+                                        <Form.Control
                                                 type="text"
-                                                name="houseNumber"
-                                                placeholder="Your house number"
+                                                name="unitNumber"
+                                                placeholder="Unit Number"
                                                 isInvalid={touched.form && errors.from}
                                                 onChange={handleAddress}
                                                 onBlur={handleBlur}
                                             />
                                             <Form.Control
                                                 type="text"
-                                                name="street"
-                                                placeholder="Your street"
+                                                name="streetNumber"
+                                                placeholder="Street Number"
                                                 isInvalid={touched.form && errors.from}
                                                 onChange={handleAddress}
                                                 onBlur={handleBlur}
                                             />
                                             <Form.Control
                                                 type="text"
-                                                name="region"
-                                                placeholder="Your region"
+                                                name="streetName"
+                                                placeholder="Street Name"
+                                                isInvalid={touched.form && errors.from}
+                                                onChange={handleAddress}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control
+                                                type="text"
+                                                name="suburb"
+                                                placeholder="Suburd"
                                                 isInvalid={touched.form && errors.from}
                                                 onChange={(e)=>handleAddress(e)}
                                                 onBlur={handleBlur}
@@ -453,7 +463,15 @@ function OrderCreation(){
                                             <Form.Control
                                                 type="text"
                                                 name="state"
-                                                placeholder="Your state"
+                                                placeholder="State"
+                                                isInvalid={touched.form && errors.from}
+                                                onChange={(e)=>handleAddress(e)}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control
+                                                type="text"
+                                                name="postcode"
+                                                placeholder="Postcode"
                                                 isInvalid={touched.form && errors.from}
                                                 onChange={(e)=>handleAddress(e)}
                                                 onBlur={handleBlur}
@@ -492,7 +510,7 @@ function OrderCreation(){
                                         <Form.Control
                                             type="text"
                                             name="receiverName"
-                                            placeholder=""
+                                            placeholder="Enter receiver name"
                                             isInvalid={touched.receiverName && !!errors?.receiverName}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
@@ -508,7 +526,7 @@ function OrderCreation(){
                                         <Form.Control
                                             type="text"
                                             name="receiverPhone"
-                                            placeholder=""
+                                            placeholder="Enter receiver phone"
                                             isInvalid={touched.receiverPhone && !!errors?.receiverPhone}
                                             onChange={handleChange}
                                             onBlur={handleBlur}

@@ -64,29 +64,20 @@ function Product() {
                 <div className='form-order'>
                     <Form.Group>
                         <div className='mb-2'>
-                            <Form.Label className='label'>From</Form.Label>
+                            <Form.Label className='label'>Suburb</Form.Label>
                         </div>
                         <Form.Control
                             type="text"
-                            name="from"
+                            name="suburd"
                         />
                     </Form.Group>
                     <Form.Group>
                         <div className='mb-2'>
-                            <Form.Label className='label'>Name</Form.Label>
+                            <Form.Label className='label'>Postcode</Form.Label>
                         </div>
                         <Form.Control
                             type="text"
-                            name="fullName"
-                        />
-                    </Form.Group>
-                    <Form.Group>
-                        <div className='mb-2'>
-                            <Form.Label className='label'>To</Form.Label>
-                        </div>
-                        <Form.Control
-                            type="text"
-                            name="to"
+                            name="postcode"
                         />
                     </Form.Group>
                 </div>

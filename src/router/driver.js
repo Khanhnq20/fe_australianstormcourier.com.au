@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { DriverActiveOrder, DriverHistory, DriverInfo, DriverProduct, Order, OrderDetail, OrderProcessDetail } from "../pages";
+import { DriverActiveOrder, DriverHistory, DriverInfo, DriverOrderDetail, DriverOrderProcessDetail, DriverProduct } from "../pages";
 
 export const driverChildrens = [
     {
@@ -39,13 +39,13 @@ export const driverChildrens = [
             {
               path: ":id",
               element: <>
-                <OrderDetail></OrderDetail>
+                <DriverOrderDetail></DriverOrderDetail>
               </>
             },
             {
               path: "process",
               element: <>
-                <OrderProcessDetail></OrderProcessDetail>
+                <DriverOrderProcessDetail></DriverOrderProcessDetail>
               </>
             },
           ]

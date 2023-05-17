@@ -3,8 +3,8 @@ import {
   Outlet,
   createBrowserRouter,
 } from "react-router-dom";
-import { Navigation, Footer, DriverSideBar, UserSideBar, AdminSideBar } from "../layout";
-import { Home, CreateProduct } from '../pages';
+import { Navigation, Footer, UserSideBar, DriverSideBar, AdminSideBar } from "../layout";
+import { Home, CreateProduct, PreventDriver } from '../pages';
 
 import { AuthValidator, OrderContextComponent } from '../stores'
 
@@ -32,6 +32,13 @@ export const router = createBrowserRouter([
         </>
       },
       {
+        path: "prevent",
+        element:<>
+          <PreventDriver></PreventDriver>
+        </>
+      }
+      ,
+      {
         path: "auth",
         element: <AuthValidator.LoggedContainer>
           <Outlet></Outlet>
@@ -40,35 +47,35 @@ export const router = createBrowserRouter([
       },
       {
         path: "user",
-        element: <AuthValidator roles={['User']}>
+        element: <>
           <OrderContextComponent>
             <UserSideBar>
               <Outlet></Outlet>
             </UserSideBar>
           </OrderContextComponent>
-        </AuthValidator>,
+        </>,
         children: userChildrens
       },
       {
         path: "driver",
-        element: <AuthValidator roles={["Driver"]}>
+        element: <>
           <OrderContextComponent>
             <DriverSideBar>
               <Outlet></Outlet>
             </DriverSideBar>
           </OrderContextComponent>
-        </AuthValidator>,
+        </>,
         children: driverChildrens
       },
       {
         path: "admin",
-        element: <AuthValidator roles={["SuperAdmin"]}>
+        element: <>
           <OrderContextComponent>
             <AdminSideBar>
               <Outlet></Outlet>
             </AdminSideBar>
           </OrderContextComponent>
-        </AuthValidator>,
+        </>,
         children: adminChildrens
       },
       {
