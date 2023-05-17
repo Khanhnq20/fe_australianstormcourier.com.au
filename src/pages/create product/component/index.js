@@ -354,7 +354,7 @@ function OrderCreation(){
         <Formik
             initialValues={{
                 senderId: authState.accountInfo?.id,
-                sendingLocation: [address?.houseNumber, address?.street, address?.region, address?.state].join(' '),
+                sendingLocation: [address?.houseNumber, address?.street, address?.region, address?.state].join('-'),
                 destination:'',
                 receiverName: '',
                 receiverPhone: '',
@@ -398,6 +398,7 @@ function OrderCreation(){
             const {touched, errors,setFieldValue, handleSubmit, handleChange, handleBlur,values} = formProps;
             return(   
                 <div className='p-3'>
+                    <pre>{JSON.stringify()}</pre>
                     <Modal show={orderState.loading} 
                         size="lg"
                         backdrop="static"

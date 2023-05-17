@@ -203,9 +203,9 @@ function AdminSideBar({children}) {
                           className={({isActive,isPending}) =>{
                               return isPending ? "sbar-link" : isActive  ? 'sbar-link active' : 'sbar-link'
                           }}
-                          to={'info'}>
+                          to={'/admin/info'}>
                           <div className='sbar-icon-frame'>
-                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard  >
+                            <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                           </div>
                           <p className='sbar-txt'>Infomation</p>
                       </NavLink>
@@ -213,7 +213,7 @@ function AdminSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link active' : 'sbar-link'
                           }}
-                          to={'accept'}>
+                          to={'/admin/accept'}>
                           <div className='sbar-icon-frame'>
                             <BsPersonCheck className="sbar-icon"></BsPersonCheck>
                           </div>
@@ -223,7 +223,7 @@ function AdminSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link active' : 'sbar-link'
                           }}
-                          to={'user'}>
+                          to={'/admin/user'}>
                           <div className='sbar-icon-frame'>
                             <HiOutlineUserGroup className="sbar-icon"></HiOutlineUserGroup>
                           </div>
@@ -233,7 +233,7 @@ function AdminSideBar({children}) {
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link active' : 'sbar-link'
                         }}
-                        to={'orders'}>
+                        to={'/admin/orders'}>
                         <div className='sbar-icon-frame'>
                           <BiPackage className="sbar-icon"></BiPackage>
                         </div>
@@ -243,7 +243,7 @@ function AdminSideBar({children}) {
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link active' : 'sbar-link'
                         }}
-                        to={'/user/product'}>
+                        to={'/admin/user/invoices'}>
                         <div className='sbar-icon-frame'>
                           <TbReportMoney className="sbar-icon"></TbReportMoney>
                         </div>

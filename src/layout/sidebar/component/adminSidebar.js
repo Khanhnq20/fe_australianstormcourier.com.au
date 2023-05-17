@@ -41,7 +41,7 @@ export function AdminSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/user/product'}>
+                          to={'/admin/user/product'}>
                           <div className='sbar-icon-frame'>
                             <BiPackage className="sbar-icon"></BiPackage>
                           </div>
@@ -51,7 +51,7 @@ export function AdminSideBar({children}) {
                           className={({isActive}) =>{
                             return isActive  ? 'sbar-link-active' : 'sbar-link'
                           }}
-                          to={'/user/product'}>
+                          to={'/admin/user/product'}>
                           <div className='sbar-icon-frame'>
                             <BiPackage className="sbar-icon"></BiPackage>
                           </div>
@@ -63,7 +63,6 @@ export function AdminSideBar({children}) {
                       </span>
                       <span className='h-ctn'>
                           <div className=''>
-  
                           </div>
                           <div className='h-ctn-inner'>
                               <div className='h-header'>

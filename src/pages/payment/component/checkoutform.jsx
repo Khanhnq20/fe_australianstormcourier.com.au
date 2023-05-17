@@ -5,13 +5,12 @@ import { Message } from "../../../layout";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 
-const CheckoutForm = ({clientSecret}) => {
+const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [amount, setAmount] = useState(0);
     const [success, setSuccess] = useState(false);
     const [resultJSON, setJSON] = useState({});
-    const navigate = useNavigate();
 
     const stripe = useStripe();
     const elements = useElements();
@@ -49,13 +48,17 @@ const CheckoutForm = ({clientSecret}) => {
         .then(result =>{
           // console.log("payment result", result);
           if (!!result?.error) {
+            if(result?.error?.payment_intent?.status === "succeeded"){
+              checkoutServerAPI();
+            }
             // Show error to your customer (for example, payment details incomplete);
               setError(i => {
-
                 return result?.error?.payment_intent?.status === "succeeded" ?
                 "This payment has been resolved. Please select others":
                 result?.error?.message
               });
+              
+
           } else {
             // Your customer will be redirected to your `return_url`. For some payment
             // methods like iDEAL, your customer will be redirected to an intermediate
@@ -64,6 +67,7 @@ const CheckoutForm = ({clientSecret}) => {
             // navigate("/payment/checkout/failed");
             setSuccess(true);
             setJSON(result.paymentIntent);
+            checkoutServerAPI();
           }
           setLoading(false);
         })

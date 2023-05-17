@@ -1,4 +1,4 @@
-import '../style/product.css';
+import '../style/driverProduct.css';
 import React, { useContext, useState } from 'react';
 import { Formik, yupToFormErrors } from "formik";
 import * as yup from 'yup';
@@ -277,22 +277,6 @@ function Product() {
             </div>
         </div>
     )
-}
-
-function DropDownStatus() {
-    const [state,setState] = React.useState(true);
-    return (
-        <Dropdown className='reg-dr'>
-            <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-                {state === true ? "Looking for driver" : "Done"}
-            </Dropdown.Toggle>
-    
-            <Dropdown.Menu className='w-100'>
-                <Dropdown.Item onClick={()=>setState(true)}>Looking for driver</Dropdown.Item>
-                <Dropdown.Item onClick={() => setState(false)}>Done</Dropdown.Item>
-            </Dropdown.Menu>
-        </Dropdown>
-    );
 }
 
 export default function Index(){

@@ -93,6 +93,7 @@ function ProductDetail(){
         .then(response =>{
             if(response?.data?.successed && response.data?.result){
                 const {orderId, driverId} = response.data?.result;
+                getOrderInfo();
                 createOrderPayment(orderId,driverId);
             }
             setLoading(false);
@@ -125,6 +126,24 @@ function ProductDetail(){
             setShow(false);
             setPopupLoading(false);
         });
+    }
+
+    function checkoutServerAPI(orderId, driverId) {
+        return authInstance.post([authConstraints.userRoot, authConstraints.postCheckout].join("/"), {}, {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+            },
+            params: {
+                orderId,
+                driverId
+            }
+        }).then(response =>{
+            if(response.data?.successed){
+                toast.success("Successfully payment");
+            }
+        }).catch(error => {
+            toast.error(error?.message);
+        })
     }
 
     if(loading) 
@@ -480,10 +499,10 @@ function ProductDetail(){
                                                                 </td>
                                                                 <td>{new moment(post?.createdDate).format("DD/MM/YYYY")}</td>
                                                                 <td>
-                                                                    {post.driverVehicles.join(" - ")}
+                                                                    {post?.driverVehicles?.join?.(" - ")}
                                                                 </td>
                                                                 <td className='sender-action justify-content-center'>
-                                                                    {(result.status === "Paid" && post.driverId === result?.driverId) ? 
+                                                                    {(result.status === "Paid" && post?.driverId === result?.driverId) ? 
                                                                         (<p className='content-green'>Accepted</p>) :
                                                                     (!!result?.driverId && post.driverId !== result?.driverId) ? 
                                                                         (<p className='content-yellow text-center'>Your package had been delivered</p>) :
@@ -548,9 +567,10 @@ function ProductDetail(){
                 onHide={() => setShow(false)} 
                 clientSecret={clientSecret}
                 loading={popupLoading}
+                checkoutServerAPI={() => checkoutServerAPI(result?.id, result?.driverId)}
             ></PaymentPopup>
 
-            {result?.driverId && result?.status === "Paid" && <Driver></Driver>}
+            {result?.driverId && result?.status === "Paid" && <Driver driver={result.driver}></Driver>}
         </div>
     )
 }
@@ -729,7 +749,7 @@ function DropDownStatus() {
     );
 }
 
-function Driver({children}){
+function Driver({driver,children}){
     const [active,setActive] = React.useState(1);
     const [modalShow, setModalShow] = React.useState(false);
     const [stepTemplate, setTemplate] = React.useState([
@@ -764,6 +784,7 @@ function Driver({children}){
             </div>
             <PopUpCenteredModal
                 show={modalShow}
+                driver={driver}
                 onHide={() => setModalShow(false)}
             />
             <div className='product-label-info' style={{alignItems:'unset'}}>
@@ -824,7 +845,7 @@ function Driver({children}){
     )
 }
 
-function PopUpCenteredModal(props) {
+function PopUpCenteredModal({driver, ...props}) {
     return (
     <>
         <Modal
@@ -842,18 +863,10 @@ function PopUpCenteredModal(props) {
                 <Col>
                     <div className='product-label-info'>
                         <p className='product-label'>
-                            ID
+                            Full Name
                         </p>
                         <p className='product-content'>
-                            00001
-                        </p>
-                    </div>
-                    <div className='product-label-info'>
-                        <p className='product-label'>
-                            Username
-                        </p>
-                        <p className='product-content'>
-                            Tymothy
+                            {driver?.name}
                         </p>
                     </div>
                     <div className='product-label-info'>
@@ -861,15 +874,7 @@ function PopUpCenteredModal(props) {
                             Phone number
                         </p>
                         <p className='product-content'>
-                            012345678
-                        </p>
-                    </div>
-                    <div className='product-label-info'>
-                        <p className='product-label'>
-                            Full Name
-                        </p>
-                        <p className='product-content'>
-                            Tymothy
+                            {driver?.phoneNumber}
                         </p>
                     </div>
                     <div className='product-label-info'>
@@ -877,7 +882,7 @@ function PopUpCenteredModal(props) {
                             Email
                         </p>
                         <p className='product-content'>
-                            Tymothy@gmail.com
+                            {driver?.email}
                         </p>
                     </div>
                     <div className='product-label-info'>
@@ -885,7 +890,7 @@ function PopUpCenteredModal(props) {
                             ABNnumber
                         </p>
                         <p className='product-content'>
-                            12325
+                            {driver?.abnNumber}
                         </p>
                     </div>
                     <div className='product-label-info'>
@@ -893,7 +898,7 @@ function PopUpCenteredModal(props) {
                             Address
                         </p>
                         <p className='product-content'>
-                            123 Newyork
+                            {driver?.address}
                         </p>
                     </div>
                     <div className='product-label-info'>
@@ -901,14 +906,14 @@ function PopUpCenteredModal(props) {
                             City
                         </p>
                         <p className='product-content'>
-                            Newyork
+                            {driver?.city}
                         </p>
                     </div>
                     <div className='product-label-info'>
                         <p className='product-label'>
                             Driving license
                         </p>
-                        <img width={"400px"} src='https://tinyurl.com/3p5vmunz'/>
+                        <img width={"400px"} src={driver?.frontDrivingLiense}/>
                     </div>
                 </Col>
                 <Col>
@@ -917,7 +922,7 @@ function PopUpCenteredModal(props) {
                             State
                         </p>
                         <p className='product-content'>
-                            American
+                            Australian
                         </p>
                     </div>
                     <div className='product-label-info'>
@@ -925,7 +930,7 @@ function PopUpCenteredModal(props) {
                             Zipcode
                         </p>
                         <p className='product-content'>
-                            555000
+                            {driver?.zipCode}
                         </p>
                     </div>
                     <div className='product-label-info'>
@@ -933,7 +938,7 @@ function PopUpCenteredModal(props) {
                             Vehicles
                         </p>
                         <p className='product-content' style={{wordWrap:"break-word",maxWidth:'200px'}}>
-                            Motorbike,Car(Hatchback),4x4Wagon,Van,Medium Van(1-3 ton), Other
+                            {driver?.vehicles?.join?.(", ")}
                         </p>
                     </div>
                     <div className='product-label-info'>
@@ -985,7 +990,7 @@ function PopUpCenteredModal(props) {
   );
 }
 
-function PaymentPopup({show,onHide,clientSecret,loading,...props}){
+function PaymentPopup({show,onHide,clientSecret,loading,checkoutServerAPI, order,...props}){
     return (<>
         <Modal
             show={show}
@@ -997,7 +1002,7 @@ function PaymentPopup({show,onHide,clientSecret,loading,...props}){
             <Modal.Header closebutton>
             </Modal.Header>
             <Modal.Body className='p-4'>
-                <PaymentComponents.Payment clientSecret={clientSecret}></PaymentComponents.Payment>
+                <PaymentComponents.Payment clientSecret={clientSecret} checkoutServerAPI={checkoutServerAPI}></PaymentComponents.Payment>
             </Modal.Body>
         </Modal>
     </>)

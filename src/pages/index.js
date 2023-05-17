@@ -30,4 +30,3 @@ export {default as DriverActiveOrder} from './driver active order/component';
 export {default as UserManagement} from './user management/component/index';
 export {default as TotalOrder} from './admin orders/component/index';
 export {default as AdminOrderDetail} from './admin order detail/component/index'
-export * as PaymentComponents from './payment';

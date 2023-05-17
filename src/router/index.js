@@ -33,9 +33,9 @@ export const router = createBrowserRouter([
       },
       {
         path: "auth",
-        element: <>
+        element: <AuthValidator.LoggedContainer>
           <Outlet></Outlet>
-        </>,
+        </AuthValidator.LoggedContainer>,
         children: authChildrens
       },
       {
@@ -62,13 +62,13 @@ export const router = createBrowserRouter([
       },
       {
         path: "admin",
-        element: <>
+        element: <AuthValidator roles={["SuperAdmin"]}>
           <OrderContextComponent>
             <AdminSideBar>
               <Outlet></Outlet>
             </AdminSideBar>
           </OrderContextComponent>
-        </>,
+        </AuthValidator>,
         children: adminChildrens
       },
       {
