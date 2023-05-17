@@ -181,7 +181,7 @@ function Product() {
                                                     <td>{post?.ratePrice} aud</td>
                                                     <td>{post?.status}</td>
                                                     <td>
-                                                    {(post?.isAccepted && post?.status === "Paid") ? 
+                                                    {(post?.isAccepted && post?.order?.status === "Paid") ? 
                                                         <Row style={{flexWrap: 'wrap'}}>
                                                             <Col sm="12" className='mb-2'>
                                                                 <Link to={`/driver/order/detail/${post?.order?.id}`}>
@@ -191,11 +191,11 @@ function Product() {
                                                                 </Link>
                                                             </Col>
                                                         </Row> :
-                                                        (post?.status === "Trading") ?
+                                                        (post?.order?.status === "Trading") ?
                                                         <div className='p-2'>
                                                             <p>Your offer has been sent to customer to get their acceptance, please wait!</p>
                                                         </div> : 
-                                                        (post?.status === "Cancel") ?
+                                                        (post?.order?.status === "Cancel") ?
                                                         <div className='p-2'>
                                                             <p>This order has been cancelled</p>
                                                         </div> : 
@@ -229,22 +229,6 @@ function Product() {
             </div>
         </div>
     )
-}
-
-function DropDownStatus() {
-    const [state,setState] = React.useState(true);
-    return (
-        <Dropdown className='reg-dr'>
-            <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-                {state === true ? "Looking for driver" : "Done"}
-            </Dropdown.Toggle>
-    
-            <Dropdown.Menu className='w-100'>
-                <Dropdown.Item onClick={()=>setState(true)}>Looking for driver</Dropdown.Item>
-                <Dropdown.Item onClick={() => setState(false)}>Done</Dropdown.Item>
-            </Dropdown.Menu>
-        </Dropdown>
-    );
 }
 
 export default function Index(){
