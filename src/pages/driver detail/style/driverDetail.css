@@ -1,0 +1,5 @@
+.driver-form{
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 35px;
+}

@@ -1,6 +1,6 @@
 import { Outlet } from "react-router";
 
-import { ChangePassword, CreateProduct, Order, SenderProductDetail, UserInformation, UserProductHistory, UserProductHistoryDetails } from "../pages";
+import { ChangePassword, UserCreateProduct, UserInformation, UserOrder, UserProductDetail, UserProductHistory, UserProductHistoryDetails } from "../pages";
 
 export const userChildrens = [
     {
@@ -10,12 +10,12 @@ export const userChildrens = [
       </>
     },  
     {
-      path:"product",
+      path:"createProduct",
       element: <Outlet></Outlet>,
       children:[    
         {
-          path: "post",
-          element: <CreateProduct></CreateProduct>
+          path: "",
+          element: <UserCreateProduct></UserCreateProduct>
         }
       ]
     },
@@ -28,12 +28,12 @@ export const userChildrens = [
       element: <Outlet></Outlet>,
       children: [
         {
-          path: "list",
-          element: <Order></Order>
+          path: "",
+          element: <UserOrder></UserOrder>
         },
         {
           path: "detail",
-          element: <SenderProductDetail></SenderProductDetail>
+          element: <UserProductDetail></UserProductDetail>
         }
       ]
     },
