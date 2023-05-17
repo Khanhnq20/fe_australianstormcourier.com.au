@@ -53,7 +53,7 @@ function Banner(){
 
 function Delivery(){
     return(
-        <InView>
+        <InView threshold={0}>
             {({inView, ref}) =>(
                 <div className='del-root' ref={ref}>
                     <div className='container'>

@@ -31,7 +31,7 @@ export const driverChildrens = [
           </>
         },
         {
-          path: "detail/{id}",
+          path: "detail",
           element: <>
             <Outlet></Outlet>
           </>,

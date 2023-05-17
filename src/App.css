@@ -216,14 +216,14 @@ body {
   }
 }
 .fadeLeft{
-  -webkit-animation:fadeLeft 0.8s 0.8s;
-  animation: fadeLeft 0.8s 0.8s;
+  -webkit-animation:fadeLeft 0.8s;
+  animation: fadeLeft 0.8s;
   animation-fill-mode:both;
   -webkit-animation-fill-mode:both;
 }
 .fadeLeft-slower{
-  -webkit-animation:fadeLeft 1.3s 1.3s;
-  animation: fadeLeft 1.3s 1.3s;
+  -webkit-animation:fadeLeft 1.3s 0.8s;
+  animation: fadeLeft 1.3s 0.8s;
   animation-fill-mode:both;
   -webkit-animation-fill-mode:both;
 }
@@ -254,8 +254,8 @@ to{
 }
 }
 .fadeRight{
-  -webkit-animation:fadeRight 0.8s 0.8s;
-  animation: fadeRight 0.8s 0.8s;
+  -webkit-animation:fadeRight 0.8s;
+  animation: fadeRight 0.8s;
   animation-fill-mode:both;
   -webkit-animation-fill-mode:both;
 }
@@ -286,8 +286,8 @@ to{
 }
 }
 .fadeDown{
-  -webkit-animation:fadeDown 0.8s 0.8s;
-  animation: fadeDown 0.8s 0.8s;
+  -webkit-animation:fadeDown 0.8s;
+  animation: fadeDown 0.8s;
   animation-fill-mode:both;
   -webkit-animation-fill-mode:both;
 }
