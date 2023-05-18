@@ -22,8 +22,7 @@ function UserInformation() {
     const [authState, {updateProfile}] = React.useContext(AuthContext);
 
     return (
-        <div>
-            
+        <div>            
             <Row>
                 <Col>
                     <h3 className='ui-header'>Information</h3>

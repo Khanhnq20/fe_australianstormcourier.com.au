@@ -11,10 +11,6 @@ import { dotnetFormDataSerialize } from "../../../ultitlies";
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
-function OrderCreationByAnonymous() {
-    
-}
-
 let orderSchema = yup.object().shape({
     senderId: yup.string().required(),
     sendingLocation: yup.object().shape({

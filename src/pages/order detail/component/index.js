@@ -229,18 +229,6 @@ function Process({children}){
             <p className='product-label-fit py-2'>
               Process
             </p> 
-            {/* <GoogleMapReact
-              defaultCenter={this.props.center}
-              defaultZoom={this.props.zoom}
-              yesIWantToUseGoogleMapApiInternals
-              onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-            >
-              <AnyReactComponent
-                lat={59.955413}
-                lng={30.337844}
-                text="My Marker"
-              />
-            </GoogleMapReact> */}
         </div>
         <div className='product-label-info py-3' style={{alignItems:'unset'}}>
             <p className='product-label-fit py-1'>
