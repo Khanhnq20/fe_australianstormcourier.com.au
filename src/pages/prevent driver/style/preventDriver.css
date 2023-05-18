@@ -13,25 +13,13 @@
     height: 160px;
     border-radius: 50%;
     color: var(--clr-primary);
-    animation: icolor infinite 8s;
+    animation: irotate infinite 4s;
 }
-@keyframes icolor{
+@keyframes irotate{
     0%{
-        color: white;
-    }
-    20%{
-        color: var(--clr-primary);
-    }
-    40%{
-        color: white;
-    }
-    60%{
-        color: var(--clr-primary);
-    }
-    80%{
-        color: white;
+        transform: rotate(0deg);
     }
     100%{
-        color: var(--clr-primary);
+        transform: rotate(180deg);
     }
 }

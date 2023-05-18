@@ -9,7 +9,7 @@ export default function Index() {
             <div className='txt-center'>
                 <CgSandClock className='clock-logo'></CgSandClock>
             </div>
-            <h2 className='txt-center'>Thanks for your register!</h2>
+            <h2 className='txt-center'>Thanks for your participation!</h2>
             <h5 className='mes-title txt-center'>
                 Please wait in few hour for admin's inspection.
             </h5>

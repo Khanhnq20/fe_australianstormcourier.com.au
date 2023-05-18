@@ -76,7 +76,7 @@ function Delivery(){
                             <Col className='col-12 col-md-6'>
                                 <div>
                                     <div>
-                                        <img className={`del-img img-auto-flex${inView ? " fadeRight" : ""}`} src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/shipping.jpg"/>
+                                        <img className={`del-img img-auto-flex${inView ? " fadeRight" : ""}`} src="../../../image/delivery.png"/>
                                     </div>
                                 </div>
                             </Col>
