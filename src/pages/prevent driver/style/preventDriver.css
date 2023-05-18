@@ -1,0 +1,25 @@
+.prevent{
+    min-height: calc(90vh - 54px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transform: translateY(-60px);
+}
+.clock-logo{
+    border: 10px solid var(--clr-primary);
+    padding: 20px;
+    width: 160px;
+    margin-bottom: 20px;
+    height: 160px;
+    border-radius: 50%;
+    color: var(--clr-primary);
+    animation: irotate infinite 4s;
+}
+@keyframes irotate{
+    0%{
+        transform: rotate(0deg);
+    }
+    100%{
+        transform: rotate(180deg);
+    }
+}

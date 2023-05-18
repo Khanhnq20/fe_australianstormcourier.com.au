@@ -45,7 +45,7 @@ AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink=
     if(authState?.isLogged)
         return <Navigate to={
             invalidLink ||
-            (authState?.accountInfo?.roles?.includes?.("User") && "/user/order/list" )|| 
+            (authState?.accountInfo?.roles?.includes?.("User") && "/user/order" )|| 
             (authState?.accountInfo?.roles?.includes?.("Driver") && "/driver/offer") ||
             "/error/forbiden"
         }

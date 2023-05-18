@@ -152,8 +152,17 @@ function Product() {
                                     <thead>
                                         <tr>
                                             <th>Id</th>
-                                            <th>User Name</th>
-                                            <th>Full Name</th>
+                                            <th>Driver Name</th>
+                                            <th>Phone Number</th>
+                                            <th>Front Driving License</th>
+                                            <th>Back Driving License</th>
+                                            <th>Confirm Driving License</th>
+                                            <th>City</th>
+                                            <th>Vehicles</th>
+                                            <th>Rank</th>
+                                            <th>BSB</th>
+                                            <th>Has Inspected</th>
+                                            <th>ABN</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead> 

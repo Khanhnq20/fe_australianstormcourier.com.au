@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { AcceptDriver, AdminInformation, AdminOrderDetail, ChangePassword, CreateProduct, DriverInfo, Order, TotalOrder, UserInformation, UserManagement, UserProductHistory, UserProductHistoryDetails } from "../pages";
+import { AcceptDriver, AdminInformation, AdminOrderDetail, ChangePassword, DriverDetail, DriverInfo, TotalOrder, UserInformation, UserManagement, UserProductHistory, UserProductHistoryDetails } from "../pages";
 
 export const adminChildrens = [
   {
@@ -14,8 +14,8 @@ export const adminChildrens = [
     }
     , 
     {
-      path: "detail/{id}",
-      element: <DriverInfo></DriverInfo>
+      path: "detail",
+      element: <DriverDetail></DriverDetail>
     }]
   },
     {
@@ -64,7 +64,7 @@ export const adminChildrens = [
       children: [
         {
           path: "list",
-          element: <Order></Order>
+          element: <></>
         },
       ]
     },
