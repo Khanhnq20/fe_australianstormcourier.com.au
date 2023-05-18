@@ -6,6 +6,19 @@ import Button from 'react-bootstrap/Button';
 import "../../../layout/navigation/style/navigation.css";
 import { Link } from 'react-router-dom';
 import { InView, useInView } from 'react-intersection-observer';
+import bannerImage from "../../../image/delivery.png";
+import city from "../../../image/city.jpg";
+import shipping from "../../../image/shipping.jpg";
+import gps from "../../../image/gps.jpg";
+import cv from "../../../image/cv.jpg";
+import truck from "../../../image/truck.png";
+import route from "../../../image/route.png";
+import dollar from "../../../image/dollar.png";
+import sender from "../../../image/sender.png";
+import senderPost from "../../../image/sender-post.png";
+import customer from "../../../image/customer.png";
+import logo from "../../../image/as-logo.png";
+
 
 export default function Index() {
 
@@ -21,7 +34,7 @@ export default function Index() {
                 <BecomeCustomer></BecomeCustomer>
                 <Address></Address>
                 <div>
-                    <img className='img-auto-flex' src='http://australianstormcourier.com.au/wp-content/uploads/2023/04/city-1536x864.jpg' width={"100%"}/>
+                    <img className='img-auto-flex' src={city} width={"100%"}/>
                 </div>
             </div>
         </>
@@ -42,7 +55,7 @@ function Banner(){
                             company based in Melbourne. We provide fast same-day delivery between Dandenong and Melbourne CBD.</p>
                         </div>
                         <div className='ban-img-frame'>
-                            <img className='ban-img img-auto-flex' src='https://tinyurl.com/2j5458ak'/>
+                            <img className='ban-img img-auto-flex' src={bannerImage}/>
                         </div>  
                     </div>
                 </div>
@@ -76,7 +89,7 @@ function Delivery(){
                             <Col className='col-12 col-md-6'>
                                 <div>
                                     <div>
-                                        <img className={`del-img img-auto-flex${inView ? " fadeRight" : ""}`} src="../../../image/delivery.png"/>
+                                        <img className={`del-img img-auto-flex${inView ? " fadeRight" : ""}`} src={shipping}/>
                                     </div>
                                 </div>
                             </Col>
@@ -98,7 +111,7 @@ function Rate(){
                             <Col className='col-12 col-md-6'>
                                 <div>
                                     <div>
-                                        <img className={`del-img img-auto-flex ${inView ? "fadeLeft" : ''}`} src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/gps.jpg"/>
+                                        <img className={`del-img img-auto-flex ${inView ? "fadeLeft" : ''}`} src={gps}/>
                                     </div>
                                 </div>
                             </Col>
@@ -141,7 +154,7 @@ function Notifycation(){
                             <Col className='col-12 col-md-6'>
                                 <div>
                                     <div>
-                                        <img className={`del-img img-auto-flex ${inView ? 'fadeRight':''}`} src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/cv-1024x652.jpg"/>
+                                        <img className={`del-img img-auto-flex ${inView ? 'fadeRight':''}`} src={cv}/>
                                     </div>
                                 </div>
                             </Col>
@@ -189,7 +202,7 @@ function Marketing(){
                             <Col sm="12" lg="6" className={inView ? 'fadeLeft' : ''}>
                                 <div className='mar-item mb-4'>
                                     <div>
-                                        <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/route-300x300.png' width={"60px"}/>
+                                        <img src={route} width={"60px"}/>
                                     </div>
                                     <div>
                                         <div>
@@ -207,7 +220,7 @@ function Marketing(){
                             <Col sm="12" lg="6" className={inView ? 'fadeLeft-slower' : ''}>
                             <div className='mar-item'>
                                     <div>
-                                        <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/dollar-bill-300x300.png' width={"60px"}/>
+                                        <img src={dollar} width={"60px"}/>
                                     </div>
                                     <div>
                                         <div>
@@ -225,7 +238,7 @@ function Marketing(){
                             <Col sm="12" lg="6" className={inView ? 'fadeLeft-slower' : ''}>
                             <div className='mar-item'>
                                     <div>
-                                        <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/truck-300x300.png' width={"60px"}/>
+                                        <img src={truck} width={"60px"}/>
                                     </div>
                                     <div>
                                         <div>
@@ -262,7 +275,7 @@ function BecomeCustomer(){
                         <Row className={`gap-4 ${inView ? 'fadeLeft' : ''}`}>
                             <Col className='cus-item p-3'>
                                 <div className='cus-img'>
-                                    <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender.png' width="100%" height="100%"/>
+                                    <img src={sender} width="100%" height="100%"/>
                                 </div>
                                 <Link to="/auth/register/driver">
                                 <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A DRIVER</Button>
@@ -270,7 +283,7 @@ function BecomeCustomer(){
                             </Col>
                             <Col className='cus-item p-3'>
                                 <div className='cus-img'>
-                                    <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/sender-1.png' width="100%" height="100%"/>
+                                    <img src={senderPost} width="100%" height="100%"/>
                                 </div>
                                 <Link to="/auth/register/user">
                                 <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A CUSTOMER</Button>
@@ -278,7 +291,7 @@ function BecomeCustomer(){
                             </Col>
                             <Col className='cus-item p-3'>
                                 <div className='cus-img'>
-                                    <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/customer.png' width="100%" height="100%"/>
+                                    <img src={customer} width="100%" height="100%"/>
                                 </div>
                                 <Link to="/anonymous/order">
                                 <Button variant="warning" className='w-100 my-btn-yellow my-4'>SEND NOW</Button>
@@ -300,7 +313,7 @@ function Address(){
                     <Row>
                         <Col className='as-ctn-1'>
                             <div className='as-img mb-4'>
-                                <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png' width={'100%'}/>
+                                <img src={logo} width={'100%'}/>
                             </div>
                             <h3 className='mar-txt-header mb-4'>AUSTRALIAN STORM COURIER</h3>
                             <div>

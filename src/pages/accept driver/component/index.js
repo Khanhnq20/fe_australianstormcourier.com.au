@@ -159,7 +159,6 @@ function Product() {
                                             <th>Confirm Driving License</th>
                                             <th>City</th>
                                             <th>Vehicles</th>
-                                            <th>Rank</th>
                                             <th>BSB</th>
                                             <th>Has Inspected</th>
                                             <th>ABN</th>
@@ -204,7 +203,7 @@ function Product() {
                                                     className={item === currentPage ? "pg-no pg-active" : "pg-no"}
                                                     onClick={()=>pagination(item)}
                                                     >{item}</Pagination.Item>
-                                                </div>
+                                                </div>  
                                             </div>
                                         )
                                     })}
