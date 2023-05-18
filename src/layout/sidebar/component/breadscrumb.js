@@ -6,16 +6,18 @@ export function Breadcrumbs() {
     const pathList = location.pathname.split('/')
     .filter(crumb => !!crumb);
   
-    const pathLinks = pathList.reduce((pre,curr) => {
-      return [...pre , pre + "/" + curr];
+    const pathLinks = pathList.reduce((pre, curr, index) => {
+      console.log(curr);
+      return [...pre , index ? pre[index - 1] + "/" + curr : "/" + curr];
     }, []);
-  
     return (
       <Breadcrumb>
         {pathList
           .map((crumb,index) => {
             return(
-              <BreadcrumbItem className={pathLinks[index] === location.pathname ? "path active-link" : "path" } key={crumb} href={pathLinks[index]}>
+              <BreadcrumbItem className={pathLinks[index] === location.pathname ? "path active-link" : "path" } 
+              key={crumb} 
+              href={pathLinks[index]}>
                 {crumb}
               </BreadcrumbItem>
             )
