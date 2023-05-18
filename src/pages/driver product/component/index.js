@@ -1,18 +1,15 @@
 import '../style/driverProduct.css';
-import React, { useContext, useState } from 'react';
-import { Formik, yupToFormErrors } from "formik";
+import React, { useContext } from 'react';
+import { Formik } from "formik";
 import * as yup from 'yup';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
-import { Col, Row, Spinner, Form, Button, Modal, InputGroup } from 'react-bootstrap';
-import { ImCross } from 'react-icons/im';
-import { FcAcceptDatabase } from 'react-icons/fc';
+import { Col, Row, Spinner, Form, Button, InputGroup } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
-import moment, { utc } from 'moment';
-import { Link } from 'react-router-dom';
+import moment from 'moment';
 import { AuthContext, OrderContext } from '../../../stores';
 
 
@@ -130,10 +127,10 @@ function Product() {
                                         }}>Item Name</th>
                                         <th style={{
                                             minWidth: '140px'
-                                        }}>Deliverable Location</th>
+                                        }}>Pickup</th>
                                         <th style={{
                                             minWidth: '140px'
-                                        }}>Deliverable Destination</th>
+                                        }}>Destination</th>
                                         <th style={{
                                             minWidth: '140px'
                                         }}>Posted At</th>

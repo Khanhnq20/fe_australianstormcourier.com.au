@@ -17,7 +17,14 @@ function OrderCreationByAnonymous() {
 
 let orderSchema = yup.object().shape({
     senderId: yup.string().required(),
-    sendingLocation: yup.string().required(),
+    sendingLocation: yup.object().shape({
+        unitNumber: yup.number().required("Unit Number is required"),
+        streetNumber: yup.number().required("Street Number is required"),
+        streetName: yup.string().required("Street Name is required"),
+        suburb: yup.string().required("Suburb is required"),
+        state: yup.string().required("State is required"),
+        postCode: yup.number().required("Post code is required"),
+    }),
     destination: yup.string().required(),
     receiverName: yup.string().nullable(),
     receiverPhone: yup.string().required(),
@@ -73,8 +80,7 @@ let orderSchema = yup.object().shape({
                     }
                 ),
         })
-    ),
-    
+    )
 });
 
 function ItemCreation({index, touched, errors, values, handleChange, handleBlur, isValid}){
@@ -334,27 +340,19 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
 function OrderCreation(){
     const [authState] = useContext(AuthContext);
     const [orderState, {postOrder}] = useContext(OrderContext);
-    const [address,setAddress] = useState(
-        {
-            houseNumber:'',
-            street:'',
-            region:'',
-            state:''
-        }
-    );
-    function handleAddress(e){
-        const { name, value } = e.target;
-        setAddress(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    }
 
     return(
         <Formik
             initialValues={{
                 senderId: authState.accountInfo?.id,
-                sendingLocation: [address?.houseNumber, address?.street, address?.region, address?.state].join('-'),
+                sendingLocation: {
+                    unitNumber: 0,
+                    streetNumber: 0,
+                    streetName: '',
+                    suburb: '',
+                    state: '',
+                    postCode: '',
+                },
                 destination:'',
                 receiverName: '',
                 receiverPhone: '',
@@ -426,40 +424,85 @@ function OrderCreation(){
                                             <p className='asterisk'>*</p>
                                         </div>
                                         <div className="pickup-post">
-                                            <Form.Control
-                                                type="text"
-                                                name="houseNumber"
-                                                placeholder="Your house number"
-                                                isInvalid={touched.form && errors.from}
-                                                onChange={handleAddress}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control
-                                                type="text"
-                                                name="street"
-                                                placeholder="Your street"
-                                                isInvalid={touched.form && errors.from}
-                                                onChange={handleAddress}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control
-                                                type="text"
-                                                name="region"
-                                                placeholder="Your region"
-                                                isInvalid={touched.form && errors.from}
-                                                onChange={(e)=>handleAddress(e)}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control
-                                                type="text"
-                                                name="state"
-                                                placeholder="Your state"
-                                                isInvalid={touched.form && errors.from}
-                                                onChange={(e)=>handleAddress(e)}
-                                                onBlur={handleBlur}
-                                            />
+                                            {/* Unit Number */}
+                                            <Form.Group>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="sendingLocation.unitNumber"
+                                                    placeholder="Enter Unit number (apartment, room,...)"
+                                                    isInvalid={touched.sendingLocation?.unitNumber && !!errors?.sendingLocation?.unitNumber}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                                <Form.Control.Feedback type="invalid">{errors?.sendingLocation?.unitNumber}</Form.Control.Feedback>
+                                            </Form.Group>
+
+                                            
+                                            {/* Street Number */}
+                                            <Form.Group>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="sendingLocation.streetNumber"
+                                                    placeholder="Enter street number"
+                                                    isInvalid={touched.sendingLocation?.streetNumber && !!errors?.sendingLocation?.streetNumber}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                                <Form.Control.Feedback type="invalid">{errors?.sendingLocation?.streetNumber}</Form.Control.Feedback>
+                                            </Form.Group>
+
+                                            {/* Street Name */}
+                                            <Form.Group>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="sendingLocation.streetName"
+                                                    placeholder="Enter street name"
+                                                    isInvalid={touched.sendingLocation?.streetName && !!errors?.sendingLocation?.streetName}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                                <Form.Control.Feedback type="invalid">{errors?.sendingLocation?.streetName}</Form.Control.Feedback>
+                                            </Form.Group>
+
+                                            {/* Suburb */}
+                                            <Form.Group>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="sendingLocation.suburb"
+                                                    placeholder="Enter suburb"
+                                                    isInvalid={touched.sendingLocation?.suburb && !!errors?.sendingLocation?.suburb}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                                <Form.Control.Feedback type="invalid">{errors?.sendingLocation?.suburb}</Form.Control.Feedback>
+                                            </Form.Group>
+
+                                            {/* State */}
+                                            <Form.Group>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="sendingLocation.state"
+                                                    placeholder="Enter state"
+                                                    isInvalid={touched.sendingLocation?.state && !!errors?.sendingLocation?.state}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                                <Form.Control.Feedback type="invalid">{errors?.sendingLocation?.state}</Form.Control.Feedback>
+                                            </Form.Group>
+
+                                            {/* State */}
+                                            <Form.Group>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="sendingLocation.postCode"
+                                                    placeholder="Enter post code"
+                                                    isInvalid={touched.sendingLocation?.postCode && !!errors?.sendingLocation?.postCode}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                                <Form.Control.Feedback type="invalid">{errors?.sendingLocation?.postCode}</Form.Control.Feedback>
+                                            </Form.Group>
                                         </div>
-                                        <Form.Control.Feedback type="invalid">{errors.from}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                                 <Col>

@@ -6,7 +6,6 @@ import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import {RiImageEditFill} from 'react-icons/ri'
 import { AuthContext } from '../../../stores';
 import { Link } from 'react-router-dom';
 
@@ -47,6 +46,7 @@ function UpdateDriver() {
                         <Col>
                             <h3 className='ui-header'>Information</h3>
                             <div style={{padding:'35px'}}>
+                                {/* Full Name */}
                                 <div className='product-label-info'>
                                     <p className='product-label'>
                                         Full Name
@@ -109,6 +109,14 @@ function UpdateDriver() {
                                     </p>
                                     <p className='product-content'>
                                         {authState?.accountInfo?.roles?.[0]}
+                                    </p>
+                                </div>
+                                <div className='product-label-info' style={{alignItems: 'flex-start'}}>
+                                    <p className='product-label'>
+                                        BSB
+                                    </p>
+                                    <p className='product-content'>
+                                        {authState?.accountInfo?.bsb}
                                     </p>
                                 </div>
                                 <div className='product-label-info' style={{alignItems: 'flex-start'}}>

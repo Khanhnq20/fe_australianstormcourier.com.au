@@ -1,3 +1,4 @@
+import { Container } from "react-bootstrap";
 import { ErrorPages } from "../pages";
 
 export const errorChildrens = [
@@ -12,5 +13,11 @@ export const errorChildrens = [
     {
       path: "500",
       element: <ErrorPages.BrokenServer></ErrorPages.BrokenServer>
+    },
+    {
+      path: "forbiden",
+      element: <Container>
+        <h2>Your account is queuing for inspecting. Please wait</h2>
+      </Container>
     }
   ]

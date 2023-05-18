@@ -403,66 +403,88 @@ function UserOrders() {
                                 <h5>No Data Found</h5>
                             </div>) :
                             (<>
-                                <Table striped bordered >
-                                    <thead>
-                                        <tr>
-                                            <th>Order Id</th>
-                                            <th>Item Name</th>
-                                            <th>Pickup Location</th>
-                                            <th>Destination</th>
-                                            <th>Posted At</th>
-                                            <th>Expected date</th>
-                                            <th>Expected time frame</th>
-                                            <th>Status</th>
-                                            <th>Vehicles</th>
-                                            <th>Offer Amount</th>
-                                            <th>Actions</th>
-                                        </tr>
-                                    </thead> 
-                                    <tbody>
-                                        {
-                                            items?.slice((currentPage - 1) * perPageAmount, perPageAmount * (1 + currentPage)).map((post,index) =>{
-                                                return (
-                                                    <tr key={index}>
-                                                        <td>{post?.id}</td>
-                                                        <td>
-                                                        <Row>
-                                                            <Col sm="4">
-                                                                    <img src={post?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
-                                                            </Col>
-                                                            <Col sm="8">
-                                                                <b>{post?.orderItems?.[0]?.itemName}</b>
-                                                            </Col>
-                                                        </Row>
-                                                            
-                                                        </td>
-                                                        <td>{post?.sendingLocation}</td>
-                                                        <td>{post?.destination}</td>
-                                                        <td>{!!post?.createdDate ? moment(post?.createdDate).format("DD-MM-YYYY") : ""}</td>
-                                                        <td>{!!post?.deliveredDate ? moment(post?.deliveredDate).format("DD-MM-YYYY") : ""}</td>
-                                                        <td>{post?.timeFrame}</td>
-                                                        <td>{post?.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</td>
-                                                        <td>{post?.vehicles?.map?.(v => {
-                                                            return <p>{v}</p>
-                                                        })}</td>
-                                                        <td>{post?.offerNumber}</td>
-                                                        <td>
+                                <div style={{maxWidth: '100%', overflowX: "scroll" }}>
+                                    <Table striped bordered >
+                                        <thead>
+                                            <tr>
+                                                <th>Order Id</th>
+                                                <th style={{
+                                                    minWidth: '320px'
+                                                }}>Item Name</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Pickup Location</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Destination</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Posted At</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Expected date</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Expected time frame</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Status</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Vehicles</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Offer Amount</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Actions</th>
+                                            </tr>
+                                        </thead> 
+                                        <tbody>
+                                            {
+                                                items?.slice((currentPage - 1) * perPageAmount, perPageAmount * (1 + currentPage)).map((post,index) =>{
+                                                    return (
+                                                        <tr key={index}>
+                                                            <td>{post?.id}</td>
+                                                            <td>
                                                             <Row>
-                                                                <Col>
-                                                                    <Link to={`/user/order/detail?orderid=${post?.id}`} state={post}>
-                                                                        <Button variant='primary'>
-                                                                            Detail
-                                                                        </Button>
-                                                                    </Link>
+                                                                <Col sm="4">
+                                                                        <img src={post?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
+                                                                </Col>
+                                                                <Col sm="8">
+                                                                    <b>{post?.orderItems?.[0]?.itemName}</b>
                                                                 </Col>
                                                             </Row>
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </Table>
+                                                                
+                                                            </td>
+                                                            <td>{post?.sendingLocation}</td>
+                                                            <td>{post?.destination}</td>
+                                                            <td>{!!post?.createdDate ? moment(post?.createdDate).format("DD-MM-YYYY") : ""}</td>
+                                                            <td>{!!post?.deliveredDate ? moment(post?.deliveredDate).format("DD-MM-YYYY") : ""}</td>
+                                                            <td>{post?.timeFrame}</td>
+                                                            <td>{post?.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</td>
+                                                            <td>{post?.vehicles?.map?.(v => {
+                                                                return <p>{v}</p>
+                                                            })}</td>
+                                                            <td>{post?.offerNumber}</td>
+                                                            <td>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <Link to={`/user/order/detail?orderid=${post?.id}`} state={post}>
+                                                                            <Button variant='primary'>
+                                                                                Detail
+                                                                            </Button>
+                                                                        </Link>
+                                                                    </Col>
+                                                                </Row>
+                                                            </td>
+                                                        </tr>
+                                                    )
+                                                })
+                                            }
+                                        </tbody>
+                                    </Table>
+                                </div>
 
                                 <Pagination className='pg-form w-100'>
                                     {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}

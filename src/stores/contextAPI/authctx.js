@@ -125,38 +125,33 @@ export default function Index({children}) {
                 loading: true,
                 tasks: {
                     ...i.tasks,
-                    [authConstraints.signupDriver] : taskStatus.Inprogress
+                    [authConstraints.signupDriver]: taskStatus.Inprogress
                 }
             }));
             authInstance.post([authConstraints.root, authConstraints.signupDriver].join("/"), body).then(response =>{
                 if(!!response.data?.successed){
                     toast.success(`You have become driver successfully`, {});
                 } 
-                    setState(i =>({
-                        ...i,
-                        errors: [...response.data?.registeredErrors, ...response.data?.assingedToRoleErrors],
-                        tasks: {
-                            ...i.tasks,
-                            [authConstraints.signupDriver] : taskStatus.Completed
-                        }
-                    }));
-            }).catch(err =>{
-                if(err){
-                    setState(i =>({
-                        ...i,
-                        errors: [err],
-                        tasks: {
-                            ...i.tasks,
-                            [authConstraints.signupDriver] : taskStatus.Failed
-                        }
-                    }));
-                }
-            }).finally(() =>{
                 setState(i =>({
                     ...i,
+                    errors: [...response.data?.registeredErrors, ...response.data?.assingedToRoleErrors],
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.signupDriver] : taskStatus.Completed
+                    },
                     loading: false
-                }))
-            });;
+                }));
+            }).catch(err =>{
+                setState(i =>({
+                    ...i,
+                    errors: [err],
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.signupDriver] : taskStatus.Failed,
+                        loading: false
+                    },
+                }));
+            })
         },
 
         signout(){
@@ -253,7 +248,7 @@ export default function Index({children}) {
                 }).catch(err =>{
                     setState(i =>({
                         ...i,
-                        errors: [err],
+                        errors: [err.message],
                     }));
                 });
         },
@@ -271,7 +266,7 @@ export default function Index({children}) {
                 }).catch(err =>{
                     setState(i =>({
                         ...i,
-                        errors: [err],
+                        errors: [err.message],
                     }));
                 });
         },

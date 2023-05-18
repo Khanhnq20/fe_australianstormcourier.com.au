@@ -518,15 +518,7 @@ function ProductDetail(){
                                                                             </div>
                                                                         </div>) :
                                                                         (<div className='txt-success' onClick={() => acceptDriver(post?.driverId)}>
-                                                                            <div style={{
-                                                                                borderRadius: '50%',
-                                                                                width: '30px',
-                                                                                height: '30px',
-                                                                                fontSize: '1rem',
-                                                                                cursor: 'pointer'
-                                                                            }}>
-                                                                                <BiCheckDouble></BiCheckDouble>
-                                                                            </div>
+                                                                            <Button className="w-100" variant="success">Accept</Button>
                                                                         </div>)
                                                                     }
                                                                 </td>
@@ -814,22 +806,10 @@ function Driver({driver,children}){
                 <p className='product-label-fit py-2'>
                 Process
                 </p> 
-                {/* <GoogleMapReact
-                defaultCenter={this.props.center}
-                defaultZoom={this.props.zoom}
-                yesIWantToUseGoogleMapApiInternals
-                onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-                >
-                <AnyReactComponent
-                    lat={59.955413}
-                    lng={30.337844}
-                    text="My Marker"
-                />
-                </GoogleMapReact> */}
             </div>
             <div className='product-label-info py-3' style={{alignItems:'unset'}}>
                 <p className='product-label-fit py-1'>
-                Delivery pictures
+                    Delivery pictures
                 </p>
                 <div>
                     <div className='img-front-frame'  style={{padding:'10px 0 '}}>
