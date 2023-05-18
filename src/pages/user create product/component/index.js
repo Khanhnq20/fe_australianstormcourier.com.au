@@ -8,6 +8,7 @@ import { AuthContext, OrderContext } from "../../../stores";
 import '../style/createProduct.css'
 import moment from 'moment';
 import { dotnetFormDataSerialize } from "../../../ultitlies";
+import Barcode from "react-barcode";
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -47,7 +48,7 @@ let orderSchema = yup.object().shape({
     orderItems: yup.array().of(
         yup.object().shape({
             itemName: yup.string().required("Item Name is required field"),
-            itemCharCode: yup.number().required("Item CharCode is required field"), 
+            itemBarcode: yup.number().required("Item BarCode is required field"), 
             itemDescription: yup.string().nullable(),
             quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
@@ -79,10 +80,10 @@ let orderSchema = yup.object().shape({
     )
 });
 
-function ItemCreation({index, touched, errors, values, handleChange, handleBlur, isValid}){
+function ItemCreation({name, index, touched, errors, values, handleChange, handleBlur, isValid}){
     const product_img_ipt = useRef();
     const [authState] = useContext(AuthContext);
-
+    
     return (
         <>
             {/* Item Name  */}
@@ -93,7 +94,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                 </div>
                 <Form.Control
                     type="text"
-                    name="orderItems[0].itemName"
+                    name={`${name}.itemName`}
                     placeholder="Enter Product Name"
                     isInvalid={touched.itemName && errors.itemName}
                     onChange={handleChange}
@@ -101,21 +102,13 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                 />
                 <Form.Control.Feedback type="invalid">{errors.itemName}</Form.Control.Feedback>
             </Form.Group>
-            {/* Item CharCode  */}
+            {/* Item BarCode  */}
             <Form.Group className="mb-3">
                 <div className='mb-2'>
-                    <Form.Label className='label'>CharCode</Form.Label>
+                    <Form.Label className='label'>Barcode</Form.Label>
                     <p className='asterisk'>*</p>
                 </div>
-                <Form.Control
-                    type="text"
-                    name="orderItems[0].itemCharCode"
-                    placeholder="Enter CharCode"
-                    isInvalid={touched.itemCharCode && errors.itemCharCode}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                />
-                <Form.Control.Feedback type="invalid">{errors.itemCharCode}</Form.Control.Feedback>
+                <Barcode value={values.orderItems[index].itemBarCode}></Barcode>
             </Form.Group>
             {/* Item Description  */}
             <Form.Group className="mb-3">
@@ -125,7 +118,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                 <Form.Control
                     as="textarea"
                     row="3"
-                    name="orderItems[0].itemDescription"
+                    name={`${name}.itemDescription`}
                     isInvalid={touched?.itemDescription && !!errors?.itemDescription}
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -145,7 +138,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                             className="product-form-input"
                             min={0}
                             max={10}
-                            name="orderItems[0].quantity"
+                            name={`${name}.quantity`}
                             placeholder="Enter Quantity"
                             isInvalid={touched?.quantity && !!errors?.quantity}
                             onChange={handleChange}
@@ -163,7 +156,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                         <InputGroup>
                             <Form.Control
                                 type="text"
-                                name="orderItems[0].weight"
+                                name={`${name}.weight`}
                                 placeholder="Enter item weight"
                                 isInvalid={touched?.weight && !!errors?.weight}
                                 onChange={handleChange}
@@ -187,7 +180,7 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                             <p className='asterisk'>*</p>
                         </div>
                         <div className='back-up'>
-                            <FieldArray name={`orderItems[${index}].productPictures`} 
+                            <FieldArray name={`${name}.productPictures`} 
                                 render={(arrayHelpers) =>{
                                 return (<>
                                     <Row style={{flexDirection:'column'}}>
@@ -267,23 +260,6 @@ function ItemCreation({index, touched, errors, values, handleChange, handleBlur,
                         />
                         <Form.Control.Feedback type="invalid">{errors?.startingRate}</Form.Control.Feedback>
                     </Form.Group>
-                    {/* Selected shipping rate */}
-                    {/* <Form.Group className="mb-3">
-                        <div className='mb-2'>
-                            <Form.Label className='label'>Selected shipper rates</Form.Label>
-                            <p className='asterisk'>*</p>
-                        </div>
-                        <Form.Control
-                            type="number"
-                            name={`orderItems[${index}].selectedRate`}
-                            placeholder="Selecte shipping rate"
-                            value={values.selectedRate}
-                            isInvalid={touched?.orderItems?.[index]?.selectedRate && !!errors?.orderItems?.[index]?.selectedRate}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                        />
-                        <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.selectedRate}</Form.Control.Feedback>
-                    </Form.Group> */}
 
                     {/* Vehicles */}
                     <Form.Group className="form-group" >
@@ -358,7 +334,7 @@ function OrderCreation(){
                 orderItems: [
                     {
                         itemName: '',
-                        itemCharCode: '', 
+                        itemBarCode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000), 
                         itemDescription: '',
                         quantity: 0,
                         weight: 0,
@@ -626,7 +602,7 @@ function OrderCreation(){
                                 render={(arrayHelpers) =>{
                                     return <>
                                         {values.orderItems.map((_,index) =>{
-                                            return <ItemCreation key={index} index={index} {...formProps}></ItemCreation>
+                                            return <ItemCreation key={index} index={index} name={`orderItems[${index}]`} {...formProps}></ItemCreation>
                                         })}
                                     </>
                                 }}

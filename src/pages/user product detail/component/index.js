@@ -600,8 +600,8 @@ function ProductEdit(){
                                         <Form.Control
                                             type="text"
                                             name="id"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            placeholder="Enter Id"
+                                            isInvalid={touched.id && errors.id}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
@@ -614,12 +614,12 @@ function ProductEdit(){
                                         <Form.Control
                                             type="text"
                                             name="shippingRates"
-                                            placeholder="Enter..."
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            placeholder="Enter Shipping Rate"
+                                            isInvalid={touched.shippingRates && errors.shippingRates}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.shippingRates}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
@@ -643,31 +643,31 @@ function ProductEdit(){
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>From</Form.Label>
+                                            <Form.Label className='label'>Sender Location</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
-                                            name="from"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            name="senderLocation"
+                                            placeholder="Enter Sender Location"
+                                            isInvalid={touched.senderLocation && errors.senderLocation}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.senderLocation}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>To</Form.Label>
+                                            <Form.Label className='label'>Destination</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
-                                            name="to"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            name="destination"
+                                            placeholder="Enter Destination"
+                                            isInvalid={touched.destination && errors.destination}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.destination}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
