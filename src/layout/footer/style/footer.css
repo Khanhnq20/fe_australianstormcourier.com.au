@@ -6,4 +6,7 @@
 }
 .ft-root{
     background-color: #FFF4E5;
+    position: absolute;
+    bottom: 0;
+    width: 100vw;
 }

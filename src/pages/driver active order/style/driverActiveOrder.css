@@ -3,6 +3,11 @@
     grid-template-columns: auto auto;
     gap: 20px;
 }
+@media only screen and (max-width:768px) {
+.form-order{
+    grid-template-columns: auto;
+}
+}
 .product-btn-search{
     display: flex;
     align-items: center;
