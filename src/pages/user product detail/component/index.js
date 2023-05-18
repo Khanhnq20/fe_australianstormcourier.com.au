@@ -518,15 +518,7 @@ function ProductDetail(){
                                                                             </div>
                                                                         </div>) :
                                                                         (<div className='txt-success' onClick={() => acceptDriver(post?.driverId)}>
-                                                                            <div style={{
-                                                                                borderRadius: '50%',
-                                                                                width: '30px',
-                                                                                height: '30px',
-                                                                                fontSize: '1rem',
-                                                                                cursor: 'pointer'
-                                                                            }}>
-                                                                                <BiCheckDouble></BiCheckDouble>
-                                                                            </div>
+                                                                            <Button className="w-100" variant="success">Accept</Button>
                                                                         </div>)
                                                                     }
                                                                 </td>
@@ -597,136 +589,136 @@ function ProductEdit(){
         return(
             <>   
                 <div>
-                        <div className='p-3'>
-                            <div>
-                                <Form>
-                                    <div className='form-order'>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>ID</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="id"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Selected shipper rates</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="shippingRates"
-                                                placeholder="Enter..."
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Name</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="fullName"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Status</Form.Label>
-                                            </div>
-                                            <DropDownStatus></DropDownStatus>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>From</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="from"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>To</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="to"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Starting shipper rates</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="shipperRates"
-                                                placeholder="Enter..."
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Product images</Form.Label>
-                                            </div>
-                                            <div className='back-up'>
-                                                <div className='img-front-frame' onClick={() => product_img_ipt.current.click()}>
-                                                    <div className='background-front'>
-                                                        <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                                        <p className='driving-txt'>Change driving license</p>
-                                                    </div>
-                                                    <img className='img-front' src={imgUrlBack || 'https://tinyurl.com/5ehpcctt'}/>
+                    <div className='p-3'>
+                        <div>
+                            <Form>
+                                <div className='form-order'>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>ID</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="id"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Selected shipper rates</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="shippingRates"
+                                            placeholder="Enter..."
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Name</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="fullName"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Status</Form.Label>
+                                        </div>
+                                        <DropDownStatus></DropDownStatus>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>From</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="from"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>To</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="to"
+                                            placeholder="Enter Full Name"
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Starting shipper rates</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="shipperRates"
+                                            placeholder="Enter..."
+                                            isInvalid={touched.fullName && errors.fullName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Product images</Form.Label>
+                                        </div>
+                                        <div className='back-up'>
+                                            <div className='img-front-frame' onClick={() => product_img_ipt.current.click()}>
+                                                <div className='background-front'>
+                                                    <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                                    <p className='driving-txt'>Change driving license</p>
                                                 </div>
-                                                <input type="file" id="driver_image_back" name="fileBack" ref={product_img_ipt} 
-                                                        isInvalid={!!errors.fileImageBack}
-                                                        onChange={(e) =>{
-                                                            
-                                                            const file = e.target.files[0];
-                                                            // setFieldValue("fileImage", file);
-                                                            
-                                                            const fileReader = new FileReader();
-                                                            if(file){
-                                                                fileReader.addEventListener("loadend", (e)=>{
-                                                                    setImgUrlBack(fileReader.result);
-                                                                })
-                                                                fileReader.readAsDataURL(file);
-                                                            }
-                                                        }}
-                                                />
-                                                <input type="file" id="driver_image_back" name="fileBack"/>
+                                                <img className='img-front' src={imgUrlBack || 'https://tinyurl.com/5ehpcctt'}/>
                                             </div>
-                                        </Form.Group>
-                                    </div>
-                                </Form>
-                            </div>
+                                            <input type="file" id="driver_image_back" name="fileBack" ref={product_img_ipt} 
+                                                    isInvalid={!!errors.fileImageBack}
+                                                    onChange={(e) =>{
+                                                        
+                                                        const file = e.target.files[0];
+                                                        // setFieldValue("fileImage", file);
+                                                        
+                                                        const fileReader = new FileReader();
+                                                        if(file){
+                                                            fileReader.addEventListener("loadend", (e)=>{
+                                                                setImgUrlBack(fileReader.result);
+                                                            })
+                                                            fileReader.readAsDataURL(file);
+                                                        }
+                                                    }}
+                                            />
+                                            <input type="file" id="driver_image_back" name="fileBack"/>
+                                        </div>
+                                    </Form.Group>
+                                </div>
+                            </Form>
                         </div>
                     </div>
+                </div>
             </>
     )}}
     </Formik>
@@ -814,22 +806,10 @@ function Driver({driver,children}){
                 <p className='product-label-fit py-2'>
                 Process
                 </p> 
-                {/* <GoogleMapReact
-                defaultCenter={this.props.center}
-                defaultZoom={this.props.zoom}
-                yesIWantToUseGoogleMapApiInternals
-                onGoogleApiLoaded={({ map, maps }) => handleApiLoaded(map, maps)}
-                >
-                <AnyReactComponent
-                    lat={59.955413}
-                    lng={30.337844}
-                    text="My Marker"
-                />
-                </GoogleMapReact> */}
             </div>
             <div className='product-label-info py-3' style={{alignItems:'unset'}}>
                 <p className='product-label-fit py-1'>
-                Delivery pictures
+                    Delivery pictures
                 </p>
                 <div>
                     <div className='img-front-frame'  style={{padding:'10px 0 '}}>
