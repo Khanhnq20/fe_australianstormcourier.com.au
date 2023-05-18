@@ -22,19 +22,20 @@ export const router = createBrowserRouter([
     element: <>
       <Navigation />
       <Outlet />
-      <Footer/>
     </>,
     children: [
       {
         path: "",
         element: <>
           <Home></Home>
+          <Footer/>
         </>
       },
       {
         path: "prevent",
         element:<>
           <PreventDriver></PreventDriver>
+          <Footer.Custom></Footer.Custom>
         </>
       }
       ,
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
         path: "auth",
         element: <AuthValidator.LoggedContainer>
           <Outlet></Outlet>
+          <Footer.Custom></Footer.Custom>
         </AuthValidator.LoggedContainer>,
         children: authChildrens
       },
@@ -53,6 +55,7 @@ export const router = createBrowserRouter([
               <Outlet></Outlet>
             </UserSideBar>
           </OrderContextComponent>
+          <Footer.Custom></Footer.Custom>
         </>,
         children: userChildrens
       },
@@ -64,6 +67,7 @@ export const router = createBrowserRouter([
               <Outlet></Outlet>
             </DriverSideBar>
           </OrderContextComponent>
+          <Footer.Custom></Footer.Custom>
         </>,
         children: driverChildrens
       },
@@ -75,17 +79,25 @@ export const router = createBrowserRouter([
               <Outlet></Outlet>
             </AdminSideBar>
           </OrderContextComponent>
+          <Footer.Custom></Footer.Custom>
         </>,
         children: adminChildrens
       },
       {
         path: 'payment',
-        element: <Outlet></Outlet>,
+        element: <>
+        <Outlet></Outlet>
+        <Footer.Custom></Footer.Custom>
+        </>,
+        
         children: paymentChildrens,
       },
       {
         path: 'error',
-        element: <Outlet></Outlet>,
+        element: <>
+        <Outlet></Outlet>
+        <Footer.Custom></Footer.Custom>
+        </>,
         children: errorChildrens
       }
     ]
