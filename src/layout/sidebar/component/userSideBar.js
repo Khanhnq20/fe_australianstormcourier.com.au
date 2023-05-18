@@ -27,7 +27,7 @@ export function UserSideBar({children}) {
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link active' : 'sbar-link'
                         }}
-                        to={'/user/order/me'}>
+                        to={'order/me'}>
                         <div className='sbar-icon-frame'>
                           <TbPackages className="sbar-icon"></TbPackages>
                         </div>
