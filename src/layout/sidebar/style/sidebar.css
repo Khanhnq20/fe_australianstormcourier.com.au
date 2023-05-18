@@ -132,6 +132,8 @@
 }
 .h-root{
     background-color: var(--clr-bgr-home);
+    position: fixed;
+    width: 100vw;
 }
 .h-del-frame{
     padding: 10px;
