@@ -3,11 +3,10 @@ import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import {DatePicker} from "antd";
-import '../style/userInformation.css'
 import { AuthContext } from '../../../stores';
 import { Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import '../style/userInformation.css'
 
 let registerSchema = yup.object().shape({
     fullName: yup.string().required("Full Name is required field"),
@@ -22,8 +21,7 @@ function UserInformation() {
     const [authState, {updateProfile}] = React.useContext(AuthContext);
 
     return (
-        <div>
-            
+        <div>            
             <Row>
                 <Col>
                     <h3 className='ui-header'>Information</h3>

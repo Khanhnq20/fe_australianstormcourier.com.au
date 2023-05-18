@@ -191,7 +191,7 @@ function Product() {
                                                             <p>This order has been cancelled</p>
                                                         </div> : 
                                                         <div className='p-2'>
-                                                            <p>Your offer has been accepted but waiting for payment</p>
+                                                            <Button className='w-100' variant='danger'>Cancel</Button>
                                                         </div>
                                                     }
                                                     </td>

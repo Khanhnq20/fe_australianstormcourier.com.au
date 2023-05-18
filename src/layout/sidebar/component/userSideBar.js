@@ -27,7 +27,7 @@ export function UserSideBar({children}) {
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link active' : 'sbar-link'
                         }}
-                        to={'order'}>
+                        to={'/user/order/me'}>
                         <div className='sbar-icon-frame'>
                           <TbPackages className="sbar-icon"></TbPackages>
                         </div>
@@ -38,7 +38,7 @@ export function UserSideBar({children}) {
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link active' : 'sbar-link'
                         }}
-                        to={'createProduct'}>
+                        to={'/user/order/create'}>
                         <div className='sbar-icon-frame'>
                           <BiPackage className="sbar-icon"></BiPackage>
                         </div>
@@ -49,7 +49,7 @@ export function UserSideBar({children}) {
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link active' : 'sbar-link'
                         }}
-                        to={'history'}>
+                        to={'/user/history'}>
                         <div className='sbar-icon-frame'>
                           <AiOutlineHistory className="sbar-icon"></AiOutlineHistory>
                         </div>
@@ -60,7 +60,7 @@ export function UserSideBar({children}) {
                         className={({isActive}) =>{
                           return isActive  ? 'sbar-link active' : 'sbar-link'
                         }}
-                        to={'info'}>
+                        to={'/user/info'}>
                         <div className='sbar-icon-frame'>
                           <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
                         </div>
@@ -76,7 +76,6 @@ export function UserSideBar({children}) {
                         </div>
                         <div className='h-ctn-inner'>
                             <div className='h-header'>
-                               
                                 <Breadcrumbs></Breadcrumbs>
                             </div>
                             <div className='h-content-frame'>

@@ -12,7 +12,6 @@ import { authConstraints, authInstance, config } from '../../../api';
 import { Col, Row, Spinner } from 'react-bootstrap';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { CustomSpinner } from '../../../layout';
 
 let loginSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field"), 
@@ -45,6 +44,14 @@ function UserOrders() {
     });
     const rows = [10,15,20,25,30,35,40];
 
+    React.useEffect(()=>{
+
+    },[]);
+
+
+    if(loading){
+        return <Spinner></Spinner>
+    }
 
     return (
         <Formik
@@ -165,7 +172,7 @@ function UserOrders() {
                             <p className='m-0'>Items</p>
                         </div>
 
-                        {loading ? <CustomSpinner></CustomSpinner> : items?.length === 0 ? (<div className='txt-center'>
+                        {items?.length === 0 ? (<div className='txt-center'>
                                 <h5>No Data Found</h5>
                             </div>) :
                             (<>
@@ -211,7 +218,7 @@ function UserOrders() {
                                                 items?.slice((currentPage - 1) * perPageAmount, perPageAmount * (1 + currentPage)).map((post,index) =>{
                                                     return (
                                                         <tr key={index}>
-                                                            <td>{"000000".substring(0,6-post?.id.toString().length) + post?.id}</td>
+                                                            <td>{post?.id}</td>
                                                             <td>
                                                             <Row>
                                                                 <Col sm="4">
@@ -229,7 +236,9 @@ function UserOrders() {
                                                             <td>{!!post?.deliveredDate ? moment(post?.deliveredDate).format("DD-MM-YYYY") : ""}</td>
                                                             <td>{post?.timeFrame}</td>
                                                             <td>{post?.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</td>
-                                                            <td>{post?.vehicles?.join?.(" - ")}</td>
+                                                            <td>{post?.vehicles?.map?.(v => {
+                                                                return <p>{v}</p>
+                                                            })}</td>
                                                             <td>{post?.offerNumber}</td>
                                                             <td>
                                                                 <Row>

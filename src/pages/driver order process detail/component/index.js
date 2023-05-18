@@ -1,6 +1,5 @@
 import React from 'react'
-import { Col, Row } from 'react-bootstrap';
-import Button from 'react-bootstrap/Button';
+import { Col, Row, Button } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
 import '../style/oderProcessDetail.css'
 

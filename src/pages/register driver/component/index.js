@@ -1,13 +1,16 @@
 import React, { useContext, useRef } from 'react'
-import { Row, Col, Form, Button} from 'react-bootstrap';
+import { Row, Col, Form, Button, Spinner} from 'react-bootstrap';
 import { Formik } from "formik";
 import * as yup from 'yup';
 import '../style/registerDriver.css';
-import { AuthContext } from '../../../stores';
+import { AuthContext, taskStatus } from '../../../stores';
 import { serialize } from 'object-to-formdata';
 
 import { RiImageEditFill } from 'react-icons/ri';
 import { AiFillEye,AiFillEyeInvisible } from  'react-icons/ai';
+import { VscFilePdf} from 'react-icons/vsc';
+import { CustomSpinner } from '../../../layout';
+import { authConstraints } from '../../../api';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -24,9 +27,11 @@ let registerSchema = yup.object().shape({
     ABNNumber: yup.number().typeError("ABN Number must be number").required("ABN Number is required field"),
     address: yup.string().required("Full Address is required field"),   
     city: yup.string().required("City is required field"),
-    zipCode: yup.number().typeError("Zip code must be number").required("Zip code is required field"),
-    vehicles: yup.array().min(1),
-    adInfo: yup.string().required("\"Additional Information\" must required"),
+    postCode: yup.number().typeError("Zip code must be number").required("Zip code is required field"),
+    vehicles: yup.array().min(1, "Select one vehicle to complete the registry"),
+    adInfo: yup.string().nullable(),
+    bsb: yup.string().required("You should specify this field to create transactions with user"),
+    isAusDrivingLiense: yup.bool().default(false),
     frontDrivingLiense: yup
         .mixed()
         .nullable()
@@ -75,15 +80,45 @@ let registerSchema = yup.object().shape({
                 return PERMIT_FILE_FORMATS.includes(value.type);
             }
         ),
+    drivingCertificate: yup
+        .mixed()
+        .nullable()
+        .when("isAusDrivingLiense", {
+            is:(isAusDrivingLiense) =>  {
+                console.log(isAusDrivingLiense);
+                return false;
+            },
+            then:() => yup.mixed().required()
+            .test(
+                'FILE SIZE', 
+                'the file is too large', 
+                (value) => {
+                    if (!value) {
+                        return true;
+                    }
     
+                    return value.size <= 5 * 1024 * 1024;
+            })
+            .test(
+                'FILE FORMAT',
+                `the file format should be pdf`,
+                (value) => {
+                    if (!value) {
+                        return true;
+                    }
+                    return value.type === "application/pdf";
+                }
+            )
+        })
 })
 
 function RegisterDriver() {
-    const [{vehicles}, {
+    const [{vehicles, loading: authLoading, ...authState}, {
         signupDriver
     }] = useContext(AuthContext);
     const f_driver_img_ipt = useRef();
     const b_driver_img_ipt = useRef();
+    const d_certificate = useRef();
     const [imgUrlFront,setImgUrlFront] = React.useState();
     const [imgUrlBack,setImgUrlBack] = React.useState();
     const [showPass,setShowPass] = React.useState(false);
@@ -107,11 +142,14 @@ function RegisterDriver() {
             ABNNumber:'',
             address:'',
             city:'',
-            zipCode:0,
+            postCode: 0,
             frontDrivingLiense: null,
             backDrivingLiense: null,
+            drivingCertificate: null,
+            isAusDrivingLiense: false,
             vehicles: [],
-            adInfo: ''
+            adInfo: '',
+            bsb: '',
         }}
         validationSchema={registerSchema}
         onSubmit={(values) =>{
@@ -123,120 +161,132 @@ function RegisterDriver() {
         }}>
     {
         ({values,touched, errors, setFieldValue, handleSubmit, handleChange, handleBlur,isValid}) =>{
-            const permitedNext = touched.userName && !errors.userName
-                && touched.phone && !errors.phone
-                && touched.email && !errors.email
-                && touched.password && !errors.password;
+            const permitedNext = !errors.userName &&
+                !errors.phone &&
+                !errors.email &&
+                !errors.password; 
 
             return ( 
                 <>
-                    <h3 className='ui-header p-3'>Become driver</h3>
                     <div className='container p-5'>
+                        <div className="text-center">
+                            <h3 className='ui-header p-3'>Become driver</h3>
+                        </div>
                         <Form className='form' onSubmit={handleSubmit}>
-                        <Row>
-                            <Col className={next ? "step1-show" : "step1-hide"}>
-                                {/* UserName */}
-                                <Form.Group className="form-group" >
-                                    <div className='mb-2'>
-                                        <Form.Label className='label'>User name</Form.Label>
-                                        <p className='asterisk'>*</p>
-                                    </div>
-                                    <Form.Control
-                                        type="text"
-                                        name="userName"
-                                        placeholder="Enter Your Full Name"
-                                        isInvalid={touched.userName && errors.userName}
-                                        value={values.userName}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                    <Form.Control.Feedback type="invalid">{errors.userName}</Form.Control.Feedback>
-                                </Form.Group>
-                                {/* Email */}
-                                <Form.Group className="form-group" >
-                                    <div  className='mb-2'>
-                                        <Form.Label className='label'>Email</Form.Label>
-                                        <p className='asterisk'>*</p>
-                                    </div>
-                                    <Form.Control
-                                        type="text"
-                                        name="email"
-                                        placeholder="Enter Your Email"
-                                        isInvalid={touched.email && errors.email}
-                                        value={values.email}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                    <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
-                                </Form.Group>
-                                
-                                {/* Password */}
-                                <Form.Group className="form-group">
-                                        <div  className='mb-2'>
-                                            <Form.Label className='label'>Password</Form.Label>
+                            {authState?.tasks?.[authConstraints.signupDriver] && authState?.tasks?.[authConstraints.signupDriver] === taskStatus.InProgress && (<CustomSpinner></CustomSpinner>)}
+                            <Row>
+                                <Col className={next ? "step1-show" : "step1-hide"}>
+                                    <h3 className='text-center' style={{textTransform: 'capitalize'}}>Account information</h3>
+                                    {/* Username and email */}
+                                    <Row>
+                                        <Col>
+                                            {/* UserName */}
+                                            <Form.Group className="form-group" >
+                                                <div className='mb-2'>
+                                                    <Form.Label className='label'>User name</Form.Label>
+                                                    <p className='asterisk'>*</p>
+                                                </div>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="userName"
+                                                    placeholder="Enter Your Full Name"
+                                                    isInvalid={touched.userName && errors.userName}
+                                                    value={values.userName}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                                <Form.Control.Feedback type="invalid">{errors.userName}</Form.Control.Feedback>
+                                            </Form.Group>
+                                        </Col>
+                                        <Col>
+                                            {/* Email */}
+                                            <Form.Group className="form-group" >
+                                                <div  className='mb-2'>
+                                                    <Form.Label className='label'>Email</Form.Label>
+                                                    <p className='asterisk'>*</p>
+                                                </div>
+                                                <Form.Control
+                                                    type="text"
+                                                    name="email"
+                                                    placeholder="Enter Your Email"
+                                                    isInvalid={touched.email && errors.email}
+                                                    value={values.email}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                />
+                                                <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                    
+                                    {/* Password */}
+                                    <Form.Group className="form-group">
+                                            <div  className='mb-2'>
+                                                <Form.Label className='label'>Password</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
+                                            <div className='frame-pass'>
+                                                <Form.Control
+                                                    type={showPass ? 'text' : 'password'} 
+                                                    isInvalid={touched.password && errors.password}
+                                                    onChange={handleChange}
+                                                    onBlur={handleBlur}
+                                                    placeholder="Enter your Password"
+                                                    name="password"/>
+                                                    <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+                                                    <div className='override-block'></div>
+                                                    <div className='eyes-pass'>
+                                                        {showPass ? <AiFillEye onClick={showPassHandler}></AiFillEye> 
+                                                        : <AiFillEyeInvisible onClick={showPassHandler}></AiFillEyeInvisible>}
+                                                    </div>
+                                            </div>
+                                    </Form.Group>
+                                    
+                                    {/* Confirm Password */}
+                                    <Form.Group className="form-group">
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Confirm Password</Form.Label>
                                             <p className='asterisk'>*</p>
                                         </div>
                                         <div className='frame-pass'>
                                             <Form.Control
-                                                type={showPass ? 'text' : 'password'} 
-                                                isInvalid={touched.password && errors.password}
+                                                type={showPassConfirm ? 'text' : 'password'} 
+                                                name="confirmPassword"
+                                                placeholder="Enter password again"
+                                                isInvalid={touched.passwordConfirm && errors.passwordConfirm}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
-                                                placeholder="Enter your Password"
-                                                name="password"/>
-                                                <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
-                                                <div className='override-block'></div>
-                                                <div className='eyes-pass'>
-                                                    {showPass ? <AiFillEye onClick={showPassHandler}></AiFillEye> 
-                                                    : <AiFillEyeInvisible onClick={showPassHandler}></AiFillEyeInvisible>}
-                                                </div>
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors.passwordConfirm}</Form.Control.Feedback>
+                                            <div className='override-block'></div>
+                                            <div className='eyes-pass'>
+                                                {showPassConfirm ? <AiFillEye onClick={showPassConfirmHandler}></AiFillEye> 
+                                                : <AiFillEyeInvisible onClick={showPassConfirmHandler}></AiFillEyeInvisible>}
+                                            </div>
                                         </div>
-                                </Form.Group>
-                                
-                                {/* Confirm Password */}
-                                <Form.Group className="form-group">
-                                    <div className='mb-2'>
-                                        <Form.Label className='label'>Confirm Password</Form.Label>
-                                        <p className='asterisk'>*</p>
-                                    </div>
-                                    <div className='frame-pass'>
+                                    </Form.Group>
+
+                                    {/* Phone */}
+                                    <Form.Group className="form-group" >
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Phone Number</Form.Label>
+                                            <p className='asterisk'>*</p>
+                                        </div>
                                         <Form.Control
-                                            type={showPassConfirm ? 'text' : 'password'} 
-                                            name="confirmPassword"
-                                            placeholder="Enter password again"
-                                            isInvalid={touched.passwordConfirm && errors.passwordConfirm}
+                                            type="text"
+                                            name="phone"
+                                            placeholder="Enter Your Full Address"
+                                            isInvalid={touched.phoneNumber && errors.phoneNumber}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.passwordConfirm}</Form.Control.Feedback>
-                                        <div className='override-block'></div>
-                                        <div className='eyes-pass'>
-                                            {showPassConfirm ? <AiFillEye onClick={showPassConfirmHandler}></AiFillEye> 
-                                            : <AiFillEyeInvisible onClick={showPassConfirmHandler}></AiFillEyeInvisible>}
-                                        </div>
-                                    </div>
-                                </Form.Group>
-                                {/* Phone */}
-                                <Form.Group className="form-group" >
-                                    <div className='mb-2'>
-                                        <Form.Label className='label'>Phone Number</Form.Label>
-                                        <p className='asterisk'>*</p>
-                                    </div>
-                                    <Form.Control
-                                        type="text"
-                                        name="phone"
-                                        placeholder="Enter Your Full Address"
-                                        isInvalid={touched.phoneNumber && errors.phoneNumber}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                    <Form.Control.Feedback type="invalid">{errors.phoneNumber}</Form.Control.Feedback>
-                                </Form.Group>
+                                        <Form.Control.Feedback type="invalid">{errors.phoneNumber}</Form.Control.Feedback>
+                                    </Form.Group>
 
-                                <Button variant="warning" disabled={!permitedNext} onClick={()=>setNext(e => !e)} className='my-btn-yellow'>Next</Button>
-                            </Col>
+                                    <Button variant="warning" disabled={!permitedNext} onClick={()=>setNext(e => !e)} className='my-btn-yellow'>Next</Button>
+                                </Col>
 
-                            <Col className={!next ? "step2-show" : "step2-hide"}>
+                                <Col className={!next ? "step2-show" : "step2-hide"}>
                                     <Button type="submit" variant="warning" onClick={()=> setNext(e => !e)} className='my-btn-yellow mb-4'>Back</Button>
                                         {/* Full Name */}
                                         <Form.Group className="form-group" >
@@ -272,6 +322,7 @@ function RegisterDriver() {
                                             <Form.Control.Feedback type="invalid">{errors.ABNNumber}</Form.Control.Feedback>
                                         </Form.Group>
 
+                                        {/* Address */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label'>Address</Form.Label>
@@ -288,6 +339,7 @@ function RegisterDriver() {
                                             <Form.Control.Feedback type="invalid">{errors?.address}</Form.Control.Feedback>
                                         </Form.Group>
 
+                                        {/* City */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label'>City</Form.Label>
@@ -304,21 +356,23 @@ function RegisterDriver() {
                                             <Form.Control.Feedback type="invalid">{errors?.city}</Form.Control.Feedback>
                                         </Form.Group>
 
+                                        {/* PostCode */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
-                                                <Form.Label className='label'>Zip code</Form.Label>
+                                                <Form.Label className='label'>Postcode</Form.Label>
                                                 <p className='asterisk'>*</p>
                                             </div>
                                             <Form.Control
                                                 type="text"
-                                                name="zipCode"
-                                                placeholder="Enter Your Zipcode"
-                                                isInvalid={touched.zipCode && !!errors?.zipCode}
+                                                name="postCode"
+                                                placeholder="Enter Your Post Code"
+                                                isInvalid={touched.postCode && !!errors?.postCode}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                             />
-                                            <Form.Control.Feedback type="invalid">{errors?.zipCode}</Form.Control.Feedback>
+                                            <Form.Control.Feedback type="invalid">{errors?.postCode}</Form.Control.Feedback>
                                         </Form.Group>
+
                                         {/* Driving Liense Images */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
@@ -379,7 +433,47 @@ function RegisterDriver() {
                                                         }}
                                                 />
                                             </div>
+                                            <label class="fr-checkbox mb-2">
+                                                <input type="checkbox" name="isAusDrivingLiense" onChange={handleChange} onBlur={handleBlur}/>
+                                                <span className="checkmark"></span>
+                                                <span className='txt-checkbox' style={{fontWeight:'500'}}>Your driving license is from australian</span>
+                                            </label>
+                                            {!values.isAusDrivingLiense && <div className='drivingCertificate'>
+                                                <div>
+                                                    <h6>Driving Certificate</h6>
+                                                </div>
+                                                <div className='img-front-frame' style={{minWidth: '120px', minHeight: '200px'}} onClick={() => d_certificate.current.click()}>
+                                                    {!values.drivingCertificate && 
+                                                    (<div className='background-front'>
+                                                        <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                                        <p className='driving-txt'>Change driving license</p>
+                                                    </div>) ||
+                                                    (<div>
+                                                        <VscFilePdf style={{fontSize: '12rem'}}></VscFilePdf>
+                                                    </div>)}
+                                                </div>
+                                                
+                                                <Form.Control type="file" id="driver_image_back" name="drivingCertificate" 
+                                                    accept='application/pdf'
+                                                    ref={d_certificate} 
+                                                    isInvalid={!!errors?.drivingCertificate}
+                                                    onChange={(e) =>{
+                                                            const file = e.target.files[0];
+                                                            setFieldValue(e.target.name, file, true);
+
+                                                            const fileReader = new FileReader();
+
+                                                            if(file){
+                                                                fileReader.addEventListener("loadend", (e)=>{
+                                                                    setImgUrlBack(fileReader.result);
+                                                                })
+                                                                fileReader.readAsDataURL(file);
+                                                            }
+                                                        }}/>
+                                                <Form.Control.Feedback type="invalid">{errors?.drivingCertificate}</Form.Control.Feedback>
+                                            </div>}
                                         </Form.Group>
+
                                         {/* Vehicles */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
@@ -400,7 +494,25 @@ function RegisterDriver() {
                                                 })}
                                             </div>
                                         </Form.Group>
+                                        <pre>{JSON.stringify(errors, 4, 4)}</pre>
 
+                                        {/* BSB */}
+                                        <Form.Group className="form-group" >
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>BSB</Form.Label>
+                                                <p className='asterisk'>*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="bsb"
+                                                isInvalid={touched.bsb && !!errors?.bsb}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors?.bsb}</Form.Control.Feedback>
+                                        </Form.Group>
+
+                                        {/* Additional Information */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label'>Additional Information</Form.Label>
@@ -412,16 +524,18 @@ function RegisterDriver() {
                                                 name="adInfo"
                                                 as="textarea" rows={3}
                                                 placeholder="Enter Your Additional Information"
-                                                isInvalid={touched.city && errors.city}
+                                                isInvalid={touched.adInfo && !!errors.adInfo}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
                                             />
-                                            <Form.Control.Feedback type="invalid">{errors.city}</Form.Control.Feedback>
+                                            <Form.Control.Feedback type="invalid">{errors.adInfo}</Form.Control.Feedback>
                                         </Form.Group>
 
-                                        <Button type="submit" variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={!isValid} className='my-btn-yellow my-2'>Submit</Button>
-                            </Col>
-                        </Row>
+                                        <Button type="submit" variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={authLoading && !isValid} className='my-btn-yellow my-2'>
+                                            {authLoading ? <Spinner></Spinner> : "Submit"}
+                                        </Button>
+                                </Col>
+                            </Row>
                         </Form>
                     </div>
                 </>
@@ -433,5 +547,5 @@ function RegisterDriver() {
 
 export default function Index(){
 return(
-        <RegisterDriver></RegisterDriver>
+    <RegisterDriver></RegisterDriver>
 )}
