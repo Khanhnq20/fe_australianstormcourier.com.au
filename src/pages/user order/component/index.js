@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
@@ -14,7 +14,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { CustomSpinner } from '../../../layout';
 
-let loginSchema = yup.object().shape({
+let orderSearchSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field"), 
     password: yup.string().required("This field is requied")
 })
@@ -55,7 +55,7 @@ function UserOrders() {
                 fullNameDriver:'',
                 to:''
             }} 
-            validationSchema={loginSchema}
+            validationSchema={orderSearchSchema}
         >
         {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
             return(<>
@@ -144,8 +144,8 @@ function UserOrders() {
                                 <h5>No Data Found</h5>
                             </div>) :
                             (<>
-                                <div style={{maxWidth: '100%', overflowX: "scroll" }}>
-                                    <Table striped bordered >
+                                <div style={{maxWidth: '100%', overflowX: "scroll", scrollBehavior: "smooth", scrollbarWidth: "30px" }}>
+                                    <Table bordered >
                                         <thead>
                                             <tr>
                                                 <th>Order Id</th>
@@ -207,15 +207,11 @@ function UserOrders() {
                                                             <td>{post?.vehicles?.join?.(" - ")}</td>
                                                             <td>{post?.offerNumber}</td>
                                                             <td>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <Link to={`/user/order/detail?orderid=${post?.id}`} state={post}>
-                                                                            <Button variant='primary'>
-                                                                                Detail
-                                                                            </Button>
-                                                                        </Link>
-                                                                    </Col>
-                                                                </Row>
+                                                                <Link to={`/user/order/detail?orderid=${post?.id}`} state={post}>
+                                                                    <Button className='w-100' variant='primary'>
+                                                                        Detail
+                                                                    </Button>
+                                                                </Link>
                                                             </td>
                                                         </tr>
                                                     )

@@ -1,4 +1,4 @@
-import React, { createContext, useEffect } from 'react'
+import React, { createContext } from 'react'
 import {authConstraints, authInstance, config} from '../../api'
 import taskStatus from './taskStatus';
 import { toast } from 'react-toastify';
@@ -43,7 +43,7 @@ export default function Index({children}) {
                     "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
                 }
             }).then(response =>{
-                if(response?.data?.newOrders){
+                if(response?.data?.successed && response?.data?.newOrder){
                     setState(i => ({
                         ...i,
                         tasks: {

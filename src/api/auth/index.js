@@ -1,11 +1,12 @@
 import axios from "axios";
 import config from '../config';
-import { authConstraints } from "..";
 
 const constraints = {
     root: "/api/auth",
     userRoot: "/api/user",
     driverRoot: "/api/driver",
+    adminRoot: "/api/admin",
+    userHub: "/hubs/user",
     // Local storage key of access token
     LOCAL_KEY: "actoken",
     // Local storage key of refresh token 
@@ -41,6 +42,13 @@ const constraints = {
     acceptDriverOffer: "order/accept",
     postCheckoutIntentSessions: "order/checkout-intent-session",
     postCheckout: "order/checkout",
+
+    getAccountsDriver: "accounts/driver",
+    acceptAccountDriver: "accounts/driver/accept",
+    getAllAccounts: "accounts/customer",
+
+    hubOnline: "online",
+    hubReceiveOnline: "online",
 
     test: "test/authorizedUser",
     getAccessToken: () => localStorage.getItem(constraints.LOCAL_KEY)

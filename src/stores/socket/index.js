@@ -1,52 +1,76 @@
-// import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
-// import { Button, Input, notification } from "antd";
-// import React, { useEffect, useState } from "react";
+import { HttpTransportType, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { authConstraints, config } from "../../api";
+import { AuthContext } from "../contextAPI";
 
-// export const Notify = () => {
-//   const [connection, setConnection] = useState<null | HubConnection>(null);
-//   const [inputText, setInputText] = useState("");
+export const SocketContext = createContext();
 
-//   useEffect(() => {
-//     const connect = new HubConnectionBuilder()
-//       .withUrl("https://localhost:51130/hubs/notifications")
-//       .withAutomaticReconnect()
-//       .build();
+export  default function Index({children}){
+    const [authState] = useContext(AuthContext);
+    const [onlineUsers, setOnlineUsers] = useState([]);
+    const [socketConnection, setSocketConnection] = useState(null);
+    const [error, setError] = useState(null);
 
-//     setConnection(connect);
-//   }, []);
+    useEffect(() => {
+        const accessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
+        console.log(accessToken);
+        if(process.env.NODE_ENV !== 'production'){
+            const connection = new HubConnectionBuilder()
+            .withUrl(`${config.APIHost}${authConstraints.userHub}`,{
+                transport: HttpTransportType.LongPolling,
+                accessTokenFactory: () => accessToken,
+                withCredentials: true,
+            })
+            // .configureLogging(LogLevel.Trace)
+            .configureLogging(LogLevel.Information)
+            .withAutomaticReconnect()
+            .build();
 
-//   useEffect(() => {
-//     if (connection) {
-//       connection
-//         .start()
-//         .then(() => {
-//           connection.on("ReceiveMessage", (message) => {
-//             notification.open({
-//               message: "New Notification",
-//               description: message,
-//             });
-//           });
-//         })
-//         .catch((error) => console.log(error));
-//     }
-//   }, [connection]);
+            setSocketConnection(connection);
+            return;
+        }
+        const connection = new HubConnectionBuilder()
+                .withUrl(`${config.APIHost}${authConstraints.userHub}`,{
+                    transport: HttpTransportType.LongPolling,
+                    accessTokenFactory: () => accessToken,
+                    withCredentials: true
+                })
+                .withAutomaticReconnect()
+                .build();
 
-//   const sendMessage = async () => {
-//     if (connection) await connection.send("SendMessage", inputText);
-//     setInputText("");
-//   };
+            setSocketConnection(connection);
+    }, []);
 
-//   return (
-//     <>
-//       <Input
-//         value={inputText}
-//         onChange={(input) => {
-//           setInputText(input.target.value);
-//         }}
-//       />
-//       <Button onClick={sendMessage} type="primary">
-//         Send
-//       </Button>
-//     </>
-//   );
-// };
+    useEffect(() =>{
+        if(socketConnection){
+            socketConnection
+                .start()
+                .then(() => {
+                    socketConnection.send(authConstraints.hubOnline);
+                })
+                .catch((error) => setError(error));
+                
+            socketConnection.on(authConstraints.hubReceiveOnline, (successed, userOnlines) => {
+                console.log(successed, userOnlines);
+                if(successed){
+                    setOnlineUsers(userOnlines);
+                }
+            });
+        }
+    }, [socketConnection])
+
+    const funcs = {
+
+    }
+
+    return (
+        <SocketContext.Provider value={[
+            {onlineUsers, error},
+            {
+                ...funcs
+            }
+        ]}>
+        {children}
+        </SocketContext.Provider>
+    );
+};

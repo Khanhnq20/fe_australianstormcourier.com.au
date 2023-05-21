@@ -15,8 +15,8 @@ const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 let orderSchema = yup.object().shape({
     senderId: yup.string().required(),
     sendingLocation: yup.object().shape({
-        unitNumber: yup.number().required("Unit Number is required"),
-        streetNumber: yup.number().required("Street Number is required"),
+        unitNumber: yup.string().required("Unit Number is required"),
+        streetNumber: yup.string().required("Street Number is required"),
         streetName: yup.string().required("Street Name is required"),
         suburb: yup.string().required("Suburb is required"),
         state: yup.string().required("State is required"),
@@ -48,7 +48,7 @@ let orderSchema = yup.object().shape({
     orderItems: yup.array().of(
         yup.object().shape({
             itemName: yup.string().required("Item Name is required field"),
-            itemBarcode: yup.number().required("Item BarCode is required field"), 
+            itemCharcode: yup.number().default(Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)), 
             itemDescription: yup.string().nullable(),
             quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
@@ -108,7 +108,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     <Form.Label className='label'>Barcode</Form.Label>
                     <p className='asterisk'>*</p>
                 </div>
-                <Barcode value={values.orderItems[index].itemBarCode}></Barcode>
+                <Barcode value={values.orderItems[index].itemCharCode.toString()}></Barcode>
             </Form.Group>
             {/* Item Description  */}
             <Form.Group className="mb-3">
@@ -271,7 +271,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             {authState.vehicles.map((item,index) => {
                                 return(
                                     <div key={index}>
-                                        <label class="fr-checkbox mb-2">
+                                        <label className="fr-checkbox mb-2">
                                             <input type="checkbox" name="vehicles" value={item?.id} onChange={handleChange} onBlur={handleBlur}/>
                                             <span className="checkmark"></span>
                                             <span className='txt-checkbox' style={{fontWeight:'500'}}>{item?.name}</span>
@@ -334,7 +334,7 @@ function OrderCreation(){
                 orderItems: [
                     {
                         itemName: '',
-                        itemBarCode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000), 
+                        itemCharCode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000), 
                         itemDescription: '',
                         quantity: 0,
                         weight: 0,
@@ -345,7 +345,6 @@ function OrderCreation(){
                     }
                 ]
             }} 
-            enableReinitialize={true}
             validationSchema={orderSchema}
             onSubmit={(values) =>{
                 const handledObjects = {

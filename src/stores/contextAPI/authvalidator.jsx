@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useContext } from 'react'
 import {AuthContext} from './authctx';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 import taskStatus from './taskStatus';
 import { authConstraints } from '../../api';
@@ -47,6 +47,7 @@ AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink=
             invalidLink ||
             (authState?.accountInfo?.roles?.includes?.("User") && "/user/order" )|| 
             (authState?.accountInfo?.roles?.includes?.("Driver") && "/driver/offer") ||
+            (authState?.accountInfo?.roles?.includes?.("SuperAdmin") && "/admin/orders") ||
             "/error/forbiden"
         }
         replace={true}></Navigate>;

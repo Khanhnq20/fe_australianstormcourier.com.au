@@ -42,12 +42,8 @@ function UserOrders() {
         startingPage: 0,
         totalPages: 1
     });
+
     const rows = [10,15,20,25,30,35,40];
-
-    React.useEffect(()=>{
-
-    },[]);
-
 
     if(loading){
         return <Spinner></Spinner>
@@ -56,8 +52,8 @@ function UserOrders() {
     return (
         <Formik
             initialValues={{
-                id:'',
-                from:'',
+                id: '',
+                from: '',
                 fullNameSender:'',
                 fullNameDriver:'',
                 to:''
@@ -69,8 +65,9 @@ function UserOrders() {
                 <div>
                     <div className='p-3'>
                         <div>
-                            <Form>
+                            <Form onSubmit={handleSubmit}>
                                 <div className='form-order'>
+                                    {/* ID */}
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>ID</Form.Label>
@@ -85,6 +82,8 @@ function UserOrders() {
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
+                                    
+                                    {/* From */}
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>From</Form.Label>
@@ -99,6 +98,8 @@ function UserOrders() {
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
+
+                                    {/* Full Name Sender */}
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>Full name sender</Form.Label>
@@ -113,6 +114,8 @@ function UserOrders() {
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
+
+                                    {/* To */}
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>To</Form.Label>
@@ -127,6 +130,8 @@ function UserOrders() {
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
+
+                                    {/* Full Name Driver */}
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>Full name driver</Form.Label>
@@ -145,7 +150,8 @@ function UserOrders() {
                                 <div>
                                     <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
                                         <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
-                                        Search</Button>
+                                        Search
+                                    </Button>
                                 </div>
                             </Form>
                         </div>

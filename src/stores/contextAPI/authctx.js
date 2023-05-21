@@ -169,6 +169,8 @@ export default function Index({children}) {
                 roles: null,
                 senderInfo: null
             }));
+
+            window.location.replace("");
         },
 
         getAccount(){
@@ -346,16 +348,7 @@ export default function Index({children}) {
             
         }
     }
-
-    useEffect(() => {
-        if(state.accessToken === "noaccesstoken"){
-            return;
-        }
-        if(hasMounted.current && !state.isLogged){
-            funcs.getAccount();
-        }
-    }, [state.accessToken]);
-
+    
     useEffect(() =>{
         const newAccessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
         
@@ -385,6 +378,17 @@ export default function Index({children}) {
         }
     },[]);
 
+
+    useEffect(() => {
+        if(state.accessToken === "noaccesstoken"){
+            return;
+        }
+        if(hasMounted.current && !state.isLogged){
+            funcs.getAccount();
+        }
+    }, [state.accessToken]);
+
+    
     return (
         <AuthContext.Provider value={[
             state,

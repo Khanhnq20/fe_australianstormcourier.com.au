@@ -17,7 +17,6 @@ let registerSchema = yup.object().shape({
 })
 
 function UserInformation() {
-    const [date,setDate] = React.useState(new Date());
     const [authState, {updateProfile}] = React.useContext(AuthContext);
 
     return (
@@ -96,12 +95,12 @@ function UserInformation() {
                     <h3 className='ui-header'>Edit Information</h3>
                     <Formik
                         initialValues={{
-                            id: authState?.accountInfo?.id,
-                            fullName: authState?.accountInfo?.name,
-                            userName: authState?.accountInfo?.username,
-                            email:authState?.accountInfo?.email,
-                            phoneNumber: authState?.accountInfo?.phoneNumber,
-                            address: authState?.accountInfo?.address
+                            id: authState?.accountInfo?.id || "",
+                            fullName: authState?.accountInfo?.name || "",
+                            userName: authState?.accountInfo?.username || '',
+                            email:authState?.accountInfo?.email|| "",
+                            phoneNumber: authState?.accountInfo?.phoneNumber || "",
+                            address: authState?.accountInfo?.address || ""
                         }}
                         validationSchema={registerSchema}
                         enableReinitialize={true}
