@@ -5,7 +5,7 @@ import '../style/spinner.css'
 
 export default function Index() {
   return (
-    <div>  
+    <div className='spinner-root'>  
         <div className='spinner'>
             <Logo className='spinner-logo'></Logo>
             <ThreeDots
