@@ -22,19 +22,20 @@ export const router = createBrowserRouter([
     element: <>
       <Navigation />
       <Outlet />
-      <Footer/>
     </>,
     children: [
       {
         path: "",
         element: <>
           <Home></Home>
+          <Footer/>
         </>
       },
       {
         path: "prevent",
         element:<>
           <PreventDriver></PreventDriver>
+          <Footer.Custom></Footer.Custom>
         </>
       }
       ,
@@ -42,6 +43,7 @@ export const router = createBrowserRouter([
         path: "auth",
         element: <AuthValidator.LoggedContainer>
           <Outlet></Outlet>
+          <Footer></Footer>
         </AuthValidator.LoggedContainer>,
         children: authChildrens
       },
@@ -69,6 +71,7 @@ export const router = createBrowserRouter([
             </OrderContextComponent>
           </SocketContainer>
         </AuthValidator>,
+
         children: driverChildrens
       },
       {
@@ -86,12 +89,19 @@ export const router = createBrowserRouter([
       },
       {
         path: 'payment',
-        element: <Outlet></Outlet>,
+        element: <>
+        <Outlet></Outlet>
+        <Footer.Custom></Footer.Custom>
+        </>,
+        
         children: paymentChildrens,
       },
       {
         path: 'error',
-        element: <Outlet></Outlet>,
+        element: <>
+        <Outlet></Outlet>
+        <Footer.Custom></Footer.Custom>
+        </>,
         children: errorChildrens
       }
     ]

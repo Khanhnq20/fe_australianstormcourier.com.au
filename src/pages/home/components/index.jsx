@@ -18,6 +18,7 @@ import sender from "../../../image/sender.png";
 import senderPost from "../../../image/sender-post.png";
 import customer from "../../../image/customer.png";
 import logo from "../../../image/as-logo.png";
+import { FacebookProvider, Page, Like } from 'react-facebook';
 
 
 export default function Index() {
@@ -278,7 +279,7 @@ function BecomeCustomer(){
                                     <img src={sender} width="100%" height="100%"/>
                                 </div>
                                 <Link to="/auth/register/driver">
-                                <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A DRIVER</Button>
+                                <button className='btn-cus my-4'>BECOME A DRIVER</button>
                                 </Link>
                             </Col>
                             <Col className='cus-item p-3'>
@@ -286,7 +287,7 @@ function BecomeCustomer(){
                                     <img src={senderPost} width="100%" height="100%"/>
                                 </div>
                                 <Link to="/auth/register/user">
-                                <Button variant="warning" className='w-100 my-btn-yellow my-4'>BECOME A CUSTOMER</Button>
+                                <button className='btn-cus my-4'>BECOME A CUSTOMER</button>
                                 </Link>
                             </Col>
                             <Col className='cus-item p-3'>
@@ -294,7 +295,7 @@ function BecomeCustomer(){
                                     <img src={customer} width="100%" height="100%"/>
                                 </div>
                                 <Link to="/anonymous/order">
-                                <Button variant="warning" className='w-100 my-btn-yellow my-4'>SEND NOW</Button>
+                                <button className='my-4 btn-cus'>SEND NOW</button>
                                 </Link>
                             </Col>
                         </Row>
@@ -324,6 +325,9 @@ function Address(){
                         <Col>
                             <div>
                                 <h3>FOLLOW US</h3>
+                                    <FacebookProvider appId="123456789">
+                                        <Like href="http://www.facebook.com" colorScheme="dark" showFaces share />
+                                    </FacebookProvider> 
                             </div>
                         </Col>
                     </Row>
