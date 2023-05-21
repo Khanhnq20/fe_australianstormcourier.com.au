@@ -24,7 +24,8 @@ let registerSchema = yup.object().shape({
     ),
     confirmPassword: yup.string().required("This field is requied").oneOf([yup.ref("password"), null], "Passwords must match"),
     fullName: yup.string().required("Full Name is required field"),
-    ABNNumber: yup.number().typeError("ABN Number must be number").required("ABN Number is required field"),
+    ABNNumber: yup.number().typeError("ABN Number must be number").nullable(),
+    businessName: yup.string().nullable(),
     address: yup.string().required("Full Address is required field"),   
     city: yup.string().required("City is required field"),
     postCode: yup.number().typeError("Zip code must be number").required("Zip code is required field"),
@@ -130,7 +131,10 @@ function RegisterDriver() {
     const showPassConfirmHandler = () => {
         setShowPassConfirm(e=>!e);
     }
- return (
+
+    if(authLoading) return <CustomSpinner></CustomSpinner>
+
+    return (
     <Formik
         initialValues={{
             userName:'',
@@ -140,6 +144,7 @@ function RegisterDriver() {
             confirmPassword: '',
             fullName:'',
             ABNNumber:'',
+            businessName: "",
             address:'',
             city:'',
             postCode: 0,
@@ -309,7 +314,6 @@ function RegisterDriver() {
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label'>ABN Number</Form.Label>
-                                                <p className='asterisk'>*</p>
                                             </div>
                                             <Form.Control
                                                 type="text"
@@ -320,6 +324,22 @@ function RegisterDriver() {
                                                 onBlur={handleBlur}
                                             />
                                             <Form.Control.Feedback type="invalid">{errors.ABNNumber}</Form.Control.Feedback>
+                                        </Form.Group>
+
+                                        {/* Business Name */}
+                                        <Form.Group className="form-group" >
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>Business Name</Form.Label>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="bussinessName"
+                                                placeholder="Enter Your Business Name"
+                                                isInvalid={touched.bussinessName && !!errors?.bussinessName}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors?.bussinessName}</Form.Control.Feedback>
                                         </Form.Group>
 
                                         {/* Address */}
@@ -494,7 +514,6 @@ function RegisterDriver() {
                                                 })}
                                             </div>
                                         </Form.Group>
-                                        <pre>{JSON.stringify(errors, 4, 4)}</pre>
 
                                         {/* BSB */}
                                         <Form.Group className="form-group" >

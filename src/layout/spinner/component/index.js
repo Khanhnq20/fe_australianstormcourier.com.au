@@ -15,7 +15,6 @@ export default function Index() {
             color="var(--clr-primary)"
             ariaLabel="loading"
             wrapperStyle
-            wrapperClass
             />
         </div>
     </div>

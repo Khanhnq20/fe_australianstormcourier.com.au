@@ -1,2 +1,2 @@
 export * from './contextAPI';
-export * from './socket/index'
+export {default as SocketContainer, SocketContext} from './socket';
