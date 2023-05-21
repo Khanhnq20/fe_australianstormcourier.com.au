@@ -71,54 +71,9 @@ function UserOrders() {
                                         <Form.Control
                                             type="text"
                                             name="id"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            placeholder="Enter Id"
                                             onChange={handleChange}
-                                            onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>From</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="from"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Full name sender</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="fullNameSender"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>To</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="to"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
@@ -127,12 +82,32 @@ function UserOrders() {
                                         <Form.Control
                                             type="text"
                                             name="fullNameDriver"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            placeholder="Enter Full Name Driver"
                                             onChange={handleChange}
-                                            onBlur={handleBlur}
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Sender Location</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="from"
+                                            placeholder="Enter Sender Location"
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Destination</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="to"
+                                            placeholder="Enter Full Name"
+                                            onChange={handleChange}
+                                        />
                                     </Form.Group>
                                 </div>
                                 <div>

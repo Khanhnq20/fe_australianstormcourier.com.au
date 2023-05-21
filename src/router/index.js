@@ -43,7 +43,7 @@ export const router = createBrowserRouter([
         path: "auth",
         element: <AuthValidator.LoggedContainer>
           <Outlet></Outlet>
-          <Footer.Custom></Footer.Custom>
+          <Footer></Footer>
         </AuthValidator.LoggedContainer>,
         children: authChildrens
       },
