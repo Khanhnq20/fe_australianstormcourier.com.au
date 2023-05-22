@@ -46,7 +46,8 @@ export default function Index() {
                 password:'',
                 confirmPassword: '',
                 phone: '',
-                address:''
+                address:'',
+                abn:0
             }}  
             validationSchema={registerSchema}
             onSubmit={(values) =>{
@@ -178,6 +179,18 @@ export default function Index() {
                                         onBlur={handleBlur}
                                     />
                                     <Form.Control.Feedback type="invalid">{errors.address}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="form-group" >
+                                    <div className='mb-2'>
+                                        <Form.Label className='label'>ABN</Form.Label>
+                                    </div>
+                                    <Form.Control
+                                        type="number"
+                                        name="abn"
+                                        placeholder="Enter Your ABN"
+                                        onChange={handleChange}
+                                    />
                                 </Form.Group>
 
                                 <Button type="submit" variant="warning" className='my-btn-yellow'>Register</Button>
