@@ -1,6 +1,7 @@
 import { Outlet } from "react-router";
 
 import { ChangePassword, UserCreateProduct, UserInformation, UserOrder, UserProductDetail, UserProductHistory, UserProductHistoryDetails } from "../pages";
+import { Container } from "react-bootstrap";
 
 export const userChildrens = [
   {
@@ -46,5 +47,11 @@ export const userChildrens = [
           element: <UserProductHistoryDetails></UserProductHistoryDetails>
       }
     ]
+  },
+  {
+    path: "*",
+    element: <Container>
+      <h2>This page are in modified</h2>
+    </Container>
   }
 ];

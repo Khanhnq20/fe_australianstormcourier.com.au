@@ -18,6 +18,7 @@ import sender from "../../../image/sender.png";
 import senderPost from "../../../image/sender-post.png";
 import customer from "../../../image/customer.png";
 import logo from "../../../image/as-logo.png";
+import { FacebookProvider, Page, Like } from 'react-facebook';
 
 
 export default function Index() {
@@ -324,6 +325,9 @@ function Address(){
                         <Col>
                             <div>
                                 <h3>FOLLOW US</h3>
+                                    <FacebookProvider appId="123456789">
+                                        <Like href="http://www.facebook.com" colorScheme="dark" showFaces share />
+                                    </FacebookProvider> 
                             </div>
                         </Col>
                     </Row>

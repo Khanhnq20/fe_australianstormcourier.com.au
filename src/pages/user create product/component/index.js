@@ -15,8 +15,8 @@ const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 let orderSchema = yup.object().shape({
     senderId: yup.string().required(),
     sendingLocation: yup.object().shape({
-        unitNumber: yup.number().required("Unit Number is required"),
-        streetNumber: yup.number().required("Street Number is required"),
+        unitNumber: yup.string().required("Unit Number is required"),
+        streetNumber: yup.string().required("Street Number is required"),
         streetName: yup.string().required("Street Name is required"),
         suburb: yup.string().required("Suburb is required"),
         state: yup.string().required("State is required"),
@@ -48,7 +48,7 @@ let orderSchema = yup.object().shape({
     orderItems: yup.array().of(
         yup.object().shape({
             itemName: yup.string().required("Item Name is required field"),
-            itemBarcode: yup.number().required("Item BarCode is required field"), 
+            itemCharcode: yup.number().default(Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)), 
             itemDescription: yup.string().nullable(),
             quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
@@ -108,16 +108,18 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     <Form.Label className='label'>Barcode</Form.Label>
                     <p className='asterisk'>*</p>
                 </div>
-                <Barcode value={values.orderItems[index].itemBarCode}></Barcode>
+                <Barcode value={values.orderItems[index].itemCharCode.toString()}></Barcode>
             </Form.Group>
             {/* Item Description  */}
             <Form.Group className="mb-3">
                 <div className='mb-2'>
                     <Form.Label className='label'>Product Description</Form.Label>
+                    <p className='asterisk'>*</p>
                 </div>
                 <Form.Control
                     as="textarea"
                     row="3"
+                    placeholder="Enter Product Description"
                     name={`${name}.itemDescription`}
                     isInvalid={touched?.itemDescription && !!errors?.itemDescription}
                     onChange={handleChange}
@@ -132,6 +134,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
                             <Form.Label className='label'>Quantity</Form.Label>
+                            <p className='asterisk'>*</p>
                         </div>
                         <Form.Control
                             type="number"
@@ -152,6 +155,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
                             <Form.Label className='label'>Weight</Form.Label>
+                            <p className='asterisk'>*</p>
                         </div>
                         <InputGroup>
                             <Form.Control
@@ -246,7 +250,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     {/* Start shipping rate */}
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
-                            <Form.Label className='label'>Starting shipper rates</Form.Label>
+                            <Form.Label className='label'>Your Preference Rate</Form.Label>
                             <p className='asterisk'>*</p>
                         </div>
                         <Form.Control
@@ -271,7 +275,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             {authState.vehicles.map((item,index) => {
                                 return(
                                     <div key={index}>
-                                        <label class="fr-checkbox mb-2">
+                                        <label className="fr-checkbox">
                                             <input type="checkbox" name="vehicles" value={item?.id} onChange={handleChange} onBlur={handleBlur}/>
                                             <span className="checkmark"></span>
                                             <span className='txt-checkbox' style={{fontWeight:'500'}}>{item?.name}</span>
@@ -286,6 +290,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
                             <Form.Label className='label'>Package Type</Form.Label>
+                            <p className='asterisk'>*</p>
                         </div>
                         <Form.Select
                             type="string"
@@ -334,7 +339,7 @@ function OrderCreation(){
                 orderItems: [
                     {
                         itemName: '',
-                        itemBarCode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000), 
+                        itemCharCode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000), 
                         itemDescription: '',
                         quantity: 0,
                         weight: 0,
@@ -345,7 +350,6 @@ function OrderCreation(){
                     }
                 ]
             }} 
-            enableReinitialize={true}
             validationSchema={orderSchema}
             onSubmit={(values) =>{
                 const handledObjects = {
@@ -503,11 +507,12 @@ function OrderCreation(){
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>Receiver Name</Form.Label>
+                                            <p className='asterisk'>*</p>
                                         </div>
                                         <Form.Control
                                             type="text"
                                             name="receiverName"
-                                            placeholder=""
+                                            placeholder="Enter Receiver Name"
                                             isInvalid={touched.receiverName && !!errors?.receiverName}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
@@ -519,11 +524,12 @@ function OrderCreation(){
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>Receiver Phone</Form.Label>
+                                            <p className='asterisk'>*</p>
                                         </div>
                                         <Form.Control
                                             type="text"
                                             name="receiverPhone"
-                                            placeholder=""
+                                            placeholder="Enter Receiver Phone Number"
                                             isInvalid={touched.receiverPhone && !!errors?.receiverPhone}
                                             onChange={handleChange}
                                             onBlur={handleBlur}

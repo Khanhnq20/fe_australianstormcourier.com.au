@@ -4,9 +4,9 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import { Navigation, Footer, UserSideBar, DriverSideBar, AdminSideBar } from "../layout";
-import { Home, CreateProduct, PreventDriver } from '../pages';
+import { Home, PreventDriver } from '../pages';
 
-import { AuthValidator, OrderContextComponent } from '../stores'
+import { AuthValidator, OrderContextComponent, SocketContainer, SocketContext} from '../stores'
 
 import { authChildrens } from './auth';
 import { userChildrens } from "./user";
@@ -43,44 +43,51 @@ export const router = createBrowserRouter([
         path: "auth",
         element: <AuthValidator.LoggedContainer>
           <Outlet></Outlet>
-          <Footer.Custom></Footer.Custom>
+          <Footer></Footer>
         </AuthValidator.LoggedContainer>,
         children: authChildrens
       },
       {
         path: "user",
-        element: <>
-          <OrderContextComponent>
-            <UserSideBar>
-              <Outlet></Outlet>
-            </UserSideBar>
-          </OrderContextComponent>
-          <Footer.Custom></Footer.Custom>
-        </>,
+        element: <AuthValidator roles={["User"]}>
+          <SocketContainer>
+            <OrderContextComponent>
+              <UserSideBar>
+                <Outlet></Outlet>
+              </UserSideBar>
+              <Footer.Custom></Footer.Custom>
+            </OrderContextComponent>
+          </SocketContainer>
+        </AuthValidator>,
         children: userChildrens
       },
       {
         path: "driver",
-        element: <>
-          <OrderContextComponent>
-            <DriverSideBar>
-              <Outlet></Outlet>
-            </DriverSideBar>
-          </OrderContextComponent>
-          <Footer.Custom></Footer.Custom>
-        </>,
+        element: <AuthValidator roles={["Driver"]}>
+          <SocketContainer>
+            <OrderContextComponent>
+              <DriverSideBar>
+                <Outlet></Outlet>
+              </DriverSideBar>
+              <Footer.Custom></Footer.Custom>
+            </OrderContextComponent>
+          </SocketContainer>
+        </AuthValidator>,
+
         children: driverChildrens
       },
       {
         path: "admin",
-        element: <>
-          <OrderContextComponent>
-            <AdminSideBar>
-              <Outlet></Outlet>
-            </AdminSideBar>
-          </OrderContextComponent>
-          <Footer.Custom></Footer.Custom>
-        </>,
+        element: <AuthValidator roles={["SuperAdmin"]}>
+          <SocketContainer>
+            <OrderContextComponent>
+              <AdminSideBar>
+                <Outlet></Outlet>
+              </AdminSideBar>
+              <Footer.Custom></Footer.Custom>
+            </OrderContextComponent>
+          </SocketContainer>
+        </AuthValidator>,
         children: adminChildrens
       },
       {

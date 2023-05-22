@@ -47,6 +47,26 @@ export function usePagination(props) {
         setCurrentPage(c => total < 1 ? 1 : c < total + 1 ? totalPages : c - 1);
     }
 
+    function refresh(){
+        setLoading(true);
+        fetchingAPIInstance.then(response =>{
+            if(Array.isArray(response?.data)){
+                setItems(response?.data);
+            }
+            else if (Array.isArray(response?.data?.[propToGetItem])){
+                setItems(response.data[propToGetItem]);
+            }
+
+            if(propToGetTotalPage){
+                setResultNumber(response?.data?.[propToGetTotalPage]);
+            }
+        }).catch(error =>{
+            setError(error?.message || "");
+        }).finally(() =>{
+            setLoading(false);
+        });
+    }
+
     return {
         currentPage,
         perPageAmount,
@@ -58,5 +78,6 @@ export function usePagination(props) {
         prevPage,
         setCurrent: setCurrentPage,
         setPerPageAmount,
+        refresh
     }
 }

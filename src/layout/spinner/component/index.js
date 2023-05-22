@@ -5,7 +5,7 @@ import '../style/spinner.css'
 
 export default function Index() {
   return (
-    <div>  
+    <div className='spinner-root'>  
         <div className='spinner'>
             <Logo className='spinner-logo'></Logo>
             <ThreeDots
@@ -15,7 +15,6 @@ export default function Index() {
             color="var(--clr-primary)"
             ariaLabel="loading"
             wrapperStyle
-            wrapperClass
             />
         </div>
     </div>

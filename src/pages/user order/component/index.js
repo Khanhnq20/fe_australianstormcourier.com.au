@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
@@ -14,7 +14,7 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { CustomSpinner } from '../../../layout';
 
-let loginSchema = yup.object().shape({
+let orderSearchSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field"), 
     password: yup.string().required("This field is requied")
 })
@@ -55,7 +55,7 @@ function UserOrders() {
                 fullNameDriver:'',
                 to:''
             }} 
-            validationSchema={loginSchema}
+            validationSchema={orderSearchSchema}
         >
         {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
             return(<>
@@ -71,54 +71,9 @@ function UserOrders() {
                                         <Form.Control
                                             type="text"
                                             name="id"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            placeholder="Enter Id"
                                             onChange={handleChange}
-                                            onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>From</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="from"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Full name sender</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="fullNameSender"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>To</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="to"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
@@ -127,12 +82,32 @@ function UserOrders() {
                                         <Form.Control
                                             type="text"
                                             name="fullNameDriver"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            placeholder="Enter Full Name Driver"
                                             onChange={handleChange}
-                                            onBlur={handleBlur}
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Sender Location</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="from"
+                                            placeholder="Enter Sender Location"
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Destination</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="to"
+                                            placeholder="Enter Full Name"
+                                            onChange={handleChange}
+                                        />
                                     </Form.Group>
                                 </div>
                                 <div>
@@ -169,8 +144,8 @@ function UserOrders() {
                                 <h5>No Data Found</h5>
                             </div>) :
                             (<>
-                                <div style={{maxWidth: '100%', overflowX: "scroll" }}>
-                                    <Table striped bordered >
+                                <div style={{maxWidth: '100%', overflowX: "scroll", scrollBehavior: "smooth", scrollbarWidth: "30px" }}>
+                                    <Table bordered >
                                         <thead>
                                             <tr>
                                                 <th>Order Id</th>
@@ -232,15 +207,11 @@ function UserOrders() {
                                                             <td>{post?.vehicles?.join?.(" - ")}</td>
                                                             <td>{post?.offerNumber}</td>
                                                             <td>
-                                                                <Row>
-                                                                    <Col>
-                                                                        <Link to={`/user/order/detail?orderid=${post?.id}`} state={post}>
-                                                                            <Button variant='primary'>
-                                                                                Detail
-                                                                            </Button>
-                                                                        </Link>
-                                                                    </Col>
-                                                                </Row>
+                                                                <Link to={`/user/order/detail?orderid=${post?.id}`} state={post}>
+                                                                    <Button className='w-100' variant='primary'>
+                                                                        Detail
+                                                                    </Button>
+                                                                </Link>
                                                             </td>
                                                         </tr>
                                                     )

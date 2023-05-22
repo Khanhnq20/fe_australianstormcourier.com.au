@@ -17,7 +17,6 @@ let registerSchema = yup.object().shape({
 })
 
 function UserInformation() {
-    const [date,setDate] = React.useState(new Date());
     const [authState, {updateProfile}] = React.useContext(AuthContext);
 
     return (
@@ -96,12 +95,12 @@ function UserInformation() {
                     <h3 className='ui-header'>Edit Information</h3>
                     <Formik
                         initialValues={{
-                            id: authState?.accountInfo?.id,
-                            fullName: authState?.accountInfo?.name,
-                            userName: authState?.accountInfo?.username,
-                            email:authState?.accountInfo?.email,
-                            phoneNumber: authState?.accountInfo?.phoneNumber,
-                            address: authState?.accountInfo?.address
+                            id: authState?.accountInfo?.id || "",
+                            fullName: authState?.accountInfo?.name || "",
+                            userName: authState?.accountInfo?.username || '',
+                            email:authState?.accountInfo?.email|| "",
+                            phoneNumber: authState?.accountInfo?.phoneNumber || "",
+                            address: authState?.accountInfo?.address || ""
                         }}
                         validationSchema={registerSchema}
                         enableReinitialize={true}
@@ -122,7 +121,7 @@ function UserInformation() {
                                     <div>
                                         <div>
                                         </div>
-                                        <Form className='form' onSubmit={handleSubmit}>
+                                        <Form className='form px-5' style={{margin:0}} onSubmit={handleSubmit}>
                                             <Form.Group className="form-group" >
                                                     <div className='mb-2'>
                                                         <Form.Label className='label'>Full name</Form.Label>
