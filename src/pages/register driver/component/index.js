@@ -11,6 +11,7 @@ import { AiFillEye,AiFillEyeInvisible } from  'react-icons/ai';
 import { VscFilePdf} from 'react-icons/vsc';
 import { CustomSpinner } from '../../../layout';
 import { authConstraints } from '../../../api';
+import {GrDocumentPdf} from 'react-icons/gr'
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -32,11 +33,11 @@ let registerSchema = yup.object().shape({
     vehicles: yup.array().min(1, "Select one vehicle to complete the registry"),
     adInfo: yup.string().nullable(),
     bsb: yup.string().required("You should specify this field to create transactions with user"),
-    isAusDrivingLiense: yup.bool().default(false),
+    isAusDrivingLiense: yup.boolean().default(false),
     frontDrivingLiense: yup
         .mixed()
         .nullable()
-        .required()
+        .required() 
         .test(
         'FILE SIZE', 
         'the file is too large', 
@@ -83,33 +84,36 @@ let registerSchema = yup.object().shape({
         ),
     drivingCertificate: yup
         .mixed()
-        .nullable()
         .when("isAusDrivingLiense", {
             is:(isAusDrivingLiense) =>  {
-                console.log(isAusDrivingLiense);
-                return false;
+                return !isAusDrivingLiense;
             },
-            then:() => yup.mixed().required()
-            .test(
-                'FILE SIZE', 
-                'the file is too large', 
-                (value) => {
-                    if (!value) {
-                        return true;
+            then:(schema) => {
+                return schema.required()
+                .test(
+                    'FILE SIZE', 
+                    'the file is too large', 
+                    (value) => {
+                        if (!value) {
+                            return true;
+                        }
+        
+                        return value.size <= 5 * 1024 * 1024;
+                })
+                .test(
+                    'FILE FORMAT',
+                    `the file format should be pdf`,
+                    (value) => {
+                        if (!value) {
+                            return true;
+                        }
+                        return value.type === "application/pdf";
                     }
-    
-                    return value.size <= 5 * 1024 * 1024;
-            })
-            .test(
-                'FILE FORMAT',
-                `the file format should be pdf`,
-                (value) => {
-                    if (!value) {
-                        return true;
-                    }
-                    return value.type === "application/pdf";
-                }
-            )
+                )
+            },
+            otherwise: (schema) =>{
+                return schema.notRequired();
+            }
         })
 })
 
@@ -122,7 +126,7 @@ function RegisterDriver() {
     const d_certificate = useRef();
     const [imgUrlFront,setImgUrlFront] = React.useState();
     const [imgUrlBack,setImgUrlBack] = React.useState();
-    const [imgCertificate, setCertificate] = React.useState();
+    const [pdf,setPdf] = React.useState();
     const [showPass,setShowPass] = React.useState(false);
     const [showPassConfirm,setShowPassConfirm] = React.useState(false);
     const [next,setNext] = React.useState(true);
@@ -174,15 +178,15 @@ function RegisterDriver() {
 
             return ( 
                 <>
-                    <div className='container p-5'>
+                    <div style={{minHeight:"calc(90vh - 54px)"}} className='container p-5'>
                         <div className="text-center">
-                            <h3 className='ui-header p-3'>Become driver</h3>
+                            <h3 className='ui-header'>Become driver</h3>
                         </div>
                         <Form className='form' onSubmit={handleSubmit}>
                             {authState?.tasks?.[authConstraints.signupDriver] && authState?.tasks?.[authConstraints.signupDriver] === taskStatus.InProgress && (<CustomSpinner></CustomSpinner>)}
                             <Row>
                                 <Col className={next ? "step1-show" : "step1-hide"}>
-                                    <h3 className='text-center' style={{textTransform: 'capitalize'}}>Account information</h3>
+                                    <h4 className='my-3' style={{textTransform: 'capitalize'}}>Account information</h4>
                                     {/* Username and email */}
                                     <Row>
                                         <Col>
@@ -395,6 +399,7 @@ function RegisterDriver() {
                                         </Form.Group>
 
                                         {/* Driving Liense Images */}
+                                        
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label py-3 mb-2'>Driving License (Front and Back)</Form.Label>
@@ -409,8 +414,8 @@ function RegisterDriver() {
                                                     </div>
                                                     <img className='img-front' src={imgUrlFront || 'https://tinyurl.com/5ehpcctt'}/>
                                                 </div>
-                                                <input type="file" id="driver_image_front" name="frontDrivingLiense" ref={f_driver_img_ipt} 
-                                                    isInvalid={!!errors?.frontDrivingLiense}
+                                                <Form.Control type="file" id="driver_image_front" name="frontDrivingLiense" ref={f_driver_img_ipt} 
+                                                    isInvalid={touched.frontDrivingLiense && !!errors?.frontDrivingLiense}
                                                     onChange={(e) =>{
                                                         const file = e.target.files[0];
                                                         setFieldValue(e.target.name, file, true);
@@ -424,6 +429,8 @@ function RegisterDriver() {
                                                         }
                                                     }}
                                                 />
+                                                
+                                                <Form.Control.Feedback type="invalid">{errors?.frontDrivingLiense}</Form.Control.Feedback>
                                             </div>
                                             <div className='back-up'>
                                                 <div>
@@ -437,7 +444,7 @@ function RegisterDriver() {
                                                     <img className='img-front' src={imgUrlBack || 'https://tinyurl.com/5ehpcctt'}/>
                                                 </div>
                                                 
-                                                <input type="file" id="driver_image_back" name="backDrivingLiense" ref={b_driver_img_ipt} 
+                                                <Form.Control type="file" id="driver_image_back" name="backDrivingLiense" ref={b_driver_img_ipt} 
                                                     isInvalid={!!errors?.backDrivingLiense}
                                                     onChange={(e) =>{
                                                             const file = e.target.files[0];
@@ -453,9 +460,10 @@ function RegisterDriver() {
                                                             }
                                                         }}
                                                 />
+                                                <Form.Control.Feedback type="invalid">{errors?.backDrivingLiense}</Form.Control.Feedback>
                                             </div>
                                             <label class="fr-checkbox mb-2">
-                                                <input type="checkbox" name="isAusDrivingLiense" onChange={handleChange} onBlur={handleBlur}/>
+                                                <input type="checkbox" name="isAusDrivingLiense" checked={values.isAusDrivingLiense} onChange={handleChange} onBlur={handleBlur}/>
                                                 <span className="checkmark"></span>
                                                 <span className='txt-checkbox' style={{fontWeight:'500'}}>Your driving license is from australian</span>
                                             </label>
@@ -466,16 +474,15 @@ function RegisterDriver() {
                                                 <div className='img-front-frame' style={{minWidth: '120px', minHeight: '200px'}} onClick={() => d_certificate.current.click()}>
                                                     {!values.drivingCertificate && 
                                                     (<div className='background-front'>
-                                                        <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                                        <p className='driving-txt'>Change driving license</p>
+                                                        <GrDocumentPdf style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></GrDocumentPdf>
+                                                        <p className='driving-txt'>Change PDF</p>
                                                     </div>) ||
                                                     (<div>
-                                                        <VscFilePdf style={{fontSize: '12rem'}}></VscFilePdf>
+                                                        <VscFilePdf style={{fontSize: '10rem'}}></VscFilePdf>
                                                     </div>)}
                                                 </div>
                                                 
-                                                <Form.Control type="file" id="driver_image_back" 
-                                                    name="drivingCertificate" 
+                                                <Form.Control type="file" id='driver_pdf' name="drivingCertificate" 
                                                     accept='application/pdf'
                                                     ref={d_certificate} 
                                                     isInvalid={!!errors?.drivingCertificate}
@@ -487,7 +494,7 @@ function RegisterDriver() {
 
                                                             if(file){
                                                                 fileReader.addEventListener("loadend", (e)=>{
-                                                                    setCertificate(fileReader.result);
+                                                                    setPdf(fileReader.result);
                                                                 })
                                                                 fileReader.readAsDataURL(file);
                                                             }
@@ -526,6 +533,7 @@ function RegisterDriver() {
                                             <Form.Control
                                                 type="text"
                                                 name="bsb"
+                                                placeholder='Enter Bsb'
                                                 isInvalid={touched.bsb && !!errors?.bsb}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
@@ -537,7 +545,6 @@ function RegisterDriver() {
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label'>Additional Information</Form.Label>
-                                                <p className='asterisk'>*</p>
                                             </div>
                                             <Form.Control
                                                 type="text"
