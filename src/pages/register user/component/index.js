@@ -47,7 +47,7 @@ export default function Index() {
                 confirmPassword: '',
                 phone: '',
                 address:'',
-                abn:0
+                abn:null
             }}  
             validationSchema={registerSchema}
             onSubmit={(values) =>{
