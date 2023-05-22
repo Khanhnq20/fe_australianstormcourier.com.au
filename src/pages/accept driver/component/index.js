@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
@@ -13,9 +13,9 @@ import { Col, Modal, Row } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
 import { CustomSpinner } from '../../../layout';
-import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { toast } from 'react-toastify';
+import { SocketContext } from '../../../stores';
 
 let driverSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field"), 
@@ -48,12 +48,12 @@ function DriverList() {
         startingPage : 1,
         totalPages: 1
     });
+    const [{onlineUsers}] = useContext(SocketContext);
     const [shown, setShown] = useState(false);
     const [entity, setEntity] = useState(-1);
     const [aloading, setALoading] = useState(false);
 
     function acceptDriver(driverId){
-        console.log(driverId);
         setALoading(true);
         authInstance.post([authConstraints.adminRoot, authConstraints.acceptAccountDriver].join("/"),null, {
             headers: {
@@ -73,9 +73,25 @@ function DriverList() {
         });
     }
 
-    function blockDriver(driverId){}
-
-    function unlockDriver(driverId){}
+    function blockDriver(driverId){
+        setALoading(true);
+        authInstance.put([authConstraints.adminRoot, authConstraints.blockAccount].join("/"),null, {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+            },
+            params: {
+                driverId
+            }
+        }).then(response =>{
+            setALoading(false);
+            if(response.data?.successed){
+                toast.success("Update the status of this user");
+            }
+        }).catch(error =>{
+            setALoading(false);
+            toast.error(error?.data?.error || error?.message);
+        });
+    }
 
     return (
         <Formik
@@ -166,6 +182,7 @@ function DriverList() {
                                                 <th style={{
                                                     minWidth: '150px'
                                                 }}>Bussiness Name</th>
+                                                <th>Online</th>
                                                 <th style={{
                                                     minWidth: '150px'
                                                 }}>Status</th>
@@ -189,6 +206,7 @@ function DriverList() {
                                                             <td>{moment(new Date()).format("YYYY/MM/DD")}</td>
                                                             <td>{driver?.abnNumber}</td>
                                                             <td>{driver?.bussinessName}</td>
+                                                            <td>{Array.isArray(onlineUsers) && onlineUsers.includes(driver?.id) ? (<span className='content-green'>Online</span>) : (<span className='content-red'>Offline</span>)}</td>
                                                             <td>{driver?.isBlocked ? <span className="content-red">Block</span> : !driver?.hasCensored ? <span className="content-red">Not Inspected</span> : <span className="content-green">Inspected</span>}</td>
                                                             <td>{driver?.address}</td>
                                                             <td>
@@ -199,7 +217,7 @@ function DriverList() {
                                                                 <DetailPopup show={shown && index === entity} driver={driver} 
                                                                 acceptDriver={() => acceptDriver(driver?.id)}
                                                                 blockDriver={() => blockDriver(driver?.id)}
-                                                                unlockDriver={() => unlockDriver(driver?.id)}
+                                                                unlockDriver={() => blockDriver(driver?.id)}
                                                                 closeHandler={() => {
                                                                     setShown(false); 
                                                                     setEntity(-1);
@@ -207,7 +225,7 @@ function DriverList() {
                                                                 {!driver?.hasCensored ?
                                                                     <Button className="ms-auto w-100" variant="success" onClick={() => acceptDriver(driver?.id)}>Accept driver</Button> :
                                                                 driver?.isBlocked ? 
-                                                                    <Button className="ms-auto w-100" variant="success" onClick={() => unlockDriver(driver?.id)}>Unlock</Button> :
+                                                                    <Button className="ms-auto w-100" variant="success" onClick={() => blockDriver(driver?.id)}>Unlock</Button> :
                                                                     <Button className="ms-auto w-100" variant="danger" onClick={() => blockDriver(driver?.id)}>Block</Button>
                                                                 }
                                                             </td>

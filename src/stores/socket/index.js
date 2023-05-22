@@ -12,14 +12,10 @@ export  default function Index({children}){
     const [error, setError] = useState(null);
 
     useEffect(() => {
-        const accessToken = localStorage.getItem(authConstraints.LOCAL_KEY);
-        console.log(accessToken);
         if(process.env.NODE_ENV !== 'production'){
             const connection = new HubConnectionBuilder()
             .withUrl(`${config.APIHost}${authConstraints.userHub}`,{
-                transport: HttpTransportType.LongPolling,
-                accessTokenFactory: () => accessToken,
-                withCredentials: true,
+                accessTokenFactory: () => localStorage.getItem(authConstraints.LOCAL_KEY),
             })
             // .configureLogging(LogLevel.Trace)
             .configureLogging(LogLevel.Information)
@@ -31,9 +27,7 @@ export  default function Index({children}){
         }
         const connection = new HubConnectionBuilder()
                 .withUrl(`${config.APIHost}${authConstraints.userHub}`,{
-                    transport: HttpTransportType.LongPolling,
-                    accessTokenFactory: () => accessToken,
-                    withCredentials: true
+                    accessTokenFactory: () => localStorage.getItem(authConstraints.LOCAL_KEY),
                 })
                 .withAutomaticReconnect()
                 .build();
@@ -46,12 +40,12 @@ export  default function Index({children}){
             socketConnection
                 .start()
                 .then(() => {
-                    socketConnection.send(authConstraints.hubOnline);
+                    console.log("Connection established");
+                    socketConnection.send(authConstraints.hubOnline, authState?.accountInfo?.id);
                 })
                 .catch((error) => setError(error));
                 
             socketConnection.on(authConstraints.hubReceiveOnline, (successed, userOnlines) => {
-                console.log(successed, userOnlines);
                 if(successed){
                     setOnlineUsers(userOnlines);
                 }

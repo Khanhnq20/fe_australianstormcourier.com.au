@@ -1,5 +1,5 @@
 import { Outlet } from "react-router";
-import { AcceptDriver, AdminInformation, AdminOrderDetail, ChangePassword, DriverDetail, DriverInfo, TotalOrder, UserInformation, UserManagement, UserProductHistory, UserProductHistoryDetails } from "../pages";
+import { AcceptDriver, AdminInformation, AdminInvoices, AdminOrderDetail, ChangePassword, DriverDetail, DriverInfo, TotalOrder, UserInformation, UserManagement, UserProductHistory, UserProductHistoryDetails } from "../pages";
 import { Container } from "react-bootstrap";
 
 export const adminChildrens = [
@@ -82,6 +82,16 @@ export const adminChildrens = [
       {
           path: "detail",
           element: <UserProductHistoryDetails></UserProductHistoryDetails>
+      }
+    ]
+  },
+  {
+    path: "invoices",
+    element: <Outlet></Outlet>,
+    children: [
+      {
+        path: '',
+        element: <AdminInvoices></AdminInvoices>
       }
     ]
   },

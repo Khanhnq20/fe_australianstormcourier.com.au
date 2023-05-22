@@ -177,8 +177,8 @@ function Product() {
                                             }
                                         </tbody>
                                 </Table>
+
                                 <Pagination className='pg-form w-100'>
-                                    <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/>
                                     <Pagination.Prev onClick={()=>previous(currentPage)} className='pg-first' />
                                     {pageCount.map((item,index) => {
                                         return (
@@ -193,7 +193,6 @@ function Product() {
                                         )
                                     })}
                                     <Pagination.Next onClick={()=>next(currentPage)} className='pg-first' />
-                                    <Pagination.Last onClick={last} className='pg-first'/>
                                 </Pagination>
                             </>)
                             }
@@ -205,23 +204,8 @@ function Product() {
   )
 }
 
-function DropDownStatus() {
-    const [state,setState] = React.useState(true);
-    return (
-      <Dropdown className='reg-dr'>
-        <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-            {state === true ? "Looking for driver" : "Done"}
-        </Dropdown.Toggle>
-  
-        <Dropdown.Menu className='w-100'>
-          <Dropdown.Item onClick={()=>setState(true)}>Looking for driver</Dropdown.Item>
-          <Dropdown.Item onClick={() => setState(false)}>Done</Dropdown.Item>
-        </Dropdown.Menu>
-      </Dropdown>
-    );
-  }
 export default function Index(){
     return(
-            <Product></Product>
+        <Product></Product>
     )
 }

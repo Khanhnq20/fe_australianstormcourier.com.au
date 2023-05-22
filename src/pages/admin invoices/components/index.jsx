@@ -19,7 +19,7 @@ let userManagementSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field"), 
     password: yup.string().required("This field is requied")
 })
-function UserManagement() {
+function AdminInvoice() {
     const rows = [10,15,20,25,30,35,40];
     const {
         currentPage,
@@ -34,7 +34,7 @@ function UserManagement() {
         setPerPageAmount,
         refresh
     } = usePagination({
-        fetchingAPIInstance: authInstance.get([authConstraints.adminRoot, authConstraints.getAllAccounts].join('/'), {
+        fetchingAPIInstance: authInstance.get([authConstraints.adminRoot, authConstraints.getAllPayments].join('/'), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
             }
@@ -48,47 +48,6 @@ function UserManagement() {
     const [shown, setShown] = useState(false);
     const [entity, setEntity] = useState(-1);
     const [aloading, setALoading] = useState(false);
-
-    function acceptDriver(driverId){
-        console.log(driverId);
-        setALoading(true);
-        authInstance.post([authConstraints.adminRoot, authConstraints.acceptAccountDriver].join("/"),null, {
-            headers: {
-                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
-            },
-            params: {
-                driverId
-            }
-        }).then(response =>{
-            setALoading(false);
-            if(response.data?.successed){
-                toast.success("Update the status of this user");
-            }
-        }).catch(error =>{
-            setALoading(false);
-            toast.error(error?.data?.error || error?.message);
-        });
-    }
-
-    function blockDriver(accountId){
-        setALoading(true);
-        authInstance.put([authConstraints.adminRoot, authConstraints.blockAccount].join("/"),null, {
-            headers: {
-                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
-            },
-            params: {
-                accountId
-            }
-        }).then(response =>{
-            setALoading(false);
-            if(response.data?.successed){
-                toast.success("Update the status of this user");
-            }
-        }).catch(error =>{
-            setALoading(false);
-            toast.error(error?.data?.error || error?.message);
-        });
-    }
 
     return (
         <Formik
@@ -106,7 +65,7 @@ function UserManagement() {
                                 <div className='form-order'>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>Full name driver</Form.Label>
+                                            <Form.Label className='label'>Enter Id</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
@@ -207,8 +166,8 @@ function UserManagement() {
                                                             <td>
                                                                 {
                                                                 driver?.isBlocked ? 
-                                                                    <Button className="ms-auto w-100" variant="success" onClick={() => blockDriver(driver?.id)}>Unlock</Button> :
-                                                                    <Button className="ms-auto w-100" variant="danger" onClick={() => blockDriver(driver?.id)}>Block</Button>
+                                                                    <Button className="ms-auto w-100" variant="success">Unlock</Button> :
+                                                                    <Button className="ms-auto w-100" variant="danger">Block</Button>
                                                                 }
                                                             </td>
                                                         </tr>
@@ -247,6 +206,6 @@ function UserManagement() {
 
 export default function Index(){
     return(
-        <UserManagement></UserManagement>
+        <AdminInvoice></AdminInvoice>
     )
 }
