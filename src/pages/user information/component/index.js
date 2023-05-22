@@ -146,7 +146,7 @@ function UserInformation() {
                                                     <Form.Control
                                                         type="text"
                                                         name="userName"
-                                                        placeholder="Enter Your Full Name"
+                                                        placeholder="Enter Your User Name"
                                                         value={values.userName}
                                                         isInvalid={touched.userName && errors.userName}
                                                         onChange={handleChange}
@@ -179,8 +179,8 @@ function UserInformation() {
                                                 </div>
                                                 <Form.Control
                                                     type="text"
-                                                    name="phoneNumber"
-                                                    placeholder="Enter Your Full Address"
+                                                    name="phoneNumber"  
+                                                    placeholder="Enter Your Phone Number"
                                                     value={values.phoneNumber}
                                                     isInvalid={touched.phoneNumber && errors.phoneNumber}
                                                     onChange={handleChange}
