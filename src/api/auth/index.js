@@ -46,6 +46,9 @@ const constraints = {
     getAccountsDriver: "accounts/driver",
     acceptAccountDriver: "accounts/driver/accept",
     getAllAccounts: "accounts/customer",
+    blockAccount: "account/block",
+
+    getAllPayments: "payments",
 
     hubOnline: "online",
     hubReceiveOnline: "online",

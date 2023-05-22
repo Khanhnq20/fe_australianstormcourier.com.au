@@ -122,6 +122,7 @@ function RegisterDriver() {
     const d_certificate = useRef();
     const [imgUrlFront,setImgUrlFront] = React.useState();
     const [imgUrlBack,setImgUrlBack] = React.useState();
+    const [imgCertificate, setCertificate] = React.useState();
     const [showPass,setShowPass] = React.useState(false);
     const [showPassConfirm,setShowPassConfirm] = React.useState(false);
     const [next,setNext] = React.useState(true);
@@ -473,7 +474,8 @@ function RegisterDriver() {
                                                     </div>)}
                                                 </div>
                                                 
-                                                <Form.Control type="file" id="driver_image_back" name="drivingCertificate" 
+                                                <Form.Control type="file" id="driver_image_back" 
+                                                    name="drivingCertificate" 
                                                     accept='application/pdf'
                                                     ref={d_certificate} 
                                                     isInvalid={!!errors?.drivingCertificate}
@@ -485,7 +487,7 @@ function RegisterDriver() {
 
                                                             if(file){
                                                                 fileReader.addEventListener("loadend", (e)=>{
-                                                                    setImgUrlBack(fileReader.result);
+                                                                    setCertificate(fileReader.result);
                                                                 })
                                                                 fileReader.readAsDataURL(file);
                                                             }
