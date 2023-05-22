@@ -1,5 +1,6 @@
 import axios from "axios";
 import config from '../config';
+import { authConstraints } from "..";
 
 const constraints = {
     root: "/api/auth",
@@ -102,26 +103,29 @@ authInstance.interceptors.response.use(response =>{
     const isDevelopment = process.env.NODE_ENV === 'development';
     let originalRequest = error.config;
 
-    if(error?.response?.status === 401 && !originalRequest._retry){
+    if(error?.response?.status === 401 && !originalRequest._retry && localStorage.getItem(authConstraints.LOCAL_KEY) && localStorage.getItem(authConstraints.LOCAL_KEY_2)){
         originalRequest._retry = true;
 
-        const response =  await authInstance.get([constraints.root, constraints.refreshToken].join("/"), {
+        const response =  await axios.get([constraints.root, constraints.refreshToken].join("/"), {
+            baseURL: config.APIHost,
             params: {
                 accessToken: localStorage.getItem(constraints.LOCAL_KEY),
                 rtoken: localStorage.getItem(constraints.LOCAL_KEY_2)
             }
         });
 
-        const {accessToken, refreshToken} = response?.data?.token;
-
-        localStorage.removeItem(constraints.LOCAL_KEY);
-        localStorage.setItem(constraints.LOCAL_KEY, accessToken);
-        localStorage.removeItem(constraints.LOCAL_KEY_2);
-        localStorage.setItem(constraints.LOCAL_KEY_2, refreshToken);
-
-        originalRequest.headers['Authorization'] = [config.AuthenticationSchema, accessToken].join(' ');
-
-        return authInstance(originalRequest);
+        if(response?.data?.successed){
+            const {accessToken, refreshToken} = response?.data?.token;
+    
+            localStorage.removeItem(constraints.LOCAL_KEY);
+            localStorage.setItem(constraints.LOCAL_KEY, accessToken);
+            localStorage.removeItem(constraints.LOCAL_KEY_2);
+            localStorage.setItem(constraints.LOCAL_KEY_2, refreshToken);
+    
+            originalRequest.headers['Authorization'] = [config.AuthenticationSchema, accessToken].join(' ');
+    
+            return authInstance(originalRequest);
+        }
     }
     if(error?.response?.status === 400 && !isDevelopment){
         window.location.replace("/error/400");

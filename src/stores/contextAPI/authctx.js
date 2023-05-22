@@ -383,7 +383,7 @@ export default function Index({children}) {
         if(state.accessToken === "noaccesstoken"){
             return;
         }
-        if(hasMounted.current && !state.isLogged){
+        if(hasMounted.current && !state.isLogged && !!localStorage.getItem(authConstraints.LOCAL_KEY)){
             funcs.getAccount();
         }
     }, [state.accessToken]);

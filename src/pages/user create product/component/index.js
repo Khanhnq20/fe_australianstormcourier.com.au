@@ -53,7 +53,6 @@ let orderSchema = yup.object().shape({
             quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
             startingRate: yup.number().positive().required("Starting Rate is required field"),
-            // selectedRate: yup.number().positive().nullable(),
             packageType: yup.string().required("Package Type is required field"),
             productPictures: yup.array().min(1)
                 .test(
@@ -171,7 +170,6 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
             </Row>
             {/* Product Pictures & Shipping Rate & PackageType & Vehicles*/}
             <Row>
-
                 {/* Product pictures */}
                 <Col>
                     <Form.Group className="mb-3">
@@ -246,19 +244,19 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     {/* Start shipping rate */}
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
-                            <Form.Label className='label'>Starting shipper rates</Form.Label>
+                            <Form.Label className='label'>Your preference rate</Form.Label>
                             <p className='asterisk'>*</p>
                         </div>
                         <Form.Control
                             type="number"
-                            name={`orderItems[${index}].startingRate`}
+                            name={`${name}.startingRate`}
                             placeholder="Enter your shipping rate"
-                            value={values.startingRate}
-                            isInvalid={touched.orderItems?.[index].startingRate && errors?.orderItems?.[index]?.startingRate}
+                            value={values?.['orderItems']?.[index]?.startingRate}
+                            isInvalid={touched?.['orderItems']?.[index]?.startingRate && !!errors?.['orderItems']?.[index]?.startingRate}
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        <Form.Control.Feedback type="invalid">{errors?.startingRate}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{errors?.['orderItems']?.[index]?.startingRate}</Form.Control.Feedback>
                     </Form.Group>
 
                     {/* Vehicles */}
@@ -287,19 +285,21 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                         <div className='mb-2'>
                             <Form.Label className='label'>Package Type</Form.Label>
                         </div>
+
                         <Form.Select
                             type="string"
-                            name={`orderItems[${index}].packageType`}
+                            name={`${name}.packageType`}
                             placeholder="Select your type of package"
-                            isInvalid={touched?.orderItems?.[index]?.packageType && !!errors?.orderItems?.[index]?.packageType}
+                            isInvalid={touched?.['orderItems']?.[index]?.packageType && !!errors?.['orderItems']?.[index]?.packageType}
                             onChange={handleChange}
                             onBlur={handleBlur}
+                            defaultValue={values?.['orderItems']?.[index]?.packageType}
                         >
                             {authState?.packageTypes?.map((type,index) =>{
                                 return <option key={index} value={type}>{type}</option>
                             })}
                         </Form.Select>
-                        <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.packageType}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{errors?.['orderItems']?.[index]?.packageType}</Form.Control.Feedback>
                     </Form.Group>
 
                     <Button type="submit" variant="warning" disabled={!isValid} className='my-btn-yellow'>Search for driver</Button>
@@ -339,8 +339,7 @@ function OrderCreation(){
                         quantity: 0,
                         weight: 0,
                         startingRate: 0,
-                        selectedRate: 0,
-                        packageType: '',
+                        packageType: authState?.packageTypes?.[0],
                         productPictures: []
                     }
                 ]
@@ -383,6 +382,7 @@ function OrderCreation(){
                         <div 
                             // className='form-order'
                         >
+                            <pre>{JSON.stringify(errors, 4, 4)}</pre>
                             {/* Sending location & Destination */}
                             <h3 className="my-3">Order Location</h3>
 
