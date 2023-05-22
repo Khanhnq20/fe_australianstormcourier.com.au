@@ -222,7 +222,7 @@ function Process({children}){
                   })}
                   
                 </ul>
-             </section>
+              </section>
             </div>
         </div>
         <div className='product-label-info' style={{alignItems:'unset'}}>
