@@ -4,16 +4,14 @@ import { Navigate } from 'react-router-dom';
 import { Container, Spinner } from 'react-bootstrap';
 import taskStatus from './taskStatus';
 import { authConstraints } from '../../api';
+import { CustomSpinner } from '../../layout';
 
 function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], invalidLink="/auth/login"}) {
     const [authState] = useContext(AuthContext);
-    
-    if(authState.loading && authState.task?.[authConstraints.getAccount] === taskStatus.Inprogress){
+
+    if(authState.loading && authState.tasks?.[authConstraints.getAccount] === taskStatus.Inprogress){
         return (<Container>
-            <div className="mx-auto text-center">
-                <Spinner></Spinner>
-                <h2>Loading...</h2>
-            </div>
+            <CustomSpinner />
         </Container>)
     } 
 

@@ -45,8 +45,6 @@ function AdminInvoice() {
         startingPage : 1,
         totalPages: 1
     });
-    const [shown, setShown] = useState(false);
-    const [entity, setEntity] = useState(-1);
     const [aloading, setALoading] = useState(false);
 
     return (
@@ -58,7 +56,7 @@ function AdminInvoice() {
         >
         {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
             return(<>
-                <div>
+                <section>
                     <div className='p-3'>
                         <div>
                             <Form onSubmit={handleSubmit}>
@@ -122,28 +120,31 @@ function AdminInvoice() {
                                                 <th>Figure</th>
                                                 <th style={{
                                                     minWidth: '150px'
-                                                }}>Driver Name</th>
-                                                <th style={{
-                                                    minWidth: '150px'
-                                                }}>Email</th>
-                                                <th style={{
-                                                    minWidth: '150px'
-                                                }}>Phone Number</th>
-                                                <th style={{
-                                                    minWidth: '150px'
-                                                }}>Joined At</th>
-                                                <th style={{
-                                                    minWidth: '150px'
-                                                }}>ABN</th>
-                                                <th style={{
-                                                    minWidth: '150px'
-                                                }}>Bussiness Name</th>
-                                                <th style={{
-                                                    minWidth: '150px'
                                                 }}>Status</th>
                                                 <th style={{
                                                     minWidth: '150px'
-                                                }}>Address</th>
+                                                }}>Sender Email</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Sender Phone</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Receiver Email</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Receiver Phone</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Created At</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Completed At</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Has Payout</th>
+                                                <th style={{
+                                                    minWidth: '150px'
+                                                }}>Payout At</th>
                                                 <th style={{
                                                     minWidth: '150px'
                                                 }}>Actions</th>
@@ -151,24 +152,24 @@ function AdminInvoice() {
                                         </thead> 
                                         <tbody>
                                             {
-                                                items?.slice((currentPage - 1) * perPageAmount, perPageAmount * (1 + currentPage)).map((driver,index) =>{
+                                                items?.slice((currentPage - 1) * perPageAmount, perPageAmount * (1 + currentPage)).map((payment,index) =>{
                                                     return (
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td>{driver?.name || <span className='content-red'>{"null"}</span>}</td>
-                                                            <td>{driver?.email}</td>
-                                                            <td>{driver?.phoneNumber}</td>
-                                                            <td>{moment(new Date()).format("YYYY/MM/DD")}</td>
-                                                            <td>{driver?.abnNumber}</td>
-                                                            <td>{driver?.bussinessName}</td>
-                                                            <td>{driver?.isBlocked ? <span className="content-red">Block</span> : <span className="content-green">Activated</span>}</td>
-                                                            <td>{driver?.address}</td>
+                                                            <td><span className="content-red">
+                                                                {payment?.status}
+                                                            </span>
+                                                            </td>
+                                                            <td>{payment?.sender?.email}</td>
+                                                            <td>{payment?.sender?.phoneNumber}</td>
+                                                            <td>{payment?.receiver?.email}</td>
+                                                            <td>{payment?.receiver?.phoneNumber}</td>
+                                                            <td>{payment?.createdAt ? moment(payment?.createdAt).format("YYYY/MM/DD") : "null"}</td>
+                                                            <td>{payment?.completedAt ? moment(payment?.completedAt).format("YYYY/MM/DD") : "null"}</td>
+                                                            <td>{payment?.completedAt ? moment(payment?.completedAt).format("YYYY/MM/DD") : "null"}</td>
+                                                            <td>{!payment?.hasPayout ? <span className="content-red">Not Payout</span> : <span className="content-green">Payout</span>}</td>
                                                             <td>
-                                                                {
-                                                                driver?.isBlocked ? 
-                                                                    <Button className="ms-auto w-100" variant="success">Unlock</Button> :
-                                                                    <Button className="ms-auto w-100" variant="danger">Block</Button>
-                                                                }
+                                                                {!payment?.hasPayout && <Button className="ms-auto w-100" variant="success">Payout</Button>}
                                                             </td>
                                                         </tr>
                                                     )
@@ -198,7 +199,7 @@ function AdminInvoice() {
                                 </Pagination>
                             </>)}
                     </div>
-                </div>
+                </section>
             </>)}}
         </Formik>
     )
