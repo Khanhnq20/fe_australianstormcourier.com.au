@@ -148,7 +148,7 @@
     transition-delay: 0s, 0s, 0s, 0s, 0s, 0s, 0s;
     transition-property: all;
     text-align: center;
-    border-radius: 4px;
+    border-radius: 4px; 
 }
 .cus-item:hover{
     transform: translateY(-15px);

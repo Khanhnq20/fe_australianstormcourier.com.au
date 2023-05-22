@@ -55,6 +55,7 @@ export const router = createBrowserRouter([
               <UserSideBar>
                 <Outlet></Outlet>
               </UserSideBar>
+              <Footer.Custom></Footer.Custom>
             </OrderContextComponent>
           </SocketContainer>
         </AuthValidator>,
@@ -68,6 +69,7 @@ export const router = createBrowserRouter([
               <DriverSideBar>
                 <Outlet></Outlet>
               </DriverSideBar>
+              <Footer.Custom></Footer.Custom>
             </OrderContextComponent>
           </SocketContainer>
         </AuthValidator>,
@@ -82,6 +84,7 @@ export const router = createBrowserRouter([
               <AdminSideBar>
                 <Outlet></Outlet>
               </AdminSideBar>
+              <Footer.Custom></Footer.Custom>
             </OrderContextComponent>
           </SocketContainer>
         </AuthValidator>,

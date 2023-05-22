@@ -314,6 +314,11 @@ input[type="text"]{
   padding: 8px 12px;
   border: 1px solid var(--clr-txt-secondary);
 }
+input[type="number"]{
+  background-color: var(--clr-input);
+  padding: 8px 12px;
+  border: 1px solid var(--clr-txt-secondary);
+}
 input[type="password"]{
   background-color: var(--clr-input);
   padding: 8px 12px;
@@ -355,7 +360,7 @@ select {
 }
 input:checked ~ .checkmark {
   background-color: var(--clr-primary);
-  border: 2px solid var(--clr-primary) ;
+  border: 2px solid var(--clr-primary);
 }
 .checkmark:after {
   content: "";
@@ -375,6 +380,7 @@ input:checked ~ .checkmark {
   -webkit-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
   transform: rotate(45deg);
+  color: white;
 }
 .txt-checkbox{
   margin-left: 30px;

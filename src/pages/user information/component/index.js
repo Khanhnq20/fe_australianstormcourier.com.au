@@ -121,7 +121,7 @@ function UserInformation() {
                                     <div>
                                         <div>
                                         </div>
-                                        <Form className='form' onSubmit={handleSubmit}>
+                                        <Form className='form px-5' style={{margin:0}} onSubmit={handleSubmit}>
                                             <Form.Group className="form-group" >
                                                     <div className='mb-2'>
                                                         <Form.Label className='label'>Full name</Form.Label>

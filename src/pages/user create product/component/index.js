@@ -114,10 +114,12 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
             <Form.Group className="mb-3">
                 <div className='mb-2'>
                     <Form.Label className='label'>Product Description</Form.Label>
+                    <p className='asterisk'>*</p>
                 </div>
                 <Form.Control
                     as="textarea"
                     row="3"
+                    placeholder="Enter Product Description"
                     name={`${name}.itemDescription`}
                     isInvalid={touched?.itemDescription && !!errors?.itemDescription}
                     onChange={handleChange}
@@ -132,6 +134,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
                             <Form.Label className='label'>Quantity</Form.Label>
+                            <p className='asterisk'>*</p>
                         </div>
                         <Form.Control
                             type="number"
@@ -152,6 +155,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
                             <Form.Label className='label'>Weight</Form.Label>
+                            <p className='asterisk'>*</p>
                         </div>
                         <InputGroup>
                             <Form.Control
@@ -246,7 +250,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     {/* Start shipping rate */}
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
-                            <Form.Label className='label'>Starting shipper rates</Form.Label>
+                            <Form.Label className='label'>Your Preference Rate</Form.Label>
                             <p className='asterisk'>*</p>
                         </div>
                         <Form.Control
@@ -271,7 +275,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             {authState.vehicles.map((item,index) => {
                                 return(
                                     <div key={index}>
-                                        <label className="fr-checkbox mb-2">
+                                        <label className="fr-checkbox">
                                             <input type="checkbox" name="vehicles" value={item?.id} onChange={handleChange} onBlur={handleBlur}/>
                                             <span className="checkmark"></span>
                                             <span className='txt-checkbox' style={{fontWeight:'500'}}>{item?.name}</span>
@@ -286,6 +290,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
                             <Form.Label className='label'>Package Type</Form.Label>
+                            <p className='asterisk'>*</p>
                         </div>
                         <Form.Select
                             type="string"
@@ -502,11 +507,12 @@ function OrderCreation(){
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>Receiver Name</Form.Label>
+                                            <p className='asterisk'>*</p>
                                         </div>
                                         <Form.Control
                                             type="text"
                                             name="receiverName"
-                                            placeholder=""
+                                            placeholder="Enter Receiver Name"
                                             isInvalid={touched.receiverName && !!errors?.receiverName}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
@@ -518,11 +524,12 @@ function OrderCreation(){
                                     <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>Receiver Phone</Form.Label>
+                                            <p className='asterisk'>*</p>
                                         </div>
                                         <Form.Control
                                             type="text"
                                             name="receiverPhone"
-                                            placeholder=""
+                                            placeholder="Enter Receiver Phone Number"
                                             isInvalid={touched.receiverPhone && !!errors?.receiverPhone}
                                             onChange={handleChange}
                                             onBlur={handleBlur}

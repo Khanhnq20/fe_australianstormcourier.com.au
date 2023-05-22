@@ -56,7 +56,7 @@ function UserHistory() {
         {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
             return(<>
                 <div>
-                        <div className='p-3'>
+                    <div className='p-3'>
                             <div>
                                 <Form>
                                     <div className='form-order'>
@@ -70,18 +70,6 @@ function UserHistory() {
                                                 placeholder="Enter Id"
                                                 onChange={handleChange}
                                             />
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Full name driver</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="fullNameDriver"
-                                                placeholder="Enter Full Name Driver"
-                                                onChange={handleChange}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
                                         </Form.Group>
                                         <Form.Group>
                                             <div className='mb-2'>
@@ -105,51 +93,27 @@ function UserHistory() {
                                                 onChange={handleChange}
                                             />
                                         </Form.Group>
+                                        <Form.Group>
+                                            <div className='mb-2'>
+                                                <Form.Label className='label'>Full name driver</Form.Label>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="fullNameDriver"
+                                                placeholder="Enter Full Name"
+                                                isInvalid={touched.fullName && errors.fullName}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        </Form.Group>
                                     </div>
-                                    <Form.Control
-                                        type="text"
-                                        name="fullNameSender"
-                                        placeholder="Enter Full Name"
-                                        isInvalid={touched.fullName && errors.fullName}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                    <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                </Form.Group>
-                                <Form.Group>
-                                    <div className='mb-2'>
-                                        <Form.Label className='label'>To</Form.Label>
-                                    </div>
-                                    <Form.Control
-                                        type="text"
-                                        name="to"
-                                        placeholder="Enter Full Name"
-                                        isInvalid={touched.fullName && errors.fullName}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                    <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                </Form.Group>
-                                <Form.Group>
-                                    <div className='mb-2'>
-                                        <Form.Label className='label'>Full name driver</Form.Label>
-                                    </div>
-                                    <Form.Control
-                                        type="text"
-                                        name="fullNameDriver"
-                                        placeholder="Enter Full Name"
-                                        isInvalid={touched.fullName && errors.fullName}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                    <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                </Form.Group>
+                                    <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
+                                        <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
+                                        Search
+                                    </Button>
+                                </Form>
                             </div>
-                            <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
-                                <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
-                                Search
-                            </Button>
-                        </Form>
                     </div>
                     
                     <div>
