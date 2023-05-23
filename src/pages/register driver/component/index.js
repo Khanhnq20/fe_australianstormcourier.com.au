@@ -488,9 +488,7 @@ function RegisterDriver() {
                                                     onChange={(e) =>{
                                                             const file = e.target.files[0];
                                                             setFieldValue(e.target.name, file, true);
-
-                                                            const fileReader = new FileReader();
-
+                                                                const fileReader = new FileReader();
                                                             if(file){
                                                                 fileReader.addEventListener("loadend", (e)=>{
                                                                     setPdf(fileReader.result);

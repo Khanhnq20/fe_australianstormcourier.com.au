@@ -9,6 +9,7 @@ import Button from 'react-bootstrap/Button';
 import { AiFillEye,AiFillEyeInvisible } from  'react-icons/ai';
 import { AuthContext } from '../../../stores';
 import { CustomSpinner } from '../../../layout';
+import { config } from '../../../api';
 
 
 let registerSchema = yup.object().shape({
@@ -51,7 +52,7 @@ export default function Index() {
             }}  
             validationSchema={registerSchema}
             onSubmit={(values) =>{
-                signupUser(values);
+                signupUser(values, `${window.location.protocol}//${window.location.host}${config.AccountConfirmationURL}`);
             }}
         >
         {({values, touched, errors, handleSubmit, handleChange, handleBlur}) =>{

@@ -17,12 +17,6 @@ export const authChildrens = [
               element: <>
                 <RegisterUser></RegisterUser>
               </>
-            },
-            {
-              path: "confirm",
-              element: <>
-                <EmailCheck></EmailCheck>
-              </>
             }
           ]
         },
@@ -30,6 +24,12 @@ export const authChildrens = [
           path: "driver",
           element: <>
             <RegisterDriver />
+          </>
+        },
+        {
+          path: "confirm",
+          element: <>
+            <EmailCheck></EmailCheck>
           </>
         }
       ]

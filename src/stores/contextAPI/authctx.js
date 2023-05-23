@@ -59,7 +59,7 @@ export default function Index({children}) {
                     setState(i =>({
                         ...i,
                         errors: [...i.errors, response.data]
-                    }))
+                    }));
                 }
             }).catch(err =>{
                 setState(i => ({
@@ -78,7 +78,7 @@ export default function Index({children}) {
             });
         },
 
-        signupUser(body){
+        signupUser(body, returnURL = ""){
             setState(i =>({
                 ...i,
                 loading: true,
@@ -87,19 +87,22 @@ export default function Index({children}) {
                     [authConstraints.signupUser] : taskStatus.Inprogress
                 }
             }));
-            authInstance.post([authConstraints.root, authConstraints.signupUser].join("/"), body).then(response =>{
+            authInstance.post([authConstraints.root, authConstraints.signupUser].join("/"), body, {
+                params: {
+                    returnURL: encodeURIComponent(returnURL)
+                }
+            }).then(response =>{
                 if(!!response.data?.successed){
                     toast.success(`You have registered account successfully, please goto "Signin" to join us`, {});
                 }
-                    setState(i =>({
-                        ...i,
-                        errors: [...response.data.registeredErrors, ...response.data.assingedToRoleErrors],
-                        tasks: {
-                            ...i.tasks,
-                            [authConstraints.signupUser] : taskStatus.Completed
-                        }
-                    }));
-
+                setState(i =>({
+                    ...i,
+                    errors: [...response.data.registeredErrors, ...response.data.assingedToRoleErrors],
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.signupUser] : taskStatus.Completed
+                    }
+                }));
             }).catch(err =>{
                 if(err?.response){
                     setState(i => ({
@@ -119,7 +122,7 @@ export default function Index({children}) {
             });
         },
     
-        signupDriver(body){
+        signupDriver(body, returnURL = ""){
             setState(i =>({
                 ...i,
                 loading: true,
@@ -128,7 +131,11 @@ export default function Index({children}) {
                     [authConstraints.signupDriver]: taskStatus.Inprogress
                 }
             }));
-            authInstance.post([authConstraints.root, authConstraints.signupDriver].join("/"), body).then(response =>{
+            authInstance.post([authConstraints.root, authConstraints.signupDriver].join("/"), body,{
+                params: {
+                    returnURL: encodeURIComponent(returnURL)
+                }
+            }).then(response =>{
                 if(!!response.data?.successed){
                     toast.success(`You have become driver successfully`, {});
                 } 
