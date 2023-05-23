@@ -7,8 +7,11 @@ import Form from 'react-bootstrap/Form';
 import '../../register driver/style/registerDriver.css';
 import Button from 'react-bootstrap/Button';
 import { AiFillEye,AiFillEyeInvisible } from  'react-icons/ai';
-import { AuthContext } from '../../../stores';
-import { CustomSpinner } from '../../../layout';
+import { AuthContext, taskStatus } from '../../../stores';
+import { CustomSpinner, Message } from '../../../layout';
+import { authConstraints, config } from '../../../api';
+import { useNavigate, useNavigation } from 'react-router-dom';
+import { Spinner } from 'react-bootstrap';
 
 
 let registerSchema = yup.object().shape({
@@ -29,6 +32,7 @@ export default function Index() {
 
     const [showPass,setShowPass] = React.useState(false);
     const [showPassConfirm,setShowPassConfirm] = React.useState(false);
+    const navigate = useNavigate();
 
     const showPassHandler = () => {
         setShowPass(e=>!e);
@@ -38,6 +42,7 @@ export default function Index() {
         setShowPassConfirm(e=>!e);
     }
 
+    const isLoading = authState?.tasks?.hasOwnProperty(authConstraints.signupUser) && authState?.tasks?.[authConstraints.signupUser] === taskStatus.Inprogress;
     return (
         <Formik
             initialValues={{
@@ -51,7 +56,9 @@ export default function Index() {
             }}  
             validationSchema={registerSchema}
             onSubmit={(values) =>{
-                signupUser(values);
+                signupUser(values, `${window.location.protocol}//${window.location.host}${config.AccountConfirmationURL}`, () =>{
+                    navigate("/auth/register/confirm");
+                });
             }}
         >
         {({values, touched, errors, handleSubmit, handleChange, handleBlur}) =>{
@@ -64,10 +71,13 @@ export default function Index() {
                                 <h4 className='reg-txt-u txt-center'>Get started with Us</h4>
                                 <p className='txt-center m-0'>Register a new membership.</p>
                             </div>
+                            {isLoading && <CustomSpinner></CustomSpinner>}
                             <Form className='form' onSubmit={handleSubmit}>
-{/* {authState?.errors?.map?.(error =>(<Message.Error>
-    {error}
-</Message.Error>))} */}
+
+                                <Message.Error>
+                                    {authState?.errors?.map(error => <p>{error}</p>)}
+                                </Message.Error>
+
                                 <Form.Group className="form-group" >
                                     <div className='mb-2'>
                                         <Form.Label className='label'>User name</Form.Label>
@@ -193,7 +203,9 @@ export default function Index() {
                                     />
                                 </Form.Group>
 
-                                <Button type="submit" variant="warning" className='my-btn-yellow'>Register</Button>
+                                <Button type="submit" variant="warning" className='my-btn-yellow' disabled={isLoading}>
+                                    {isLoading ? <Spinner></Spinner> : "Register"}
+                                </Button>
                             </Form>
                         </div>
                     </div>
