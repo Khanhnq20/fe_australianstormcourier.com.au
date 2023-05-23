@@ -415,7 +415,7 @@ function RegisterDriver() {
                                                     <img className='img-front' src={imgUrlFront || 'https://tinyurl.com/5ehpcctt'}/>
                                                 </div>
                                                 <Form.Control type="file" id="driver_image_front" name="frontDrivingLiense" ref={f_driver_img_ipt} 
-                                                    isInvalid={touched.frontDrivingLiense && !!errors?.frontDrivingLiense}
+                                                    isInvalid={!!errors?.frontDrivingLiense}
                                                     onChange={(e) =>{
                                                         const file = e.target.files[0];
                                                         setFieldValue(e.target.name, file, true);
@@ -429,8 +429,7 @@ function RegisterDriver() {
                                                         }
                                                     }}
                                                 />
-                                                
-                                                <Form.Control.Feedback type="invalid">{errors?.frontDrivingLiense}</Form.Control.Feedback>
+                                                <Form.Control.Feedback className='mb-2' type="invalid">{errors?.frontDrivingLiense}</Form.Control.Feedback>
                                             </div>
                                             <div className='back-up'>
                                                 <div>
@@ -460,7 +459,7 @@ function RegisterDriver() {
                                                             }
                                                         }}
                                                 />
-                                                <Form.Control.Feedback type="invalid">{errors?.backDrivingLiense}</Form.Control.Feedback>
+                                                <Form.Control.Feedback className='mb-2' type="invalid">{errors?.backDrivingLiense}</Form.Control.Feedback>
                                             </div>
                                             <label class="fr-checkbox mb-2">
                                                 <input type="checkbox" name="isAusDrivingLiense" checked={values.isAusDrivingLiense} onChange={handleChange} onBlur={handleBlur}/>
@@ -499,7 +498,7 @@ function RegisterDriver() {
                                                                 fileReader.readAsDataURL(file);
                                                             }
                                                         }}/>
-                                                <Form.Control.Feedback type="invalid">{errors?.drivingCertificate}</Form.Control.Feedback>
+                                                <Form.Control.Feedback className='mb-2' type="invalid">{errors?.drivingCertificate}</Form.Control.Feedback>
                                             </div>}
                                         </Form.Group>
 
