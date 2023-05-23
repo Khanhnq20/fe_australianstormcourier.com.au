@@ -1,7 +1,7 @@
 import { FieldArray, Formik } from "formik";
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
-import React,{ useContext, useRef, useState } from 'react'
+import React,{ useContext, useRef } from 'react'
 import {RiImageEditFill} from 'react-icons/ri';
 import { Button, Col, InputGroup, Modal, Row, Spinner } from "react-bootstrap";
 import { AuthContext, OrderContext } from "../../../stores";
@@ -53,29 +53,32 @@ let orderSchema = yup.object().shape({
             quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
             startingRate: yup.number().positive().required("Starting Rate is required field"),
-            // selectedRate: yup.number().positive().nullable(),
             packageType: yup.string().required("Package Type is required field"),
-            productPictures: yup.array().min(1)
-                .test(
-                'FILE SIZE', 
-                'the file is too large', 
-                (files) => {
-                    if (!files) {
-                        return true;
-                    }
-
-                    return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
-                })
-                .test(
-                    'FILE FORMAT',
-                    `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
-                    (files) => {
-                        if (!files.length) {
-                            return true;
-                        }
-                        return files.every(c => PERMIT_FILE_FORMATS.includes(c.file.type));
-                    }
-                ),
+            productPictures: yup.array().of(
+                yup.object().shape({
+                    file: yup.mixed().required()
+                        .test(
+                        'FILE SIZE', 
+                        'the file is too large', 
+                        (files) => {
+                            if (!files) {
+                                return true;
+                            }
+        
+                            return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
+                        })
+                        .test(
+                            'FILE FORMAT',
+                            `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
+                            (files) => {
+                                if (!files.length) {
+                                    return true;
+                                }
+                                return files.every(c => PERMIT_FILE_FORMATS.includes(c.file.type));
+                            }
+                        ),
+                    url: yup.string().required()
+                })).min(1).required()
         })
     )
 });
@@ -175,12 +178,11 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
             </Row>
             {/* Product Pictures & Shipping Rate & PackageType & Vehicles*/}
             <Row>
-
                 {/* Product pictures */}
                 <Col>
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
-                            <Form.Label className='label'>Product images</Form.Label>
+                            <Form.Label className='label'>Product Images</Form.Label>
                             <p className='asterisk'>*</p>
                         </div>
                         <div className='back-up'>
@@ -190,9 +192,9 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                     <Row style={{flexDirection:'column'}}>
                                         <>
                                         {
-                                            values?.orderItems?.[index]?.productPictures?.map?.((picture,index) =>{
+                                            values?.orderItems?.[index]?.productPictures?.map?.((picture,ind) =>{
                                             return (
-                                                <Col key={index}>
+                                                <Col key={ind}>
                                                     <div className='img-front-frame'>
                                                         <div className='background-front'>
                                                             <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
@@ -200,6 +202,8 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                                         </div>
                                                         <img className='img-front' src={picture?.url || 'https://tinyurl.com/5ehpcctt'}/>
                                                     </div>
+                                                    <pre>{JSON.stringify(errors?.orderItems?.[index]?.productPictures)}</pre>
+                                                    {errors?.orderItems?.[index]?.productPictures?.[ind]?.file}
                                                 </Col>
                                                 )
                                             })
@@ -221,7 +225,8 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                         isInvalid={!!errors?.orderItems?.[index]?.productPictures}
                                         onChange={(e) =>{
                                             const files = e.target.files;
-                                            for (var i = 0; i < files.length; i++) { //for multiple files          
+                                            for (var i = 0; i < files.length; i++) { 
+                                                //for multiple files          
                                                 (function(file) {                                        
                                                     const fileReader = new FileReader();
                                                     fileReader.onload = function(e) {  
@@ -236,8 +241,8 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                                     fileReader.readAsDataURL(file);
                                                 })(files[i]);
                                             }}}
+                                            accept="img"
                                         />
-                                    <Form.Control.Feedback type="invalid">{!!errors?.orderItems?.[index]?.productPictures}</Form.Control.Feedback>
                                 </>)
                                 }}
                             />
@@ -250,19 +255,19 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     {/* Start shipping rate */}
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
-                            <Form.Label className='label'>Your Preference Rate</Form.Label>
+                            <Form.Label className='label'>Your preference rate</Form.Label>
                             <p className='asterisk'>*</p>
                         </div>
                         <Form.Control
                             type="number"
-                            name={`orderItems[${index}].startingRate`}
+                            name={`${name}.startingRate`}
                             placeholder="Enter your shipping rate"
-                            value={values.startingRate}
-                            isInvalid={touched.orderItems?.[index].startingRate && errors?.orderItems?.[index]?.startingRate}
+                            value={values?.['orderItems']?.[index]?.startingRate}
+                            isInvalid={touched?.['orderItems']?.[index]?.startingRate && !!errors?.['orderItems']?.[index]?.startingRate}
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        <Form.Control.Feedback type="invalid">{errors?.startingRate}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{errors?.['orderItems']?.[index]?.startingRate}</Form.Control.Feedback>
                     </Form.Group>
 
                     {/* Vehicles */}
@@ -292,19 +297,21 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             <Form.Label className='label'>Package Type</Form.Label>
                             <p className='asterisk'>*</p>
                         </div>
+
                         <Form.Select
                             type="string"
-                            name={`orderItems[${index}].packageType`}
+                            name={`${name}.packageType`}
                             placeholder="Select your type of package"
-                            isInvalid={touched?.orderItems?.[index]?.packageType && !!errors?.orderItems?.[index]?.packageType}
+                            isInvalid={touched?.['orderItems']?.[index]?.packageType && !!errors?.['orderItems']?.[index]?.packageType}
                             onChange={handleChange}
                             onBlur={handleBlur}
+                            defaultValue={values?.['orderItems']?.[index]?.packageType}
                         >
                             {authState?.packageTypes?.map((type,index) =>{
                                 return <option key={index} value={type}>{type}</option>
                             })}
                         </Form.Select>
-                        <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.packageType}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{errors?.['orderItems']?.[index]?.packageType}</Form.Control.Feedback>
                     </Form.Group>
 
                     <Button type="submit" variant="warning" disabled={!isValid} className='my-btn-yellow'>Search for driver</Button>
@@ -344,8 +351,7 @@ function OrderCreation(){
                         quantity: 0,
                         weight: 0,
                         startingRate: 0,
-                        selectedRate: 0,
-                        packageType: '',
+                        packageType: authState?.packageTypes?.[0],
                         productPictures: []
                     }
                 ]
@@ -388,6 +394,7 @@ function OrderCreation(){
                         <div 
                             // className='form-order'
                         >
+                            <pre>{JSON.stringify(errors, 4, 4)}</pre>
                             {/* Sending location & Destination */}
                             <h3 className="my-3">Order Location</h3>
 
