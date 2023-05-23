@@ -46,9 +46,10 @@
 .reg-header{
     font-weight: 800;
 }
-#driver_image_front, #driver_image_back {
+#driver_image_front, #driver_image_back,#driver_pdf {
     display: none;
 }
+
 .driving-txt{
     color: gray;
     opacity: 70%;

@@ -7,6 +7,10 @@
     margin: 0 auto;
     
 }
+.process-form{
+    display: flex;
+    flex-wrap: wrap;
+}
 /* step process bar */
 /* .step-wizard {
     display: flex;

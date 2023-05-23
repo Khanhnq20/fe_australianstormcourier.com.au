@@ -23,9 +23,8 @@ function UpdateDriver() {
     return (
         <Formik
             initialValues={{
-                fullName:'',
+                fullName:authState?.accountInfo?.name,
                 userName: authState?.accountInfo?.username,
-                gender: "male",
                 phone: authState?.accountInfo?.phoneNumber,
                 address: authState?.accountInfo?.address,
                 zipCode: authState?.accountInfo?.zipCode,
@@ -175,15 +174,6 @@ function UpdateDriver() {
                                     />
                                     <Form.Control.Feedback type="invalid">{errors?.fullName}</Form.Control.Feedback>
                                 </Form.Group>
-                                {/* Username */}
-                                <Form.Group className="form-group" >
-                                    <div className='mb-2'>
-                                        <Form.Label className='label'>Gender</Form.Label>
-                                        <p className='asterisk'>*</p>
-                                    </div>
-                                    <DropDownGender></DropDownGender>
-                                    <Form.Control.Feedback type="invalid">{errors?.username}</Form.Control.Feedback>
-                                </Form.Group>
                                 {/* Phone */}
                                 <Form.Group className="form-group" >
                                     <div className='mb-2'>
@@ -319,22 +309,6 @@ function UpdateDriver() {
         )}}
         </Formik>
     )
-}
-
-function DropDownGender({name, handleChange}) {
-const [state,setState] = React.useState(true);
-return (
-    <Dropdown className='reg-dr'>
-    <Dropdown.Toggle className='dr-btn' id="dropdown-basic">
-        {state === true ? "Male" : "Female"}
-    </Dropdown.Toggle>
-
-    <Dropdown.Menu className='w-100' name={name} onChange={handleChange}>
-        <Dropdown.Item onClick={()=>setState(true)}>Male</Dropdown.Item>
-        <Dropdown.Item onClick={() => setState(false)}>Female</Dropdown.Item>
-    </Dropdown.Menu>
-    </Dropdown>
-);
 }
 
 export default function Index(){

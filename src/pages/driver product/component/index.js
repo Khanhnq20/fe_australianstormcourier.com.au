@@ -11,6 +11,7 @@ import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
 import moment from 'moment';
 import { AuthContext, OrderContext } from '../../../stores';
+import { CustomSpinner } from '../../../layout';
 
 
 let driverSchema = yup.object().shape({
@@ -50,7 +51,7 @@ function Product() {
     
 
     if(loading){
-        return <Spinner></Spinner>
+        return <CustomSpinner></CustomSpinner>
     }
 
     if(error) return <pre>{JSON.stringify(error, 4, 4)}</pre>
@@ -58,32 +59,25 @@ function Product() {
     return (
         <div>
             <div className='p-3'>
-                <div className='form-order'>
+            <div className='form-order'>
                     <Form.Group>
                         <div className='mb-2'>
-                            <Form.Label className='label'>From</Form.Label>
+                            <Form.Label className='label'>Suburb</Form.Label>
                         </div>
                         <Form.Control
                             type="text"
-                            name="from"
+                            placeholder='Enter The Suburb'
+                            name="suburd"
                         />
                     </Form.Group>
                     <Form.Group>
                         <div className='mb-2'>
-                            <Form.Label className='label'>Name</Form.Label>
+                            <Form.Label className='label'>Postcode</Form.Label>
                         </div>
                         <Form.Control
                             type="text"
-                            name="fullName"
-                        />
-                    </Form.Group>
-                    <Form.Group>
-                        <div className='mb-2'>
-                            <Form.Label className='label'>To</Form.Label>
-                        </div>
-                        <Form.Control
-                            type="text"
-                            name="to"
+                            placeholder='Enter Postcode'
+                            name="postcode"
                         />
                     </Form.Group>
                 </div>

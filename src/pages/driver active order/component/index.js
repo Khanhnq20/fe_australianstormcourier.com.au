@@ -14,6 +14,7 @@ import { authConstraints, authInstance, config } from '../../../api';
 import moment, { utc } from 'moment';
 import { Link } from 'react-router-dom';
 import { AuthContext, OrderContext } from '../../../stores';
+import { CustomSpinner } from '../../../layout';
 
 
 let driverSchema = yup.object().shape({
@@ -53,7 +54,7 @@ function Product() {
     
 
     if(loading){
-        return <Spinner></Spinner>
+        return <CustomSpinner></CustomSpinner>
     }
 
     if(error) return <pre>{JSON.stringify(error, 4, 4)}</pre>
@@ -68,6 +69,7 @@ function Product() {
                         </div>
                         <Form.Control
                             type="text"
+                            placeholder='Enter The Suburb'
                             name="suburd"
                         />
                     </Form.Group>
@@ -77,6 +79,7 @@ function Product() {
                         </div>
                         <Form.Control
                             type="text"
+                            placeholder='Enter Postcode'
                             name="postcode"
                         />
                     </Form.Group>

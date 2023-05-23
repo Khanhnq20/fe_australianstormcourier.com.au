@@ -1,5 +1,6 @@
 import { Outlet } from "react-router";
 import { DriverActiveOrder, DriverHistory, DriverInfo, DriverOrderDetail, DriverOrderProcessDetail, DriverProduct } from "../pages";
+import { NotFound } from "../pages/errors";
 
 export const driverChildrens = [
     {
@@ -52,4 +53,10 @@ export const driverChildrens = [
         },
       ]
     },
+    {
+      path: "*",
+      element:<>
+        <NotFound></NotFound>
+      </>
+    }
   ];
