@@ -105,7 +105,7 @@ function AdminInvoice() {
                             </div>
                             <p className='m-0'>Items</p>
                             
-                            <GrRefresh className='ms-auto' style={{fontSize: '2rem'}} onClick={()=> refresh()}></GrRefresh>
+                            <GrRefresh className='ms-auto' style={{fontSize: '2rem', cursor: 'pointer'}} onClick={()=> refresh()}></GrRefresh>
                         </div>
                         {aloading && <CustomSpinner></CustomSpinner>}
                         
@@ -141,9 +141,6 @@ function AdminInvoice() {
                                                 }}>Completed At</th>
                                                 <th style={{
                                                     minWidth: '150px'
-                                                }}>Has Payout</th>
-                                                <th style={{
-                                                    minWidth: '150px'
                                                 }}>Payout At</th>
                                                 <th style={{
                                                     minWidth: '150px'
@@ -166,8 +163,7 @@ function AdminInvoice() {
                                                             <td>{payment?.receiver?.phoneNumber}</td>
                                                             <td>{payment?.createdAt ? moment(payment?.createdAt).format("YYYY/MM/DD") : "null"}</td>
                                                             <td>{payment?.completedAt ? moment(payment?.completedAt).format("YYYY/MM/DD") : "null"}</td>
-                                                            <td>{payment?.completedAt ? moment(payment?.completedAt).format("YYYY/MM/DD") : "null"}</td>
-                                                            <td>{!payment?.hasPayout ? <span className="content-red">Not Payout</span> : <span className="content-green">Payout</span>}</td>
+                                                            <td>{!payment?.hasPayout ? <span className="content-red">Not Payout</span> : <span className="content-green">Payout at moment(payment?.payoutAt).format("YYYY/MM/DD")</span>}</td>
                                                             <td>
                                                                 {!payment?.hasPayout && <Button className="ms-auto w-100" variant="success">Payout</Button>}
                                                             </td>
