@@ -146,6 +146,7 @@
     border-radius: 10px;
     padding: 20px;
     min-height: 80vh;
+    position: relative;
 }
 .h-content{
     display: flex;

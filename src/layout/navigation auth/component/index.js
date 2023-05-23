@@ -8,6 +8,7 @@ import {AiFillUnlock,AiOutlineSetting} from 'react-icons/ai';
 import {FiLogOut,FiChevronDown} from 'react-icons/fi';
 import {BsChevronDown} from 'react-icons/bs'
 import { AuthContext } from '../../../stores/contextAPI/authctx';
+import {BsPersonWorkspace} from 'react-icons/bs';
 
 export default function Index() {
     const [notify,setNotify] = React.useState(false);
@@ -79,6 +80,12 @@ function AvatarUserDropDown() {
             </div>
         </Dropdown.Toggle>
         <Dropdown.Menu className='nav-menu'>
+            <Dropdown.Item className='nav-menu-topic'>
+                <BsPersonWorkspace className='nav-menu-topic-icon'></BsPersonWorkspace>
+                <Link to={`/user/order/me`}style={{textDecoration: "none",color:"black"}}>
+                    My Workspace
+                </Link>
+            </Dropdown.Item>
             <Dropdown.Item className='nav-menu-topic'>
                 <AiFillUnlock className='nav-menu-topic-icon'></AiFillUnlock>
                 <Link to={`/user/password`}style={{textDecoration: "none",color:"black"}}>

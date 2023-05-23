@@ -10,11 +10,6 @@ import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
 import { Col, Row } from 'react-bootstrap';
 
-
-let loginSchema = yup.object().shape({
-    email: yup.string().email('This field must be email type').required("Email is required field"), 
-    password: yup.string().required("This field is requied")
-})
 function Product() {
     const [post,setPost] = React.useState([]);
     const [paginatedPost,setPagiantedPost] = React.useState([]);
@@ -72,7 +67,6 @@ function Product() {
                 fullNameDriver:'',
                 to:''
             }} 
-            validationSchema={loginSchema}
         >
         {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
             return(
@@ -88,26 +82,26 @@ function Product() {
                                         <Form.Control
                                             type="text"
                                             name="id"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            placeholder="Enter Id"
+                                            isInvalid={touched.id && errors.id}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.id}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>From</Form.Label>
+                                            <Form.Label className='label'>Sender Location</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
-                                            name="from"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            name="senderLocation"
+                                            placeholder="Enter Sender Location"
+                                            isInvalid={touched.senderLocation && errors.senderLocation}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.id}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
@@ -116,26 +110,26 @@ function Product() {
                                         <Form.Control
                                             type="text"
                                             name="fullNameSender"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            placeholder="Enter Sender's Name"
+                                            isInvalid={touched.senderName && errors.senderName}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.senderName}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>To</Form.Label>
+                                            <Form.Label className='label'>Destination</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
-                                            name="to"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            name="destiantion"
+                                            placeholder="Enter Destination"
+                                            isInvalid={touched.destination && errors.destination}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.destination}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
@@ -143,13 +137,13 @@ function Product() {
                                         </div>
                                         <Form.Control
                                             type="text"
-                                            name="fullNameDriver"
-                                            placeholder="Enter Full Name"
-                                            isInvalid={touched.fullName && errors.fullName}
+                                            name="date"
+                                            placeholder="Enter Date"
+                                            isInvalid={touched.date && errors.date}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.date}</Form.Control.Feedback>
                                     </Form.Group>
                                 </div>
                                 <div>

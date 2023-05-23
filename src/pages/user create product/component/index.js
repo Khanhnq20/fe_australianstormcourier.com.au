@@ -54,27 +54,31 @@ let orderSchema = yup.object().shape({
             weight: yup.number().positive().required("Weight is required field"),
             startingRate: yup.number().positive().required("Starting Rate is required field"),
             packageType: yup.string().required("Package Type is required field"),
-            productPictures: yup.array().min(1)
-                .test(
-                'FILE SIZE', 
-                'the file is too large', 
-                (files) => {
-                    if (!files) {
-                        return true;
-                    }
-
-                    return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
-                })
-                .test(
-                    'FILE FORMAT',
-                    `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
-                    (files) => {
-                        if (!files.length) {
-                            return true;
-                        }
-                        return files.every(c => PERMIT_FILE_FORMATS.includes(c.file.type));
-                    }
-                ),
+            productPictures: yup.array().of(
+                yup.object().shape({
+                    file: yup.mixed().required()
+                        .test(
+                        'FILE SIZE', 
+                        'the file is too large', 
+                        (files) => {
+                            if (!files) {
+                                return true;
+                            }
+        
+                            return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
+                        })
+                        .test(
+                            'FILE FORMAT',
+                            `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
+                            (files) => {
+                                if (!files.length) {
+                                    return true;
+                                }
+                                return files.every(c => PERMIT_FILE_FORMATS.includes(c.file.type));
+                            }
+                        ),
+                    url: yup.string().required()
+                })).min(1).required()
         })
     )
 });
@@ -178,7 +182,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                 <Col>
                     <Form.Group className="mb-3">
                         <div className='mb-2'>
-                            <Form.Label className='label'>Product images</Form.Label>
+                            <Form.Label className='label'>Product Images</Form.Label>
                             <p className='asterisk'>*</p>
                         </div>
                         <div className='back-up'>
@@ -188,9 +192,9 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                     <Row style={{flexDirection:'column'}}>
                                         <>
                                         {
-                                            values?.orderItems?.[index]?.productPictures?.map?.((picture,index) =>{
+                                            values?.orderItems?.[index]?.productPictures?.map?.((picture,ind) =>{
                                             return (
-                                                <Col key={index}>
+                                                <Col key={ind}>
                                                     <div className='img-front-frame'>
                                                         <div className='background-front'>
                                                             <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
@@ -198,6 +202,8 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                                         </div>
                                                         <img className='img-front' src={picture?.url || 'https://tinyurl.com/5ehpcctt'}/>
                                                     </div>
+                                                    <pre>{JSON.stringify(errors?.orderItems?.[index]?.productPictures)}</pre>
+                                                    {errors?.orderItems?.[index]?.productPictures?.[ind]?.file}
                                                 </Col>
                                                 )
                                             })
@@ -219,7 +225,8 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                         isInvalid={!!errors?.orderItems?.[index]?.productPictures}
                                         onChange={(e) =>{
                                             const files = e.target.files;
-                                            for (var i = 0; i < files.length; i++) { //for multiple files          
+                                            for (var i = 0; i < files.length; i++) { 
+                                                //for multiple files          
                                                 (function(file) {                                        
                                                     const fileReader = new FileReader();
                                                     fileReader.onload = function(e) {  
@@ -234,8 +241,8 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                                     fileReader.readAsDataURL(file);
                                                 })(files[i]);
                                             }}}
+                                            accept="img"
                                         />
-                                    <Form.Control.Feedback type="invalid">{!!errors?.orderItems?.[index]?.productPictures}</Form.Control.Feedback>
                                 </>)
                                 }}
                             />
