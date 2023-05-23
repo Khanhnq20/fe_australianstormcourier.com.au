@@ -2,16 +2,15 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    min-height: calc(90vh - 54px);
+    padding: 20px;
     flex-direction: column;
     position: relative;
-    transform: translateY(-100px);
 }
 .em-root{
     background-color: #F6F6F6;
     margin: 0 auto;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
 }
 .em-txt{
     max-width: 600px;

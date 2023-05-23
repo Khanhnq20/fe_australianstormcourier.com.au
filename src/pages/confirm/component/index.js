@@ -11,7 +11,7 @@ export default function Index() {
                 <h3 className='txt-center mb-4'>
                     Thanks for your register!
                 </h3>
-                <h4>
+                <h4 className='txt-center'>
                     Your account will be certain by Admin. Please wait in a few minutes.
                 </h4>
             </div>

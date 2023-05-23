@@ -78,7 +78,7 @@ export default function Index({children}) {
             });
         },
 
-        signupUser(body, returnURL = ""){
+        signupUser(body, returnURL = "", callback){
             setState(i =>({
                 ...i,
                 loading: true,
@@ -94,10 +94,12 @@ export default function Index({children}) {
             }).then(response =>{
                 if(!!response.data?.successed){
                     toast.success(`You have registered account successfully, please goto "Signin" to join us`, {});
+                    callback?.();
                 }
                 setState(i =>({
                     ...i,
-                    errors: [...response.data.registeredErrors, ...response.data.assingedToRoleErrors],
+                    errors: [...response.data.registeredErrors],
+                    loading: false,
                     tasks: {
                         ...i.tasks,
                         [authConstraints.signupUser] : taskStatus.Completed
@@ -108,21 +110,17 @@ export default function Index({children}) {
                     setState(i => ({
                         ...i,
                         errors: [err?.response],
+                        loading: false,
                         tasks: {
                             ...i.tasks,
                             [authConstraints.signupUser] : taskStatus.Failed
                         }
                     }));
                 }
-            }).finally(() =>{
-                setState(i =>({
-                    ...i,
-                    loading: false
-                }));
             });
         },
     
-        signupDriver(body, returnURL = ""){
+        signupDriver(body, returnURL = "", callback){
             setState(i =>({
                 ...i,
                 loading: true,
@@ -148,6 +146,8 @@ export default function Index({children}) {
                     },
                     loading: false
                 }));
+
+                callback?.();
             }).catch(err =>{
                 setState(i =>({
                     ...i,

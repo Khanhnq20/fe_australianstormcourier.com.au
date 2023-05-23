@@ -9,9 +9,10 @@ import { serialize } from 'object-to-formdata';
 import { RiImageEditFill } from 'react-icons/ri';
 import { AiFillEye,AiFillEyeInvisible } from  'react-icons/ai';
 import { VscFilePdf} from 'react-icons/vsc';
-import { CustomSpinner } from '../../../layout';
-import { authConstraints } from '../../../api';
+import { CustomSpinner, Message } from '../../../layout';
+import { authConstraints, config } from '../../../api';
 import {GrDocumentPdf} from 'react-icons/gr'
+import { useNavigate } from 'react-router-dom';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -121,6 +122,7 @@ function RegisterDriver() {
     const [{vehicles, loading: authLoading, ...authState}, {
         signupDriver
     }] = useContext(AuthContext);
+    const navigate = useNavigate();
     const f_driver_img_ipt = useRef();
     const b_driver_img_ipt = useRef();
     const d_certificate = useRef();
@@ -139,6 +141,8 @@ function RegisterDriver() {
 
     if(authLoading) return <CustomSpinner></CustomSpinner>
 
+
+    const isLoading = authState?.tasks?.[authConstraints.signupDriver] && authState?.tasks?.[authConstraints.signupDriver] === taskStatus.InProgress;
     return (
     <Formik
         initialValues={{
@@ -167,8 +171,11 @@ function RegisterDriver() {
                 indices: true,
                 dotsForObjectNotation: true
             });
-            signupDriver(formData);
-        }}>
+
+            signupDriver(formData, `${window.location.protocol}//${window.location.host}${config.AccountConfirmationURL}`, () =>{
+                navigate("/auth/register/confirm");
+            });
+        }}> 
     {
         ({values,touched, errors, setFieldValue, handleSubmit, handleChange, handleBlur,isValid}) =>{
             const permitedNext = !errors.userName &&
@@ -183,7 +190,12 @@ function RegisterDriver() {
                             <h3 className='ui-header'>Become driver</h3>
                         </div>
                         <Form className='form' onSubmit={handleSubmit}>
-                            {authState?.tasks?.[authConstraints.signupDriver] && authState?.tasks?.[authConstraints.signupDriver] === taskStatus.InProgress && (<CustomSpinner></CustomSpinner>)}
+                            {isLoading && (<CustomSpinner></CustomSpinner>)}
+
+                            <Message.Error>
+                                {authState?.errors?.map(error => <p>{error}</p>)}
+                            </Message.Error>
+
                             <Row>
                                 <Col className={next ? "step1-show" : "step1-hide"}>
                                     <h4 className='my-3' style={{textTransform: 'capitalize'}}>Account information</h4>
@@ -557,7 +569,7 @@ function RegisterDriver() {
                                         </Form.Group>
 
                                         <Button type="submit" variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={authLoading && !isValid} className='my-btn-yellow my-2'>
-                                            {authLoading ? <Spinner></Spinner> : "Submit"}
+                                            {isLoading ? <Spinner></Spinner> : "Submit"}
                                         </Button>
                                 </Col>
                             </Row>
