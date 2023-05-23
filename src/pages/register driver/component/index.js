@@ -12,6 +12,7 @@ import { VscFilePdf} from 'react-icons/vsc';
 import { CustomSpinner } from '../../../layout';
 import { authConstraints } from '../../../api';
 import {GrDocumentPdf} from 'react-icons/gr'
+import { useNavigate } from 'react-router-dom';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -121,6 +122,7 @@ function RegisterDriver() {
     const [{vehicles, loading: authLoading, ...authState}, {
         signupDriver
     }] = useContext(AuthContext);
+    const navigate = useNavigate();
     const f_driver_img_ipt = useRef();
     const b_driver_img_ipt = useRef();
     const d_certificate = useRef();
@@ -168,7 +170,11 @@ function RegisterDriver() {
                 dotsForObjectNotation: true
             });
             signupDriver(formData);
-        }}>
+            console.log(authState);
+            if(authState?.tasks?.[authConstraints.signupDriver] === taskStatus.Completed){
+                navigate("/auth/register/confirm")
+            }
+        }}> 
     {
         ({values,touched, errors, setFieldValue, handleSubmit, handleChange, handleBlur,isValid}) =>{
             const permitedNext = !errors.userName &&

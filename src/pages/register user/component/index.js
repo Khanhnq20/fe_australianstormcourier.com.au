@@ -62,7 +62,7 @@ export default function Index() {
                             <div>
                                 <h3 className='reg-header txt-center'>Register</h3>
                                 <h4 className='reg-txt-u txt-center'>Get started with Us</h4>
-                                <p className='txt-center'>Register a new membership.</p>
+                                <p className='txt-center m-0'>Register a new membership.</p>
                             </div>
                             <Form className='form' onSubmit={handleSubmit}>
 {/* {authState?.errors?.map?.(error =>(<Message.Error>

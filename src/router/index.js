@@ -4,7 +4,7 @@ import {
   createBrowserRouter,
 } from "react-router-dom";
 import { Navigation, Footer, UserSideBar, DriverSideBar, AdminSideBar } from "../layout";
-import { Home, PreventDriver } from '../pages';
+import { EmailCheck, Home, PreventDriver } from '../pages';
 
 import { AuthValidator, OrderContextComponent, SocketContainer, SocketContext} from '../stores'
 
@@ -43,7 +43,6 @@ export const router = createBrowserRouter([
         path: "auth",
         element: <AuthValidator.LoggedContainer>
           <Outlet></Outlet>
-          <Footer></Footer>
         </AuthValidator.LoggedContainer>,
         children: authChildrens
       },
