@@ -1,5 +1,4 @@
 .reg-user{
-    min-height: calc(90vh - 54px);
 }
 .reg-txt-u{
     color: var(--clr-primary);
