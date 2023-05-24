@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { authConstraints, authInstance, config } from '../../../api';
 import { usePagination } from '../../../hooks';
 import { PaymentComponents } from '../..';
+import { CustomSpinner } from '../../../layout';
 
 function ProductDetail(){
     const [result, setResult] = React.useState(null);
@@ -148,7 +149,7 @@ function ProductDetail(){
 
     if(loading) 
         return (<Container>
-            <Spinner></Spinner>
+            <CustomSpinner></CustomSpinner>
         </Container>);
 
     if(error === "Forbiden"){
@@ -164,7 +165,7 @@ function ProductDetail(){
             <div>
                 {/* Delivery Information */}
                 <div className='sender-product-title'>
-                    <p className='product-content-title mb-3'>Delivery Information</p>
+                    <p className='product-content-title my-3'>Delivery Information</p>
                 </div>
                 <Row className='product-form-content'>
                     <Col>
@@ -318,12 +319,7 @@ function ProductDetail(){
 
                 {/* Product Information */}
                 <div className='sender-product-title'>
-                    <p className='product-content-title mb-3'>Product Information</p>
-                    <div>
-                        <Button className='my-btn-yellow py-1'>
-                            <TfiPencilAlt className='product-edit-icon'></TfiPencilAlt>
-                            Edit</Button>
-                    </div>
+                    <p className='product-content-title my-4'>Product Information</p>
                 </div>
                 {result?.orderItems?.map?.((item,index) =>{
                     return (

@@ -322,14 +322,6 @@ function Address(){
                                 <h5>Email: info@australianstormcourier.com.au</h5>
                             </div>
                         </Col>
-                        <Col>
-                            <div>
-                                <h3>FOLLOW US</h3>
-                                    <FacebookProvider appId="123456789">
-                                        <Like href="http://www.facebook.com" colorScheme="dark" showFaces share />
-                                    </FacebookProvider> 
-                            </div>
-                        </Col>
                     </Row>
                 </div>
             </div>  
