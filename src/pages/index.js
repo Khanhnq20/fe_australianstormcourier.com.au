@@ -30,3 +30,4 @@ export {default as AdminOrderDetail} from './admin order detail/component/index'
 export {default as DriverDetail} from './driver detail/component/index';
 export {default as PreventDriver} from './prevent driver/component/index';
 export {default as AdminInvoices} from './admin invoices/components';
+export {default as Verify} from './verify/component';
