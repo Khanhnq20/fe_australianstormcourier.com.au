@@ -19,13 +19,6 @@ export const authChildrens = [
                 <RegisterUser></RegisterUser>
                 <Footer></Footer>
               </>
-            },
-            {
-              path: "confirm",
-              element: <>
-                <EmailCheck></EmailCheck>
-                <Footer.Custom></Footer.Custom>
-              </>
             }
           ]
         },
