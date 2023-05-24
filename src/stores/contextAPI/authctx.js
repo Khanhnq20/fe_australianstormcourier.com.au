@@ -30,7 +30,7 @@ export default function Index({children}) {
             this.getAccount();
         },
 
-        signin(body) {
+        signin(body, returnURL) {
             this.clearErrors();
             setState(i =>({
                 ...i,
@@ -40,7 +40,11 @@ export default function Index({children}) {
                     [authConstraints.signin] : taskStatus.Inprogress
                 }
             }));
-            authInstance.post([authConstraints.root, authConstraints.signin].join("/"), body).then(response =>{
+            authInstance.post([authConstraints.root, authConstraints.signin].join("/"), body, {
+                params: {
+                    returnURL
+                }
+            }).then(response =>{
                 if(response?.data?.token?.accessToken && response?.data?.token?.refreshToken){
                     const {data} = response;
                     const {accessToken, refreshToken} = data?.token;
@@ -56,26 +60,23 @@ export default function Index({children}) {
                     }));
                 }
                 else {
-                    setState(i =>({
-                        ...i,
-                        errors: [...i.errors, response.data]
-                    }));
+                    toast.warning(response?.data || "");
                 }
+                setState(i => ({
+                    ...i,
+                    loading: false
+                }))
             }).catch(err =>{
                 setState(i => ({
                     ...i,
                     errors: err,
+                    loading: false,
                     tasks: {
                         ...i.tasks,
                         [authConstraints.signin] : taskStatus.Failed
                     }
                 }));
-            }).finally(() =>{
-                setState(i =>({
-                    ...i,
-                    loading: false
-                }))
-            });
+            })
         },
 
         signupUser(body, returnURL = "", callback){
@@ -161,6 +162,50 @@ export default function Index({children}) {
             })
         },
 
+        verifyAccount(email, userName, confirmToken){
+            console.log(email, userName, confirmToken);
+            setState(i =>({
+                ...i,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.verifiedUser]: taskStatus.Inprogress
+                }
+            }));
+            authInstance.get([authConstraints.root, authConstraints.verifiedUser].join("/"), {
+                params: {
+                    email, userName, confirmToken
+                }
+            }).then(res =>{
+                if(res.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.verifiedUser]: taskStatus.Completed
+                        }
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.verifiedUser]: taskStatus.Completed
+                        },
+                        errors: res.data?.errors || [res.data?.error]
+                    }));
+                }
+            }).catch(err =>{
+                setState(i =>({
+                    ...i,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.verifiedUser]: taskStatus.Failed
+                    }
+                }));
+            });
+        },
+
         signout(){
             localStorage.removeItem(authConstraints.LOCAL_KEY);
             localStorage.removeItem(authConstraints.LOCAL_KEY_2);
@@ -184,6 +229,7 @@ export default function Index({children}) {
             setState(i =>({
                 ...i,
                 loading: true,
+                errors: [],
                 tasks: {
                     ...i.tasks,
                     [authConstraints.getAccount] : taskStatus.Inprogress
@@ -209,30 +255,26 @@ export default function Index({children}) {
                     }));
                 }
             }).catch(err =>{
-                if(err.message === "Network Error"){
-                    setState(i =>({
-                        ...i,
-                        errors: ["Network Error"],
-                        isLogged: false,
-                        tasks: {
-                            ...i.tasks,
-                            [authConstraints.getAccount] : taskStatus.Failed
-                        },
-                        loading: false
-                    }));
+                setState(i =>({
+                    ...i,
+                    isLogged: false,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.getAccount] : taskStatus.Failed
+                    },
+                    loading: false
+                }));
+            });
+        },
+
+        resetPassword(body, returnURL){
+            authInstance.post([authConstraints.root, authConstraints.resetPwd].join("/")).then(response =>{
+                if(response.data?.successed){
+                    
                 }
-                else{
-                    setState(i =>({
-                        ...i,
-                        errors: [err.message],
-                        isLogged: false,
-                        tasks: {
-                            ...i.tasks,
-                            [authConstraints.getAccount] : taskStatus.Failed
-                        },
-                        loading: false
-                    }));
-                }
+
+            }).catch(err =>{
+
             });
         },
 

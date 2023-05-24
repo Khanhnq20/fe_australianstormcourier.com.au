@@ -11,6 +11,7 @@ let forgotSchema = yup.object().shape({
 })
 export default function Index() {
     const [step, setStep] = useState(0);
+    
     return (
         <>   
             <div className='container p-5'>

@@ -192,9 +192,9 @@ function RegisterDriver() {
                         <Form className='form' onSubmit={handleSubmit}>
                             {isLoading && (<CustomSpinner></CustomSpinner>)}
 
-                            <Message.Error>
-                                {authState?.errors?.map(error => <p>{error}</p>)}
-                            </Message.Error>
+                            {!!authState?.errors?.length && (<Message.Error>
+                                    {authState?.errors?.map(error => <p>{error}</p>)}
+                                </Message.Error>)}
 
                             <Row>
                                 <Col className={next ? "step1-show" : "step1-hide"}>
