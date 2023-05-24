@@ -11,41 +11,58 @@ import { RiImageEditFill } from 'react-icons/ri';
 import { CustomSpinner } from '../../../layout';
 import Modal from 'react-bootstrap/Modal';
 
-
+const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 let imgSchema = yup.object().shape({
   delImg: yup
-      .mixed()
-      .when("isAusDrivingLiense", {
-          is:(isAusDrivingLiense) =>  {
-              return !isAusDrivingLiense;
-          },
-          then:(schema) => {
-              return schema.required()
-              .test(
-                  'FILE SIZE', 
-                  'the file is too large', 
-                  (value) => {
-                      if (!value) {
-                          return true;
-                      }
-      
-                      return value.size <= 5 * 1024 * 1024;
-              })
-              .test(
-                  'FILE FORMAT',
-                  `the file format should be pdf`,
-                  (value) => {
-                      if (!value) {
-                          return true;
-                      }
-                      return value.type === "application/pdf";
-                  }
-              )
-          },
-          otherwise: (schema) =>{
-              return schema.notRequired();
+  .mixed()
+  .required() 
+  .test(
+  'FILE SIZE', 
+  'the file is too large', 
+  (value) => {
+      if (!value) {
+          return true;
+      }
+
+      return value.size <= 2 * 1024 * 1024;
+  })
+  .test(
+      'FILE FORMAT',
+      `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
+      (value) => {
+          if (!value) {
+              return true;
           }
-      })
+          return PERMIT_FILE_FORMATS.includes(value.type);
+      }
+  ),
+})
+let imgDoneSchema = yup.object().shape({
+    imgComplete: yup
+    .mixed()
+    .nullable()
+    .required() 
+    .test(
+    'FILE SIZE', 
+    'the file is too large', 
+    (value) => {
+        if (!value) {
+            return true;
+        }
+
+        return value.size <= 2 * 1024 * 1024;
+    })
+    .test(
+        'FILE FORMAT',
+        `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
+        (value) => {
+            if (!value) {
+                return true;
+            }
+            return PERMIT_FILE_FORMATS.includes(value.type);
+        }
+    ),
+    barcode: yup.number().required("Barcode is required field"),
 })
 function OrderDetail(){
     const [process,setProcess] = React.useState(false);
@@ -254,7 +271,10 @@ function OrderDetail(){
 function Process({children}){
     const [active,setActive] = React.useState(1);
     const [cancel,setCancel] = React.useState(false);
+    const [complete,setComplete] = React.useState(false);
     const [modalShow, setModalShow] = React.useState(false);
+    const [imgD,setImgD] = React.useState();
+    const imgDone = useRef();
     const [stepTemplate, setTemplate] = React.useState([
       "Prepare", "Ordering", "Delivering", "Completed"
     ]);
@@ -298,7 +318,88 @@ function Process({children}){
                     </section>
                   </div>
                   <div>
-                    <button className='my-btn-yellow mx-5 my-2' >Next Step</button>
+{/* Delivery Success */}
+                    <button className='my-btn-yellow mx-5 my-2' onClick={()=>{
+                      setComplete(true);
+                    }}>Next Step</button>
+                    <Modal
+                      size="md"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                      show={complete}
+                      >
+                      <Modal.Header>
+                        <Modal.Title className='txt-center w-100'>
+                          Confirm Your Action
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <Formik 
+                        initialValues={
+                          {
+                            imgComplete: null,
+                            barcode:null
+                          }
+                        }
+                        validationSchema={imgDoneSchema}
+                        >
+                          {({errors,touched,setFieldValue,values,handleChange,handleBlur}) =>{
+                            return(
+                              <div>
+                                <div className='txt-center'>
+                                  <div className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDone.current.click()}>
+                                      <div className='background-front'>
+                                          <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                          <p className='driving-txt'>Change the Image</p>
+                                      </div>
+                                      <img className='img-front' src={imgD || 'https://tinyurl.com/5ehpcctt'}/>
+                                  </div>
+                                  <Form.Control type="file" id="driver_image_front" name="imgComplete" ref={imgDone} 
+                                    isInvalid={touched.imgComplete && !!errors?.imgComplete}
+                                    onChange={(e) =>{
+                                        const file = e.target.files[0];
+                                        setFieldValue(e.target.name, file, true);
+                                        
+                                        const fileReader = new FileReader();
+                                        if(file){
+                                            fileReader.addEventListener("loadend", (e)=>{
+                                                setImgD(fileReader.result);
+                                            })
+                                            fileReader.readAsDataURL(file);
+                                          }
+                                      }}
+                                  />
+                                  <Form.Control.Feedback type="invalid">{errors?.imgComplete}</Form.Control.Feedback>
+                                </div>
+                                <div>
+                                  <Form.Group className="form-group px-4" >
+                                    <div className='mb-2'>
+                                        <Form.Label className='label'>Barcode</Form.Label>
+                                        <p className='asterisk'>*</p>
+                                    </div>
+                                    <Form.Control
+                                        type="number"
+                                        name="barcode"
+                                        placeholder="Enter The Barcode"
+                                        isInvalid={touched.barcode && errors.barcode}
+                                        onBlur={handleBlur}
+                                        onChange={handleChange}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{errors.barcode}</Form.Control.Feedback>
+                                  </Form.Group>
+                                </div>
+                              </div>
+                            )
+                          }}
+                        </Formik>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <div className='txt-center w-100'>
+                          <button className='my-btn-gray mx-4' onClick={() => {setComplete(false)}}>Cancel</button>
+                          <button className='my-btn-yellow mx-4'>Done</button>
+                        </div>
+                      </Modal.Footer>
+                    </Modal>
                   </div>
                 </div>
             </div>

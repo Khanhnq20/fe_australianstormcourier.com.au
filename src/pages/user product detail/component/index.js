@@ -776,9 +776,6 @@ function Driver({driver,children}){
                 onHide={() => setModalShow(false)}
             />
             <div className='product-label-info' style={{alignItems:'unset'}}>
-                <p className='product-label-fit py-2'>
-                Process
-                </p>  
                 <div>
                 <section className="step-wizard">
                     <ul className='order-progress'>

@@ -1,6 +1,6 @@
 import '../style/driverActiveOrder.css';
 import React, { useContext, useState } from 'react';
-import { Formik, yupToFormErrors } from "formik";
+import {AiOutlineFileExclamation} from 'react-icons/ai'
 import * as yup from 'yup';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
@@ -26,6 +26,7 @@ let driverSchema = yup.object().shape({
 function Product() {
     const [authState] = useContext(AuthContext);
     const [_,{postDriverOffer}] = useContext(OrderContext);
+    const [modalShow, setModalShow] = React.useState(false);
 
     const rows = [5,10,15,20,25,30,35,40];
     const {
@@ -194,7 +195,30 @@ function Product() {
                                                             <p>This order has been cancelled</p>
                                                         </div> : 
                                                         <div className='p-2'>
-                                                            <Button className='w-100' variant='danger'>Cancel</Button>
+                                                            <Button className='w-100' variant='danger' onClick={() => setModalShow(true)}>Cancel</Button>
+                                                            <Modal
+                                                                size="sm"
+                                                                aria-labelledby="contained-modal-title-vcenter"
+                                                                centered
+                                                                show={modalShow}
+                                                                >
+                                                                <Modal.Header>
+                                                                    <Modal.Title className='txt-center w-100'>
+                                                                    Confirm Your Action
+                                                                    </Modal.Title>
+                                                                </Modal.Header>
+                                                                <Modal.Body>
+                                                                    <p className='txt-center' style={{margin:'0'}}> 
+                                                                    Are you sure to cancel this order?
+                                                                    </p>
+                                                                </Modal.Body>
+                                                                <Modal.Footer>
+                                                                    <div className='txt-center w-100'>
+                                                                    <button className='my-btn-gray mx-4' onClick={() => {setModalShow(false)}}>No</button>
+                                                                    <button className='my-btn-red mx-4'>Yes</button>
+                                                                    </div>
+                                                                </Modal.Footer>
+                                                            </Modal>
                                                         </div>
                                                     }
                                                     </td>
@@ -224,7 +248,6 @@ function Product() {
         </div>
     )
 }
-
 export default function Index(){
     return(
         <Product></Product>
