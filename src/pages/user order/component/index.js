@@ -1,6 +1,5 @@
 import React from 'react';
 import { Formik } from "formik";
-import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import {BiSearchAlt2} from 'react-icons/bi';
@@ -30,7 +29,6 @@ const UserOrders = () => {
         search
     } = usePagination({
         fetchingAPIInstance:({controller, page, take, ...queries}) =>{ 
-            console.log(queries);
             return authInstance.get([authConstraints.userRoot, authConstraints.getUserOrders].join("/"), {
                 headers: {
                     'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
@@ -60,7 +58,7 @@ const UserOrders = () => {
                 search(values);
             }}
         >
-        {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
+        {({handleSubmit, handleChange, handleBlur, isValid,values}) =>{
             return(<>
                 <div>
                     <div className='p-3'>
