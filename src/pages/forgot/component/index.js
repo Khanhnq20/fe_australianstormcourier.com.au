@@ -1,16 +1,34 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import * as yup from 'yup';
 import '../../login/style/login.css';
 import { Formik } from "formik";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { NavLink } from 'react-bootstrap';
+import { AuthContext, taskStatus } from '../../../stores';
+import { authConstraints, config } from '../../../api';
+import { Spinner } from 'react-bootstrap';
+import { CustomSpinner, Message } from '../../../layout';
 
 let forgotSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field")
-})
+});
+
 export default function Index() {
+    const [authState, {
+        resetPassword
+    }] = useContext(AuthContext);
     const [step, setStep] = useState(0);
+
+    const isLoading = authState.tasks?.hasOwnProperty(authConstraints.resetPwd) && authState.tasks?.[authConstraints.resetPwd] === taskStatus.Inprogress;
+    
+    useEffect(() =>{
+        if(authState.tasks?.[authConstraints.resetPwd] && authState.tasks?.[authConstraints.resetPwd] === taskStatus.Completed){
+            setStep(1);
+        }
+    },[authState.tasks]);
+
+    if(isLoading) return <CustomSpinner></CustomSpinner>
+
     return (
         <>   
             <div className='container p-5'>
@@ -22,17 +40,24 @@ export default function Index() {
                     </div>
                 <Formik
                     initialValues={{
-                        email:''
+                        email: ''
                     }}
                     isInitialValid={false}
                     validationSchema={forgotSchema}
                     onSubmit={(values) =>{
-                        console.log(values);
+                        resetPassword(
+                            values.email, 
+                            "", 
+                            `${window.location.protocol}//${window.location.host}${config.ResetPwdConfirmationURL}`, 
+                            "");
                     }}
                 >
                 {({touched, errors, handleSubmit,values, isValid, handleChange,handleBlur}) =>{
                     return( 
                         <Form className='form' onSubmit={handleSubmit}>
+                            {authState.errors?.length > 0 && <Message.Error>
+                                {authState.errors.map(err => <p className='mb-1'>{err}</p>)}
+                            </Message.Error>}
                             <Form.Group className="form-group" >
                                     <div  className='mb-2'>
                                     <Form.Label className='label'>{!step ? "Email" : "Code"}</Form.Label>
@@ -49,14 +74,20 @@ export default function Index() {
                                     /> 
                                 <Form.Control.Feedback type="invalid">{!step ? errors.email : errors.code}</Form.Control.Feedback>
                             </Form.Group>
-                       <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={!values.email} onClick={() => setStep(1)} className={`my-btn-yellow my-2`}>Forget password</Button> 
-                    </Form>
+                            <Button type="submit" 
+                                variant="warning" 
+                                style={{backgroundColor:"#f2a13b",border:'none'}} 
+                                disabled={!values.email && isLoading} 
+                                className={`my-btn-yellow my-2`}>
+                                {isLoading ? <Spinner /> : "Forget password"}
+                            </Button> 
+                        </Form>
                 )}}
                 </Formik>
                 </div>
             </div>
         </>
-  )
+    )
 }
 
 function SendEmail(){

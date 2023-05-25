@@ -7,7 +7,6 @@ export const AuthContext = createContext();
 export default function Index({children}) {
     const [state,setState] = React.useState({
         accessToken: "",    
-        // accountInfo: null,
         accountInfo: null,
         loading: true,
         isLogged: false,
@@ -16,6 +15,7 @@ export default function Index({children}) {
         errors: [],
         tasks: {}
     });
+    const controller = new AbortController();
 
     const hasMounted = React.useRef(false);    
 
@@ -30,7 +30,7 @@ export default function Index({children}) {
             this.getAccount();
         },
 
-        signin(body) {
+        signin(body, returnURL) {
             this.clearErrors();
             setState(i =>({
                 ...i,
@@ -40,7 +40,11 @@ export default function Index({children}) {
                     [authConstraints.signin] : taskStatus.Inprogress
                 }
             }));
-            authInstance.post([authConstraints.root, authConstraints.signin].join("/"), body).then(response =>{
+            authInstance.post([authConstraints.root, authConstraints.signin].join("/"), body, {
+                params: {
+                    returnURL
+                }
+            }).then(response =>{
                 if(response?.data?.token?.accessToken && response?.data?.token?.refreshToken){
                     const {data} = response;
                     const {accessToken, refreshToken} = data?.token;
@@ -56,26 +60,23 @@ export default function Index({children}) {
                     }));
                 }
                 else {
-                    setState(i =>({
-                        ...i,
-                        errors: [...i.errors, response.data]
-                    }));
+                    toast.warning(response?.data || "");
                 }
+                setState(i => ({
+                    ...i,
+                    loading: false
+                }))
             }).catch(err =>{
                 setState(i => ({
                     ...i,
                     errors: err,
+                    loading: false,
                     tasks: {
                         ...i.tasks,
                         [authConstraints.signin] : taskStatus.Failed
                     }
                 }));
-            }).finally(() =>{
-                setState(i =>({
-                    ...i,
-                    loading: false
-                }))
-            });
+            })
         },
 
         signupUser(body, returnURL = "", callback){
@@ -110,6 +111,17 @@ export default function Index({children}) {
                     setState(i => ({
                         ...i,
                         errors: [err?.response],
+                        loading: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.signupUser] : taskStatus.Failed
+                        }
+                    }));
+                }
+                else {
+                    setState(i => ({
+                        ...i,
+                        errors: [err?.message],
                         loading: false,
                         tasks: {
                             ...i.tasks,
@@ -155,10 +167,53 @@ export default function Index({children}) {
                     tasks: {
                         ...i.tasks,
                         [authConstraints.signupDriver] : taskStatus.Failed,
-                        loading: false
                     },
+                    loading: false
                 }));
             })
+        },
+
+        verifyAccount(email, userName, confirmToken){
+            setState(i =>({
+                ...i,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.verifiedUser]: taskStatus.Inprogress
+                }
+            }));
+            authInstance.get([authConstraints.root, authConstraints.verifiedUser].join("/"), {
+                params: {
+                    email, userName, confirmToken
+                }
+            }).then(res =>{
+                if(res.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.verifiedUser]: taskStatus.Completed
+                        }
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.verifiedUser]: taskStatus.Completed
+                        },
+                        errors: res.data?.errors || [res.data?.error]
+                    }));
+                }
+            }).catch(err =>{
+                setState(i =>({
+                    ...i,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.verifiedUser]: taskStatus.Failed
+                    }
+                }));
+            });
         },
 
         signout(){
@@ -184,6 +239,7 @@ export default function Index({children}) {
             setState(i =>({
                 ...i,
                 loading: true,
+                errors: [],
                 tasks: {
                     ...i.tasks,
                     [authConstraints.getAccount] : taskStatus.Inprogress
@@ -192,7 +248,8 @@ export default function Index({children}) {
             authInstance.get([authConstraints.root, authConstraints.getAccount].join("/"), {
                 headers: {
                     "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
-                }
+                },
+                signal: controller.signal
             })
             .then(response =>{
                 if(response?.data){
@@ -209,38 +266,80 @@ export default function Index({children}) {
                     }));
                 }
             }).catch(err =>{
-                if(err.message === "Network Error"){
-                    setState(i =>({
-                        ...i,
-                        errors: ["Network Error"],
-                        isLogged: false,
-                        tasks: {
-                            ...i.tasks,
-                            [authConstraints.getAccount] : taskStatus.Failed
-                        },
-                        loading: false
-                    }));
-                }
-                else{
-                    setState(i =>({
-                        ...i,
-                        errors: [err.message],
-                        isLogged: false,
-                        tasks: {
-                            ...i.tasks,
-                            [authConstraints.getAccount] : taskStatus.Failed
-                        },
-                        loading: false
-                    }));
-                }
+                setState(i =>({
+                    ...i,
+                    isLogged: false,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.getAccount] : taskStatus.Failed
+                    },
+                    loading: false
+                }));
             });
         },
 
-        changePassword(){
-            authInstance.post([authConstraints.root, authConstraints.forgetPwd].join("/")).then(response =>{
-
+        resetPassword(email, newPassword = "", returnURL = "", token = ""){
+            setState(i =>({
+                ...i,
+                errors: [],
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.resetPwd] : taskStatus.Inprogress
+                }
+            }));
+            authInstance.post([authConstraints.root, authConstraints.resetPwd].join("/"), {
+                email,
+                newPassword
+            }, {
+                params: {
+                    returnURL: encodeURI(returnURL),
+                    token
+                }
+            }).then(response =>{
+                if(response.data?.successed){
+                    toast.success("Reset Password Completed!");
+                    setState(i =>({
+                        ...i,
+                        errors: [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.resetPwd] : taskStatus.Completed
+                        }
+                    }));
+                }
+                else if(response.status === 201){
+                    toast.success(response?.data);
+                    setState(i =>({
+                        ...i,
+                        errors: [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.resetPwd] : taskStatus.Completed
+                        }
+                    }));
+                }
+                else {
+                    toast.warning(response?.data || "");
+                    setState(i =>({
+                        ...i,
+                        errors: 
+                            (response?.data?.errors && [...response?.data?.errors]) ||
+                            (typeof response.data === "string" && [response.data]) || [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.resetPwd] : taskStatus.Failed
+                        }
+                    }));
+                }
             }).catch(err =>{
-
+                setState(i =>({
+                    ...i,
+                    errors: [err.message],
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.resetPwd] : taskStatus.Failed
+                    }
+                }));
             });
         },
 
@@ -310,12 +409,14 @@ export default function Index({children}) {
                         accountInfo: response.data.userInfo
                     }));
 
-                    toast.success("Updated user information", {
-                    });
+                    toast.success("Updated user information");
+                    setState(i =>({
+                        ...i,
+                        loading: false
+                    }));
                 }
             }).catch(err =>{
                 toast.error(err.response);
-            }).finally(() =>{
                 setState(i =>({
                     ...i,
                     loading: false
@@ -351,8 +452,58 @@ export default function Index({children}) {
                 toast.error(err.response);
             });
         },
-        changePassword(body, userId){
-            
+        changePassword(oldPassword, newPassword){
+            setState(i =>({
+                ...i,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.changePwd]: taskStatus.Inprogress
+                }
+            }));
+            authInstance.post([authConstraints.root, authConstraints.changePwd].join("/"),{
+                oldPassword,
+                newPassword
+            }, {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                }
+            }).then(response =>{
+                if(!!response.data?.successed){
+                    toast.success("Update password completed !");
+                    setState(i =>({
+                        ...i,
+                        errors: [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.changePwd] : taskStatus.Completed
+                        },
+                        loading: false
+                    }));
+                } 
+                else {
+                    setState(i =>({
+                        ...i,
+                        errors: typeof response.data === "string" ? [response.data] : 
+                        response.data?.errors && Array.isArray(response.data?.errors) ? response.data?.errors :
+                        [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.changePwd] : taskStatus.Failed
+                        },
+                        loading: false
+                    }));
+                }
+            }).catch(err =>{
+                setState(i =>({
+                    ...i,
+                    errors: [err],
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.changePwd] : taskStatus.Failed,
+                        loading: false
+                    },
+                }));
+            })
         }
     }
     
@@ -392,6 +543,10 @@ export default function Index({children}) {
         }
         if(hasMounted.current && !state.isLogged && !!localStorage.getItem(authConstraints.LOCAL_KEY)){
             funcs.getAccount();
+        }
+
+        return () =>{
+            controller.abort();
         }
     }, [state.accessToken]);
 

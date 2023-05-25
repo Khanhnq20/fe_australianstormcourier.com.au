@@ -10,7 +10,7 @@ import { NonRouting } from '../../pages';
 function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], invalidLink="/auth/login"}) {
     const [authState] = useContext(AuthContext);
 
-    if(authState.loading && authState.tasks?.[authConstraints.getAccount] === taskStatus.Inprogress){
+    if(authState.tasks.hasOwnProperty(authConstraints.getAccount) && authState.tasks?.[authConstraints.getAccount] === taskStatus.Inprogress){
         return (<Container>
             <CustomSpinner />
         </Container>)
@@ -33,7 +33,7 @@ function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], i
 AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink=null}) {
     const [authState] = useContext(AuthContext);
 
-    if(authState.loading && authState.task?.[authConstraints.getAccount] === taskStatus.Inprogress) 
+    if(authState.tasks.hasOwnProperty(authConstraints.getAccount) &&  authState.tasks?.[authConstraints.getAccount] === taskStatus.Inprogress) 
         return (<Container>
             <div className="mx-auto text-center">
                 <Spinner></Spinner>

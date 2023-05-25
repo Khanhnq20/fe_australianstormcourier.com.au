@@ -18,11 +18,14 @@ const constraints = {
 
     signupUser: "register/customer",
     signupDriver: "register/driver",
+    verifiedUser: "verified/user",
+
     vehicles: "vehicles",
 
     updateUser: "update/user",
     updateDriver: "update/driver",
-    changePwd: "update/password",
+    resetPwd: "password/reset",
+    changePwd: "password/update",
 
     getAccount: "account",
     refreshToken: "refresh",
@@ -102,7 +105,9 @@ authInstance.interceptors.response.use(response =>{
 }, async (error) =>{
     const isDevelopment = process.env.NODE_ENV === 'development';
     let originalRequest = error.config;
-
+    if(error.message === "Network Error"){
+        window.location.replace("/error/500");
+    }
     if(error?.response?.status === 401 && !originalRequest._retry && localStorage.getItem(authConstraints.LOCAL_KEY) && localStorage.getItem(authConstraints.LOCAL_KEY_2)){
         originalRequest._retry = true;
 

@@ -4,6 +4,7 @@ import { authConstraints } from "../../../api";
 import { Message } from "../../../layout";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
+import SuccessPayment from "./success";
 
 const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
     const [loading, setLoading] = useState(false);
@@ -16,8 +17,6 @@ const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
     const elements = useElements();
   
     const handleSubmit = async (event) => {
-      // We don't want to let default form submission happen here,
-      // which would refresh the page.
         event.preventDefault();
 
         if (!stripe) {
@@ -31,6 +30,7 @@ const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
         setSuccess(false);
 
         const {error: submitError} = await elements.submit();
+        
         if(submitError){
           setError(submitError?.message);
           setLoading(false);
@@ -38,11 +38,7 @@ const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
         }
 
         stripe.confirmPayment({
-            //`Elements` instance that was used to create the Payment Element
             elements: elements,
-            // confirmParams: {
-            //   return_url: "http://localhost:3000/payment/checkout/return"
-            // },
             redirect: "if_required"
         })
         .then(result =>{
@@ -95,8 +91,7 @@ const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
 
     if(success){
       return (<div>
-        <h2>Successed Payment</h2>
-        <pre>{JSON.stringify(resultJSON, 4, 4)}</pre>
+        <SuccessPayment result={resultJSON}></SuccessPayment>
       </div>)
     }
 

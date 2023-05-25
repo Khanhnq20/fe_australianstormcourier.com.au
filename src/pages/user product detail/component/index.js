@@ -37,13 +37,16 @@ function ProductDetail(){
         setCurrent,
         setPerPageAmount
     } = usePagination({
-        fetchingAPIInstance: authInstance.get([authConstraints.userRoot, authConstraints.getOrderOffers].join("/"), {
+        fetchingAPIInstance:({controller, page, take}) => authInstance.get([authConstraints.userRoot, authConstraints.getOrderOffers].join("/"), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
             },
             params: {
-                orderId: searchParams.get(keyquery)
-            }
+                orderId: searchParams.get(keyquery),
+                page,
+                amount: take
+            },
+            signal: controller.signal
         }),
         propToGetItem: "result",
         deps: [result],
@@ -420,7 +423,7 @@ function ProductDetail(){
                 <Row>
                     <Col>
                         <div className='py-4'>
-                        <div className='product-label-info my' >
+                            <div className='product-label-info my' >
                                 <p className='product-label-fit'>
                                     Status
                                 </p>
@@ -431,120 +434,117 @@ function ProductDetail(){
                             <div>
                                 <p style={{fontWeight:'600'}}>The driver requested {result?.offerNumber} offers</p>
                             </div>
-                            <div>
-                                <div className='pg-rows'>
-                                    <p className='m-0'>Show</p>
-                                    <div>
-                                        <Dropdown className='reg-dr' style={{width:'fit-content'}}>
-                                            <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
-                                                {perPageAmount}
-                                            </Dropdown.Toggle>
-                                            <Dropdown.Menu>
-                                                {rows.map((item,index) => {
-                                                    return(
-                                                        <Dropdown.Item key={index} onClick={()=> setCurrent(item)}>{item}</Dropdown.Item>
-                                                    )
-                                                })}
-                                            </Dropdown.Menu>
-                                        </Dropdown>
-                                    </div>
-                                    <p className='m-0'>Rows</p>
-                                </div>
-                                {items.length === 0 ? (<div className='txt-center'>
-                                        <h5>No Data Found</h5>
-                                    </div>) :
-                                    (<>
-                                        <Table bordered >
-                                            <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th style={{minWidth: '150px'}}>Rate</th>
-                                                    <th>Status</th>
-                                                    <th>Sent at</th>
-                                                    <th>Driver Vehicles</th>
-                                                    <th>Action</th>
-                                                </tr>
-                                            </thead> 
-                                            <tbody>
-                                                {
-                                                    items?.map?.((post,index) =>{
-                                                        return (
-                                                            <tr key={index}>
-                                                                <td>{"000000".substring(0, 6 - (index + 1)?.toString().length) + (index + 1)}
-                                                                </td>
-                                                                <td>
-                                                                    <Row>
-                                                                        <Col>ShipFee:</Col>
-                                                                        <Col>{post?.ratePrice}</Col>
-                                                                    </Row>
-                                                                    <Row>
-                                                                        <Col>GST:</Col>
-                                                                        <Col>10%</Col>
-                                                                    </Row>
-                                                                    <Row>
-                                                                        <Col>Freight:</Col>
-                                                                        <Col>10%</Col>
-                                                                    </Row>
-                                                                    <Row>
-                                                                        <Col>Total</Col>
-                                                                        <Col>{(post?.ratePrice * (1 + 0.1 + 0.1)).toFixed(2)}</Col>
-                                                                    </Row>
-                                                                </td>
-                                                                <td>
-                                                                    {<div className={post.status === 'Accepted' ? 'content-green' : post.status === 'Denied' ? 'content-danger' : 'content-yellow'}>{post.status}</div>}
-                                                                </td>
-                                                                <td>{new moment(post?.createdDate).format("DD/MM/YYYY")}</td>
-                                                                <td>
-                                                                    {post?.driverVehicles?.join?.(" - ")}
-                                                                </td>
-                                                                <td className='sender-action justify-content-center'>
-                                                                    {(result.status === "Paid" && post?.driverId === result?.driverId) ? 
-                                                                        (<p className='content-green'>Accepted</p>) :
-                                                                    (!!result?.driverId && post.driverId !== result?.driverId) ? 
-                                                                        (<p className='content-yellow text-center'>Your package had been delivered</p>) :
-                                                                    (result.status === "WaitingForPayment") ? 
-                                                                        (<div className='txt-success' onClick={() => createOrderPayment(result?.id, post?.driverId)}>
-                                                                            <div style={{
-                                                                                cursor: 'pointer',
-                                                                                fontSize: '1.4rem',
-                                                                            }}>
-                                                                                <p>
-                                                                                    <MdPayment></MdPayment><span className='ms-auto' style={{fontSize: '1rem'}}>Checkout Now</span>
-                                                                                </p>
-                                                                            </div>
-                                                                        </div>) :
-                                                                        (<div className='txt-success' onClick={() => acceptDriver(post?.driverId)}>
-                                                                            <Button className="w-100" variant="success">Accept</Button>
-                                                                        </div>)
-                                                                    }
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    })
-                                                }
-                                            </tbody>
-                                        </Table>
-                                        <Pagination className='pg-form w-100'>
-                                            {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
-                                            <Pagination.Prev onClick={() =>{}} className='pg-first' />
-                                            {/* {pageCount.map((item,index) => {
-                                                return (
-                                                    <div>
-                                                        <div key={index}>
-                                                            <Pagination.Item 
-                                                            className={item === currentPage ? "pg-no pg-active" : "pg-no"}
-                                                            onClick={()=>{}}
-                                                            >{item}</Pagination.Item>
-                                                        </div>
-                                                    </div>
+                            <div className='pg-rows'>
+                                <p className='m-0'>Show</p>
+                                <div>
+                                    <Dropdown className='reg-dr' style={{width:'fit-content'}}>
+                                        <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
+                                            {perPageAmount}
+                                        </Dropdown.Toggle>
+                                        <Dropdown.Menu>
+                                            {rows.map((item,index) => {
+                                                return(
+                                                    <Dropdown.Item key={index} onClick={()=> setPerPageAmount(item)}>{item}</Dropdown.Item>
                                                 )
-                                            })} */}
-                                            <Pagination.Next onClick={()=>{}} className='pg-first' />
-                                            {/* <Pagination.Last onClick={last} className='pg-first'/> */}
-                                        </Pagination>
-                                    </>)
-                                    }
+                                            })}
+                                        </Dropdown.Menu>
+                                    </Dropdown>
+                                </div>
+                                <p className='m-0'>Rows</p>
                             </div>
+                            {items.length === 0 ? (<div className='txt-center'>
+                                    <h5>No Data Found</h5>
+                            </div>) :
+                            (<>
+                                <Table bordered >
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th style={{minWidth: '150px'}}>Rate</th>
+                                            <th>Status</th>
+                                            <th>Sent at</th>
+                                            <th>Driver Vehicles</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead> 
+                                    <tbody>
+                                        {
+                                            items?.map?.((post,index) =>{
+                                                return (
+                                                    <tr key={index}>
+                                                        <td>{"000000".substring(0, 6 - (index + 1)?.toString().length) + (index + 1)}
+                                                        </td>
+                                                        <td>
+                                                            <Row>
+                                                                <Col>ShipFee:</Col>
+                                                                <Col>{post?.ratePrice}</Col>
+                                                            </Row>
+                                                            <Row>
+                                                                <Col>GST:</Col>
+                                                                <Col>10%</Col>
+                                                            </Row>
+                                                            <Row>
+                                                                <Col>Freight:</Col>
+                                                                <Col>10%</Col>
+                                                            </Row>
+                                                            <Row>
+                                                                <Col>Total</Col>
+                                                                <Col>{(post?.ratePrice * (1 + 0.1 + 0.1)).toFixed(2)}</Col>
+                                                            </Row>
+                                                        </td>
+                                                        <td>
+                                                            {<div className={post.status === 'Accepted' ? 'content-green' : post.status === 'Denied' ? 'content-danger' : 'content-yellow'}>{post.status}</div>}
+                                                        </td>
+                                                        <td>{new moment(post?.createdDate).format("DD/MM/YYYY")}</td>
+                                                        <td>
+                                                            {post?.driverVehicles?.join?.(" - ")}
+                                                        </td>
+                                                        <td className='sender-action justify-content-center'>
+                                                            {(result.status === "Paid" && post?.driverId === result?.driverId) ? 
+                                                                (<p className='content-green'>Accepted</p>) :
+                                                            (!!result?.driverId && post.driverId !== result?.driverId) ? 
+                                                                (<p className='content-yellow text-center'>Your package had been delivered</p>) :
+                                                            (result.status === "WaitingForPayment") ? 
+                                                                (<div className='txt-success' onClick={() => createOrderPayment(result?.id, post?.driverId)}>
+                                                                    <div style={{
+                                                                        cursor: 'pointer',
+                                                                        fontSize: '1.4rem',
+                                                                    }}>
+                                                                        <p>
+                                                                            <MdPayment></MdPayment><span className='ms-auto' style={{fontSize: '1rem'}}>Checkout Now</span>
+                                                                        </p>
+                                                                    </div>
+                                                                </div>) :
+                                                                (<div className='txt-success' onClick={() => acceptDriver(post?.driverId)}>
+                                                                    <Button className="w-100" variant="success">Accept</Button>
+                                                                </div>)
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })
+                                        }
+                                    </tbody>
+                                </Table>
+                                <Pagination className='pg-form w-100'>
+                                    {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
+                                    <Pagination.Prev onClick={prevPage} className='pg-first' />
+                                    {Array.from(Array(total).keys()).map((item,index) => {
+                                        return (
+                                            <div>
+                                                <div key={index}>
+                                                    <Pagination.Item 
+                                                        className={item + 1 === currentPage ? "pg-no pg-active" : "pg-no"}
+                                                        onClick={()=> setCurrent(item + 1)}
+                                                    >{item + 1}</Pagination.Item>
+                                                </div>
+                                            </div>
+                                        )
+                                    })}
+                                    <Pagination.Next onClick={nextPage} className='pg-first' />
+                                    {/* <Pagination.Last onClick={last} className='pg-first'/> */}
+                                </Pagination>
+                            </>)}
                         </div>
                     </Col>
                 </Row>
@@ -758,7 +758,7 @@ function Driver({driver,children}){
                 Driver
                 </p>
                 <p>
-                Tymothy
+                {driver.name}
                 </p>
             </div>
             <div className='product-label-info'>
@@ -767,7 +767,7 @@ function Driver({driver,children}){
                 </p>
                 <div className="license-form" onClick={() => setModalShow(true)}>
                     <BsFillPersonVcardFill className='license-icon'></BsFillPersonVcardFill>
-                    <p className='m-0'>Tymothy</p>
+                    <p className='m-0'>{driver.name}</p>
                 </div>
             </div>
             <PopUpCenteredModal

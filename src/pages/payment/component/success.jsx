@@ -1,21 +1,12 @@
 import { useStripe } from '@stripe/react-stripe-js';
-import React from 'react'
+import React, { useState } from 'react'
 import { Button, Container } from 'react-bootstrap';
-import { useSearchParams } from 'react-router-dom';
 import {BsClipboard2Check} from 'react-icons/bs';
 import '../style/index.css'
 
-function SuccessPayment() {
-  const [searchParams] = useSearchParams();
-  const keyParams = ["payment_intent", "payment_intent_client_secret", "redirect_status"];
-  
-  React.useEffect(() =>{
-  },[]);
-
-  // if(!keyParams.every(key => searchParams.has(key)))
-  //   return <Container>
-  //     <h2>Failed</h2>
-  //   </Container>
+function SuccessPayment({result}) {
+  const [showInvoice, setShowInvoice] = useState(false);
+  const [stripeResult] = useStripe();
 
   return (
     <Container className='p-success-root'>
@@ -29,8 +20,11 @@ function SuccessPayment() {
         <p className='p-txt-grey txt-center'>Thanks for your billing</p>
         <div className='txt-center'>
           <Button className='my-btn-yellow mx-2'>Print Invoice</Button>
-          <Button className='my-btn-yellow mx-2'>Invoice View</Button>
+          <Button className='my-btn-yellow mx-2' onClick={() => setShowInvoice(i => !i)}>Invoice View</Button>
         </div>
+        {showInvoice && <div>
+          <pre>{JSON.stringify(result, 4, 4)}</pre>
+        </div>}
       </div>
     </Container>
   )
