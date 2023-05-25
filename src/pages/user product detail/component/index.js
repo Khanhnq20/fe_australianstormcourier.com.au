@@ -1,5 +1,5 @@
 import React,{ useEffect, useRef } from 'react'
-import { Col, Container, Row, Button, Dropdown, Table, Form, Pagination,Modal } from 'react-bootstrap';
+import { Col, Container, Row, Button, Dropdown, Table, Form, Pagination,Modal, Stack } from 'react-bootstrap';
 import '../style/senderProductDetail.css';
 import {MdPayment} from 'react-icons/md';
 import { Formik } from "formik";
@@ -603,7 +603,14 @@ function ProductDetail(){
                                                                     </div>
                                                                 </div>) : 
                                                                 ((result.status === "Paid" || result.status === "Prepared" || result.status === "Delivering") && post?.status === 'Accepted') ? 
-                                                                (<p className='content-yellow'>Support</p>) :
+                                                                (<Stack>
+                                                                    <Button className="w-100 mb-2" variant="warning">
+                                                                        Support
+                                                                    </Button>
+                                                                    <Button className="w-100 mb-2">View Invoice</Button>
+                                                                    <Button className="w-100 mb-2" variant="success">Print Invoice</Button>
+                                                                </Stack>
+                                                                ) :
                                                                 (result.status === "Completed") ? 
                                                                 (<p className='content-green'>Completed</p>) :
                                                                 (<></>)
@@ -650,10 +657,14 @@ function ProductDetail(){
             ></PaymentPopup>
 
 
-            {result?.driverId && (result?.status === "Paid" 
+            {result?.driverId && (result?.status === "Completed" 
             || result?.status === "Delivering" 
-            || result?.status === "Prepared"
-            || result?.status === "") && <Driver driver={result.driver}></Driver>}
+            || result?.status === "Prepared") 
+            && <Driver driver={result.driver} 
+            orderStatus={
+                result?.status === "Prepared" ? 0 :
+                result?.status === "Delivering" ? 1 :
+                2}></Driver>}
         </div>
     )
 }
@@ -832,8 +843,8 @@ function DropDownStatus() {
     );
 }
 
-function Driver({driver,children}){
-    const [active,setActive] = React.useState(1);
+function Driver({driver, orderStatus}){
+    const [active,setActive] = React.useState(orderStatus);
     const [modalShow, setModalShow] = React.useState(false);
     const stepTemplate = [
         "Prepared", "Delivering", "Completed"
