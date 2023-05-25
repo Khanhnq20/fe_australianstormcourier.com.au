@@ -58,7 +58,7 @@ function UserHistory() {
                 search(values);
             }}
         >
-        {({handleSubmit, handleChange, handleBlur,values}) =>{
+        {({handleSubmit, handleChange}) =>{
             return(<>
                 <div>
                     <div className='p-3'>

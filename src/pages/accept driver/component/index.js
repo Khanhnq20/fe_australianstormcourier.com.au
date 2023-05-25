@@ -37,9 +37,14 @@ function DriverList() {
         setPerPageAmount,
         refresh
     } = usePagination({
-        fetchingAPIInstance: authInstance.get([authConstraints.adminRoot, authConstraints.getAccountsDriver].join('/'), {
+        fetchingAPIInstance:({controller, page, take}) => authInstance.get([authConstraints.adminRoot, authConstraints.getAccountsDriver].join('/'), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+            },
+            signal: controller.signal,
+            params: {
+                page,
+                amount: take
             }
         }), 
         propToGetItem: "results", 
@@ -105,7 +110,7 @@ function DriverList() {
                 <div>
                     <div className='p-3'>
                         <div>
-                            <Form>
+                            <Form onSubmit={handleSubmit}>
                                 <div className='form-order'>
                                     <Form.Group>
                                         <div className='mb-2'>
@@ -196,7 +201,7 @@ function DriverList() {
                                         </thead> 
                                         <tbody>
                                             {
-                                                items?.slice((currentPage - 1) * perPageAmount, perPageAmount * (1 + currentPage)).map((driver,index) =>{
+                                                items?.slice((currentPage - 1) * perPageAmount, perPageAmount * currentPage).map((driver,index) =>{
                                                     return (
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
@@ -240,7 +245,8 @@ function DriverList() {
                                 <Pagination className='pg-form w-100'>
                                     {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
                                     <Pagination.Prev onClick={prevPage} className='pg-first' />
-                                    {Array.from(total).map((item,index) => {
+                                    {Array.from(Array(total).keys()).map((i,index) => {
+                                        const item = i + 1;
                                         return (
                                             <div>
                                                 <div key={index}>
