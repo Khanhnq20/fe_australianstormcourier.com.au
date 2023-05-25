@@ -371,15 +371,16 @@ input:checked ~ .checkmark {
   display: block;
 }
 .fr-checkbox .checkmark:after {
+  display: block;
   left: 6px;
   top: 2px;
   width: 5px;
   height: 10px;
   border: solid var(--clr-light);
-  border-width: 0 2px 2px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
+  border-width: 0 2px 2px 0 ;
+  -webkit-transform: rotate(45deg) ;
+  -ms-transform: rotate(45deg) ;
+  transform: rotate(45deg) ;
   color: white;
 }
 .txt-checkbox{
@@ -486,4 +487,7 @@ a{
 .txt-error {
   color: var(--clr-txt-error);
   font-weight: 600;
+}
+.link-slider > .active{
+  border-left: none !important;
 }

@@ -22,9 +22,9 @@ let orderSchema = yup.object().shape({
         state: yup.string().required("State is required"),
         postCode: yup.number().required("Post code is required"),
     }),
-    destination: yup.string().required(),
-    receiverName: yup.string().nullable(),
-    receiverPhone: yup.string().required(),
+    destination: yup.string().required("Destination is required"),
+    receiverName: yup.string().required("Receiver Name is required"),
+    receiverPhone: yup.string().required("Receiver Phone is required"),
     deliverableDate: yup.date().required(),
     timeFrame: yup.string()
         .test(
@@ -50,7 +50,7 @@ let orderSchema = yup.object().shape({
             itemName: yup.string().required("Item Name is required field"),
             itemCharcode: yup.number().default(Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)), 
             itemDescription: yup.string().nullable(),
-            quantity: yup.number().positive().min(0).max(10).required("Quantity is required field"),
+            quantity: yup.number().positive().min(1, "Quantity should be larger then 1 and least than 10").max(10, "Quantity should be larger then 1 and least than 10").required("Quantity is required field"),
             weight: yup.number().positive().required("Weight is required field"),
             startingRate: yup.number().positive().required("Starting Rate is required field"),
             packageType: yup.string().required("Package Type is required field"),
@@ -59,10 +59,10 @@ let orderSchema = yup.object().shape({
                     yup.object().shape({
                         file: yup.mixed().required(),
                         url: yup.string().required()
-                    })).min(1).required()
+                    })).min(1, "Adding more pictures for product").required("Adding more pictures for product")
                 .test(
                 'FILE SIZE', 
-                'the file is too large', 
+                'the file collection is too large', 
                 (files) => {
                     if (!files) {
                         return true;
@@ -99,11 +99,11 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     type="text"
                     name={`${name}.itemName`}
                     placeholder="Enter Product Name"
-                    isInvalid={touched.itemName && errors.itemName}
+                    isInvalid={touched.orderItems?.[index].itemName && errors.orderItems?.[index].itemName}
                     onChange={handleChange}
                     onBlur={handleBlur}
                 />
-                <Form.Control.Feedback type="invalid">{errors.itemName}</Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">{errors.orderItems?.[index].itemName}</Form.Control.Feedback>
             </Form.Group>
             {/* Item BarCode  */}
             <Form.Group className="mb-3">
@@ -124,11 +124,11 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                     row="3"
                     placeholder="Enter Product Description"
                     name={`${name}.itemDescription`}
-                    isInvalid={touched?.itemDescription && !!errors?.itemDescription}
+                    isInvalid={touched.orderItems?.[index]?.itemDescription && !!errors.orderItems?.[index]?.itemDescription}
                     onChange={handleChange}
                     onBlur={handleBlur}
                 />
-                <Form.Control.Feedback type="invalid">{errors?.itemDescription}</Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.itemDescription}</Form.Control.Feedback>
             </Form.Group>
             {/* Quantity and Weight */}
             <Row>
@@ -146,11 +146,11 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             max={10}
                             name={`${name}.quantity`}
                             placeholder="Enter Quantity"
-                            isInvalid={touched?.quantity && !!errors?.quantity}
+                            isInvalid={touched?.orderItems?.[index].quantity && !!errors?.orderItems?.[index].quantity}
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        <Form.Control.Feedback type="invalid">{errors?.quantity}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index].quantity}</Form.Control.Feedback>
                     </Form.Group>
                 </Col>
                 <Col>
@@ -165,13 +165,13 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                 type="text"
                                 name={`${name}.weight`}
                                 placeholder="Enter item weight"
-                                isInvalid={touched?.weight && !!errors?.weight}
+                                isInvalid={touched?.orderItems?.[index]?.weight && !!errors?.orderItems?.[index]?.weight}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 aria-describedby="weight"
                             />
                             <InputGroup.Text id="weight">Kilogram</InputGroup.Text>
-                            <Form.Control.Feedback type="invalid">{errors?.weight}</Form.Control.Feedback>
+                            <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.weight}</Form.Control.Feedback>
                         </InputGroup>
                     </Form.Group>
                 </Col>
@@ -189,6 +189,31 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             <FieldArray name={`${name}.productPictures`} 
                                 render={(arrayHelpers) =>{
                                 return (<>
+                                    <Form.Control type="file" id="driver_image_back" 
+                                        ref={product_img_ipt} 
+                                        multiple
+                                        isInvalid={!!errors?.orderItems?.[index]?.productPictures}
+                                        onChange={(e) =>{
+                                            const files = e.target.files;
+                                            for (var i = 0; i < files.length; i++) { 
+                                                //for multiple files          
+                                                (function(file) {                                        
+                                                    const fileReader = new FileReader();
+                                                    fileReader.onload = function(e) {  
+                                                        // get file content  
+                                                        fileReader.addEventListener("loadend", (e)=>{
+                                                            arrayHelpers.push({
+                                                                file,
+                                                                url: fileReader.result
+                                                            });
+                                                        })
+                                                    }
+                                                    fileReader.readAsDataURL(file);
+                                                })(files[i]);
+                                            }}}
+                                            accept="img"
+                                        />
+                                    <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.productPictures}</Form.Control.Feedback>
                                     <Row style={{flexDirection:'column'}}>
                                         {
                                             values?.orderItems?.[index]?.productPictures?.map?.((picture,ind) =>{
@@ -262,12 +287,12 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             type="number"
                             name={`${name}.startingRate`}
                             placeholder="Enter your shipping rate"
-                            value={values?.['orderItems']?.[index]?.startingRate}
-                            isInvalid={touched?.['orderItems']?.[index]?.startingRate && !!errors?.['orderItems']?.[index]?.startingRate}
+                            value={values?.orderItems?.[index]?.startingRate}
+                            isInvalid={touched?.orderItems?.[index]?.startingRate && !!errors?.orderItems?.[index]?.startingRate}
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
-                        <Form.Control.Feedback type="invalid">{errors?.['orderItems']?.[index]?.startingRate}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.startingRate}</Form.Control.Feedback>
                     </Form.Group>
 
                     {/* Vehicles */}
@@ -280,8 +305,13 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             {authState.vehicles.map((item,index) => {
                                 return(
                                     <div key={index}>
-                                        <label className="fr-checkbox">
-                                            <input type="checkbox" name="vehicles" value={item?.id} onChange={handleChange} onBlur={handleBlur}/>
+                                        <label className="fr-checkbox mb-2">
+                                            <input type="checkbox" 
+                                                name="vehicles" 
+                                                value={item?.id} 
+                                                onChange={handleChange} 
+                                                onBlur={handleBlur}
+                                                />
                                             <span className="checkmark"></span>
                                             <span className='txt-checkbox' style={{fontWeight:'500'}}>{item?.name}</span>
                                         </label>
@@ -289,6 +319,9 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                 )
                             })}
                         </div>
+                        <p className="content-red mt-2">
+                            {errors?.vehicles}
+                        </p>
                     </Form.Group>
 
                     {/* Package Type */}
@@ -302,7 +335,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                             type="string"
                             name={`${name}.packageType`}
                             placeholder="Select your type of package"
-                            isInvalid={touched?.['orderItems']?.[index]?.packageType && !!errors?.['orderItems']?.[index]?.packageType}
+                            isInvalid={touched?.orderItems?.[index]?.packageType && !!errors?.orderItems?.[index]?.packageType}
                             onChange={handleChange}
                             onBlur={handleBlur}
                             defaultValue={values?.['orderItems']?.[index]?.packageType}
@@ -311,7 +344,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                 return <option key={index} value={type}>{type}</option>
                             })}
                         </Form.Select>
-                        <Form.Control.Feedback type="invalid">{errors?.['orderItems']?.[index]?.packageType}</Form.Control.Feedback>
+                        <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.packageType}</Form.Control.Feedback>
                     </Form.Group>
 
                     <Button type="submit" variant="warning" disabled={!isValid} className='my-btn-yellow'>Search for driver</Button>
@@ -330,8 +363,8 @@ function OrderCreation(){
             initialValues={{
                 senderId: authState.accountInfo?.id,
                 sendingLocation: {
-                    unitNumber: 0,
-                    streetNumber: 0,
+                    unitNumber: '',
+                    streetNumber: '',
                     streetName: '',
                     suburb: '',
                     state: '',
@@ -348,9 +381,9 @@ function OrderCreation(){
                         itemName: '',
                         itemCharCode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000), 
                         itemDescription: '',
-                        quantity: 0,
-                        weight: 0,
-                        startingRate: 0,
+                        quantity: '',
+                        weight: '',
+                        startingRate: '',
                         packageType: authState?.packageTypes?.[0],
                         productPictures: []
                     }
@@ -437,7 +470,7 @@ function OrderCreation(){
                                                 <Form.Control
                                                     type="text"
                                                     name="sendingLocation.streetName"
-                                                    placeholder="Enter street name"
+                                                    placeholder="Enter Street Name"
                                                     isInvalid={touched.sendingLocation?.streetName && !!errors?.sendingLocation?.streetName}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
@@ -450,7 +483,7 @@ function OrderCreation(){
                                                 <Form.Control
                                                     type="text"
                                                     name="sendingLocation.suburb"
-                                                    placeholder="Enter suburb"
+                                                    placeholder="Enter Suburb"
                                                     isInvalid={touched.sendingLocation?.suburb && !!errors?.sendingLocation?.suburb}
                                                     onChange={handleChange}
                                                     onBlur={handleBlur}
@@ -497,11 +530,11 @@ function OrderCreation(){
                                             type="text"
                                             name="destination"
                                             placeholder="Enter destination"
-                                            isInvalid={touched.to && errors.to}
+                                            isInvalid={touched.destination && errors.destination}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.to}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.destination}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -518,7 +551,7 @@ function OrderCreation(){
                                             type="text"
                                             name="receiverName"
                                             placeholder="Enter Receiver Name"
-                                            isInvalid={touched.receiverName && !!errors?.receiverName}
+                                            isInvalid={touched?.receiverName && !!errors?.receiverName}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />

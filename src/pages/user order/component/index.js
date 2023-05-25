@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { CustomSpinner } from '../../../layout';
 
 const UserOrders = () => {
-    const rows = [5,10,15,20,25,30,35,40];
+    const rows = [1,2,3,4,5,10,15];
     const {
         currentPage,
         perPageAmount,
@@ -160,7 +160,7 @@ const UserOrders = () => {
                                         </thead> 
                                         <tbody>
                                             {
-                                                items?.slice((currentPage - 1) * perPageAmount, perPageAmount * currentPage).map((post,index) =>{
+                                                items.map((post,index) =>{
                                                     return (
                                                         <tr key={index}>
                                                             <td>{"000000".substring(0,6-post?.id.toString().length) + post?.id}</td>

@@ -22,10 +22,10 @@ export default function Index() {
                         </Navbar.Brand>
                         
                         <div className='nav-auth-form'>
-                            <div className='nav-notification'>
+                            {/* <div className='nav-notification'>
                                 <AiFillBell onClick={()=>{setNotify(e=>!e)}} className='nav-auth-icon-notify'></AiFillBell>
                                 {notify ? <Notification></Notification> : <></>}
-                            </div>
+                            </div> */}
                             <div>
                                 <AvatarUserDropDown></AvatarUserDropDown>
                             </div>
@@ -92,12 +92,12 @@ function AvatarUserDropDown() {
                     Change Password
                 </Link>
             </Dropdown.Item>
-            <Dropdown.Item className='nav-menu-topic'>
+            {/* <Dropdown.Item className='nav-menu-topic'>
                 <AiOutlineSetting className='nav-menu-topic-icon'></AiOutlineSetting>
                 <Link to="/userManagement" style={{textDecoration: "none",color:"black"}}>
                     Setting
                 </Link>
-            </Dropdown.Item>
+            </Dropdown.Item> */}
             <Dropdown.Item className='nav-menu-topic' onClick={signout}>
                 <FiLogOut className='nav-menu-topic-icon'></FiLogOut>
                 <div>   

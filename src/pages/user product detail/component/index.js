@@ -13,8 +13,13 @@ import { authConstraints, authInstance, config } from '../../../api';
 import { usePagination } from '../../../hooks';
 import { PaymentComponents } from '../..';
 import { CustomSpinner } from '../../../layout';
+import Carousel from 'react-bootstrap/Carousel';
+import {FaTimes} from 'react-icons/fa'
 
 function ProductDetail(){
+    const [slider,setSlider] = React.useState(false);
+    const [receiveImg,setReceiveImg] = React.useState(false); 
+    const [deliveryImg,setDeliveryImg] = React.useState(false); 
     const [result, setResult] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
     const [popupLoading, setPopupLoading] = React.useState(false);
@@ -291,12 +296,43 @@ function ProductDetail(){
                                     Delivery Images
                                 </p>
                                 <div>
-                                    <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                                    <div className='img-front-frame'  style={{padding:'10px 0 '}} onClick={()=>{setDeliveryImg(true)}}>
                                         <div className='background-front'>
                                             <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.deliverdItemImages?.split("[space]")?.length || 0}</div>
                                             <p className='driving-txt'>view image</p>
                                         </div>
                                         <img className='img-front' src={result?.deliverdItemImages?.split?.("[space]")?.[0]}/>
+                                    </div>
+                                    <div>
+                                        <Modal
+                                            size="lg"
+                                            aria-labelledby="contained-modal-title-vcenter"
+                                            centered
+                                            show={deliveryImg}
+                                            >
+                                            <Modal.Header>
+                                                <Modal.Title className='txt-center w-100' onClick={()=>{setDeliveryImg(false)}}>
+                                                    <div style={{textAlign:'right'}}>
+                                                        <FaTimes style={{color:'grey',cursor:'pointer'}}></FaTimes>
+                                                    </div>
+                                                </Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body className='link-slider'>
+                                                <Carousel>
+                                                    {result.deliverdItemImages?.split?.("[space]")?.map((url,index) =>{
+                                                        return <Carousel.Item style={{borderLeft:'none'}} key={index}>
+                                                            <img
+                                                            className="w-100"
+                                                            src={url}
+                                                            alt="First slide"
+                                                            />
+                                                            <Carousel.Caption>
+                                                            </Carousel.Caption>
+                                                        </Carousel.Item>
+                                                    })}
+                                                </Carousel>
+                                            </Modal.Body>
+                                        </Modal>
                                     </div>
                                 </div>
                             </div>
@@ -305,13 +341,42 @@ function ProductDetail(){
                                     Received Images
                                 </p>
                                 <div>
-                                    <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                                    <div className='img-front-frame'  style={{padding:'10px 0 '}} onClick={()=>{setReceiveImg(true)}}>
                                         <div className='background-front'>
                                             <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.receivedItemImages?.split("[space]")?.length || 0}</div>
                                             <p className='driving-txt'>view image</p>
                                         </div>
                                         <img className='img-front' src={result?.receivedItemImages?.split?.("[space]")?.[0]}/>
                                     </div>
+                                    <Modal
+                                            size="lg"
+                                            aria-labelledby="contained-modal-title-vcenter"
+                                            centered
+                                            show={receiveImg}
+                                            >
+                                            <Modal.Header>
+                                                <Modal.Title className='txt-center w-100' onClick={()=>{setReceiveImg(false)}}>
+                                                    <div style={{textAlign:'right'}}>
+                                                        <FaTimes style={{color:'grey',cursor:'pointer'}}></FaTimes>
+                                                    </div>
+                                                </Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body className='link-slider'>
+                                                <Carousel>
+                                                    {result.receivedItemImages?.split?.("[space]")?.map((url,index) =>{
+                                                        return <Carousel.Item style={{borderLeft:'none'}} key={index}>
+                                                            <img
+                                                            className="w-100"
+                                                            src={url}
+                                                            alt="First slide"
+                                                            />
+                                                            <Carousel.Caption>
+                                                            </Carousel.Caption>
+                                                        </Carousel.Item>
+                                                    })}
+                                                </Carousel>
+                                            </Modal.Body>
+                                        </Modal>
                                 </div>
                             </div>
                         </div>
@@ -381,33 +446,56 @@ function ProductDetail(){
                             </Col>
                             <Col>
                                 <div>
-                                    <div className='product-label-info'>
-                                        <p className='product-label-fit'>
-                                            Starting shipping rates
-                                        </p>
-                                        <p className='product-content'>
-                                            {item.startingRate} AUD
-                                        </p>
-                                    </div>
-                                    <div className='product-label-info'>
-                                        <p className='product-label-fit'>
-                                            Selected shipping rates
-                                        </p>
-                                        <p className='product-content'>
-                                        {item.selectedRate} AUD
-                                        </p>
-                                    </div>
                                     <div className='product-label-info'  style={{alignItems:'unset'}}>
                                         <p className='product-label-fit'>
                                             Product pictures
                                         </p>
                                         <div>
-                                            <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                                            <div className='img-front-frame'  style={{padding:'10px 0 '}} onClick={()=>{setSlider(true)}}>
                                                 <div className='background-front'>
                                                     <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.orderItems?.[0]?.itemImages?.split("[space]")?.length}</div>
                                                     <p className='driving-txt'>view image</p>
                                                 </div>
                                                 <img className='img-front' src={item.itemImages?.split?.("[space]")?.[0]}/>
+                                            </div>
+                                            <div>
+                                                {
+                                                    slider 
+                                                    ? 
+                                                    <div>
+                                                        <Modal
+                                                                size="lg"
+                                                                aria-labelledby="contained-modal-title-vcenter"
+                                                                centered
+                                                                show={slider}
+                                                                >
+                                                                <Modal.Header>
+                                                                    <Modal.Title className='txt-center w-100' onClick={()=>{setSlider(false)}}>
+                                                                        <div style={{textAlign:'right'}}>
+                                                                            <FaTimes style={{color:'grey',cursor:'pointer'}}></FaTimes>
+                                                                        </div>
+                                                                    </Modal.Title>
+                                                                </Modal.Header>
+                                                                <Modal.Body className='link-slider'>
+                                                                    <Carousel>
+                                                                        {item.itemImages?.split?.("[space]")?.map((url,index) =>{
+                                                                            return <Carousel.Item style={{borderLeft:'none'}} key={index}>
+                                                                                <img
+                                                                                className="w-100"
+                                                                                src={url}
+                                                                                alt="First slide"
+                                                                                />
+                                                                                <Carousel.Caption>
+                                                                                </Carousel.Caption>
+                                                                            </Carousel.Item>
+                                                                        })}
+                                                                    </Carousel>
+                                                                </Modal.Body>
+                                                            </Modal>
+                                                    </div>
+                                                    :
+                                                    <></>
+                                                }
                                             </div>
                                         </div>
                                     </div>
@@ -748,14 +836,6 @@ function Driver({driver,children}){
         <div>
             <div className='product-label-info'>
                 <p className='product-label-fit'>
-                Status
-                </p>
-                <p className='content-yellow'>
-                In processing
-                </p>
-            </div>
-            <div className='product-label-info'>
-                <p className='product-label-fit'>
                 Driver
                 </p>
                 <p>
@@ -777,6 +857,9 @@ function Driver({driver,children}){
                 onHide={() => setModalShow(false)}
             />
             <div className='product-label-info' style={{alignItems:'unset'}}>
+                <p className='product-label-fit py-2'>
+                Process
+                </p> 
                 <div>
                 <section className="step-wizard">
                     <ul className='order-progress'>
@@ -797,11 +880,8 @@ function Driver({driver,children}){
                 </div>
             </div>
             <div className='product-label-info' style={{alignItems:'unset'}}>
-                <p className='product-label-fit py-2'>
-                Process
-                </p> 
             </div>
-            <div className='product-label-info py-3' style={{alignItems:'unset'}}>
+            {/* <div className='product-label-info py-3' style={{alignItems:'unset'}}>
                 <p className='product-label-fit py-1'>
                     Delivery pictures
                 </p>
@@ -814,7 +894,7 @@ function Driver({driver,children}){
                         <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
                     </div>
                 </div>
-            </div>
+            </div> */}
         </div>
     )
 }

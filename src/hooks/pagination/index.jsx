@@ -32,6 +32,7 @@ export function usePagination({
             take: perPageAmount,
         }).then(response =>{
             if (!!propToGetItem && Array.isArray(response?.data?.[propToGetItem])){
+                console.log(response.data?.[propToGetItem]);
                 setItems(response.data[propToGetItem]);
             }
 
