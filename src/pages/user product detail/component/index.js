@@ -319,7 +319,7 @@ function ProductDetail(){
                                             </Modal.Header>
                                             <Modal.Body className='link-slider'>
                                                 <Carousel>
-                                                    {result.deliverdItemImages?.split?.("[space]")?.map((url,index) =>{
+                                                    {result?.deliverdItemImages?.split?.("[space]")?.map((url,index) =>{
                                                         return <Carousel.Item style={{borderLeft:'none'}} key={index}>
                                                             <img
                                                             className="w-100"
@@ -363,7 +363,7 @@ function ProductDetail(){
                                             </Modal.Header>
                                             <Modal.Body className='link-slider'>
                                                 <Carousel>
-                                                    {result.receivedItemImages?.split?.("[space]")?.map((url,index) =>{
+                                                    {/* {result.receivedItemImages?.split?.("[space]")?.map((url,index) =>{
                                                         return <Carousel.Item style={{borderLeft:'none'}} key={index}>
                                                             <img
                                                             className="w-100"
@@ -373,7 +373,7 @@ function ProductDetail(){
                                                             <Carousel.Caption>
                                                             </Carousel.Caption>
                                                         </Carousel.Item>
-                                                    })}
+                                                    })} */}
                                                 </Carousel>
                                             </Modal.Body>
                                         </Modal>
@@ -587,13 +587,11 @@ function ProductDetail(){
                                                         </td>
                                                         <td className='sender-action justify-content-center'>
                                                             {
-                                                                (post?.status === 'Cancelled') ? 
-                                                                (<p className='content-yellow'>Cancelled by driver</p>)
-                                                                :(result.status === "Paid" && post?.driverId === result?.driverId) ? 
-                                                                (<p className='content-green'>Accepted</p>) :
-                                                            (!!result?.driverId && post.driverId !== result?.driverId) ? 
-                                                                (<p className='content-yellow text-center'>Your package had been delivered</p>) :
-                                                            (result.status === "WaitingForPayment") ? 
+                                                                ((result.status === "LookingForDriver" || result.status === "Trading") && post.status === "Waiting") ?
+                                                                (<div className='txt-success' onClick={() => acceptDriver(post?.driverId)}>
+                                                                    <Button className="w-100" variant="success">Accept</Button>
+                                                                </div>) :
+                                                                (result.status === "WaitingForPayment" && post?.status === 'Accepted') ? 
                                                                 (<div className='txt-success' onClick={() => createOrderPayment(result?.id, post?.driverId)}>
                                                                     <div style={{
                                                                         cursor: 'pointer',
@@ -603,11 +601,15 @@ function ProductDetail(){
                                                                             <MdPayment></MdPayment><span className='ms-auto' style={{fontSize: '1rem'}}>Checkout Now</span>
                                                                         </p>
                                                                     </div>
-                                                                </div>) :
-                                                                (<div className='txt-success' onClick={() => acceptDriver(post?.driverId)}>
-                                                                    <Button className="w-100" variant="success">Accept</Button>
-                                                                </div>)
+                                                                </div>) : 
+                                                                ((result.status === "Paid" || result.status === "Prepared" || result.status === "Delivering") && post?.status === 'Accepted') ? 
+                                                                (<p className='content-yellow'>Support</p>) :
+                                                                (result.status === "Completed") ? 
+                                                                (<p className='content-green'>Completed</p>) :
+                                                                (<></>)
                                                             }
+                                                            {/* (!!result?.driverId && post.driverId !== result?.driverId) ? 
+                                                            (<p className='content-yellow text-center'>Your package had been delivered</p>) : */}
                                                         </td>
                                                     </tr>
                                                 )
@@ -647,7 +649,11 @@ function ProductDetail(){
                 checkoutServerAPI={() => checkoutServerAPI(result?.id, result?.driverId)}
             ></PaymentPopup>
 
-            {result?.driverId && result?.status === "Paid" && <Driver driver={result.driver}></Driver>}
+
+            {result?.driverId && (result?.status === "Paid" 
+            || result?.status === "Delivering" 
+            || result?.status === "Prepared"
+            || result?.status === "") && <Driver driver={result.driver}></Driver>}
         </div>
     )
 }
@@ -829,9 +835,9 @@ function DropDownStatus() {
 function Driver({driver,children}){
     const [active,setActive] = React.useState(1);
     const [modalShow, setModalShow] = React.useState(false);
-    const [stepTemplate, setTemplate] = React.useState([
-      "Prepare", "Ordering", "Delivering", "Completed"
-    ]);
+    const stepTemplate = [
+        "Prepared", "Delivering", "Completed"
+    ];
     return(
         <div>
             <div className='product-label-info'>

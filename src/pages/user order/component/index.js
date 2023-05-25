@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { CustomSpinner } from '../../../layout';
 
 const UserOrders = () => {
-    const rows = [1,2,3,4,5,10,15];
+    const rows = [5,10,15];
     const {
         currentPage,
         perPageAmount,
