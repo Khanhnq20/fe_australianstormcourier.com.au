@@ -15,7 +15,7 @@ import { Spinner } from 'react-bootstrap';
 
 
 let registerSchema = yup.object().shape({
-    userName: yup.string().required("Full Name is required field").matches(
+    userName: yup.string().required("User Name is required field").matches(
         /^(?!\s+$).*/, "User name field contain only blankspaces"),
     phone: yup.string().typeError("Phone Number must be number").required("Phone Number is required field"),
     email: yup.string().email().required("Email is required field"),
@@ -86,7 +86,7 @@ export default function Index() {
                                     <Form.Control
                                         type="text"
                                         name="userName"
-                                        placeholder="Enter Your UserName"
+                                        placeholder="Enter User Name"
                                         isInvalid={touched.userName && errors.userName}
                                         value={values.userName}
                                         onChange={handleChange}
@@ -124,7 +124,7 @@ export default function Index() {
                                                 value={values.password}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
-                                                placeholder="Enter your Password"
+                                                placeholder="Enter Your Password"
                                                 name="password"/>
                                                 <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                                                 <div className='override-block'></div>
@@ -144,7 +144,7 @@ export default function Index() {
                                         <Form.Control
                                             type={showPassConfirm ? 'text' : 'password'} 
                                             name="confirmPassword"
-                                            placeholder="Enter password again"
+                                            placeholder="Enter Password Again"
                                             isInvalid={touched.confirmPassword && errors.confirmPassword}
                                             value={values.confirmPassword}
                                             onChange={handleChange}
@@ -167,12 +167,12 @@ export default function Index() {
                                     <Form.Control
                                         type="text"
                                         name="phone"
-                                        placeholder="Enter Your Full Address"
-                                        isInvalid={touched.phoneNumber && errors.phoneNumber}
+                                        placeholder="Enter Your Phone Number"
+                                        isInvalid={touched.phone && errors.phone}
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     />
-                                    <Form.Control.Feedback type="invalid">{errors.phoneNumber}</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
                                 </Form.Group>
 
                                 <Form.Group className="form-group" >
