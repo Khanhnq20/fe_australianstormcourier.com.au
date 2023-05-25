@@ -105,6 +105,84 @@ export default function Index({children}) {
                 console.log(error);
             });
         },
+
+        putCancelOffer(orderId){
+            authInstance.put([authConstraints.driverRoot, authConstraints.putCancelOffer].join("/"), null, {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                },
+                params: {
+                    orderId
+                }
+            }).then(response =>{
+                if(response.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putCancelOffer]: taskStatus.Completed }
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putCancelOffer]: taskStatus.Failed }
+                    }));
+
+                    toast.error(response.data?.error);
+                }
+            }).catch(error => {
+                toast.error(error?.status + ": " + error?.message);
+            });
+        },
+
+        putDeliveryOrder(body){
+            authInstance.put([authConstraints.driverRoot, authConstraints.putDeliverOrder].join("/"), body, {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                },
+            }).then(response =>{
+                if(response.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putDeliverOrder]: taskStatus.Completed }
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putDeliverOrder]: taskStatus.Failed }
+                    }));
+
+                    toast.error(response.data?.error);
+                }
+            }).catch(error => {
+                toast.error(error?.status + ": " + error?.message);
+            });
+        },
+
+        putReceiveOrder(body){
+            authInstance.put([authConstraints.driverRoot, authConstraints.putReceiveOrder].join("/"), body, {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                },
+            }).then(response =>{
+                if(response.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putReceiveOrder]: taskStatus.Completed }
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putReceiveOrder]: taskStatus.Failed }
+                    }));
+
+                    toast.error(response.data?.error);
+                }
+            }).catch(error => {
+                toast.error(error?.status + ": " + error?.message);
+            });
+        }
     }
 
     return (

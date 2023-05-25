@@ -67,8 +67,6 @@ let orderSchema = yup.object().shape({
                     if (!files) {
                         return true;
                     }
-                    console.log(files);
-
                     return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
                 })
                 .test(
@@ -240,9 +238,10 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                                     }
                                                     fileReader.readAsDataURL(file);
                                                 })(files[i]);
-                                            }}}
-                                            accept="img"
-                                        />
+                                            }
+                                        }}
+                                        accept="img"
+                                    />
                                     <Form.Control.Feedback type="invalid">{errors?.productPictures}</Form.Control.Feedback>
                                 </>)
                                 }}

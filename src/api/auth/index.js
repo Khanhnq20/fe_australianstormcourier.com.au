@@ -47,12 +47,17 @@ const constraints = {
     postCheckoutIntentSessions: "order/checkout-intent-session",
     postCheckout: "order/checkout",
 
+    putCancelOffer: "offer/cancel",
+
     getAccountsDriver: "accounts/driver",
     acceptAccountDriver: "accounts/driver/accept",
     getAllAccounts: "accounts/customer",
     blockAccount: "account/block",
 
     getAllPayments: "payments",
+
+    putDeliverOrder: "order/deliver",
+    putReceiveOrder: "order/receive",
 
     hubOnline: "online",
     hubReceiveOnline: "online",

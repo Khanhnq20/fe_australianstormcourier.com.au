@@ -8,6 +8,7 @@ import { AuthContext, taskStatus } from '../../../stores';
 import { authConstraints, config } from '../../../api';
 import { Spinner } from 'react-bootstrap';
 import { CustomSpinner, Message } from '../../../layout';
+import { useNavigate } from 'react-router-dom';
 
 let forgotSchema = yup.object().shape({
     email: yup.string().email('This field must be email type').required("Email is required field")
@@ -18,12 +19,13 @@ export default function Index() {
         resetPassword
     }] = useContext(AuthContext);
     const [step, setStep] = useState(0);
+    const navigate = useNavigate();
 
     const isLoading = authState.tasks?.hasOwnProperty(authConstraints.resetPwd) && authState.tasks?.[authConstraints.resetPwd] === taskStatus.Inprogress;
     
     useEffect(() =>{
         if(authState.tasks?.[authConstraints.resetPwd] && authState.tasks?.[authConstraints.resetPwd] === taskStatus.Completed){
-            setStep(1);
+            navigate("/auth/forgot/email")
         }
     },[authState.tasks]);
 

@@ -1,79 +1,88 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useContext, useEffect, useRef } from 'react'
 import { Col, Container, Row } from 'react-bootstrap';
 import '../style/orderDetail.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { Formik } from 'formik';
+import { FieldArray, Formik } from 'formik';
 import * as yup from 'yup';
 import { Navigate, useParams } from 'react-router-dom';
 import { authConstraints, authInstance, config } from '../../../api';
 import { RiImageEditFill } from 'react-icons/ri';
 import { CustomSpinner } from '../../../layout';
 import Modal from 'react-bootstrap/Modal';
+import { OrderContext } from '../../../stores';
+import { dotnetFormDataSerialize } from "../../../ultitlies";
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 let imgSchema = yup.object().shape({
-  delImg: yup
-  .mixed()
-  .required() 
-  .test(
-  'FILE SIZE', 
-  'the file is too large', 
-  (value) => {
-      if (!value) {
-          return true;
-      }
-
-      return value.size <= 2 * 1024 * 1024;
-  })
-  .test(
-      'FILE FORMAT',
-      `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
-      (value) => {
-          if (!value) {
+  orderId: yup.number().required(),
+  deliveryImages: yup.array().of(
+    yup.object().shape({
+        file: yup.mixed().required(),
+        url: yup.string().required()
+    })).min(1).required()
+    .test(
+      'FILE SIZE', 
+      'the file is too large', 
+      (files) => {
+          if (!files) {
               return true;
           }
-          return PERMIT_FILE_FORMATS.includes(value.type);
-      }
-  ),
-})
-let imgDoneSchema = yup.object().shape({
-    imgComplete: yup
-    .mixed()
-    .nullable()
-    .required() 
-    .test(
-    'FILE SIZE', 
-    'the file is too large', 
-    (value) => {
-        if (!value) {
-            return true;
-        }
-
-        return value.size <= 2 * 1024 * 1024;
-    })
+          return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
+      })
     .test(
         'FILE FORMAT',
         `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
-        (value) => {
-            if (!value) {
+        (files) => {
+            if (!files.length) {
                 return true;
             }
-            return PERMIT_FILE_FORMATS.includes(value.type);
+            return files.every(c => PERMIT_FILE_FORMATS.includes(c.file.type));
         }
     ),
+})
+let imgDoneSchema = yup.object().shape({
+    orderId: yup.number().required(),
+    receivedImages: yup.array().of(
+      yup.object().shape({
+          file: yup.mixed().required(),
+          url: yup.string().required()
+      })).min(1).required()
+      .test(
+        'FILE SIZE', 
+        'the file is too large', 
+        (files) => {
+            if (!files) {
+                return true;
+            }
+            return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
+        })
+      .test(
+          'FILE FORMAT',
+          `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
+          (files) => {
+              if (!files.length) {
+                  return true;
+              }
+              return files.every(c => PERMIT_FILE_FORMATS.includes(c.file.type));
+          }
+      ),
     barcode: yup.number().required("Barcode is required field"),
 })
 function OrderDetail(){
-    const [process,setProcess] = React.useState(false);
-    const [result, setResult] = React.useState(null);
-    const [loading,setLoading] = React.useState(true);
-    const [img,setImg] = React.useState();
-    const imgDelivery = useRef();
-    const [error, setError] = React.useState("");
-    const {id} = useParams();
+  const [_, {putDeliveryOrder,putReceiveOrder}] = useContext(OrderContext);
+  const [process,setProcess] = React.useState(false);
+  const [result, setResult] = React.useState(null);
+  const [loading,setLoading] = React.useState(true);
+  const imgDelivery = useRef();
+  const [error, setError] = React.useState("");
+  const {id} = useParams();
 
     useEffect(() =>{
+      refresh();
+    }, [id]);
+
+    function refresh(){
       setLoading(true);
       authInstance.get([authConstraints.driverRoot, authConstraints.getAllOrderInfo].join('/'), {
         headers: {
@@ -93,12 +102,12 @@ function OrderDetail(){
         }
         setLoading(false);
       });
-    }, [id]);
+    }
 
     if(loading) return (
-    <Container>
-      <CustomSpinner></CustomSpinner>
-    </Container>);
+      <Container>
+        <CustomSpinner></CustomSpinner>
+      </Container>);
 
     if(error === "Forbiden"){
       return (<Navigate to="/driver/order"></Navigate>);
@@ -209,57 +218,105 @@ function OrderDetail(){
               <p className='product-content-title my-3'>Order</p>
               <Col>
                   {
-                    process ? <Process>{2}</Process> : 
-                  <div className='order-letter-form py-4'>
-                    <div>
-                      <Formik 
-                      initialValues={
-                        {
-                          delImg: null
-                        }
-                      }
-                      validationSchema={imgSchema}
-                      >
-                        {({errors,touched,setFieldValue,values}) =>{
-                          return(
-                            <div className='txt-center'>
-                              <div className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDelivery.current.click()}>
-                                  <div className='background-front'>
-                                      <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                      <p className='driving-txt'>Change the Image</p>
-                                  </div>
-                                  <img className='img-front' src={img || 'https://tinyurl.com/5ehpcctt'}/>
-                              </div>
-                              <Form.Control type="file" id="driver_image_front" name="delImg" ref={imgDelivery} 
-                                isInvalid={touched.delImg && !!errors?.delImg}
-                                onChange={(e) =>{
-                                    const file = e.target.files[0];
-                                    setFieldValue(e.target.name, file, true);
-                                    
-                                    const fileReader = new FileReader();
-                                    if(file){
-                                        fileReader.addEventListener("loadend", (e)=>{
-                                            setImg(fileReader.result);
-                                        })
-                                        fileReader.readAsDataURL(file);
-                                    }
-                                }}
-                            />
-                            <Form.Control.Feedback type="invalid">{errors?.delImg}</Form.Control.Feedback>
-                              <div>
-                                  <p className='order-txt-letter txt-center py-3 px-5'> 
-                                      Please send package image when you received it from the sender to start delivery process.
-                                  </p>
-                              </div>
-                              <div style={{margin:'0 auto'}}>
-                                <Button className='my-btn-yellow mx-2' disabled={values.delImg != null ? false : true} onClick={()=>{setProcess(e=>!e)}}>Start</Button>
-                              </div>
-                            </div>
-                          )
-                        }}
-                      </Formik>
+                    result?.order?.status && 
+                    ( result?.order?.status === "Prepared"   || 
+                      result?.order?.status === "Delivering" || 
+                      result?.order?.status === "Completed"  )? <Process>{2}</Process> : 
+                    <div className='order-letter-form py-4'>
+                      <div>
+                        <Formik 
+                          initialValues={
+                            {
+                              orderId: result?.orderId,
+                              deliveryImages: []
+                            }
+                          }
+                          validationSchema={imgSchema}
+                          onSubmit={values =>{
+                            const formData = dotnetFormDataSerialize({
+                                ...values,
+                                deliveryImages: values.deliveryImages.map(item => item?.file)
+                            }, {
+                              indices: true,
+                              dotsForObjectNotation: true
+                            });
+
+                            putDeliveryOrder(formData);
+                          }}
+                        >
+                          {({errors,isValid,handleSubmit,handleBlur,values}) =>{
+                            return(
+                              <Form onSubmit={handleSubmit}>
+                                <div className='txt-center'>
+                                <FieldArray name='deliveryImages' render={(arrayHelpers) =>{
+                                  return <>
+                                    <Row>
+                                      {values?.deliveryImages?.map(({url}, ind) =>(<Col sm={3}>
+                                        <div className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDelivery.current.click()}>
+                                          <div className='background-front'>
+                                              <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                              <p className='driving-txt'>Change the Image</p>
+                                          </div>
+                                          <img className='img-front' src={url || 'https://tinyurl.com/5ehpcctt'}/>
+                                        </div>
+                                        <Button onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
+                                      </Col>))}
+                                      <Col sm={6} className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDelivery.current.click()}>
+                                        <div className='background-front'>
+                                            <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                            <p className='driving-txt'>Change the Image</p>
+                                        </div>
+                                        <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
+                                      </Col>
+                                    </Row>
+                                    <div>
+                                      <Form.Control type="file" id="driver_image_front" name="deliveryImages" ref={imgDelivery} 
+                                        multiple
+                                        accept="image"
+                                        isInvalid={!!errors?.deliveryImages}
+                                        onBlur={handleBlur}
+                                        onChange={(e) =>{
+                                          const files = e.target.files;
+                                            for (var i = 0; i < files.length; i++) { 
+                                                //for multiple files          
+                                                (function(file) {                                        
+                                                    const fileReader = new FileReader();
+                                                    fileReader.onload = function(e) {  
+                                                        // get file content  
+                                                        fileReader.addEventListener("loadend", (e)=>{
+                                                            arrayHelpers.push({
+                                                                file,
+                                                                url: fileReader.result
+                                                            });
+                                                        })
+                                                    }
+                                                    fileReader.readAsDataURL(file);
+                                                })(files[i]);
+                                            }
+                                        }}/>
+                                      <Form.Control.Feedback type="invalid">{errors?.deliveryImages}</Form.Control.Feedback>
+                                    </div>
+                                  </>
+                                }}/>
+                                  
+                                <p className='order-txt-letter txt-center py-3 px-5'> 
+                                  Please send package image when you received it from the sender to start delivery process.
+                                </p>
+                                
+                                <div style={{margin:'0 auto'}}>
+                                  <Button 
+                                    type="submit"
+                                    className='my-btn-yellow mx-2' 
+                                    disabled={!isValid && !values.deliveryImages?.length} 
+                                  >Start</Button>
+                                </div>
+                                </div>
+                              </Form>
+                            )
+                          }}
+                        </Formik>
+                      </div>
                     </div>
-                  </div>
                   }
               </Col>
             </Row>
@@ -318,7 +375,7 @@ function Process({children}){
                     </section>
                   </div>
                   <div>
-{/* Delivery Success */}
+                  {/* Delivery Success */}
                     <button className='my-btn-yellow mx-5 my-2' onClick={()=>{
                       setComplete(true);
                     }}>Next Step</button>
