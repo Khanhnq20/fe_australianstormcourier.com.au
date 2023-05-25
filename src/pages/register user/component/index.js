@@ -74,9 +74,9 @@ export default function Index() {
                             {isLoading && <CustomSpinner></CustomSpinner>}
                             <Form className='form' onSubmit={handleSubmit}>
 
-                                <Message.Error>
+                                {!!authState?.errors?.length && (<Message.Error>
                                     {authState?.errors?.map(error => <p>{error}</p>)}
-                                </Message.Error>
+                                </Message.Error>)}
 
                                 <Form.Group className="form-group" >
                                     <div className='mb-2'>

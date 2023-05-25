@@ -1,6 +1,5 @@
 import React from 'react';
 import { Formik } from "formik";
-import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import {BiSearchAlt2} from 'react-icons/bi';
@@ -14,9 +13,6 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { CustomSpinner } from '../../../layout';
 
-// const userHistorySchema = yup.object.shape({
-
-// });
 
 function UserHistory() {
     const {
@@ -29,17 +25,24 @@ function UserHistory() {
         nextPage,
         prevPage,
         setCurrent,
-        setPerPageAmount
+        setPerPageAmount,
+        search
     } = usePagination({
-        fetchingAPIInstance: authInstance.get([authConstraints.userRoot, authConstraints.getUserOrderHistory].join("/"), {
+        fetchingAPIInstance:({controller, page, take, ...queries}) =>  authInstance.get([authConstraints.userRoot, authConstraints.getUserOrderHistory].join("/"), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+            },
+            signal: controller.signal,
+            params: {
+                page,
+                amount: take,
+                ...queries
             }
         }),
         propToGetItem: "results",
         propToGetTotalPage: "total",
         amountPerPage: 10,
-        startingPage: 0,
+        startingPage: 1,
         totalPages: 1
     });
     const rows = [10,15,20,25,30,35,40];
@@ -48,72 +51,50 @@ function UserHistory() {
     return (
         <Formik
             initialValues={{
-                suburb: '',
-                postCOde: ''
+                pick: '',
+                des: '',
             }} 
-            // validationSchema={userHistorySchema}
+            onSubmit={values => {
+                search(values);
+            }}
         >
-        {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
+        {({handleSubmit, handleChange, handleBlur,values}) =>{
             return(<>
                 <div>
                     <div className='p-3'>
-                            <div>
-                                <Form>
-                                    <div className='form-order'>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>ID</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="id"
-                                                placeholder="Enter Id"
-                                                onChange={handleChange}
-                                            />
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Sender Location</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="from"
-                                                placeholder="Enter Sender Location"
-                                                onChange={handleChange}
-                                            />
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Destination</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="to"
-                                                placeholder="Enter Full Name"
-                                                onChange={handleChange}
-                                            />
-                                        </Form.Group>
-                                        <Form.Group>
-                                            <div className='mb-2'>
-                                                <Form.Label className='label'>Full name driver</Form.Label>
-                                            </div>
-                                            <Form.Control
-                                                type="text"
-                                                name="fullNameDriver"
-                                                placeholder="Enter Full Name"
-                                                isInvalid={touched.fullName && errors.fullName}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">{errors.fullName}</Form.Control.Feedback>
-                                        </Form.Group>
+                        <Form onSubmit={handleSubmit}>
+                            <div className='form-order'>
+                                <Form.Group>
+                                    <div className='mb-2'>
+                                        <Form.Label className='label'>Pickup Location</Form.Label>
                                     </div>
-                                    <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} className={`my-btn-yellow my-4 product-btn-search`}>
-                                        <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2>
-                                        Search
-                                    </Button>
-                                </Form>
+                                    <Form.Control
+                                        type="text"
+                                        name="pick"
+                                        placeholder=""
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group>
+                                    <div className='mb-2'>
+                                        <Form.Label className='label'>Destination</Form.Label>
+                                    </div>
+                                    <Form.Control
+                                        type="text"
+                                        name="des"
+                                        placeholder=""
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
                             </div>
+                            <Button 
+                                type="submit"
+                                variant="warning" 
+                                style={{backgroundColor:"#f2a13b",border:'none'}} 
+                                className={`my-btn-yellow my-4 product-btn-search`}>
+                                <BiSearchAlt2 style={{fontSize:'20px'}}></BiSearchAlt2> Search
+                            </Button>
+                        </Form>
                     </div>
                     
                     <div>
@@ -137,7 +118,9 @@ function UserHistory() {
                             <p className='m-0'>Items</p>
                         </div>
 
-                        {loading ? <CustomSpinner></CustomSpinner> : items?.length === 0 ? (<div className='txt-center'>
+                        {loading ? <CustomSpinner></CustomSpinner> : 
+                            items?.length === 0 ? 
+                            (<div className='txt-center'>
                                 <h5>No Data Found</h5>
                             </div>) :
                             (<>

@@ -54,31 +54,33 @@ let orderSchema = yup.object().shape({
             weight: yup.number().positive().required("Weight is required field"),
             startingRate: yup.number().positive().required("Starting Rate is required field"),
             packageType: yup.string().required("Package Type is required field"),
-            productPictures: yup.array().of(
-                yup.object().shape({
-                    file: yup.mixed().required()
-                        .test(
-                        'FILE SIZE', 
-                        'the file is too large', 
-                        (files) => {
-                            if (!files) {
-                                return true;
-                            }
-        
-                            return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
-                        })
-                        .test(
-                            'FILE FORMAT',
-                            `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
-                            (files) => {
-                                if (!files.length) {
-                                    return true;
-                                }
-                                return files.every(c => PERMIT_FILE_FORMATS.includes(c.file.type));
-                            }
-                        ),
-                    url: yup.string().required()
-                })).min(1).required()
+            productPictures: yup.array()
+                .of(
+                    yup.object().shape({
+                        file: yup.mixed().required(),
+                        url: yup.string().required()
+                    })).min(1).required()
+                .test(
+                'FILE SIZE', 
+                'the file is too large', 
+                (files) => {
+                    if (!files) {
+                        return true;
+                    }
+                    console.log(files);
+
+                    return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
+                })
+                .test(
+                    'FILE FORMAT',
+                    `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
+                    (files) => {
+                        if (!files.length) {
+                            return true;
+                        }
+                        return files.every(c => PERMIT_FILE_FORMATS.includes(c.file.type));
+                    }
+                ),
         })
     )
 });
@@ -190,25 +192,23 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                 render={(arrayHelpers) =>{
                                 return (<>
                                     <Row style={{flexDirection:'column'}}>
-                                        <>
                                         {
                                             values?.orderItems?.[index]?.productPictures?.map?.((picture,ind) =>{
-                                            return (
-                                                <Col key={ind}>
-                                                    <div className='img-front-frame'>
-                                                        <div className='background-front'>
-                                                            <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                                            <p className='driving-txt'>Change Product Images</p>
+                                                return (
+                                                    <Col key={ind}>
+                                                        <div className='img-front-frame'>
+                                                            <div className='background-front'>
+                                                                <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                                                <p className='driving-txt'>Change Product Images</p>
+                                                            </div>
+                                                            <img className='img-front' src={picture?.url || 'https://tinyurl.com/5ehpcctt'}/>
                                                         </div>
-                                                        <img className='img-front' src={picture?.url || 'https://tinyurl.com/5ehpcctt'}/>
-                                                    </div>
-                                                    <pre>{JSON.stringify(errors?.orderItems?.[index]?.productPictures)}</pre>
-                                                    {errors?.orderItems?.[index]?.productPictures?.[ind]?.file}
-                                                </Col>
-                                                )
-                                            })
+                                                        <Button onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
+                                                        {errors?.orderItems?.[index]?.productPictures?.[ind]?.file}
+                                                    </Col>
+                                                    )
+                                                })
                                         }
-                                        </>
                                         <Col>
                                             <div className='img-front-frame' onClick={() => product_img_ipt.current.click()}>
                                                 <div className='background-front'>
@@ -222,7 +222,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                     <Form.Control type="file" id="driver_image_back" 
                                         ref={product_img_ipt} 
                                         multiple
-                                        isInvalid={!!errors?.orderItems?.[index]?.productPictures}
+                                        isInvalid={!!errors?.productPictures}
                                         onChange={(e) =>{
                                             const files = e.target.files;
                                             for (var i = 0; i < files.length; i++) { 
@@ -243,6 +243,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                             }}}
                                             accept="img"
                                         />
+                                    <Form.Control.Feedback type="invalid">{errors?.productPictures}</Form.Control.Feedback>
                                 </>)
                                 }}
                             />
@@ -378,7 +379,6 @@ function OrderCreation(){
             const {touched, errors,setFieldValue, handleSubmit, handleChange, handleBlur,values} = formProps;
             return(   
                 <div className='p-3'>
-                    <pre>{JSON.stringify()}</pre>
                     <Modal show={orderState.loading} 
                         size="lg"
                         backdrop="static"
@@ -394,7 +394,6 @@ function OrderCreation(){
                         <div 
                             // className='form-order'
                         >
-                            <pre>{JSON.stringify(errors, 4, 4)}</pre>
                             {/* Sending location & Destination */}
                             <h3 className="my-3">Order Location</h3>
 
@@ -508,7 +507,7 @@ function OrderCreation(){
                                 </Col>
                             </Row>
                             {/* Receiver Information */}
-                            <h4 className="my-3">Receiver</h4>
+                            <h3 className="my-3">Receiver Information</h3>
                             <Row>
                                 <Col>
                                     <Form.Group>

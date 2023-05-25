@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import * as yup from 'yup';
 import { Formik } from "formik";
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import {AiFillEye,AiFillEyeInvisible} from  'react-icons/ai';
 import { Message, Sidebar } from '../../../layout';
+import { AuthContext, taskStatus } from '../../../stores';
+import { Spinner } from 'react-bootstrap';
+import { authConstraints } from '../../../api';
 
 let changePasswordSchema = yup.object().shape({
     oldPassword: yup.string().required("This field is requied"),
@@ -16,6 +19,7 @@ let changePasswordSchema = yup.object().shape({
 })
 
 function ChangePassword() {
+    const [authState, {changePassword}] = useContext(AuthContext);
     const [showPass,setShowPass] = React.useState(false); 
     const [showPassConfirm,setShowPassConfirm] = React.useState(false);
     const showPassHandler = () => {
@@ -24,8 +28,10 @@ function ChangePassword() {
     const showPassConfirmHandler = () => {
         setShowPassConfirm(e=>!e);
     }
-  return (
+    const isLoading = authState.tasks?.hasOwnProperty(authConstraints.changePwd) && 
+        authState.tasks?.[authConstraints.changePwd] === taskStatus.Inprogress;
 
+    return (
     <Formik
         initialValues={{
             oldPassword:'',
@@ -34,15 +40,20 @@ function ChangePassword() {
         }}
         isInitialValid={false}  
         validationSchema={changePasswordSchema}
+        onSubmit={values =>{
+            changePassword(values.oldPassword, values.password)
+        }}
     >
     {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
         return(
             <>   
-                <h3 className='ui-header p-2'>Information</h3>
-                <div className='container p-5'>
+                <div className='container p-3'>
+                    <h3 className='ui-header p-2'>Information</h3>
                     <div>
-                        <Form className='form'>
-                        <Message.Error>Error</Message.Error>
+                        <Form className='form' onSubmit={handleSubmit}>
+                            {authState.errors.length > 0 && <Message.Error>
+                                {authState.errors.map(error => <p>{error}</p>)}
+                            </Message.Error>}
                             <Form.Group className="form-group">
                                     <div  className='mb-2'>
                                         <Form.Label className='label'>Old Password</Form.Label>
@@ -107,7 +118,14 @@ function ChangePassword() {
                                     </div>
                                 </div>
                             </Form.Group>
-                            <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={!isValid} className={`my-btn-yellow my-3`}>Update</Button>
+                            <Button 
+                                variant="warning"
+                                type="submit" 
+                                style={{backgroundColor:"#f2a13b",border:'none'}} 
+                                disabled={!isValid && isLoading} 
+                                className={`my-btn-yellow my-3`}>
+                                {isLoading && <Spinner></Spinner> || "Update"}
+                            </Button>
                         </Form>
                     </div>
                 </div>
@@ -119,6 +137,6 @@ function ChangePassword() {
 
 export default function Index(){
     return(
-            <ChangePassword></ChangePassword>
+        <ChangePassword></ChangePassword>
     )
 }

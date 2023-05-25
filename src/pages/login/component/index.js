@@ -11,6 +11,7 @@ import '../style/login.css';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../../stores';
 import { CustomSpinner, Message } from '../../../layout';
+import { config } from '../../../api';
 
 
 let loginSchema = yup.object().shape({
@@ -30,7 +31,6 @@ export default function Index() {
     }
 
     return (
-
         <Formik
             initialValues={{
                 email:'',
@@ -44,7 +44,7 @@ export default function Index() {
                     "UserName": values.email,
                     "Password": values.password,
                     "RememeberMe": values.rememberMe
-                });
+                }, `${window.location.protocol}//${window.location.host}${config.AccountConfirmationURL}`);
             }}
         >
         {({touched, errors, handleSubmit, handleChange, handleBlur, isValid}) =>{

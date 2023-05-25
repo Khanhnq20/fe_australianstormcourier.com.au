@@ -51,7 +51,7 @@ export const userChildrens = [
   {
     path: "*",
     element: <Container>
-      <h2>This page are in modified</h2>
+      <h2 className="m-2">This page are in modified</h2>
     </Container>
   }
 ];
