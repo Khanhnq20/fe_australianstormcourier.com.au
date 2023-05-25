@@ -9,7 +9,7 @@ import { CustomSpinner } from '../../layout';
 function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], invalidLink="/auth/login"}) {
     const [authState] = useContext(AuthContext);
 
-    if(authState.loading && authState.tasks?.[authConstraints.getAccount] === taskStatus.Inprogress){
+    if(authState.tasks.hasOwnProperty(authConstraints.getAccount) && authState.tasks?.[authConstraints.getAccount] === taskStatus.Inprogress){
         return (<Container>
             <CustomSpinner />
         </Container>)
@@ -18,6 +18,7 @@ function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], i
     if(!authState?.accountInfo?.roles) {
         return (<Container>
             <h2>User has not been permitted to access</h2>
+            <Spinner></Spinner>
         </Container>)
     } 
 
@@ -32,7 +33,7 @@ function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], i
 AuthValidator.LoggedContainer = function LoggedContainer({children, invalidLink=null}) {
     const [authState] = useContext(AuthContext);
 
-    if(authState.loading && authState.task?.[authConstraints.getAccount] === taskStatus.Inprogress) 
+    if(authState.tasks.hasOwnProperty(authConstraints.getAccount) &&  authState.tasks?.[authConstraints.getAccount] === taskStatus.Inprogress) 
         return (<Container>
             <div className="mx-auto text-center">
                 <Spinner></Spinner>

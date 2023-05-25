@@ -7,7 +7,6 @@ export const AuthContext = createContext();
 export default function Index({children}) {
     const [state,setState] = React.useState({
         accessToken: "",    
-        // accountInfo: null,
         accountInfo: null,
         loading: true,
         isLogged: false,
@@ -16,6 +15,7 @@ export default function Index({children}) {
         errors: [],
         tasks: {}
     });
+    const controller = new AbortController();
 
     const hasMounted = React.useRef(false);    
 
@@ -118,6 +118,17 @@ export default function Index({children}) {
                         }
                     }));
                 }
+                else {
+                    setState(i => ({
+                        ...i,
+                        errors: [err?.message],
+                        loading: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.signupUser] : taskStatus.Failed
+                        }
+                    }));
+                }
             });
         },
     
@@ -156,14 +167,13 @@ export default function Index({children}) {
                     tasks: {
                         ...i.tasks,
                         [authConstraints.signupDriver] : taskStatus.Failed,
-                        loading: false
                     },
+                    loading: false
                 }));
             })
         },
 
         verifyAccount(email, userName, confirmToken){
-            console.log(email, userName, confirmToken);
             setState(i =>({
                 ...i,
                 tasks: {
@@ -238,7 +248,8 @@ export default function Index({children}) {
             authInstance.get([authConstraints.root, authConstraints.getAccount].join("/"), {
                 headers: {
                     "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
-                }
+                },
+                signal: controller.signal
             })
             .then(response =>{
                 if(response?.data){
@@ -267,22 +278,68 @@ export default function Index({children}) {
             });
         },
 
-        resetPassword(body, returnURL){
-            authInstance.post([authConstraints.root, authConstraints.resetPwd].join("/")).then(response =>{
-                if(response.data?.successed){
-                    
+        resetPassword(email, newPassword = "", returnURL = "", token = ""){
+            setState(i =>({
+                ...i,
+                errors: [],
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.resetPwd] : taskStatus.Inprogress
                 }
-
+            }));
+            authInstance.post([authConstraints.root, authConstraints.resetPwd].join("/"), {
+                email,
+                newPassword
+            }, {
+                params: {
+                    returnURL: encodeURI(returnURL),
+                    token
+                }
+            }).then(response =>{
+                if(response.data?.successed){
+                    toast.success("Reset Password Completed!");
+                    setState(i =>({
+                        ...i,
+                        errors: [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.resetPwd] : taskStatus.Completed
+                        }
+                    }));
+                }
+                else if(response.status === 201){
+                    toast.success(response?.data);
+                    setState(i =>({
+                        ...i,
+                        errors: [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.resetPwd] : taskStatus.Completed
+                        }
+                    }));
+                }
+                else {
+                    toast.warning(response?.data || "");
+                    setState(i =>({
+                        ...i,
+                        errors: 
+                            (response?.data?.errors && [...response?.data?.errors]) ||
+                            (typeof response.data === "string" && [response.data]) || [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.resetPwd] : taskStatus.Failed
+                        }
+                    }));
+                }
             }).catch(err =>{
-
-            });
-        },
-
-        changePassword(){
-            authInstance.post([authConstraints.root, authConstraints.forgetPwd].join("/")).then(response =>{
-
-            }).catch(err =>{
-
+                setState(i =>({
+                    ...i,
+                    errors: [err.message],
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.resetPwd] : taskStatus.Failed
+                    }
+                }));
             });
         },
 
@@ -352,12 +409,14 @@ export default function Index({children}) {
                         accountInfo: response.data.userInfo
                     }));
 
-                    toast.success("Updated user information", {
-                    });
+                    toast.success("Updated user information");
+                    setState(i =>({
+                        ...i,
+                        loading: false
+                    }));
                 }
             }).catch(err =>{
                 toast.error(err.response);
-            }).finally(() =>{
                 setState(i =>({
                     ...i,
                     loading: false
@@ -393,8 +452,58 @@ export default function Index({children}) {
                 toast.error(err.response);
             });
         },
-        changePassword(body, userId){
-            
+        changePassword(oldPassword, newPassword){
+            setState(i =>({
+                ...i,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.changePwd]: taskStatus.Inprogress
+                }
+            }));
+            authInstance.post([authConstraints.root, authConstraints.changePwd].join("/"),{
+                oldPassword,
+                newPassword
+            }, {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                }
+            }).then(response =>{
+                if(!!response.data?.successed){
+                    toast.success("Update password completed !");
+                    setState(i =>({
+                        ...i,
+                        errors: [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.changePwd] : taskStatus.Completed
+                        },
+                        loading: false
+                    }));
+                } 
+                else {
+                    setState(i =>({
+                        ...i,
+                        errors: typeof response.data === "string" ? [response.data] : 
+                        response.data?.errors && Array.isArray(response.data?.errors) ? response.data?.errors :
+                        [],
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.changePwd] : taskStatus.Failed
+                        },
+                        loading: false
+                    }));
+                }
+            }).catch(err =>{
+                setState(i =>({
+                    ...i,
+                    errors: [err],
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.changePwd] : taskStatus.Failed,
+                        loading: false
+                    },
+                }));
+            })
         }
     }
     
@@ -434,6 +543,10 @@ export default function Index({children}) {
         }
         if(hasMounted.current && !state.isLogged && !!localStorage.getItem(authConstraints.LOCAL_KEY)){
             funcs.getAccount();
+        }
+
+        return () =>{
+            controller.abort();
         }
     }, [state.accessToken]);
 

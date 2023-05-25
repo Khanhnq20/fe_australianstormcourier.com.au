@@ -1,17 +1,14 @@
 import '../style/driverActiveOrder.css';
-import React, { useContext, useState } from 'react';
-import {AiOutlineFileExclamation} from 'react-icons/ai'
+import React, { useContext } from 'react';
 import * as yup from 'yup';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
-import { Col, Row, Spinner, Form, Button, Modal, InputGroup } from 'react-bootstrap';
-import { ImCross } from 'react-icons/im';
-import { FcAcceptDatabase } from 'react-icons/fc';
+import { Col, Row, Form, Button, Modal } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
-import moment, { utc } from 'moment';
+import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { AuthContext, OrderContext } from '../../../stores';
 import { CustomSpinner } from '../../../layout';
