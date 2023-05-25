@@ -6,7 +6,6 @@ import '../style/index.css'
 
 function SuccessPayment({result}) {
   const [showInvoice, setShowInvoice] = useState(false);
-  const [stripeResult] = useStripe();
 
   return (
     <Container className='p-success-root'>

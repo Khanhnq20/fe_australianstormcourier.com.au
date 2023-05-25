@@ -30,31 +30,32 @@ function Product() {
         perPageAmount,
         total,
         loading,
-        error,
         items,
         nextPage,
         prevPage,
         setCurrent,
         setPerPageAmount
      } = usePagination({
-        fetchingAPIInstance: authInstance.get([authConstraints.driverRoot, authConstraints.getDriverJobs].join("/"), {
+        fetchingAPIInstance: ({controller, page, take }) => authInstance.get([authConstraints.driverRoot, authConstraints.getDriverJobs].join("/"), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
-            }
+            },
+            params: {
+                page,
+                amount: take
+            },
+            signal: controller.signal
         }),
         propToGetItem: "results",
         propToGetTotalPage: "total",
         amountPerPage: rows[0],
-        startingPage: 0,
+        startingPage: 1,
         totalPages: 1
     });
-    
 
     if(loading){
         return <CustomSpinner></CustomSpinner>
     }
-
-    if(error) return <pre>{JSON.stringify(error, 4, 4)}</pre>
 
     return (
         <div>
@@ -153,7 +154,7 @@ function Product() {
                                 </thead> 
                                 <tbody>
                                     {
-                                        items?.slice(currentPage * perPageAmount, perPageAmount * (1 + currentPage)).map((post,index) =>{
+                                        items?.slice((currentPage - 1) * perPageAmount, perPageAmount * currentPage).map((post,index) =>{
                                             return (
                                                 <tr key={index}>
                                                     <td>{post?.id}</td>
@@ -172,7 +173,7 @@ function Product() {
                                                     <td>{post?.sendingLocation}</td>
                                                     <td>{post?.destination}</td>
                                                     <td>{!!post?.createdDate ? moment(post?.createdDate).format("DD-MM-YYYY") : ""}</td>
-                                                    <td>{!!post?.deliveredDate ? moment(post?.deliveredDate).format("DD-MM-YYYY") : ""}</td>
+                                                    <td>{!!post?.deliverableDate ? moment(post?.deliverableDate).format("DD-MM-YYYY") : ""}</td>
                                                     <td>{post?.timeFrame}</td>
                                                     <td><>
                                                         {post?.vehicles?.map?.(str => {
@@ -207,7 +208,6 @@ function Product() {
                                                                                     ...values,
                                                                                     ratePrice: post?.orderItems?.[0]?.startingRate
                                                                                 };
-                                                                                
                                                                                 postDriverOffer(body);
                                                                             }}>
                                                                                 Accept
@@ -252,12 +252,12 @@ function Product() {
                         </div>
                         <Pagination className='pg-form w-100'>
                             <Pagination.Prev onClick={prevPage} className='pg-first' />
-                            {Array.from(Array(5).keys()).map((item,index) => {
+                            {Array.from(Array(total).keys()).map((item,index) => {
                                 return (
                                     <div key={index}>
                                         <Pagination.Item 
-                                        className={item === currentPage ? "pg-no pg-active" : "pg-no"}
-                                        onClick={()=>setCurrent(item)}
+                                        className={item + 1 === currentPage ? "pg-no pg-active" : "pg-no"}
+                                        onClick={()=>setCurrent(item + 1)}
                                         >{item + 1}</Pagination.Item>
                                     </div>
                                 )

@@ -67,8 +67,6 @@ let orderSchema = yup.object().shape({
                     if (!files) {
                         return true;
                     }
-                    console.log(files);
-
                     return files.reduce((p,c) => c.file.size + p, 0) <= 2 * 1024 * 1024;
                 })
                 .test(
@@ -244,6 +242,32 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                             </div>
                                         </Col>
                                     </Row>
+                                    <Form.Control type="file" id="driver_image_back" 
+                                        ref={product_img_ipt} 
+                                        multiple
+                                        isInvalid={!!errors?.productPictures}
+                                        onChange={(e) =>{
+                                            const files = e.target.files;
+                                            for (var i = 0; i < files.length; i++) { 
+                                                //for multiple files          
+                                                (function(file) {                                        
+                                                    const fileReader = new FileReader();
+                                                    fileReader.onload = function(e) {  
+                                                        // get file content  
+                                                        fileReader.addEventListener("loadend", (e)=>{
+                                                            arrayHelpers.push({
+                                                                file,
+                                                                url: fileReader.result
+                                                            });
+                                                        })
+                                                    }
+                                                    fileReader.readAsDataURL(file);
+                                                })(files[i]);
+                                            }
+                                        }}
+                                        accept="img"
+                                    />
+                                    <Form.Control.Feedback type="invalid">{errors?.productPictures}</Form.Control.Feedback>
                                 </>)
                                 }}
                             />

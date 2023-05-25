@@ -34,9 +34,14 @@ function UserManagement() {
         setPerPageAmount,
         refresh
     } = usePagination({
-        fetchingAPIInstance: authInstance.get([authConstraints.adminRoot, authConstraints.getAllAccounts].join('/'), {
+        fetchingAPIInstance: ({controller, page, take}) => authInstance.get([authConstraints.adminRoot, authConstraints.getAllAccounts].join('/'), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+            },
+            signal: controller.signal,
+            params: {
+                page,
+                amount: take
             }
         }), 
         propToGetItem: "results", 
@@ -222,7 +227,8 @@ function UserManagement() {
                                 <Pagination className='pg-form w-100'>
                                     {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
                                     <Pagination.Prev onClick={prevPage} className='pg-first' />
-                                    {Array.from(total).map((item,index) => {
+                                    {Array.from(Array(total).keys()).map((i,index) => {
+                                        const item = i + 1;
                                         return (
                                             <div>
                                                 <div key={index}>
