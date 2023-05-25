@@ -1,6 +1,5 @@
 import React from 'react';
 import { Formik } from "formik";
-import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import {BiSearchAlt2} from 'react-icons/bi';
@@ -15,7 +14,7 @@ import { Link } from 'react-router-dom';
 import { CustomSpinner } from '../../../layout';
 
 const UserOrders = () => {
-    const rows = [1,2,3,4,5,10,15];
+    const rows = [5,10,15];
     const {
         currentPage,
         perPageAmount,
@@ -30,7 +29,6 @@ const UserOrders = () => {
         search
     } = usePagination({
         fetchingAPIInstance:({controller, page, take, ...queries}) =>{ 
-            console.log(queries);
             return authInstance.get([authConstraints.userRoot, authConstraints.getUserOrders].join("/"), {
                 headers: {
                     'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
@@ -60,7 +58,7 @@ const UserOrders = () => {
                 search(values);
             }}
         >
-        {({touched, errors, handleSubmit, handleChange, handleBlur, isValid,values}) =>{
+        {({handleSubmit, handleChange, handleBlur, isValid,values}) =>{
             return(<>
                 <div>
                     <div className='p-3'>
