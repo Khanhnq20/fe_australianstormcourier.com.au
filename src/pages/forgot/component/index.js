@@ -59,7 +59,6 @@ export default function Index() {
                                 {authState.errors.map(err => <p className='mb-1'>{err}</p>)}
                             </Message.Error>}
                             <Form.Group className="form-group" >
-                                {!step ? <>
                                     <div  className='mb-2'>
                                     <Form.Label className='label'>{!step ? "Email" : "Code"}</Form.Label>
                                     <p className='asterisk'>*</p>
@@ -73,11 +72,6 @@ export default function Index() {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     /> 
-                                </>
-                                : 
-                                <>
-                                    <SendEmail></SendEmail>
-                                </>}
                                 <Form.Control.Feedback type="invalid">{!step ? errors.email : errors.code}</Form.Control.Feedback>
                             </Form.Group>
                             <Button type="submit" 

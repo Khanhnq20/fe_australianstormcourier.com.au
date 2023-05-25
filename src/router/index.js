@@ -93,7 +93,6 @@ export const router = createBrowserRouter([
         path: 'payment',
         element: <>
         <Outlet></Outlet>
-        <Footer.Custom></Footer.Custom>
         </>,
         
         children: paymentChildrens,

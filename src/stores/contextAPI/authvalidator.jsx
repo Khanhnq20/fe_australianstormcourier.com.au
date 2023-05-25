@@ -5,6 +5,7 @@ import { Container, Spinner } from 'react-bootstrap';
 import taskStatus from './taskStatus';
 import { authConstraints } from '../../api';
 import { CustomSpinner } from '../../layout';
+import { NonRouting } from '../../pages';
 
 function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], invalidLink="/auth/login"}) {
     const [authState] = useContext(AuthContext);
@@ -17,8 +18,7 @@ function AuthValidator({children, roles=["User", "Driver", "Sender", "Admin"], i
 
     if(!authState?.accountInfo?.roles) {
         return (<Container>
-            <h2>User has not been permitted to access</h2>
-            <Spinner></Spinner>
+            <NonRouting></NonRouting>
         </Container>)
     } 
 
