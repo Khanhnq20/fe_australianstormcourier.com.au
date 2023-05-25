@@ -31,3 +31,6 @@ export {default as DriverDetail} from './driver detail/component/index';
 export {default as PreventDriver} from './prevent driver/component/index';
 export {default as AdminInvoices} from './admin invoices/components';
 export {default as Verify} from './verify/component';
+export {EmailForgot} from './forgot/component/emailForgot';
+export {default as Invoice} from './invoice/invoice';
+export {default as NonRouting} from './nonRouting/component/index'

@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { EmailCheck, Forgot, Login, RegisterDriver, RegisterUser, ResetPassword, UserInformation, Verify } from "../pages";
+import { EmailCheck, EmailForgot, Forgot, Login, RegisterDriver, RegisterUser, ResetPassword, UserInformation, Verify } from "../pages";
 import { Footer } from "../layout";
 
 export const authChildrens = [
@@ -54,9 +54,22 @@ export const authChildrens = [
     {
       path:"forgot",
       element:<>
-        <Forgot></Forgot>
+        <Outlet></Outlet>
         <Footer.Custom></Footer.Custom>
-      </>
+      </>,
+      children:[{
+        path:'',
+        element:<>
+          <Forgot></Forgot>
+        </>
+      },
+      {
+        path:'email',
+        element:<>
+          <EmailForgot></EmailForgot>
+        </>
+      }
+    ]
     },
     {
       path:"reset",

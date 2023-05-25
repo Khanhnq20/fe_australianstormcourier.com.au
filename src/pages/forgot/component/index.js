@@ -34,7 +34,6 @@ export default function Index() {
                     return( 
                         <Form className='form' onSubmit={handleSubmit}>
                             <Form.Group className="form-group" >
-                                {!step ? <>
                                     <div  className='mb-2'>
                                     <Form.Label className='label'>{!step ? "Email" : "Code"}</Form.Label>
                                     <p className='asterisk'>*</p>
@@ -48,11 +47,6 @@ export default function Index() {
                                         onChange={handleChange}
                                         onBlur={handleBlur}
                                     /> 
-                                </>
-                                : 
-                                <>
-                                    <SendEmail></SendEmail>
-                                </>}
                                 <Form.Control.Feedback type="invalid">{!step ? errors.email : errors.code}</Form.Control.Feedback>
                             </Form.Group>
                        <Button variant="warning" style={{backgroundColor:"#f2a13b",border:'none'}} disabled={!values.email} onClick={() => setStep(1)} className={`my-btn-yellow my-2`}>Forget password</Button> 
