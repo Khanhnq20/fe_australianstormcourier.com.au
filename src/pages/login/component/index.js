@@ -91,7 +91,7 @@ export default function Index() {
                                             <Form.Control
                                                 type={showPass ? 'text' : 'password'} 
                                                 onChange={handleChange}
-                                                placeholder="Enter your Password"
+                                                placeholder="Enter Your Password"
                                                 name="password"/>
                                                 <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
                                                 <div className='override-block'></div>

@@ -49,11 +49,13 @@ function Banner(){
                 <div className='ban-form-content'>
                     <div className='w-100 ban-content-2'>
                         <div className='ban-content fadeLeft'>
-                            <h5 style={{fontSize:'1.250em',fontWeight:'800',color:'white'}}>AS Courier</h5>
-                            <h3 className='ban-txt-header py-3'>GPS Postal <br/>Tracking</h3>
+                            <div className='px-4'>
+                                <h5 style={{fontSize:'1.250em',fontWeight:'800',color:'white'}}>AS Courier</h5>
+                                <h3 className='ban-txt-header py-3'>GPS Postal <br/>Tracking</h3>
 
-                            <p className='ban-txt'>Australian Storm Courier is an Australian professional delivery 
-                            company based in Melbourne. We provide fast same-day delivery between Dandenong and Melbourne CBD.</p>
+                                <p className='ban-txt'>Australian Storm Courier is an Australian professional delivery 
+                                company based in Melbourne. We provide fast same-day delivery between Dandenong and Melbourne CBD.</p>
+                            </div>
                         </div>
                         <div className='ban-img-frame'>
                             <img className='ban-img img-auto-flex' src={bannerImage}/>

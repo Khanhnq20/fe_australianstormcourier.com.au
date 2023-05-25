@@ -8,7 +8,6 @@ import '../style/productHistoryDetail.css'
 
 function OrderDetail(){
     const [process,setProcess] = React.useState(false);
-
     return(
         <div>
             <div>
@@ -153,9 +152,6 @@ function Process({children}){
             </div>
         </div>
         <div className='product-label-info' style={{alignItems:'unset'}}>
-            <p className='product-label-fit py-2'>
-              Process
-            </p> 
             {/* <GoogleMapReact
               defaultCenter={this.props.center}
               defaultZoom={this.props.zoom}

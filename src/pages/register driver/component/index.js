@@ -26,7 +26,7 @@ let registerSchema = yup.object().shape({
     ),
     confirmPassword: yup.string().required("This field is requied").oneOf([yup.ref("password"), null], "Passwords must match"),
     fullName: yup.string().required("Full Name is required field"),
-    ABNNumber: yup.number().typeError("ABN Number must be number").nullable(),
+    ABNNumber: yup.number().typeError("ABN must be number").nullable(),
     businessName: yup.string().nullable(),
     address: yup.string().required("Full Address is required field"),   
     city: yup.string().required("City is required field"),
@@ -38,7 +38,7 @@ let registerSchema = yup.object().shape({
     frontDrivingLiense: yup
         .mixed()
         .nullable()
-        .required() 
+        .required("Front Driving License is required field") 
         .test(
         'FILE SIZE', 
         'the file is too large', 
@@ -62,7 +62,7 @@ let registerSchema = yup.object().shape({
     backDrivingLiense: yup
         .mixed()
         .nullable()
-        .required()
+        .required("Back Driving License is required field")
         .test(
         'FILE SIZE', 
         'the file is too large', 
@@ -85,6 +85,7 @@ let registerSchema = yup.object().shape({
         ),
     drivingCertificate: yup
         .mixed()
+        .required("Driving Certificate is required field")
         .when("isAusDrivingLiense", {
             is:(isAusDrivingLiense) =>  {
                 return !isAusDrivingLiense;
@@ -298,11 +299,11 @@ function RegisterDriver() {
                                             type="text"
                                             name="phone"
                                             placeholder="Enter Your Full Address"
-                                            isInvalid={touched.phoneNumber && errors.phoneNumber}
+                                            isInvalid={touched.phone && errors.phone}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.phoneNumber}</Form.Control.Feedback>
+                                        <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
                                     </Form.Group>
 
                                     <Button variant="warning" disabled={!permitedNext} onClick={()=>setNext(e => !e)} className='my-btn-yellow'>Next</Button>
@@ -330,7 +331,7 @@ function RegisterDriver() {
                                         {/* ABN Number */}
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
-                                                <Form.Label className='label'>ABN Number</Form.Label>
+                                                <Form.Label className='label'>ABN</Form.Label>
                                             </div>
                                             <Form.Control
                                                 type="text"
