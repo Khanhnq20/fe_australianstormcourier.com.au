@@ -38,6 +38,7 @@ const constraints = {
 
     getDriverJobs: "job",
     postDriverOffers: "offer",
+    getDriverHistory: "history",
     getDriverActiveOrders: 'order/active',
 
     getAllOrderInfo: 'order/detail',
