@@ -14,9 +14,11 @@ import { usePagination } from '../../../hooks';
 import { PaymentComponents } from '../..';
 import { CustomSpinner } from '../../../layout';
 import Carousel from 'react-bootstrap/Carousel';
-import {FaTimes} from 'react-icons/fa'
+import {FaTimes} from 'react-icons/fa';
+import { Link } from "react-router-dom";
 
 function ProductDetail(){
+    const [support,setSupport] = React.useState(false);
     const [slider,setSlider] = React.useState(false);
     const [receiveImg,setReceiveImg] = React.useState(false); 
     const [deliveryImg,setDeliveryImg] = React.useState(false); 
@@ -513,7 +515,7 @@ function ProductDetail(){
                                 <p className='product-label-fit'>
                                     Status
                                 </p>
-                                <p className='content-blue'>
+                                <p className='content-green'>
                                     {result.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}
                                 </p>
                             </div>
@@ -604,11 +606,46 @@ function ProductDetail(){
                                                                 </div>) : 
                                                                 ((result.status === "Paid" || result.status === "Prepared" || result.status === "Delivering") && post?.status === 'Accepted') ? 
                                                                 (<Stack>
-                                                                    <Button className="w-100 mb-2" variant="warning">
-                                                                        Support
-                                                                    </Button>
-                                                                    <Button className="w-100 mb-2">View Invoice</Button>
-                                                                    <Button className="w-100 mb-2" variant="success">Print Invoice</Button>
+                                                                    <div>
+                                                                        <Button className="w-100 mb-2" variant="warning" onClick={()=>{setSupport(true)}}>
+                                                                            Support
+                                                                        </Button>
+                                                                        <Modal
+                                                                        size="md"
+                                                                        aria-labelledby="contained-modal-title-vcenter"
+                                                                        centered
+                                                                        show={support}
+                                                                        >
+                                                                            <Modal.Header>
+                                                                                <Modal.Title className='txt-center w-100'>
+                                                                                    Support
+                                                                                </Modal.Title>
+                                                                            </Modal.Header>
+                                                                            <Modal.Body>
+                                                                                <div style={{display: "flex",gap: "30px",justifyContent:'center'}}>
+                                                                                    <div>
+                                                                                        <div className='invoice-txt-label'>Phone Number</div>
+                                                                                        <div className='invoice-txt-label'> Email</div>
+                                                                                    </div>
+                                                                                    <div>
+                                                                                        <div className='invoice-txt-content'>0987655677</div>
+                                                                                        <div className='invoice-txt-content'>info@australianstormcourier.com.au</div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <p className='txt-center p-3 m-0' style={{color:'var(--clr-txt-secondary)'}}>Please contact the phone number and email above to receive support from us</p>
+                                                                                </div>
+                                                                            </Modal.Body>
+                                                                            <Modal.Footer>
+                                                                                <div className='txt-center w-100'>
+                                                                                <button className='my-btn-gray mx-4' onClick={() => {setSupport(false)}}>Oke</button>
+                                                                                </div>
+                                                                            </Modal.Footer>
+                                                                        </Modal>
+                                                                    </div>
+                                                                    <Link to="/payment/checkout/return/invoice">
+                                                                        <Button variant='success' className="w-100 mb-2">View Invoice</Button>
+                                                                    </Link>
                                                                 </Stack>
                                                                 ) :
                                                                 (result.status === "Completed") ? 
