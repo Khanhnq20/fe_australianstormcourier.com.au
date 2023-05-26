@@ -56,8 +56,10 @@ const constraints = {
 
     getAllPayments: "payments",
 
+    putPrepareOrder: "order/prepare",
     putDeliverOrder: "order/deliver",
     putReceiveOrder: "order/receive",
+    putCancelOrder: "order/cancel",
 
     hubOnline: "online",
     hubReceiveOnline: "online",

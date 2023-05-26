@@ -134,11 +134,47 @@ export default function Index({children}) {
             });
         },
 
-        putDeliveryOrder(body){
-            authInstance.put([authConstraints.driverRoot, authConstraints.putDeliverOrder].join("/"), body, {
+        putPrepareOrder(body){
+            setState(i =>({
+                ...i,
+                tasks: {[authConstraints.putPrepareOrder]: taskStatus.Inprogress }
+            }));
+            authInstance.put([authConstraints.driverRoot, authConstraints.putPrepareOrder].join("/"), body, {
                 headers: {
                     'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
                 },
+            }).then(response =>{
+                if(response.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putPrepareOrder]: taskStatus.Completed }
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putPrepareOrder]: taskStatus.Failed }
+                    }));
+
+                    toast.error(response.data?.error);
+                }
+            }).catch(error => {
+                toast.error(error?.status + ": " + error?.message);
+            });
+        },
+
+        putDeliveryOrder(orderId){
+            setState(i =>({
+                ...i,
+                tasks: {[authConstraints.putDeliverOrder]: taskStatus.Inprogress }
+            }));
+            authInstance.put([authConstraints.driverRoot, authConstraints.putDeliverOrder].join("/"), null, {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                },
+                params: {
+                    orderId
+                }
             }).then(response =>{
                 if(response.data?.successed){
                     setState(i =>({
@@ -160,6 +196,10 @@ export default function Index({children}) {
         },
 
         putReceiveOrder(body){
+            setState(i =>({
+                ...i,
+                tasks: {[authConstraints.putReceiveOrder]: taskStatus.Inprogress }
+            }));
             authInstance.put([authConstraints.driverRoot, authConstraints.putReceiveOrder].join("/"), body, {
                 headers: {
                     'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
@@ -175,6 +215,38 @@ export default function Index({children}) {
                     setState(i =>({
                         ...i,
                         tasks: {[authConstraints.putReceiveOrder]: taskStatus.Failed }
+                    }));
+
+                    toast.error(response.data?.error);
+                }
+            }).catch(error => {
+                toast.error(error?.status + ": " + error?.message);
+            });
+        },
+
+        putCancelOrder(orderId){
+            setState(i =>({
+                ...i,
+                tasks: {[authConstraints.putCancelOffer]: taskStatus.Inprogress }
+            }));
+            authInstance.put([authConstraints.driverRoot, authConstraints.putCancelOffer].join("/"), null, {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                },
+                params: {
+                    orderId
+                }
+            }).then(response =>{
+                if(response.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putCancelOffer]: taskStatus.Completed }
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        tasks: {[authConstraints.putCancelOffer]: taskStatus.Failed }
                     }));
 
                     toast.error(response.data?.error);
