@@ -161,8 +161,9 @@ function Product() {
                                         <tr>
                                             <th>Id</th>
                                             <th>Order Name</th>
-                                            <th>Delivery Location</th>
-                                            <th>Delivery Destination</th>
+                                            <th>Pickup Location</th>
+                                            <th>Destination</th>
+                                            <th></th>
                                         </tr>
                                     </thead> 
                                         <tbody>
