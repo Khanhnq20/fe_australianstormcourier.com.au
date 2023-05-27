@@ -12,13 +12,12 @@ code {
 }
 
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   -webkit-appearance: none;
   width: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 5px;
-  background-color: var(--clr-primary);
   -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
-}
+} */

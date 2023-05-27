@@ -3,7 +3,9 @@ import { Col, Container, Row, Stack } from 'react-bootstrap';
 import '../style/orderDetail.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import {FaTimes} from 'react-icons/fa';
 import { FieldArray, Formik } from 'formik';
+import Carousel from 'react-bootstrap/Carousel';
 import * as yup from 'yup';
 import { Navigate, useParams } from 'react-router-dom';
 import { authConstraints, authInstance, config } from '../../../api';
@@ -279,7 +281,7 @@ function OrderDetail(){
                                           </div>
                                           <img className='img-front' src={url || 'https://tinyurl.com/5ehpcctt'}/>
                                         </div>
-                                        <Button onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
+                                        <Button variant='danger' onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
                                       </Col>))}
                                       <Col sm={6} className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDelivery.current.click()}>
                                         <div className='background-front'>
@@ -349,6 +351,7 @@ function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, p
     const [active] = React.useState(orderStatus);
     const [complete,setComplete] = React.useState(false);
     const [modalShow, setModalShow] = React.useState(false);
+    const [slider,setSlider] = React.useState(false);
     const imgDone = useRef();
     const [stepTemplate] = React.useState([
       "Prepared", "Delivering", "Completed", "Cancelled"
@@ -455,17 +458,17 @@ function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, p
                                 <Form.Group className='txt-center'>
                                   <FieldArray name='receivedImages' render={(arrayHelpers) =>{
                                     return <>
-                                      <Row>
+                                      <Row style={{paddingRight:'20px'}}>
                                         {/* ReceivedImages have been in showcase  */}
                                         {values?.receivedImages?.map(({url}, ind) =>(<Col sm={8}>
                                           <div className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDone.current.click()}>
-                                            <div className='background-front'>
+                                            <div className='background-front' style={{maxWidth:'470px'}}>
                                                 <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
                                                 <p className='driving-txt'>Change the Image</p>
                                             </div>
                                             <img className='img-front' src={url || 'https://tinyurl.com/5ehpcctt'}/>
                                           </div>
-                                          <Button onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
+                                          <Button variant='danger' onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
                                         </Col>))}
 
                                         {/* A trigger button to upload new receivedImages */}
@@ -543,14 +546,53 @@ function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, p
                     Delivery pictures
                   </p>
                   <div>
-                      <div className='img-front-frame'  style={{padding:'10px 0 '}}>
-                          <div className='background-front'>
-                              <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></div>
-                              <p className='driving-txt'>view image</p>
-                          </div>
-                          <img className='img-front' src={deliveryImages?.[0] || 'https://tinyurl.com/5ehpcctt'}/>
-                      </div>
-                  </div>
+                    <div className='img-front-frame'  style={{padding:'10px 0 '}} onClick={()=>{setSlider(true)}}>
+                        <div className='background-front'>
+                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{deliveryImages?.length}</div>
+                            <p className='driving-txt'>view image</p>
+                        </div>
+                        <img className='img-front' src={deliveryImages?.[0] || 'https://tinyurl.com/5ehpcctt'}/>
+                    </div>
+                    <div>
+                        {
+                            slider 
+                            ? 
+                            <div>
+                                <Modal
+                                        size="lg"
+                                        aria-labelledby="contained-modal-title-vcenter"
+                                        centered
+                                        show={slider}
+                                        >
+                                        <Modal.Header>
+                                            <Modal.Title className='txt-center w-100' onClick={()=>{setSlider(false)}}>
+                                                <div style={{textAlign:'right'}}>
+                                                    <FaTimes style={{color:'grey',cursor:'pointer'}}></FaTimes>
+                                                </div>
+                                            </Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body className='link-slider'>
+                                            <Carousel>
+                                                {deliveryImages?.split?.("[space]")?.map((url,index) =>{
+                                                    return <Carousel.Item style={{borderLeft:'none'}} key={index}>
+                                                        <img
+                                                        className="w-100"
+                                                        src={url}
+                                                        alt="First slide"
+                                                        />
+                                                        <Carousel.Caption>
+                                                        </Carousel.Caption>
+                                                    </Carousel.Item>
+                                                })}
+                                            </Carousel>
+                                        </Modal.Body>
+                                    </Modal>
+                            </div>
+                            :
+                            <></>
+                        }
+                    </div>
+                </div>
               </div>
               {/* Trigger to cancel and confirm cancellation */}
               {(stepTemplate[active] !== "Cancelled" && stepTemplate[active] !== "Completed") &&
