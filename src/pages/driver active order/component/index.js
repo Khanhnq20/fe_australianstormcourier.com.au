@@ -12,11 +12,13 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { OrderContext, SocketContext, taskStatus } from '../../../stores';
 import { Formik } from 'formik';
+import { toast } from 'react-toastify';
 
 function Product() {
     const [orderState,{putCancelOffer}] = useContext(OrderContext);
     const [__,{onOrderReceive}] = useContext(SocketContext);
     const [modalShow, setModalShow] = React.useState(false);
+    const [modalData, setModalData] = React.useState();
 
     const rows = [5,10,15,20,25,30,35,40];
     const {
@@ -57,7 +59,6 @@ function Product() {
 
     // On Global Tasks Changed
     useEffect(() => {
-        console.log(orderState);
         if(orderState.tasks?.[authConstraints.putCancelOffer] === taskStatus.Completed){
             refresh();
             setModalShow(false);
@@ -223,32 +224,10 @@ function Product() {
                                                                     <p className='content-yellow text-center'>This offer has been cancelled</p>
                                                                 </div> :
                                                                 <div className='p-2'>
-                                                                    <Button className='w-100' variant='danger' onClick={() => setModalShow(true)}>Cancel</Button>
-                                                                    <Modal
-                                                                        size="sm"
-                                                                        aria-labelledby="contained-modal-title-vcenter"
-                                                                        centered
-                                                                        show={modalShow}
-                                                                        >
-                                                                        <Modal.Header>
-                                                                            <Modal.Title className='txt-center w-100'>
-                                                                            Confirm Your Action
-                                                                            </Modal.Title>
-                                                                        </Modal.Header>
-                                                                        <Modal.Body>
-                                                                            <p className='txt-center' style={{margin:'0'}}> 
-                                                                            Are you sure to cancel this order?
-                                                                            </p>
-                                                                        </Modal.Body>
-                                                                        <Modal.Footer>
-                                                                            <div className='txt-center w-100'>
-                                                                            <button className='my-btn-gray mx-4' onClick={() => {setModalShow(false)}}>No</button>
-                                                                            <button className='my-btn-red mx-4' onClick={() =>{
-                                                                                putCancelOffer(offer?.orderId);
-                                                                            }}>Yes</button>
-                                                                            </div>
-                                                                        </Modal.Footer>
-                                                                    </Modal>
+                                                                    <Button className='w-100' variant='danger' onClick={() => {
+                                                                        setModalShow(true);
+                                                                        setModalData(offer);
+                                                                    }}>Cancel</Button>
                                                                 </div>
                                                             }
                                                             </td>
@@ -258,6 +237,36 @@ function Product() {
                                             }
                                         </tbody>
                                     </Table>
+
+                                    <Modal
+                                        size="sm"
+                                        aria-labelledby="contained-modal-title-vcenter"
+                                        centered
+                                        show={modalShow}
+                                        >
+                                        <Modal.Header>
+                                            <Modal.Title className='txt-center w-100'>
+                                            Confirm Your Action
+                                            </Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            <p className='txt-center' style={{margin:'0'}}> 
+                                            Are you sure to cancel this order?
+                                            </p>
+                                        </Modal.Body>
+                                        <Modal.Footer>
+                                            <div className='txt-center w-100'>
+                                            <button className='my-btn-gray mx-4' onClick={() => {setModalShow(false)}}>No</button>
+                                            <button className='my-btn-red mx-4' onClick={() =>{
+                                                if(modalData?.orderId){
+                                                    putCancelOffer(modalData?.orderId);
+                                                    return;
+                                                }
+                                                toast.error('Cannot find your order id');
+                                            }}>Yes</button>
+                                            </div>
+                                        </Modal.Footer>
+                                    </Modal>
                                 </div>
                                 <Pagination className='pg-form w-100'>
                                     <Pagination.Prev onClick={prevPage} className='pg-first' />
