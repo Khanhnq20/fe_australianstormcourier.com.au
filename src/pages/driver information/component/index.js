@@ -167,7 +167,7 @@ function UpdateDriver() {
                                         type="text"
                                         name="fullName"
                                         placeholder="Enter Full Name"
-                                        value={values.name}
+                                        value={values.fullName}
                                         isInvalid={touched.fullName && !!errors?.fullName}
                                         onChange={handleChange}
                                         onBlur={handleBlur}

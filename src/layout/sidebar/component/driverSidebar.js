@@ -18,7 +18,7 @@ export function DriverSideBar({children}) {
               <span className={toggle ? 'sbar-root hide' : 'sbar-root'}>
                 <div style={{minWidth:'200px'}}>
                   <div className='sbar-header'>
-                      <div className='sbar-title'>MENU</div>
+                      <div className='sbar-title'>Menu</div>
                       <AiFillLeftCircle className={toggle ? 'sbar-toggle right' : 'sbar-toggle'} onClick={()=>{setToggle(e => !e)}}></AiFillLeftCircle>
                   </div>
                   <div>
