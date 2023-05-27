@@ -1,4 +1,4 @@
-import { HttpTransportType, HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
+import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { authConstraints, config } from "../../api";
 import { AuthContext } from "../contextAPI";
@@ -54,12 +54,22 @@ export  default function Index({children}){
     }, [socketConnection])
 
     const funcs = {
+        onOrderChanged(orderId){
+            if(socketConnection){
+                socketConnection.send(authConstraints.hubOnChangeOrderStatus, orderId);
+            }
+        },
 
+        onOrderReceive(callback){
+            if(socketConnection){
+                socketConnection.on(authConstraints.hubOnReceiveOrderStatus, callback); 
+            }
+        }
     }
 
     return (
         <SocketContext.Provider value={[
-            {onlineUsers, error},
+            {onlineUsers, error, socketConnection},
             {
                 ...funcs
             }

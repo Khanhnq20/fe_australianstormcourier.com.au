@@ -64,6 +64,8 @@ const constraints = {
 
     hubOnline: "online",
     hubReceiveOnline: "online",
+    hubOnChangeOrderStatus: "order/status",
+    hubOnReceiveOrderStatus: "order/status",
 
     test: "test/authorizedUser",
     getAccessToken: () => localStorage.getItem(constraints.LOCAL_KEY)

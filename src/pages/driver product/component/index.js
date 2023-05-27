@@ -1,5 +1,5 @@
 import '../style/driverProduct.css';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Formik } from "formik";
 import * as yup from 'yup';
 import {BiSearchAlt2} from 'react-icons/bi';
@@ -10,7 +10,7 @@ import { Col, Row, Spinner, Form, Button, InputGroup } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
 import moment from 'moment';
-import { AuthContext, OrderContext } from '../../../stores';
+import { AuthContext, OrderContext, SocketContext, taskStatus } from '../../../stores';
 import { CustomSpinner } from '../../../layout';
 
 
@@ -22,7 +22,8 @@ let driverSchema = yup.object().shape({
 })
 function Product() {
     const [authState] = useContext(AuthContext);
-    const [_,{postDriverOffer}] = useContext(OrderContext);
+    const [orderState,{postDriverOffer}] = useContext(OrderContext);
+    const [{socketConnection},{onOrderReceive}] = useContext(SocketContext);
 
     const rows = [5,10,15,20,25,30,35,40];
     const {
@@ -34,8 +35,9 @@ function Product() {
         nextPage,
         prevPage,
         setCurrent,
-        setPerPageAmount
-     } = usePagination({
+        setPerPageAmount,
+        refresh
+    } = usePagination({
         fetchingAPIInstance: ({controller, page, take }) => authInstance.get([authConstraints.driverRoot, authConstraints.getDriverJobs].join("/"), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
@@ -52,6 +54,25 @@ function Product() {
         startingPage: 1,
         totalPages: 1
     });
+
+    useEffect(() =>{
+        onOrderReceive(orderId =>{
+            console.log("Driver Active Order Page has changed status :" + orderId);
+            refresh();
+        });
+    }, [socketConnection]);
+
+    // On Global Tasks Changed
+    useEffect(() => {
+        console.log(orderState);
+        if(orderState.tasks?.[authConstraints.postDriverOffers] === taskStatus.Completed){
+            refresh();
+        }
+
+        else if(orderState.tasks?.[authConstraints.postDriverOffers] === taskStatus.Failed){
+
+        }
+    }, [orderState.tasks]);
 
     if(loading){
         return <CustomSpinner></CustomSpinner>

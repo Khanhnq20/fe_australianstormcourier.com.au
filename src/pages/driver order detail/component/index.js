@@ -545,7 +545,7 @@ function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, p
                   <div>
                       <div className='img-front-frame'  style={{padding:'10px 0 '}}>
                           <div className='background-front'>
-                              <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
+                              <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></div>
                               <p className='driving-txt'>view image</p>
                           </div>
                           <img className='img-front' src={deliveryImages?.[0] || 'https://tinyurl.com/5ehpcctt'}/>
