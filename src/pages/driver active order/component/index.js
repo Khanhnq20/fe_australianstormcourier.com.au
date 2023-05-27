@@ -1,22 +1,21 @@
 import '../style/driverActiveOrder.css';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import * as yup from 'yup';
 import {BiSearchAlt2} from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
-import { Col, Row, Form, Button, Modal } from 'react-bootstrap';
+import { Col, Row, Form, Button, Modal, Spinner } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { AuthContext, OrderContext } from '../../../stores';
-import { CustomSpinner } from '../../../layout';
+import { OrderContext, SocketContext, taskStatus } from '../../../stores';
 import { Formik } from 'formik';
 
 function Product() {
-    const [authState] = useContext(AuthContext);
-    const [_,{postDriverOffer, putCancelOffer}] = useContext(OrderContext);
+    const [orderState,{putCancelOffer}] = useContext(OrderContext);
+    const [__,{onOrderReceive}] = useContext(SocketContext);
     const [modalShow, setModalShow] = React.useState(false);
 
     const rows = [5,10,15,20,25,30,35,40];
@@ -25,11 +24,12 @@ function Product() {
         perPageAmount,
         total,
         loading,
-        items,
+        items: offers,
         nextPage,
         prevPage,
         setCurrent,
-        setPerPageAmount
+        setPerPageAmount,
+        refresh
     } = usePagination({
         fetchingAPIInstance: ({controller, page, take}) => authInstance.get([authConstraints.driverRoot, authConstraints.getDriverActiveOrders].join("/"), {
             headers: {
@@ -47,21 +47,37 @@ function Product() {
         startingPage: 1,
         totalPages: 1
     });
-    
 
-    if(loading){
-        return <CustomSpinner></CustomSpinner>
-    }
+    useEffect(() =>{
+        onOrderReceive(orderId =>{
+            console.log("Driver Active Order Page has changed status :" + orderId);
+            refresh();
+        });
+    }, []);
+
+    // On Global Tasks Changed
+    useEffect(() => {
+        console.log(orderState);
+        if(orderState.tasks?.[authConstraints.putCancelOffer] === taskStatus.Completed){
+            refresh();
+            setModalShow(false);
+        }
+
+        else if(orderState.tasks?.[authConstraints.putCancelOffer] === taskStatus.Failed){
+        }        
+    }, [orderState.tasks]);
     
     return (
         <Formik initialValues={{
-
+            suburb: '',
+            postcode: ''
         }}
         onSubmit={(values) =>{
 
         }}>
             {props => {
                 return (<>
+                    {/* Search Panel */}
                     <div className='p-3'>
                         <div className='form-order'>
                             <Form.Group>
@@ -92,6 +108,7 @@ function Product() {
                         </div>
                     </div>
                     
+                    {/* Table Showcase */}
                     <div>
                         <div className='pg-rows'>
                             <p className='m-0'>Show</p>
@@ -109,8 +126,10 @@ function Product() {
                             </Dropdown>
                             <p className='m-0'>Rows</p>
                         </div>
+
+                        {loading && <Spinner></Spinner>}
                         
-                        {items?.length === 0 ? 
+                        {offers?.length === 0 ? 
                             (<div className='txt-center'>
                                 <h5>No Data Found</h5>
                             </div>) :
@@ -156,54 +175,52 @@ function Product() {
                                         </thead> 
                                         <tbody>
                                             {
-                                                items?.slice((currentPage - 1) * perPageAmount, currentPage * perPageAmount).map((post,index) =>{
-                                                    const allowDelivery = post?.status === "Accepted" 
-                                                        && post?.order?.status === "Paid"
-                                                        || post?.order?.status === "Prepared"
-                                                        || post?.order?.status === "Delivering"
-                                                        || post?.order?.status === "Completed";
+                                                offers?.slice((currentPage - 1) * perPageAmount, currentPage * perPageAmount).map((offer,index) =>{
+                                                    const allowDelivery = offer?.status === "Accepted" 
+                                                        && offer?.order?.status === "Paid"
+                                                        || offer?.order?.status === "Prepared"
+                                                        || offer?.order?.status === "Delivering"
+                                                        || offer?.order?.status === "Completed";
                                                     return (
                                                         <tr key={index}>
-                                                            <td>{post?.order?.id}</td>
+                                                            <td>{offer?.order?.id}</td>
                                                             <td>
                                                             <Row>
                                                                 <Col sm="5">
-                                                                    <>
-                                                                        <img src={post?.order?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
-                                                                    </>
+                                                                    <img src={offer?.order?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
                                                                 </Col>
                                                                 <Col sm="7">
-                                                                    <b>{post?.order?.orderItems?.[0]?.itemName}</b>
+                                                                    <b>{offer?.order?.orderItems?.[0]?.itemName}</b>
                                                                 </Col>
                                                             </Row>
                                                                 
                                                             </td>
-                                                            <td>{post?.order?.sendingLocation}</td>
-                                                            <td>{post?.order?.destination}</td>
-                                                            <td>{!!post?.order?.deliverableDate ? moment(post?.order?.deliverableDate).format("DD-MM-YYYY") : ""}</td>
-                                                            <td>{post?.order?.timeFrame}</td>
-                                                            <td>{post?.order?.orderItems?.reduce?.((i,c) => i + c?.startingRate, 0)} aud</td>
-                                                            <td>{post?.ratePrice} aud</td>
-                                                            <td>{post?.order?.status}</td>
-                                                            <td>{post?.status}</td>
+                                                            <td>{offer?.order?.sendingLocation}</td>
+                                                            <td>{offer?.order?.destination}</td>
+                                                            <td>{!!offer?.order?.deliverableDate ? moment(offer?.order?.deliverableDate).format("DD-MM-YYYY") : ""}</td>
+                                                            <td>{offer?.order?.timeFrame}</td>
+                                                            <td>{offer?.order?.orderItems?.reduce?.((i,c) => i + c?.startingRate, 0)} aud</td>
+                                                            <td>{offer?.ratePrice} aud</td>
+                                                            <td>{offer?.order?.status}</td>
+                                                            <td>{offer?.status}</td>
                                                             <td>
                                                             {allowDelivery ? 
                                                                 <Row style={{flexWrap: 'wrap'}}>
                                                                     <Col sm="12" className='mb-2'>
-                                                                        <Link to={`/driver/order/detail/${post?.order?.id}`}>
+                                                                        <Link to={`/driver/order/detail/${offer?.order?.id}`}>
                                                                             <Button className="w-100" variant='success'>
                                                                                 Start
                                                                             </Button>
                                                                         </Link>
                                                                     </Col>
                                                                 </Row> :
-                                                                (post?.order?.status === "Cancel") ?
+                                                                (offer?.order?.status === "Cancel") ?
                                                                 <div className='p-2'>
-                                                                    <p>This order has been cancelled</p>
+                                                                    <p className='content-yellow text-center'>This order has been cancelled</p>
                                                                 </div> : 
-                                                                (post?.status === "Cancelled") ?
+                                                                (offer?.status === "Cancelled") ?
                                                                 <div className='p-2'>
-                                                                    <p>This offer has been cancelled</p>
+                                                                    <p className='content-yellow text-center'>This offer has been cancelled</p>
                                                                 </div> :
                                                                 <div className='p-2'>
                                                                     <Button className='w-100' variant='danger' onClick={() => setModalShow(true)}>Cancel</Button>
@@ -227,7 +244,7 @@ function Product() {
                                                                             <div className='txt-center w-100'>
                                                                             <button className='my-btn-gray mx-4' onClick={() => {setModalShow(false)}}>No</button>
                                                                             <button className='my-btn-red mx-4' onClick={() =>{
-                                                                                putCancelOffer(post?.orderId);
+                                                                                putCancelOffer(offer?.orderId);
                                                                             }}>Yes</button>
                                                                             </div>
                                                                         </Modal.Footer>

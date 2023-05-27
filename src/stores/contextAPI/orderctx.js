@@ -15,16 +15,50 @@ export default function Index({children}) {
 
     const funcs = {
         getJobAvailables(){
+            setState(i =>({
+                ...i,
+                loading: true,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.getDriverJobs] : taskStatus.Inprogress
+                }
+            }));
             return authInstance.get([authConstraints.driverRoot, authConstraints.getDriverJobs].join(" "), {
                 headers: {
                     'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
                 }
             })
             .then(response =>{
-                console.log(response);
+                if(response.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        loading: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.getDriverJobs] : taskStatus.Completed
+                        }
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        loading: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.getDriverJobs] : taskStatus.Failed
+                        }
+                    }));
+                }
             })
             .catch(error => {
-                console.log(error);
+                setState(i =>({
+                    ...i,
+                    loading: false,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.getDriverJobs] : taskStatus.Failed
+                    }
+                }));
             });
         },
 
@@ -34,7 +68,7 @@ export default function Index({children}) {
                 loading: true,
                 tasks: {
                     ...i.tasks,
-                    [authConstraints.getAccount] : taskStatus.Inprogress
+                    [authConstraints.postOrder] : taskStatus.Inprogress
                 }
             }));
 
@@ -74,19 +108,53 @@ export default function Index({children}) {
         },
 
         postDriverOffer(body){
+            setState(i =>({
+                ...i,
+                loading: true,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.postDriverOffers] : taskStatus.Inprogress
+                }
+            }));
             return authInstance.post([authConstraints.driverRoot, authConstraints.postDriverOffers].join("/"), body, {
                 headers: {
                     'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
                 }
             })
             .then(response =>{
-                console.log(response);
-                toast.success("Post offer successfully");
+                if(response.data?.successed){
+                    setState(i =>({
+                        ...i,
+                        loading: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.postDriverOffers] : taskStatus.Completed
+                        }
+                    }));
+                    toast.success("Post offer successfully");
+                }
+
+                else {
+                    setState(i =>({
+                        ...i,
+                        loading: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.postDriverOffers] : taskStatus.Failed
+                        }
+                    }));
+                    toast.warning("Post offer incompletely");
+                }
             })
             .catch(error => {
                 setState(i => ({
                     ...i,
-                    errors: [error.message] 
+                    errors: [error.message],
+                    loading: false,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.postDriverOffers] : taskStatus.Completed
+                    }
                 }));
                 toast.error(error.message);
             });
@@ -107,6 +175,11 @@ export default function Index({children}) {
         },
 
         putCancelOffer(orderId){
+            setState(i =>({
+                ...i,
+                loading: true,
+                tasks: {[authConstraints.putCancelOffer]: taskStatus.Inprogress }
+            }));
             authInstance.put([authConstraints.driverRoot, authConstraints.putCancelOffer].join("/"), null, {
                 headers: {
                     'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
@@ -118,18 +191,26 @@ export default function Index({children}) {
                 if(response.data?.successed){
                     setState(i =>({
                         ...i,
+                        loading: false,
                         tasks: {[authConstraints.putCancelOffer]: taskStatus.Completed }
                     }));
+                    toast.success("Updated offer status successfully");
                 }
                 else {
                     setState(i =>({
                         ...i,
+                        loading: false,
                         tasks: {[authConstraints.putCancelOffer]: taskStatus.Failed }
                     }));
 
                     toast.error(response.data?.error);
                 }
             }).catch(error => {
+                setState(i =>({
+                    ...i,
+                    loading: false,
+                    tasks: {[authConstraints.putCancelOffer]: taskStatus.Failed }
+                }));
                 toast.error(error?.status + ": " + error?.message);
             });
         },
@@ -242,6 +323,8 @@ export default function Index({children}) {
                         ...i,
                         tasks: {[authConstraints.putCancelOffer]: taskStatus.Completed }
                     }));
+
+                    
                 }
                 else {
                     setState(i =>({
