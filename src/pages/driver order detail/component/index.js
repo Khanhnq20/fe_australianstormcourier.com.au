@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react'
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, Row, Stack } from 'react-bootstrap';
 import '../style/orderDetail.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -12,6 +12,7 @@ import { CustomSpinner } from '../../../layout';
 import Modal from 'react-bootstrap/Modal';
 import { OrderContext } from '../../../stores';
 import { dotnetFormDataSerialize } from "../../../ultitlies";
+import moment from 'moment';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 let imgSchema = yup.object().shape({
@@ -69,9 +70,9 @@ let imgDoneSchema = yup.object().shape({
       ),
     barcode: yup.number().required("Barcode is required field"),
 })
+
 function OrderDetail(){
-  const [_, {putDeliveryOrder,putReceiveOrder}] = useContext(OrderContext);
-  const [process,setProcess] = React.useState(false);
+  const [_, {putPrepareOrder, putDeliveryOrder, putReceiveOrder, putCancelOrder}] = useContext(OrderContext);
   const [result, setResult] = React.useState(null);
   const [loading,setLoading] = React.useState(true);
   const imgDelivery = useRef();
@@ -119,6 +120,7 @@ function OrderDetail(){
             <p className='product-detail-header'>Details</p>
           </div>
           <div>
+            {/* Display order information  */}
             <div>
               <p className='product-content-title mb-3'>Order Information</p>
             </div>
@@ -214,15 +216,34 @@ function OrderDetail(){
                     </div>
                 </Col>
             </Row>
+            {/* It includes before delivering and after prepared process + delivery pictures and cancelled reason */}
             <Row>
               <p className='product-content-title my-3'>Order</p>
               <Col>
-                  {
-                    result?.order?.status && 
-                    ( result?.order?.status === "Prepared"   || 
-                      result?.order?.status === "Delivering" || 
-                      result?.order?.status === "Completed"  )? <Process>{2}</Process> : 
-                    <div className='order-letter-form py-4'>
+                  {/* The order must be larger than "prepared" status to display the process of driver */}
+                  { 
+                    result?.order?.status &&  ( result?.order?.status === "Prepared"   || 
+                                                result?.order?.status === "Delivering" || 
+                                                result?.order?.status === "Completed"  || 
+                                                result?.order?.status === "Cancelled"  )? 
+                      (<Process 
+                        orderId={result?.orderId}
+                        putDeliveryOrder={() => putDeliveryOrder(result?.orderId)}
+                        putReceiveOrder={putReceiveOrder}
+                        putCancelOrder={() => putCancelOrder(result?.orderId)}
+                        preparedTime={moment().format("HH : mm, dd MMM YYYY")}
+                        deliveryTime={moment().format("HH : mm, dd MMM YYYY")}
+                        completedTime={moment().format("HH : mm, dd MMM YYYY")}
+                        cancelledTime={moment().format("HH : mm, dd MMM YYYY")}
+                        orderStatus={
+                        result?.order?.status === "Prepared" ? 0 :
+                        result?.order?.status === "Delivering" ? 1 : 
+                        result?.order?.status === "Completed" ? 2 :
+                        result?.order?.status === "Cancelled" ? 3 :
+                        3
+                        }>{2}</Process>) : 
+                    (<div className='order-letter-form py-4'>
+                      {/* otherwise driver send delivery images to confirm their ready */}
                       <div>
                         <Formik 
                           initialValues={
@@ -240,8 +261,7 @@ function OrderDetail(){
                               indices: true,
                               dotsForObjectNotation: true
                             });
-
-                            putDeliveryOrder(formData);
+                            putPrepareOrder(formData);
                           }}
                         >
                           {({errors,isValid,handleSubmit,handleBlur,values}) =>{
@@ -316,7 +336,7 @@ function OrderDetail(){
                           }}
                         </Formik>
                       </div>
-                    </div>
+                    </div>)
                   }
               </Col>
             </Row>
@@ -325,187 +345,247 @@ function OrderDetail(){
     )
 }
 
-function Process({children}){
-    const [active,setActive] = React.useState(1);
-    const [cancel,setCancel] = React.useState(false);
+function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, putReceiveOrder,putCancelOrder, preparedTime, deliveryTime, completedTime, cancelledTime}){
+    const [active] = React.useState(orderStatus);
     const [complete,setComplete] = React.useState(false);
     const [modalShow, setModalShow] = React.useState(false);
-    const [imgD,setImgD] = React.useState();
     const imgDone = useRef();
-    const [stepTemplate, setTemplate] = React.useState([
-      "Prepare", "Ordering", "Delivering", "Completed"
+    const [stepTemplate] = React.useState([
+      "Prepared", "Delivering", "Completed", "Cancelled"
     ]);
 
     return(
       <>
-        {cancel 
-          ? 
-          <StatusFail></StatusFail>
-          :
-          <div>
-            <div className='product-label-info'>
-                <p className='product-label-fit'>
-                  Status
-                </p>
-                <p className='content-yellow'>
-                  In processing
-                </p>
-            </div>
-            <div className='product-label-info' style={{alignItems:'unset'}}>
+        {/* Cancellation status*/}
+        {stepTemplate[active] === "Cancelled" 
+          ? <StatusFail></StatusFail>
+          : 
+          (<div>
+              {/* Agreed to delivery */}
+              {/* Status of delivery */}
+              <div className='product-label-info'>
+                  <p className='product-label-fit'>
+                    Status
+                  </p>
+                  <p className='content-yellow'>
+                    {stepTemplate?.[active]}
+                  </p>
+              </div>
+              {/* Process of delivery */}
+              <div className='product-label-info' style={{alignItems:'unset'}}>
                 <div className='process-form'>
                   <p className='product-label-fit py-2'>
                     Process
                   </p>  
-                  <div>
-                    <section class="step-wizard">
-                      <ul className='order-progress'>
-                        {stepTemplate.map((template,index) =>{
-                          return (<li className='order-progress-item' key={index} data-active={index <= active}>
-                            <div class="progress-circle"></div>
-                            <div class="progress-label">
-                                <h2 className='progress-txt-header'>
+
+                  <section class="step-wizard">
+                    <ul className='order-progress'>
+                      {stepTemplate.map((template,index) =>{
+                        return (<li className='order-progress-item' key={index} data-active={index <= active}>
+                          <div class="progress-circle"></div>
+                          <div class="progress-label">
+                              <h2 className='progress-txt-header'>
                                 {template}
-                                </h2>
-                                <p>At 9PM, the driver requested to deliver the good</p>
-                            </div>
-                          </li>)
-                        })}
-                        
-                      </ul>
-                    </section>
-                  </div>
-                  <div>
+                              </h2>
+                              <p>
+                                {
+                                  template === "Prepared" ? 
+                                  `At ${preparedTime} ready to delivering` :
+                                  template === "Delivering" ?
+                                  `At ${deliveryTime} delivering` :
+                                  template === "Completed" ?
+                                  `At ${completedTime} completed` :
+                                  `At ${cancelledTime} cancelled`
+                                }
+                              </p>
+                          </div>
+                        </li>)
+                      })}
+                    </ul>
+                  </section>
+
+                <div>
                   {/* Delivery Success */}
-                    <button className='my-btn-yellow mx-5 my-2' onClick={()=>{
+                    {!active ? 
+                      (<button className='my-btn-yellow mx-5 my-2' onClick={()=>{
+                        putDeliveryOrder();
+                      }}>Start Deliver Now</button>)
+                    : <button className='my-btn-yellow mx-5 my-2' onClick={()=>{
                       setComplete(true);
-                    }}>Next Step</button>
+                    }}>Next Step</button>}
+
+                    {/* Modal show form to submit the received package */}
                     <Modal
                       size="md"
                       aria-labelledby="contained-modal-title-vcenter"
                       centered
                       show={complete}
+                      onHide={() => setComplete(false)}
                       >
-                      <Modal.Header>
+                      <Modal.Header closeButton>
                         <Modal.Title className='txt-center w-100'>
                           Confirm Your Action
                         </Modal.Title>
                       </Modal.Header>
                       <Modal.Body>
                         <Formik 
-                        initialValues={
-                          {
-                            imgComplete: null,
-                            barcode:null
+                          initialValues={
+                            {
+                              orderId: orderId,
+                              receivedImages: [],
+                              barcode: null
+                            }
                           }
-                        }
-                        validationSchema={imgDoneSchema}
+                          validationSchema={imgDoneSchema}
+                          onSubmit={values => {
+                            const formData = dotnetFormDataSerialize({
+                                ...values,
+                                receivedImages: values.receivedImages.map(item => item?.file)
+                            }, {
+                              indices: true,
+                              dotsForObjectNotation: true
+                            });
+
+                            putReceiveOrder(formData);
+                          }}
                         >
-                          {({errors,touched,setFieldValue,values,handleChange,handleBlur}) =>{
+                          {({errors,touched,values,handleSubmit,handleChange,handleBlur}) =>{
                             return(
-                              <div>
-                                <div className='txt-center'>
-                                  <div className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDone.current.click()}>
-                                      <div className='background-front'>
-                                          <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                          <p className='driving-txt'>Change the Image</p>
-                                      </div>
-                                      <img className='img-front' src={imgD || 'https://tinyurl.com/5ehpcctt'}/>
+                              <Form onSubmit={handleSubmit}>
+                                <Form.Group className='txt-center'>
+                                  <FieldArray name='receivedImages' render={(arrayHelpers) =>{
+                                    return <>
+                                      <Row>
+                                        {/* ReceivedImages have been in showcase  */}
+                                        {values?.receivedImages?.map(({url}, ind) =>(<Col sm={8}>
+                                          <div className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDone.current.click()}>
+                                            <div className='background-front'>
+                                                <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                                <p className='driving-txt'>Change the Image</p>
+                                            </div>
+                                            <img className='img-front' src={url || 'https://tinyurl.com/5ehpcctt'}/>
+                                          </div>
+                                          <Button onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
+                                        </Col>))}
+
+                                        {/* A trigger button to upload new receivedImages */}
+                                        <Col ms={4} className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDone.current.click()}>
+                                          <div className='background-front'>
+                                              <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                              <p className='driving-txt'>Change the Image</p>
+                                          </div>
+                                          <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
+                                        </Col>
+                                      </Row>
+
+                                      <Form.Group>
+                                        <Form.Control type="file" id="driver_image_front" name="deliveryImages" ref={imgDone} 
+                                          multiple
+                                          accept="image"
+                                          isInvalid={!!errors?.deliveryImages}
+                                          onBlur={handleBlur}
+                                          onChange={(e) =>{
+                                            const files = e.target.files;
+                                              for (var i = 0; i < files.length; i++) { 
+                                                  //for multiple files          
+                                                  (function(file) {                                        
+                                                      const fileReader = new FileReader();
+                                                      fileReader.onload = function(e) {  
+                                                          // get file content  
+                                                          fileReader.addEventListener("loadend", (e)=>{
+                                                              arrayHelpers.push({
+                                                                  file,
+                                                                  url: fileReader.result
+                                                              });
+                                                          })
+                                                      }
+                                                      fileReader.readAsDataURL(file);
+                                                  })(files[i]);
+                                              }
+                                          }}/>
+                                        <Form.Control.Feedback type="invalid">{errors?.deliveryImages}</Form.Control.Feedback>
+                                      </Form.Group>
+                                    </>
+                                  }}/>
+                                </Form.Group>
+                                
+                                <Form.Group className="form-group" >
+                                  <div className='mb-2'>
+                                      <Form.Label className='label'>Barcode</Form.Label>
+                                      <p className='asterisk'>*</p>
                                   </div>
-                                  <Form.Control type="file" id="driver_image_front" name="imgComplete" ref={imgDone} 
-                                    isInvalid={touched.imgComplete && !!errors?.imgComplete}
-                                    onChange={(e) =>{
-                                        const file = e.target.files[0];
-                                        setFieldValue(e.target.name, file, true);
-                                        
-                                        const fileReader = new FileReader();
-                                        if(file){
-                                            fileReader.addEventListener("loadend", (e)=>{
-                                                setImgD(fileReader.result);
-                                            })
-                                            fileReader.readAsDataURL(file);
-                                          }
-                                      }}
+                                  <Form.Control
+                                      type="number"
+                                      name="barcode"
+                                      placeholder="Enter The Barcode"
+                                      isInvalid={touched.barcode && errors.barcode}
+                                      onBlur={handleBlur}
+                                      onChange={handleChange}
                                   />
-                                  <Form.Control.Feedback type="invalid">{errors?.imgComplete}</Form.Control.Feedback>
-                                </div>
-                                <div>
-                                  <Form.Group className="form-group px-4" >
-                                    <div className='mb-2'>
-                                        <Form.Label className='label'>Barcode</Form.Label>
-                                        <p className='asterisk'>*</p>
-                                    </div>
-                                    <Form.Control
-                                        type="number"
-                                        name="barcode"
-                                        placeholder="Enter The Barcode"
-                                        isInvalid={touched.barcode && errors.barcode}
-                                        onBlur={handleBlur}
-                                        onChange={handleChange}
-                                    />
-                                    <Form.Control.Feedback type="invalid">{errors.barcode}</Form.Control.Feedback>
-                                  </Form.Group>
-                                </div>
-                              </div>
+                                  <Form.Control.Feedback type="invalid">{errors.barcode}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Stack direction='horizontal' gap={5} style={{justifyContent: 'right'}} className='w-100'>
+                                  <button type='submit' className='my-btn-yellow'>Done</button>
+                                </Stack>
+                              </Form>
                             )
                           }}
                         </Formik>
                       </Modal.Body>
-                      <Modal.Footer>
-                        <div className='txt-center w-100'>
-                          <button className='my-btn-gray mx-4' onClick={() => {setComplete(false)}}>Cancel</button>
-                          <button className='my-btn-yellow mx-4'>Done</button>
-                        </div>
-                      </Modal.Footer>
                     </Modal>
                   </div>
                 </div>
-            </div>
-            <div className='product-label-info py-3' style={{alignItems:'unset'}}>
-                <p className='product-label-fit py-1'>
-                  Delivery pictures
-                </p>
-                <div>
-                    <div className='img-front-frame'  style={{padding:'10px 0 '}}>
-                        <div className='background-front'>
-                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
-                            <p className='driving-txt'>view image</p>
+              </div>
+              {/* Showcase of deliveryImages */}
+              <div className='product-label-info py-3' style={{alignItems:'unset'}}>
+                  <p className='product-label-fit py-1'>
+                    Delivery pictures
+                  </p>
+                  <div>
+                      <div className='img-front-frame'  style={{padding:'10px 0 '}}>
+                          <div className='background-front'>
+                              <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
+                              <p className='driving-txt'>view image</p>
+                          </div>
+                          <img className='img-front' src={deliveryImages?.[0] || 'https://tinyurl.com/5ehpcctt'}/>
+                      </div>
+                  </div>
+              </div>
+              {/* Trigger to cancel and confirm cancellation */}
+              {(stepTemplate[active] !== "Cancelled" && stepTemplate[active] !== "Completed") &&
+                (<div className='product-label-info py-3' style={{alignItems:'unset'}}>
+                    <div>
+                      <button className='my-btn-red'  onClick={() => setModalShow(true)}>Cancel</button>
+                    </div>
+                    <Modal
+                      size="sm"
+                      aria-labelledby="contained-modal-title-vcenter"
+                      centered
+                      show={modalShow}
+                    >
+                      <Modal.Header>
+                        <Modal.Title className='txt-center w-100'>
+                          Confirm Your Action
+                        </Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>
+                        <p className='txt-center' style={{margin:'0'}}> 
+                          Are you sure to cancel this order?
+                        </p>
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <div className='txt-center w-100'>
+                          <button className='my-btn-gray mx-4' onClick={() => {setModalShow(false)}}>No</button>
+                          <button className='my-btn-red mx-4' onClick={() => {
+                            putCancelOrder();
+                            setModalShow(false);
+                          }}>Yes</button>
                         </div>
-                        <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
-                    </div>
-                </div>
-            </div>
-            <div className='product-label-info py-3' style={{alignItems:'unset'}}>
-                <p className='product-label-fit py-1'>
-                  Cancel Order
-                </p>
-                <div>
-                    <button className='my-btn-red'  onClick={() => setModalShow(true)}>Cancel</button>
-                </div>
-                <Modal
-                  size="sm"
-                  aria-labelledby="contained-modal-title-vcenter"
-                  centered
-                  show={modalShow}
-                >
-                  <Modal.Header>
-                    <Modal.Title className='txt-center w-100'>
-                      Confirm Your Action
-                    </Modal.Title>
-                  </Modal.Header>
-                  <Modal.Body>
-                    <p className='txt-center' style={{margin:'0'}}> 
-                      Are you sure to cancel this order?
-                    </p>
-                  </Modal.Body>
-                  <Modal.Footer>
-                    <div className='txt-center w-100'>
-                      <button className='my-btn-gray mx-4' onClick={() => {setModalShow(false)}}>No</button>
-                      <button className='my-btn-red mx-4' onClick={() => {setCancel(true)}}>Yes</button>
-                    </div>
-                  </Modal.Footer>
-                </Modal>
-            </div>
-          </div>
+                      </Modal.Footer>
+                    </Modal>
+                </div>)}
+          </div>)
         }
       </>
     )

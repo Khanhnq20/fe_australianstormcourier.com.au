@@ -22,7 +22,7 @@ function ProductDetail(){
     const [slider,setSlider] = React.useState(false);
     const [receiveImg,setReceiveImg] = React.useState(false); 
     const [deliveryImg,setDeliveryImg] = React.useState(false); 
-    const [result, setResult] = React.useState(null);
+    const [order, setResult] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
     const [popupLoading, setPopupLoading] = React.useState(false);
     const [error, setError] = React.useState("");
@@ -36,7 +36,7 @@ function ProductDetail(){
         total,
         loading: offerLoading,
         error: offerError,
-        items,
+        items : offers,
         nextPage,
         prevPage,
         setCurrent,
@@ -54,7 +54,7 @@ function ProductDetail(){
             signal: controller.signal
         }),
         propToGetItem: "result",
-        deps: [result],
+        deps: [order],
         propToGetTotalPage: "total",
         amountPerPage: rows[0],
         startingPage: 1,
@@ -184,7 +184,7 @@ function ProductDetail(){
                                         ID
                                     </p>
                                     <p className='product-content'>
-                                        {"000000".substring(0, 6 - result?.id?.toString().length) + result?.id}
+                                        {"000000".substring(0, 6 - order?.id?.toString().length) + order?.id}
                                     </p>
                                 </div>
                                 <div className='product-label-info'>
@@ -192,7 +192,7 @@ function ProductDetail(){
                                         Sender Name
                                     </p>
                                     <p className='product-content'>
-                                        {result?.sender?.name}
+                                        {order?.sender?.name}
                                     </p>
                                 </div>
                                 <div className='product-label-info'>
@@ -200,7 +200,7 @@ function ProductDetail(){
                                         Phone number
                                     </p>
                                     <p className='product-content'>
-                                        {result?.sender?.phoneNumber}
+                                        {order?.sender?.phoneNumber}
                                     </p>
                                 </div>
                                 <div className='product-label-info'>
@@ -208,7 +208,7 @@ function ProductDetail(){
                                         From
                                     </p>
                                     <p className='product-content'>
-                                        {result?.sendingLocation}
+                                        {order?.sendingLocation}
                                     </p>
                                 </div>
                                 <div className='product-label-info'>
@@ -216,7 +216,7 @@ function ProductDetail(){
                                         To
                                     </p>
                                     <p className='product-content'>
-                                        {result?.destination}
+                                        {order?.destination}
                                     </p>
                                 </div>
                                 <div className='product-label-info'>
@@ -224,7 +224,7 @@ function ProductDetail(){
                                         Receiver Name
                                     </p>
                                     <p className='product-content'>
-                                        {result?.receiverName || "Provide now"}
+                                        {order?.receiverName || "Provide now"}
                                     </p>
                                 </div>
                                 <div className='product-label-info'>
@@ -232,7 +232,7 @@ function ProductDetail(){
                                         Receiver Phone
                                     </p>
                                     <p className='product-content'>
-                                        {result?.receiverPhone}
+                                        {order?.receiverPhone}
                                     </p>
                                 </div>
                                 <div className='product-label-info'>
@@ -240,7 +240,7 @@ function ProductDetail(){
                                         Posted Date
                                     </p>
                                     <p className='product-content'>
-                                        {new moment(result?.createdDate).format('YYYY-MM-DD HH : mm : ss')}
+                                        {new moment(order?.createdDate).format('YYYY-MM-DD HH : mm : ss')}
                                     </p>
                                 </div>
                                 <div className='product-label-info' style={{alignItems: 'flex-start'}}>
@@ -248,7 +248,7 @@ function ProductDetail(){
                                         Vehicles
                                     </p>
                                     <div className='product-content'>
-                                        {result.vehicles.map((str,idx) =>{
+                                        {order?.vehicles?.map?.((str,idx) =>{
                                             return <p key={idx}>- {str}</p>
                                         })}
                                     </div>
@@ -263,7 +263,7 @@ function ProductDetail(){
                                     Starting shipping rates
                                 </p>
                                 <p className='product-content'>
-                                    {result?.orderItems?.[0]?.startingRate} AUD
+                                    {order?.orderItems?.[0]?.startingRate} AUD
                                 </p>
                             </div>
                             <div className='product-label-info'>
@@ -271,7 +271,7 @@ function ProductDetail(){
                                     Selected shipping rates
                                 </p>
                                 <p className='product-content'>
-                                {result?.orderItems?.[0]?.selectedRate} AUD
+                                {order?.orderItems?.[0]?.selectedRate} AUD
                                 </p>
                             </div>
                             <div className='product-label-info'>
@@ -279,11 +279,11 @@ function ProductDetail(){
                                     Status
                                 </p>
                                 
-                                {result?.status === "WaitingForPayment" || result?.status === "Paid" ? (
+                                {order?.status === "WaitingForPayment" || order?.status === "Paid" ? (
                                     <p className="content-red">
                                         Closed
                                     </p>
-                                ): result?.status !== "Cancelled" ? (
+                                ): order?.status !== "Cancelled" ? (
                                     <p className='content-green'>
                                         Opening
                                     </p>
@@ -300,10 +300,10 @@ function ProductDetail(){
                                 <div>
                                     <div className='img-front-frame'  style={{padding:'10px 0 '}} onClick={()=>{setDeliveryImg(true)}}>
                                         <div className='background-front'>
-                                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.deliverdItemImages?.split("[space]")?.length || 0}</div>
+                                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{order?.deliverdItemImages?.split("[space]")?.length || 0}</div>
                                             <p className='driving-txt'>view image</p>
                                         </div>
-                                        <img className='img-front' src={result?.deliverdItemImages?.split?.("[space]")?.[0]}/>
+                                        <img className='img-front' src={order?.deliverdItemImages?.split?.("[space]")?.[0]}/>
                                     </div>
                                     <div>
                                         <Modal
@@ -321,7 +321,7 @@ function ProductDetail(){
                                             </Modal.Header>
                                             <Modal.Body className='link-slider'>
                                                 <Carousel>
-                                                    {result?.deliverdItemImages?.split?.("[space]")?.map((url,index) =>{
+                                                    {order?.deliverdItemImages?.split?.("[space]")?.map((url,index) =>{
                                                         return <Carousel.Item style={{borderLeft:'none'}} key={index}>
                                                             <img
                                                             className="w-100"
@@ -345,10 +345,10 @@ function ProductDetail(){
                                 <div>
                                     <div className='img-front-frame'  style={{padding:'10px 0 '}} onClick={()=>{setReceiveImg(true)}}>
                                         <div className='background-front'>
-                                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.receivedItemImages?.split("[space]")?.length || 0}</div>
+                                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{order?.receivedItemImages?.split("[space]")?.length || 0}</div>
                                             <p className='driving-txt'>view image</p>
                                         </div>
-                                        <img className='img-front' src={result?.receivedItemImages?.split?.("[space]")?.[0]}/>
+                                        <img className='img-front' src={order?.receivedItemImages?.split?.("[space]")?.[0]}/>
                                     </div>
                                     <Modal
                                             size="lg"
@@ -365,7 +365,7 @@ function ProductDetail(){
                                             </Modal.Header>
                                             <Modal.Body className='link-slider'>
                                                 <Carousel>
-                                                    {/* {result.receivedItemImages?.split?.("[space]")?.map((url,index) =>{
+                                                    {order.receivedItemImages?.split?.("[space]")?.map((url,index) =>{
                                                         return <Carousel.Item style={{borderLeft:'none'}} key={index}>
                                                             <img
                                                             className="w-100"
@@ -375,7 +375,7 @@ function ProductDetail(){
                                                             <Carousel.Caption>
                                                             </Carousel.Caption>
                                                         </Carousel.Item>
-                                                    })} */}
+                                                    })}
                                                 </Carousel>
                                             </Modal.Body>
                                         </Modal>
@@ -389,7 +389,7 @@ function ProductDetail(){
                 <div className='sender-product-title'>
                     <p className='product-content-title my-4'>Product Information</p>
                 </div>
-                {result?.orderItems?.map?.((item,index) =>{
+                {order?.orderItems?.map?.((item,index) =>{
                     return (
                         <Row className='product-form-content' key={index + 1}>
                             <Col>
@@ -455,7 +455,7 @@ function ProductDetail(){
                                         <div>
                                             <div className='img-front-frame'  style={{padding:'10px 0 '}} onClick={()=>{setSlider(true)}}>
                                                 <div className='background-front'>
-                                                    <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{result?.orderItems?.[0]?.itemImages?.split("[space]")?.length}</div>
+                                                    <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{order?.orderItems?.[0]?.itemImages?.split("[space]")?.length}</div>
                                                     <p className='driving-txt'>view image</p>
                                                 </div>
                                                 <img className='img-front' src={item.itemImages?.split?.("[space]")?.[0]}/>
@@ -515,12 +515,12 @@ function ProductDetail(){
                                 <p className='product-label-fit'>
                                     Status
                                 </p>
-                                <p className='content-green'>
-                                    {result.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}
+                                <p className='content-blue'>
+                                    {order.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}
                                 </p>
                             </div>
                             <div>
-                                <p style={{fontWeight:'600'}}>The driver requested {result?.offerNumber} offers</p>
+                                <p style={{fontWeight:'600'}}>The driver requested {order?.offerNumber} offers</p>
                             </div>
                             <div className='pg-rows'>
                                 <p className='m-0'>Show</p>
@@ -540,7 +540,7 @@ function ProductDetail(){
                                 </div>
                                 <p className='m-0'>Rows</p>
                             </div>
-                            {items.length === 0 ? (<div className='txt-center'>
+                            {offers.length === 0 ? (<div className='txt-center'>
                                     <h5>No Data Found</h5>
                             </div>) :
                             (<>
@@ -557,7 +557,7 @@ function ProductDetail(){
                                     </thead> 
                                     <tbody>
                                         {
-                                            items?.map?.((post,index) =>{
+                                            offers?.map?.((offer,index) =>{
                                                 return (
                                                     <tr key={index}>
                                                         <td>{"000000".substring(0, 6 - (index + 1)?.toString().length) + (index + 1)}
@@ -565,7 +565,7 @@ function ProductDetail(){
                                                         <td>
                                                             <Row>
                                                                 <Col>ShipFee:</Col>
-                                                                <Col>{post?.ratePrice}</Col>
+                                                                <Col>{offer?.ratePrice}</Col>
                                                             </Row>
                                                             <Row>
                                                                 <Col>GST:</Col>
@@ -577,24 +577,27 @@ function ProductDetail(){
                                                             </Row>
                                                             <Row>
                                                                 <Col>Total</Col>
-                                                                <Col>{(post?.ratePrice * (1 + 0.1 + 0.1)).toFixed(2)}</Col>
+                                                                <Col>{(offer?.ratePrice * (1 + 0.1 + 0.1)).toFixed(2)}</Col>
                                                             </Row>
                                                         </td>
                                                         <td>
-                                                            {<div className={post.status === 'Accepted' ? 'content-green' : post.status === 'Denied' ? 'content-danger' : 'content-yellow'}>{post.status}</div>}
+                                                            {<div className={offer.status === 'Accepted' ? 'content-green' : 
+                                                            offer.status === 'Denied' ? 'content-danger' : 'content-yellow'}>
+                                                                {offer.status}
+                                                            </div>}
                                                         </td>
-                                                        <td>{new moment(post?.createdDate).format("DD/MM/YYYY")}</td>
+                                                        <td>{new moment(offer?.createdDate).format("DD/MM/YYYY")}</td>
                                                         <td>
-                                                            {post?.driverVehicles?.join?.(" - ")}
+                                                            {offer?.driver?.vehicles?.join?.(" - ") || offer?.driverVehicles?.join(" - ")}
                                                         </td>
                                                         <td className='sender-action justify-content-center'>
                                                             {
-                                                                ((result.status === "LookingForDriver" || result.status === "Trading") && post.status === "Waiting") ?
-                                                                (<div className='txt-success' onClick={() => acceptDriver(post?.driverId)}>
+                                                                ((order.status === "LookingForDriver" || order.status === "Trading") && offer.status === "Waiting") ?
+                                                                (<div className='txt-success' onClick={() => acceptDriver(offer?.driverId)}>
                                                                     <Button className="w-100" variant="success">Accept</Button>
                                                                 </div>) :
-                                                                (result.status === "WaitingForPayment" && post?.status === 'Accepted') ? 
-                                                                (<div className='txt-success' onClick={() => createOrderPayment(result?.id, post?.driverId)}>
+                                                                (order.status === "WaitingForPayment" && offer?.status === 'Accepted') ? 
+                                                                (<div className='txt-success' onClick={() => createOrderPayment(order?.id, offer?.driverId)}>
                                                                     <div style={{
                                                                         cursor: 'pointer',
                                                                         fontSize: '1.4rem',
@@ -604,7 +607,7 @@ function ProductDetail(){
                                                                         </p>
                                                                     </div>
                                                                 </div>) : 
-                                                                ((result.status === "Paid" || result.status === "Prepared" || result.status === "Delivering") && post?.status === 'Accepted') ? 
+                                                                ((order.status === "Paid" || order.status === "Prepared" || order.status === "Delivering") && offer?.status === 'Accepted') ? 
                                                                 (<Stack>
                                                                     <div>
                                                                         <Button className="w-100 mb-2" variant="warning" onClick={()=>{setSupport(true)}}>
@@ -648,11 +651,11 @@ function ProductDetail(){
                                                                     </Link>
                                                                 </Stack>
                                                                 ) :
-                                                                (result.status === "Completed") ? 
+                                                                (order.status === "Completed") ? 
                                                                 (<p className='content-green'>Completed</p>) :
                                                                 (<></>)
                                                             }
-                                                            {/* (!!result?.driverId && post.driverId !== result?.driverId) ? 
+                                                            {/* (!!order?.driverId && post.driverId !== order?.driverId) ? 
                                                             (<p className='content-yellow text-center'>Your package had been delivered</p>) : */}
                                                         </td>
                                                     </tr>
@@ -690,17 +693,21 @@ function ProductDetail(){
                 onHide={() => setShow(false)} 
                 clientSecret={clientSecret}
                 loading={popupLoading}
-                checkoutServerAPI={() => checkoutServerAPI(result?.id, result?.driverId)}
+                checkoutServerAPI={() => checkoutServerAPI(order?.id, order?.driverId)}
             ></PaymentPopup>
 
 
-            {result?.driverId && (result?.status === "Completed" 
-            || result?.status === "Delivering" 
-            || result?.status === "Prepared") 
-            && <Driver driver={result.driver} 
-            orderStatus={
-                result?.status === "Prepared" ? 0 :
-                result?.status === "Delivering" ? 1 :
+            {order?.driverId && (order?.status === "Completed" 
+            || order?.status === "Delivering" 
+            || order?.status === "Prepared"
+            || order?.status === "Paid") 
+            && <Driver driver={order.driver} 
+                // preparedTime={order.}
+                // deliveringTime={}
+                // completedTime={}
+                orderStatus={
+                    order?.status === "Prepared" || order?.status === "Paid" ? 0 :
+                    order?.status === "Delivering" ? 1 :
                 2}></Driver>}
         </div>
     )
@@ -835,20 +842,20 @@ function ProductEdit(){
                                                 <img className='img-front' src={imgUrlBack || 'https://tinyurl.com/5ehpcctt'}/>
                                             </div>
                                             <input type="file" id="driver_image_back" name="fileBack" ref={product_img_ipt} 
-                                                    isInvalid={!!errors.fileImageBack}
-                                                    onChange={(e) =>{
-                                                        
-                                                        const file = e.target.files[0];
-                                                        // setFieldValue("fileImage", file);
-                                                        
-                                                        const fileReader = new FileReader();
-                                                        if(file){
-                                                            fileReader.addEventListener("loadend", (e)=>{
-                                                                setImgUrlBack(fileReader.result);
-                                                            })
-                                                            fileReader.readAsDataURL(file);
-                                                        }
-                                                    }}
+                                                isInvalid={!!errors.fileImageBack}
+                                                onChange={(e) =>{
+                                                    
+                                                    const file = e.target.files[0];
+                                                    // setFieldValue("fileImage", file);
+                                                    
+                                                    const fileReader = new FileReader();
+                                                    if(file){
+                                                        fileReader.addEventListener("loadend", (e)=>{
+                                                            setImgUrlBack(fileReader.result);
+                                                        })
+                                                        fileReader.readAsDataURL(file);
+                                                    }
+                                                }}
                                             />
                                             <input type="file" id="driver_image_back" name="fileBack"/>
                                         </div>
@@ -880,12 +887,13 @@ function DropDownStatus() {
     );
 }
 
-function Driver({driver, orderStatus}){
+function Driver({preparedTime, deliveringTime, completedTime,driver, orderStatus}){
     const [active,setActive] = React.useState(orderStatus);
     const [modalShow, setModalShow] = React.useState(false);
     const stepTemplate = [
         "Prepared", "Delivering", "Completed"
     ];
+
     return(
         <div>
             <div className='product-label-info'>
@@ -912,7 +920,7 @@ function Driver({driver, orderStatus}){
             />
             <div className='product-label-info' style={{alignItems:'unset'}}>
                 <p className='product-label-fit py-2'>
-                Process
+                    Process
                 </p> 
                 <div>
                 <section className="step-wizard">
@@ -922,9 +930,13 @@ function Driver({driver, orderStatus}){
                         <div className="progress-circle"></div>
                         <div className="progress-label">
                             <h2 className='progress-txt-header'>
-                            {template}
+                                {template}
                             </h2>
-                            <p>At 9PM, the driver requested to deliver the good</p>
+                            <p>{
+                                active === 0 ? `At ${preparedTime}, the driver has packaged ` :
+                                active === 1 ? `At ${deliveringTime}, the driver started to deliver good` :
+                                `At ${completedTime}, the driver has finished to deliver`   
+                            }</p>
                         </div>
                         </li>)
                     })}

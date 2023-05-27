@@ -38,6 +38,7 @@ const constraints = {
 
     getDriverJobs: "job",
     postDriverOffers: "offer",
+    getDriverHistory: "history",
     getDriverActiveOrders: 'order/active',
 
     getAllOrderInfo: 'order/detail',
@@ -56,8 +57,10 @@ const constraints = {
 
     getAllPayments: "payments",
 
+    putPrepareOrder: "order/prepare",
     putDeliverOrder: "order/deliver",
     putReceiveOrder: "order/receive",
+    putCancelOrder: "order/cancel",
 
     hubOnline: "online",
     hubReceiveOnline: "online",
