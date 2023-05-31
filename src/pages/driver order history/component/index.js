@@ -1,9 +1,10 @@
 import React from 'react';
 import { Formik } from "formik";
 import {BiSearchAlt2} from 'react-icons/bi';
-import {Table, Pagination,Form,Button, Dropdown} from 'react-bootstrap';
+import {Table, Pagination,Form,Button, Dropdown, Row, Col} from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
+import moment from 'moment';
 
 function Product() {
     const rows = [10,15,20,25,30,35,40];
@@ -12,12 +13,12 @@ function Product() {
         perPageAmount,
         total,
         loading,
-        items : orders,
+        items : offers,
         nextPage,
         prevPage,
         setCurrent,
         setPerPageAmount
-     } = usePagination({
+    } = usePagination({
         fetchingAPIInstance: ({controller, page, take }) => authInstance.get([authConstraints.driverRoot, authConstraints.getDriverHistory].join("/"), {
             headers: {
                 'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
@@ -54,21 +55,7 @@ function Product() {
                                 <div className='form-order'>
                                     <Form.Group>
                                         <div className='mb-2'>
-                                            <Form.Label className='label'>ID</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="id"
-                                            placeholder="Enter Id"
-                                            isInvalid={touched.id && errors.id}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.id}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Sender Location</Form.Label>
+                                            <Form.Label className='label'>Pickup Location</Form.Label>
                                         </div>
                                         <Form.Control
                                             type="text"
@@ -79,20 +66,6 @@ function Product() {
                                             onBlur={handleBlur}
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.id}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Full name sender</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="fullNameSender"
-                                            placeholder="Enter Sender's Name"
-                                            isInvalid={touched.senderName && errors.senderName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.senderName}</Form.Control.Feedback>
                                     </Form.Group>
                                     <Form.Group>
                                         <div className='mb-2'>
@@ -107,20 +80,6 @@ function Product() {
                                             onBlur={handleBlur}
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.destination}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Date</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="date"
-                                            placeholder="Enter Date"
-                                            isInvalid={touched.date && errors.date}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.date}</Form.Control.Feedback>
                                     </Form.Group>
                                 </div>
                                 <div>
@@ -138,7 +97,7 @@ function Product() {
                             <div>
                                 <Dropdown className='reg-dr' style={{width:'fit-content'}}>
                                     <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
-                                        {rows}
+                                        {perPageAmount}
                                     </Dropdown.Toggle>
                                     <Dropdown.Menu>
                                         {rows.map((item,index) => {
@@ -151,36 +110,81 @@ function Product() {
                             </div>
                             <p className='m-0'>Rows</p>
                         </div>
-                        {orders?.length === 0 ? 
+                        {offers?.length === 0 ? 
                             (<div className='txt-center'>
                                 <h5>No Data Found</h5>
                             </div>) :
-                            (<>
+                            (<div style={{maxWidth: '100%', overflowX: "scroll" }}>
                                 <Table striped bordered >
-                                    <thead>
-                                        <tr>
-                                            <th>Id</th>
-                                            <th>Order Name</th>
-                                            <th>Pickup Location</th>
-                                            <th>Destination</th>
-                                            <th></th>
-                                        </tr>
-                                    </thead> 
-                                        <tbody>
-                                            {
-                                                orders?.map((order,index) =>{
-                                                    return (
-                                                        <tr key={index}>
-                                                            <td>{order.id}</td>
-                                                            <td>{order.userId}</td>
-                                                            <td>{order.title}</td>
-                                                            <td>
-                                                            </td>
-                                                        </tr>
-                                                    )
-                                                })
-                                            }
-                                        </tbody>
+                                <thead>
+                                            <tr>
+                                                <th>Order Id</th>
+                                                <th style={{
+                                                    minWidth: '320px'
+                                                }}>Item Name</th>
+                                                <th style={{
+                                                    minWidth: '140px'
+                                                }}>Pickup</th>
+                                                <th style={{
+                                                    minWidth: '140px'
+                                                }}>Destination</th>
+                                                <th style={{
+                                                    minWidth: '140px'
+                                                }}>Expected date</th>
+                                                <th style={{
+                                                    minWidth: '140px'
+                                                }}>Expected time frame</th>
+                                                <th style={{
+                                                    minWidth: '140px'
+                                                }}>Sender Offer</th>
+                                                <th style={{
+                                                    minWidth: '140px'
+                                                }}>My Offer</th>
+                                                <th style={{
+                                                    minWidth: '140px'
+                                                }}>
+                                                    Order Status
+                                                </th>
+                                                <th style={{
+                                                    minWidth: '140px'
+                                                }}>Offer Status</th>
+                                            </tr>
+                                </thead> 
+                                <tbody>
+                                    {
+                                        offers?.slice((currentPage - 1) * perPageAmount, currentPage * perPageAmount).map((offer,index) =>{
+                                            const allowDelivery = offer?.status === "Accepted" 
+                                                && offer?.order?.status === "Paid"
+                                                || offer?.order?.status === "Prepared"
+                                                || offer?.order?.status === "Delivering"
+                                                || offer?.order?.status === "Completed";
+                                            return (
+                                                <tr key={index}>
+                                                    <td>{offer?.order?.id}</td>
+                                                    <td>
+                                                    <Row>
+                                                        <Col sm="5">
+                                                            <img src={offer?.order?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
+                                                        </Col>
+                                                        <Col sm="7">
+                                                            <b>{offer?.order?.orderItems?.[0]?.itemName}</b>
+                                                        </Col>
+                                                    </Row>
+                                                        
+                                                    </td>
+                                                    <td>{offer?.order?.sendingLocation}</td>
+                                                    <td>{offer?.order?.destination}</td>
+                                                    <td>{!!offer?.order?.deliverableDate ? moment(offer?.order?.deliverableDate).format("DD-MM-YYYY") : ""}</td>
+                                                    <td>{offer?.order?.timeFrame}</td>
+                                                    <td>{offer?.order?.orderItems?.reduce?.((i,c) => i + c?.startingRate, 0)} aud</td>
+                                                    <td>{offer?.ratePrice} aud</td>
+                                                    <td>{offer?.order?.status}</td>
+                                                    <td>{offer?.status}</td>
+                                                </tr>
+                                            )
+                                        })
+                                    }
+                                </tbody>
                                 </Table>
                                 <Pagination className='pg-form w-100'>
                                     <Pagination.Prev onClick={prevPage} className='pg-first' />
@@ -196,7 +200,7 @@ function Product() {
                                     })}
                                     <Pagination.Next onClick={nextPage} className='pg-first' />
                                 </Pagination>
-                            </>)
+                            </div>)
                             }
                     </div>
                 </div>)

@@ -1,5 +1,5 @@
 import React,{ useEffect, useRef } from 'react'
-import { Col, Container, Row, Button, Dropdown, Table, Form, Pagination,Modal, Stack } from 'react-bootstrap';
+import { Col, Container, Row, Button, Dropdown, Table, Form, Pagination,Modal, Stack, Spinner } from 'react-bootstrap';
 import '../style/senderProductDetail.css';
 import {MdPayment} from 'react-icons/md';
 import { Formik } from "formik";
@@ -38,7 +38,8 @@ function ProductDetail(){
         nextPage,
         prevPage,
         setCurrent,
-        setPerPageAmount
+        setPerPageAmount,
+        refresh
     } = usePagination({
         fetchingAPIInstance:({controller, page, take}) => authInstance.get([authConstraints.userRoot, authConstraints.getOrderOffers].join("/"), {
             headers: {
@@ -60,8 +61,16 @@ function ProductDetail(){
     });
 
     useEffect(() =>{
-        getOrderInfo();
+        if(searchParams.get(keyquery)){
+            getOrderInfo();
+        }
     }, [searchParams]);
+
+    useEffect(() =>{
+        if(order){
+            refresh();
+        }
+    }, [order])
 
     function getOrderInfo(){
         setLoading(true);
@@ -102,6 +111,31 @@ function ProductDetail(){
                 const {orderId, driverId} = response.data?.result;
                 getOrderInfo();
                 createOrderPayment(orderId,driverId);
+            }
+            setLoading(false);
+        })
+        .catch(error => {
+            toast.error(error?.message);
+            setError(error?.message);
+            setLoading(false);
+        });
+    }
+
+    function cancelDriver(driverId){
+        setLoading(true);
+        authInstance.put([authConstraints.userRoot, authConstraints.cancelDriverOffer].join("/"), null, {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
+            },
+            params: {
+                orderId: searchParams.get(keyquery),
+                driverId: driverId,
+            }
+        })
+        .then(response =>{
+            if(response?.data?.successed && response.data?.result){
+                const {orderId, driverId} = response.data?.result;
+                getOrderInfo();
             }
             setLoading(false);
         })
@@ -169,11 +203,13 @@ function ProductDetail(){
             </div>
 
             <div>
-                {/* Delivery Information */}
+                {/* Delivery Information Title*/}
                 <div className='sender-product-title'>
                     <p className='product-content-title my-3'>Delivery Information</p>
                 </div>
+                {/* Delivery Information Body*/}
                 <Row className='product-form-content'>
+                    {/* Left Info: ID, Sender name, Phone number, From, To, Receiver Name, Receiver Phone, Posted Date, Vehicles */}
                     <Col>
                         <div className='product-form-info'>
                             <div>
@@ -254,6 +290,7 @@ function ProductDetail(){
                             </div>
                         </div>
                     </Col>
+                    {/* Right Info: Starting shipping rates, Selected shipping rates, Status, Delivery Images, Received Images */}
                     <Col>
                         <div>
                             <div className='product-label-info'>
@@ -383,7 +420,7 @@ function ProductDetail(){
                     </Col>
                 </Row>
 
-                {/* Product Information */}
+                {/* Item Information */}
                 <div className='sender-product-title'>
                     <p className='product-content-title my-4'>Product Information</p>
                 </div>
@@ -446,6 +483,14 @@ function ProductDetail(){
                             </Col>
                             <Col>
                                 <div>
+                                    <div className='product-label-info' style={{alignItems:'unset'}}>
+                                        <p className="product-label-fit">
+                                            Received Barcode
+                                        </p>
+                                        <p>
+                                            {item?.itemCharCode}
+                                        </p>
+                                    </div>
                                     <div className='product-label-info'  style={{alignItems:'unset'}}>
                                         <p className='product-label-fit'>
                                             Product pictures
@@ -505,150 +550,153 @@ function ProductDetail(){
                     )
                 })}
 
-                {/* Order Status */}
-                <Row>
-                    <Col>
-                        <div className='py-4'>
-                            <div className='product-label-info my' >
-                                <p className='product-label-fit'>
-                                    Status
-                                </p>
-                                <p className='content-blue'>
-                                    {order.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}
-                                </p>
-                            </div>
-                            <div>
-                                <p style={{fontWeight:'600'}}>The driver requested {order?.offerNumber} offers</p>
-                            </div>
-                            <div className='pg-rows'>
-                                <p className='m-0'>Show</p>
-                                <div>
-                                    <Dropdown className='reg-dr' style={{width:'fit-content'}}>
-                                        <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
-                                            {perPageAmount}
-                                        </Dropdown.Toggle>
-                                        <Dropdown.Menu>
-                                            {rows.map((item,index) => {
-                                                return(
-                                                    <Dropdown.Item key={index} onClick={()=> setPerPageAmount(item)}>{item}</Dropdown.Item>
-                                                )
-                                            })}
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </div>
-                                <p className='m-0'>Rows</p>
-                            </div>
-                            {offers.length === 0 ? (<div className='txt-center'>
-                                    <h5>No Data Found</h5>
-                            </div>) :
-                            (<>
-                                <Table bordered >
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th style={{minWidth: '150px'}}>Rate</th>
-                                            <th>Status</th>
-                                            <th>Sent at</th>
-                                            <th>Driver Vehicles</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead> 
-                                    <tbody>
-                                        {
-                                            offers?.map?.((offer,index) =>{
-                                                return (
-                                                    <tr key={index}>
-                                                        <td>{"000000".substring(0, 6 - (index + 1)?.toString().length) + (index + 1)}
-                                                        </td>
-                                                        <td>
-                                                            <Row>
-                                                                <Col>ShipFee:</Col>
-                                                                <Col>{offer?.ratePrice}</Col>
-                                                            </Row>
-                                                            <Row>
-                                                                <Col>GST:</Col>
-                                                                <Col>10%</Col>
-                                                            </Row>
-                                                            <Row>
-                                                                <Col>Freight:</Col>
-                                                                <Col>10%</Col>
-                                                            </Row>
-                                                            <Row>
-                                                                <Col>Total</Col>
-                                                                <Col>{(offer?.ratePrice * (1 + 0.1 + 0.1)).toFixed(2)}</Col>
-                                                            </Row>
-                                                        </td>
-                                                        <td>
-                                                            {<div className={offer.status === 'Accepted' ? 'content-green' : 
-                                                            offer.status === 'Denied' ? 'content-danger' : 'content-yellow'}>
-                                                                {offer.status}
-                                                            </div>}
-                                                        </td>
-                                                        <td>{new moment(offer?.createdDate).format("DD/MM/YYYY")}</td>
-                                                        <td>
-                                                            {offer?.driver?.vehicles?.join?.(" - ") || offer?.driverVehicles?.join(" - ")}
-                                                        </td>
-                                                        <td className='sender-action justify-content-center'>
-                                                            {
-                                                                ((order.status === "LookingForDriver" || order.status === "Trading") && offer.status === "Waiting") ?
-                                                                (<div className='txt-success' onClick={() => acceptDriver(offer?.driverId)}>
-                                                                    <Button className="w-100" variant="success">Accept</Button>
-                                                                </div>) :
-                                                                (order.status === "WaitingForPayment" && offer?.status === 'Accepted') ? 
-                                                                (<div className='txt-success' onClick={() => createOrderPayment(order?.id, offer?.driverId)}>
-                                                                    <div style={{
-                                                                        cursor: 'pointer',
-                                                                        fontSize: '1.4rem',
-                                                                    }}>
-                                                                        <p>
-                                                                            <MdPayment></MdPayment><span className='ms-auto' style={{fontSize: '1rem'}}>Checkout Now</span>
-                                                                        </p>
-                                                                    </div>
-                                                                </div>) : 
-                                                                ((order.status === "Paid" || order.status === "Prepared" || order.status === "Delivering") && offer?.status === 'Accepted') ? 
-                                                                (<Stack>
-                                                                    <Button className="w-100 mb-2" variant="warning">
-                                                                        Support
-                                                                    </Button>
-                                                                    <Button className="w-100 mb-2">View Invoice</Button>
-                                                                    <Button className="w-100 mb-2" variant="success">Print Invoice</Button>
-                                                                </Stack>
-                                                                ) :
-                                                                (order.status === "Completed") ? 
-                                                                (<p className='content-green'>Completed</p>) :
-                                                                (<></>)
-                                                            }
-                                                            {/* (!!order?.driverId && post.driverId !== order?.driverId) ? 
-                                                            (<p className='content-yellow text-center'>Your package had been delivered</p>) : */}
-                                                        </td>
-                                                    </tr>
-                                                )
-                                            })
-                                        }
-                                    </tbody>
-                                </Table>
-                                <Pagination className='pg-form w-100'>
-                                    {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
-                                    <Pagination.Prev onClick={prevPage} className='pg-first' />
-                                    {Array.from(Array(total).keys()).map((item,index) => {
-                                        return (
-                                            <div>
-                                                <div key={index}>
-                                                    <Pagination.Item 
-                                                        className={item + 1 === currentPage ? "pg-no pg-active" : "pg-no"}
-                                                        onClick={()=> setCurrent(item + 1)}
-                                                    >{item + 1}</Pagination.Item>
-                                                </div>
-                                            </div>
+                {/* Order Status And Table of Offer*/}
+                <div className='py-4'>
+                    <div className='product-label-info my' >
+                        <p className='product-label-fit'>
+                            Status
+                        </p>
+                        <p className='content-blue'>
+                            {order.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}
+                        </p>
+                    </div>
+                    <div>
+                        <p style={{fontWeight:'600'}}>The driver requested {order?.offerNumber} offers</p>
+                    </div>
+                    <div className='pg-rows'>
+                        <p className='m-0'>Show</p>
+                        <div>
+                            <Dropdown className='reg-dr' style={{width:'fit-content'}}>
+                                <Dropdown.Toggle className='dr-btn py-1' id="dropdown-basic">
+                                    {perPageAmount}
+                                </Dropdown.Toggle>
+                                <Dropdown.Menu>
+                                    {rows.map((item,index) => {
+                                        return(
+                                            <Dropdown.Item key={index} onClick={()=> setPerPageAmount(item)}>{item}</Dropdown.Item>
                                         )
                                     })}
-                                    <Pagination.Next onClick={nextPage} className='pg-first' />
-                                    {/* <Pagination.Last onClick={last} className='pg-first'/> */}
-                                </Pagination>
-                            </>)}
+                                </Dropdown.Menu>
+                            </Dropdown>
                         </div>
-                    </Col>
-                </Row>
+                        <p className='m-0'>Rows</p>
+                    </div>
+                    {offerLoading ? <Spinner></Spinner> : offers.length === 0 ? (<div className='txt-center'>
+                            <h5>No Data Found</h5>
+                    </div>) :
+                    (<>
+                        <Table bordered >
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th style={{minWidth: '150px'}}>Rate</th>
+                                    <th>Status</th>
+                                    <th>Sent at</th>
+                                    <th>Driver Vehicles</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead> 
+                            <tbody>
+                                {
+                                    offers?.map?.((offer,index) =>{
+                                        return (
+                                            <tr key={index}>
+                                                <td>{"000000".substring(0, 6 - (index + 1)?.toString().length) + (index + 1)}
+                                                </td>
+                                                <td>
+                                                    <Row>
+                                                        <Col>ShipFee:</Col>
+                                                        <Col>{offer?.ratePrice}</Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col>GST:</Col>
+                                                        <Col>10%</Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col>Freight:</Col>
+                                                        <Col>10%</Col>
+                                                    </Row>
+                                                    <Row>
+                                                        <Col>Total</Col>
+                                                        <Col>{(offer?.ratePrice * (1 + 0.1 + 0.1)).toFixed(2)}</Col>
+                                                    </Row>
+                                                </td>
+                                                <td>
+                                                    {<div className={offer.status === 'Accepted' ? 'content-green' : 
+                                                    offer.status === 'Denied' ? 'content-danger' : 'content-yellow'}>
+                                                        {offer.status}
+                                                    </div>}
+                                                </td>
+                                                <td>{new moment(offer?.createdDate).format("DD/MM/YYYY")}</td>
+                                                <td>
+                                                    {offer?.driver?.vehicles?.join?.(" - ") || offer?.driverVehicles?.join(" - ")}
+                                                </td>
+                                                <td className='sender-action justify-content-center'>
+                                                    {
+                                                        // Case 1: Button Accept 
+                                                        ((order.status === "LookingForDriver" || order.status === "Trading" || order.status === "WaitingForPayment") && offer.status === "Waiting") ?
+                                                        (<div className='txt-success'>
+                                                            <Button className="w-100 mb-2" variant="success" onClick={() => acceptDriver(offer?.driverId)}>Accept</Button>
+                                                        </div>) :
+                                                        // Case 2: Button Checkout
+                                                        (order.status === "WaitingForPayment" && offer?.status === 'Accepted') ? 
+                                                        (<div className='txt-success'>
+                                                            <div style={{
+                                                                cursor: 'pointer',
+                                                                fontSize: '1.4rem',
+                                                            }}
+                                                            onClick={() => createOrderPayment(order?.id, offer?.driverId)}>
+                                                                <p>
+                                                                    <MdPayment></MdPayment><span className='ms-auto' style={{fontSize: '1rem'}}>Checkout Now</span>
+                                                                </p>
+                                                            </div>
+                                                            <Button className='w-100' variant="danger" onClick={() => cancelDriver(offer?.driverId)}>Cancel</Button>
+                                                        </div>) : 
+                                                        // Case 3: Button Support, View and Print invoice
+                                                        ((order.status === "Paid" || order.status === "Prepared" || order.status === "Delivering") && offer?.status === 'Accepted') ? 
+                                                        (<Stack>
+                                                            <Button className="w-100 mb-2" variant="warning">
+                                                                Support
+                                                            </Button>
+                                                            <Button className="w-100 mb-2">View Invoice</Button>
+                                                            <Button className="w-100 mb-2" variant="success">Print Invoice</Button>
+                                                        </Stack>
+                                                        ) :
+                                                        // Case 4: Text Completed
+                                                        (order.status === "Completed" && offer?.status === 'Accepted') ? 
+                                                        (<p className='content-green'>Completed</p>) :
+                                                        // Default
+                                                        (<></>)
+                                                    }
+                                                    {/* (!!order?.driverId && post.driverId !== order?.driverId) ? 
+                                                    (<p className='content-yellow text-center'>Your package had been delivered</p>) : */}
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                            </tbody>
+                        </Table>
+                        <Pagination className='pg-form w-100'>
+                            {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
+                            <Pagination.Prev onClick={prevPage} className='pg-first' />
+                            {Array.from(Array(total).keys()).map((item,index) => {
+                                return (
+                                    <div>
+                                        <div key={index}>
+                                            <Pagination.Item 
+                                                className={item + 1 === currentPage ? "pg-no pg-active" : "pg-no"}
+                                                onClick={()=> setCurrent(item + 1)}
+                                            >{item + 1}</Pagination.Item>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                            <Pagination.Next onClick={nextPage} className='pg-first' />
+                            {/* <Pagination.Last onClick={last} className='pg-first'/> */}
+                        </Pagination>
+                    </>)}
+                </div>
             </div>
             
             <PaymentPopup 
@@ -664,14 +712,22 @@ function ProductDetail(){
             || order?.status === "Delivering" 
             || order?.status === "Prepared"
             || order?.status === "Paid") 
-            && <Driver driver={order.driver} 
-                // preparedTime={order.}
-                // deliveringTime={}
-                // completedTime={}
-                orderStatus={
-                    order?.status === "Prepared" || order?.status === "Paid" ? 0 :
-                    order?.status === "Delivering" ? 1 :
-                2}></Driver>}
+            && <Driver 
+                    driver={order.driver} 
+                    preparedTime={order?.preparedDate}
+                    deliveringTime={order?.deliveredDate}
+                    completedTime={order?.completedDate}
+                    createdTime={order?.approvedDate}
+                    cancelledTime={order?.cancelledDate}
+                    deliveryImages={order?.deliverdItemImages?.split?.("[space]")}
+                    receivedImages={order?.receivedItemImages?.split?.("[space]")}
+                    orderStatus={
+                        order?.status === "Paid" ? 0 :
+                        order?.status === "Prepared" ? 1 :
+                        order?.status === "Delivering" ? 2 : 
+                        order?.status === "Completed" ? 3 : 
+                        4}
+                ></Driver>}
         </div>
     )
 }
@@ -850,23 +906,50 @@ function DropDownStatus() {
     );
 }
 
-function Driver({preparedTime, deliveringTime, completedTime,driver, orderStatus}){
+function Driver({createdTime,preparedTime, deliveringTime, completedTime,cancelledTime, driver, deliveryImages, orderStatus}){
     const [active,setActive] = React.useState(orderStatus);
     const [modalShow, setModalShow] = React.useState(false);
+    const [modalDeliveryImage, setModalDeliveryImage] = React.useState(false);
     const stepTemplate = [
-        "Prepared", "Delivering", "Completed"
+        {
+            type: "Waiting",
+            message: "We has sent the request to delivery of driver",
+            date: moment(createdTime).format("YYYY-MM-DD HH:mm:ss"),
+        },
+        {
+            type: "Prepared",
+            message: "Driver has received the order",
+            date: moment(preparedTime).format("YYYY-MM-DD HH:mm:ss")
+        },
+        {
+            type: "Delivering", 
+            message: "Driver are on his way",
+            date: moment(deliveringTime).format("YYYY-MM-DD HH:mm:ss")
+        },
+        {
+            type: "Completed",
+            message: "Driver has come to you",
+            date: moment(completedTime).format("YYYY-MM-DD HH:mm:ss")
+        },
+        {
+            type: "Cancelled",
+            message: "Driver has cancelled",
+            date: moment(cancelledTime).format("YYYY-MM-DD HH:mm:ss")
+        },
     ];
 
     return(
         <div>
+            {/* Driver Name  */}
             <div className='product-label-info'>
                 <p className='product-label-fit'>
-                Driver
+                    Driver
                 </p>
                 <p>
-                {driver.name}
+                    {driver.name}
                 </p>
             </div>
+            {/* Driver License Detail */}
             <div className='product-label-info'>
                 <p className='product-label-fit'>
                 Driving license
@@ -875,12 +958,13 @@ function Driver({preparedTime, deliveringTime, completedTime,driver, orderStatus
                     <BsFillPersonVcardFill className='license-icon'></BsFillPersonVcardFill>
                     <p className='m-0'>{driver.name}</p>
                 </div>
-            </div>
             <PopUpCenteredModal
                 show={modalShow}
                 driver={driver}
                 onHide={() => setModalShow(false)}
             />
+            </div>
+            {/* Process */}
             <div className='product-label-info' style={{alignItems:'unset'}}>
                 <p className='product-label-fit py-2'>
                     Process
@@ -888,42 +972,52 @@ function Driver({preparedTime, deliveringTime, completedTime,driver, orderStatus
                 <div>
                 <section className="step-wizard">
                     <ul className='order-progress'>
-                    {stepTemplate.map((template,index) =>{
+                    {stepTemplate?.map?.((template,index) =>{
                         return (<li className='order-progress-item' key={index} data-active={index <= active}>
-                        <div className="progress-circle"></div>
-                        <div className="progress-label">
-                            <h2 className='progress-txt-header'>
-                                {template}
-                            </h2>
-                            <p>{
-                                active === 0 ? `At ${preparedTime}, the driver has packaged ` :
-                                active === 1 ? `At ${deliveringTime}, the driver started to deliver good` :
-                                `At ${completedTime}, the driver has finished to deliver`   
-                            }</p>
-                        </div>
+                            <div className="progress-circle"></div>
+                            <div className="progress-label">
+                                <h2 className='progress-txt-header'>
+                                    {template.type}
+                                </h2>
+                                <p className='order-progress-description'>
+                                    At <b>{template.date}</b>, {template.message}
+                                </p>
+                            </div>
                         </li>)
                     })}
-                    
                     </ul>
                 </section>
                 </div>
             </div>
-            <div className='product-label-info' style={{alignItems:'unset'}}>
-            </div>
-            {/* <div className='product-label-info py-3' style={{alignItems:'unset'}}>
+            {/* Delivery Pictures */}
+            <div className='product-label-info py-3' style={{alignItems:'unset'}}>
                 <p className='product-label-fit py-1'>
                     Delivery pictures
                 </p>
                 <div>
                     <div className='img-front-frame'  style={{padding:'10px 0 '}}>
                         <div className='background-front'>
-                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>4</div>
+                            <div style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}>{deliveryImages?.length}</div>
                             <p className='driving-txt'>view image</p>
                         </div>
-                        <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
+                        <img className='img-front' src={deliveryImages?.[0] || 'https://tinyurl.com/5ehpcctt'}/>
                     </div>
+                    <Modal centered show={modalDeliveryImage} onHide={() => setModalDeliveryImage(false)}>
+                        <Modal.Header></Modal.Header>
+                        <Modal.Body>
+                            <Carousel>
+                            {
+                                deliveryImages && deliveryImages?.map?.((image,index) =>{
+                                    return (<Carousel.Item key={index}>
+                                        <img src={image} />
+                                    </Carousel.Item>)
+                                })
+                            }
+                            </Carousel>
+                        </Modal.Body>
+                    </Modal>
                 </div>
-            </div> */}
+            </div>
         </div>
     )
 }

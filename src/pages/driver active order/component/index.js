@@ -10,11 +10,12 @@ import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { OrderContext, SocketContext, taskStatus } from '../../../stores';
+import { AuthContext, OrderContext, SocketContext, taskStatus } from '../../../stores';
 import { Formik } from 'formik';
 import { toast } from 'react-toastify';
 
 function Product() {
+    const [authState] = useContext(AuthContext);
     const [orderState,{putCancelOffer}] = useContext(OrderContext);
     const [__,{onOrderReceive}] = useContext(SocketContext);
     const [modalShow, setModalShow] = React.useState(false);
@@ -178,10 +179,11 @@ function Product() {
                                             {
                                                 offers?.slice((currentPage - 1) * perPageAmount, currentPage * perPageAmount).map((offer,index) =>{
                                                     const allowDelivery = offer?.status === "Accepted" 
-                                                        && offer?.order?.status === "Paid"
+                                                        && (offer?.order?.status === "Paid"
                                                         || offer?.order?.status === "Prepared"
                                                         || offer?.order?.status === "Delivering"
-                                                        || offer?.order?.status === "Completed";
+                                                        || offer?.order?.status === "Completed" );
+                                                    const isCorrectDriver =offer?.order?.driverId === authState?.accountInfo?.id;
                                                     return (
                                                         <tr key={index}>
                                                             <td>{offer?.order?.id}</td>
@@ -205,7 +207,7 @@ function Product() {
                                                             <td>{offer?.order?.status}</td>
                                                             <td>{offer?.status}</td>
                                                             <td>
-                                                            {allowDelivery ? 
+                                                            {(allowDelivery && isCorrectDriver) ? 
                                                                 <Row style={{flexWrap: 'wrap'}}>
                                                                     <Col sm="12" className='mb-2'>
                                                                         <Link to={`/driver/order/detail/${offer?.order?.id}`}>
@@ -217,12 +219,16 @@ function Product() {
                                                                 </Row> :
                                                                 (offer?.order?.status === "Cancel") ?
                                                                 <div className='p-2'>
-                                                                    <p className='content-yellow text-center'>This order has been cancelled</p>
+                                                                    <p className='content-yellow text-center'>This order has been removed</p>
                                                                 </div> : 
                                                                 (offer?.status === "Cancelled") ?
                                                                 <div className='p-2'>
                                                                     <p className='content-yellow text-center'>This offer has been cancelled</p>
                                                                 </div> :
+                                                                !allowDelivery ?  
+                                                                (<div className='p-2'>
+                                                                    <p className='content-red text-center'>Order has completed transaction</p>
+                                                                </div>) :
                                                                 <div className='p-2'>
                                                                     <Button className='w-100' variant='danger' onClick={() => {
                                                                         setModalShow(true);

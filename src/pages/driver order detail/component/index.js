@@ -10,7 +10,7 @@ import { authConstraints, authInstance, config } from '../../../api';
 import { RiImageEditFill } from 'react-icons/ri';
 import { CustomSpinner } from '../../../layout';
 import Modal from 'react-bootstrap/Modal';
-import { OrderContext } from '../../../stores';
+import { OrderContext, taskStatus } from '../../../stores';
 import { dotnetFormDataSerialize } from "../../../ultitlies";
 import moment from 'moment';
 
@@ -72,7 +72,7 @@ let imgDoneSchema = yup.object().shape({
 })
 
 function OrderDetail(){
-  const [_, {putPrepareOrder, putDeliveryOrder, putReceiveOrder, putCancelOrder}] = useContext(OrderContext);
+  const [orderState, {putPrepareOrder, putDeliveryOrder, putReceiveOrder, putCancelOrder}] = useContext(OrderContext);
   const [result, setResult] = React.useState(null);
   const [loading,setLoading] = React.useState(true);
   const imgDelivery = useRef();
@@ -82,6 +82,16 @@ function OrderDetail(){
     useEffect(() =>{
       refresh();
     }, [id]);
+
+    useEffect(() =>{
+      console.log(orderState.tasks);
+      if(orderState.tasks?.[authConstraints.putPrepareOrder] === taskStatus.Completed ||
+        orderState.tasks?.[authConstraints.putDeliverOrder] === taskStatus.Completed ||
+        orderState.tasks?.[authConstraints.putReceiveOrder] === taskStatus.Completed ||
+        orderState.tasks?.[authConstraints.putCancelOffer] === taskStatus.Completed){
+          refresh();
+        }
+    }, [orderState]);
 
     function refresh(){
       setLoading(true);

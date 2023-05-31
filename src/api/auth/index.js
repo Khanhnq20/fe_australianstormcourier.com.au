@@ -45,6 +45,7 @@ const constraints = {
     getOrderOffers: 'order/offers',
 
     acceptDriverOffer: "order/accept",
+    cancelDriverOffer: "order/cancel",
     postCheckoutIntentSessions: "order/checkout-intent-session",
     postCheckout: "order/checkout",
 
@@ -56,6 +57,7 @@ const constraints = {
     blockAccount: "account/block",
 
     getAllPayments: "payments",
+    putPayoutPayments: "payments/payout",
 
     putPrepareOrder: "order/prepare",
     putDeliverOrder: "order/deliver",
@@ -64,6 +66,8 @@ const constraints = {
 
     hubOnline: "online",
     hubReceiveOnline: "online",
+    hubOnCreatedOrder: "order/create",
+    hubOnCreatedOrderReceived: "order/create",
     hubOnChangeOrderStatus: "order/status",
     hubOnReceiveOrderStatus: "order/status",
 
@@ -129,12 +133,12 @@ authInstance.interceptors.response.use(response =>{
             }
         });
 
-        if(response?.data?.successed){
+        if(response?.data?.token){
             const {accessToken, refreshToken} = response?.data?.token;
-    
+
             localStorage.removeItem(constraints.LOCAL_KEY);
-            localStorage.setItem(constraints.LOCAL_KEY, accessToken);
             localStorage.removeItem(constraints.LOCAL_KEY_2);
+            localStorage.setItem(constraints.LOCAL_KEY, accessToken);
             localStorage.setItem(constraints.LOCAL_KEY_2, refreshToken);
     
             originalRequest.headers['Authorization'] = [config.AuthenticationSchema, accessToken].join(' ');
