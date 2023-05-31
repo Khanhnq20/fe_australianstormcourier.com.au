@@ -1,13 +1,23 @@
-import React from 'react';
-import './style.css'
+import React, { useRef } from 'react';
+import './style.css';
+import { useReactToPrint } from 'react-to-print';
 
 export default function Invoice() {
+    const componentRef = useRef();
+    const handlePrint = useReactToPrint({
+        content:()=> componentRef.current,
+        documentTitle : 'new document',
+        onafterprint:()=>alert('Print Success')
+    })
   return (
     <div>
-        <div className='invoice'>
-            <div className='invoice-form'>
+        <div className='invoice mb-4' >
+                <div style={{textAlign:'right',maxWidth:"1500px"}}>
+                    <button className='my-btn-yellow' onClick={handlePrint}>Print Invoice</button>
+                </div>
+             <div className='invoice-form' ref={componentRef}>
                 <div className='invoice-header'>
-                    <div style={{maxWidth: "100px"}}>
+                    <div style={{maxWidth: "100px",marginBottom:'20px'}}>
                         <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" width="100%"/>
                     </div>
                     <div>
@@ -77,7 +87,7 @@ export default function Invoice() {
                             </tr>
                         </table>
                     </div>
-                    <div className='invoice-last-info'>
+                    <div className='invoice-last-info' style={{marginTop:'35px'}}>
                             <div>
                                 <div className='invoice-txt-label'>Payment Method</div>
                                 <div className='invoice-txt-label'>Name </div>

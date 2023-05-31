@@ -226,7 +226,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                                                             </div>
                                                             <img className='img-front' src={picture?.url || 'https://tinyurl.com/5ehpcctt'}/>
                                                         </div>
-                                                        <Button onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
+                                                        <Button variant="danger" onClick={() => arrayHelpers.remove(ind)}>Remove</Button>
                                                         {errors?.orderItems?.[index]?.productPictures?.[ind]?.file}
                                                     </Col>
                                                     )
