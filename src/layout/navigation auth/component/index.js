@@ -61,13 +61,14 @@ function Notification(){
 }
 
 function AvatarUserDropDown() {
+    const  [show,setShow] = React.useState(false);
     const [{accountInfo},{
         signout
     }] = useContext(AuthContext);
 
     return (
-    <Dropdown>
-        <Dropdown.Toggle className='nav-avatar' id="dropdown-basic">
+    <div className='mx-4'>
+        <div className='nav-avatar' onClick={()=>setShow(e => !e)}>
             <img
                 className='nav-avatar-img'
                 height="40px"
@@ -81,33 +82,39 @@ function AvatarUserDropDown() {
             </div>
                 <BsChevronDown  style={{color:'black'}}></BsChevronDown>
             </div>
-        </Dropdown.Toggle>
-        <Dropdown.Menu className='nav-menu'>
-            <Dropdown.Item className='nav-menu-topic'>
-                <BsPersonWorkspace className='nav-menu-topic-icon'></BsPersonWorkspace>
-                <Link to={`/user/order/me`}style={{textDecoration: "none",color:"black"}}>
-                    My Workspace
-                </Link>
-            </Dropdown.Item>
-            <Dropdown.Item className='nav-menu-topic'>
-                <AiFillUnlock className='nav-menu-topic-icon'></AiFillUnlock>
-                <Link to={`/user/password`}style={{textDecoration: "none",color:"black"}}>
-                    Change Password
-                </Link>
-            </Dropdown.Item>
-            {/* <Dropdown.Item className='nav-menu-topic'>
-                <AiOutlineSetting className='nav-menu-topic-icon'></AiOutlineSetting>
-                <Link to="/userManagement" style={{textDecoration: "none",color:"black"}}>
-                    Setting
-                </Link>
-            </Dropdown.Item> */}
-            <Dropdown.Item className='nav-menu-topic' onClick={signout}>
-                <FiLogOut className='nav-menu-topic-icon'></FiLogOut>
-                <div>   
-                    Log out
+        </div>
+        {
+            show 
+            ? 
+            <div className='nav-menu'>
+                <div className='nav-menu-topic' onClick={()=>setShow(e => !e)}>
+                    <BsPersonWorkspace className='nav-menu-topic-icon'></BsPersonWorkspace>
+                    <Link to={`/user/order/me`} style={{textDecoration: "none",color:"var(--clr-txt-secondary)"}}>
+                        My Workspace
+                    </Link>
                 </div>
-            </Dropdown.Item>
-        </Dropdown.Menu>
-    </Dropdown>
+                <div className='nav-menu-topic' onClick={()=>setShow(e => !e)}>
+                    <AiFillUnlock className='nav-menu-topic-icon'></AiFillUnlock>
+                    <Link to={`/user/password`} style={{textDecoration: "none",color:"var(--clr-txt-secondary)"}}>
+                        Change Password
+                    </Link>
+                </div>
+                {/* <div className='nav-menu-topic'>
+                    <AiOutlineSetting className='nav-menu-topic-icon'></AiOutlineSetting>
+                    <Link to="/userManagement" style={{textDecoration: "none",color:"black"}}>
+                        Setting
+                    </Link>
+                </div> */}
+                <div className='nav-menu-topic' onClick={signout}>
+                    <FiLogOut className='nav-menu-topic-icon'></FiLogOut>
+                    <div onClick={()=>setShow(e => !e)}>   
+                        Log out
+                    </div>
+                </div>
+            </div>
+            :
+            <></>
+        }
+    </div>
     );
 }
