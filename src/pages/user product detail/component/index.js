@@ -14,9 +14,11 @@ import { usePagination } from '../../../hooks';
 import { PaymentComponents } from '../..';
 import { CustomSpinner } from '../../../layout';
 import Carousel from 'react-bootstrap/Carousel';
-import {FaTimes} from 'react-icons/fa'
+import {FaTimes} from 'react-icons/fa';
+import { Link } from "react-router-dom";
 
 function ProductDetail(){
+    const [support,setSupport] = React.useState(false);
     const [slider,setSlider] = React.useState(false);
     const [receiveImg,setReceiveImg] = React.useState(false); 
     const [deliveryImg,setDeliveryImg] = React.useState(false); 
