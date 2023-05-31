@@ -76,7 +76,10 @@ function AvatarUserDropDown() {
                 src="https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg"
             />
             <div className='user-name'>
-                <p style={{color:'#666666',margin:'0'}}>{accountInfo?.name || accountInfo?.username}</p>
+            <div>
+                <p className='content-green' style={{display: 'block', margin: 0}}>{accountInfo?.roles?.[0]}</p>
+                <p className="pt-1" style={{color:'#666666',margin:'0', paddingLeft: '10px'}}>{accountInfo?.name || accountInfo?.username}</p>
+            </div>
                 <BsChevronDown  style={{color:'black'}}></BsChevronDown>
             </div>
         </div>

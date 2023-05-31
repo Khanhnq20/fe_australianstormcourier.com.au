@@ -155,6 +155,10 @@
     z-index: -1;
 }
 
+.order-progress-description{
+    visibility: hidden;
+}
+
 .order-progress-item[data-active="true"] {
     opacity: 1;
     cursor: pointer;
@@ -167,6 +171,11 @@
 .order-progress-item[data-active="true"]:not(:first-child) > .progress-circle::after {
     background-color: var(--clr-primary);
 }
+
+.order-progress-item[data-active="true"] .order-progress-description{
+    visibility: visible;
+}
+
 .progress-txt-header{
     font-size: 14px;
 }

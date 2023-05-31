@@ -40,7 +40,6 @@ export  default function Index({children}){
             socketConnection
                 .start()
                 .then(() => {
-                    console.log("Connection established");
                     socketConnection.send(authConstraints.hubOnline, authState?.accountInfo?.id);
                 })
                 .catch((error) => setError(error));
@@ -54,6 +53,18 @@ export  default function Index({children}){
     }, [socketConnection])
 
     const funcs = {
+        onOrderCreator(orderId){
+            if(socketConnection){
+                socketConnection.send(authConstraints.hubOnCreatedOrder, orderId);
+            }
+        },
+
+        onCreatedOrderReceiver(callback){
+            if(socketConnection){
+                socketConnection.on(authConstraints.hubOnCreatedOrderReceived, callback);
+            }
+        },
+
         onOrderChanged(orderId){
             if(socketConnection){
                 socketConnection.send(authConstraints.hubOnChangeOrderStatus, orderId);
