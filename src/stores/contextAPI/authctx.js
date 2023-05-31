@@ -26,8 +26,6 @@ export default function Index({children}) {
 
             localStorage.setItem(authConstraints.LOCAL_KEY, accessToken);
             localStorage.setItem(authConstraints.LOCAL_KEY_2, refreshToken);
-
-            this.getAccount();
         },
 
         signin(body, returnURL) {
@@ -257,7 +255,7 @@ export default function Index({children}) {
                         ...i,
                         accountInfo: response.data,
                         isLogged: true,
-                        roles: response.roles,
+                        roles: response.data?.roles,
                         tasks: {
                             ...i.tasks,
                             [authConstraints.getAccount] : taskStatus.Completed
@@ -265,16 +263,30 @@ export default function Index({children}) {
                         loading: false
                     }));
                 }
+
             }).catch(err =>{
-                setState(i =>({
-                    ...i,
-                    isLogged: false,
-                    tasks: {
-                        ...i.tasks,
-                        [authConstraints.getAccount] : taskStatus.Failed
-                    },
-                    loading: false
-                }));
+                if(err.message === 'canceled'){
+                    setState(i =>({
+                        ...i,
+                        isLogged: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.getAccount] : taskStatus.Inprogress
+                        },
+                        loading: false
+                    }));
+                }
+                else {
+                    setState(i =>({
+                        ...i,
+                        isLogged: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.getAccount] : taskStatus.Failed
+                        },
+                        loading: false
+                    }));
+                }
             });
         },
 
@@ -533,6 +545,7 @@ export default function Index({children}) {
 
         return () =>{
             hasMounted.current = false;
+            controller.abort();
         }
     },[]);
 

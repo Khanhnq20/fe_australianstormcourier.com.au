@@ -153,6 +153,7 @@ export function usePagination({
         setCurrent: setCurrentPage,
         setPerPageAmount,
         refresh,
-        search
+        search,
+        setItems
     }
 }

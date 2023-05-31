@@ -32,7 +32,8 @@ function AdminInvoice() {
         prevPage,
         setCurrent,
         setPerPageAmount,
-        refresh
+        refresh,
+        setItems
     } = usePagination({
         fetchingAPIInstance:({controller, page, take}) => authInstance.get([authConstraints.adminRoot, authConstraints.getAllPayments].join('/'), {
             headers: {
@@ -51,6 +52,37 @@ function AdminInvoice() {
         totalPages: 1
     });
     const [aloading, setALoading] = useState(false);
+
+
+    function payout(id, hasPayout){
+        setALoading(true);
+        authInstance.put([authConstraints.adminRoot, authConstraints.putPayoutPayments].join("/"), null, {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+            },
+            params: {
+                id,
+                hasPayout
+            }
+        }).then(response => {
+            setALoading(false);
+            if(response.data?.successed && response.data?.result?.stripePaymentId){
+                setItems(items => (items.map(item => {
+                    if(item?.stripePaymentId == response.data?.result?.stripePaymentId){
+                        return response.data?.result;
+                    }
+                    return item;
+                })));
+                toast.success("Updated invoice status successfully");
+            }
+            else {
+                toast.error("Updated invoice status failed");
+            }
+        }).catch(error => {
+            setALoading(false);
+            toast.error("Updated invoice status failed");
+        });
+    }
 
     return (
         <Formik
@@ -140,6 +172,11 @@ function AdminInvoice() {
                                                 }}>Receiver Phone</th>
                                                 <th style={{
                                                     minWidth: '150px'
+                                                }}>
+                                                    Receiver Bsb
+                                                </th>
+                                                <th style={{
+                                                    minWidth: '150px'
                                                 }}>Created At</th>
                                                 <th style={{
                                                     minWidth: '150px'
@@ -158,19 +195,25 @@ function AdminInvoice() {
                                                     return (
                                                         <tr key={index}>
                                                             <td>{index + 1}</td>
-                                                            <td><span className="content-red">
-                                                                {payment?.status}
-                                                            </span>
+                                                            <td>
+                                                                {payment?.status === "Paid" && <span className="content-green">
+                                                                    {payment?.status}
+                                                                </span> || <span className="content-red">
+                                                                    {payment?.status}
+                                                                </span>}
                                                             </td>
                                                             <td>{payment?.sender?.email}</td>
                                                             <td>{payment?.sender?.phoneNumber}</td>
                                                             <td>{payment?.receiver?.email}</td>
                                                             <td>{payment?.receiver?.phoneNumber}</td>
+                                                            <td>{payment?.receiver?.bsb}</td>
                                                             <td>{payment?.createdAt ? moment(payment?.createdAt).format("YYYY/MM/DD") : "null"}</td>
                                                             <td>{payment?.completedAt ? moment(payment?.completedAt).format("YYYY/MM/DD") : "null"}</td>
-                                                            <td>{!payment?.hasPayout ? <span className="content-red">Not Payout</span> : <span className="content-green">Payout at moment(payment?.payoutAt).format("YYYY/MM/DD")</span>}</td>
+                                                            <td>{!payment?.hasPayout ? <span className="content-red">Not Payout</span> : <span className="content-green">
+                                                            {moment(payment?.payoutAt).format("HH:mm YYYY/MM/DD")}
+                                                            </span>}</td>
                                                             <td>
-                                                                {!payment?.hasPayout && <Button className="ms-auto w-100" variant="success">Payout</Button>}
+                                                                {payment?.status === "Paid" && <Button className="ms-auto w-100" variant={payment?.hasPayout ? "success" : "danger"} onClick={() => payout(payment?.stripePaymentId, !payment?.hasPayout)}>{payment?.hasPayout ? "Recover": "Payout"}</Button>}
                                                             </td>
                                                         </tr>
                                                     )
