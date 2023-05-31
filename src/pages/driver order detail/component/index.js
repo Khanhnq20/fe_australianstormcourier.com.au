@@ -277,7 +277,7 @@ function OrderDetail(){
                                         <div className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDelivery.current.click()}>
                                           <div className='background-front'>
                                               <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                              <p className='driving-txt'>Change the Image</p>
+                                              <p className='driving-txt'>Post the Image</p>
                                           </div>
                                           <img className='img-front' src={url || 'https://tinyurl.com/5ehpcctt'}/>
                                         </div>
@@ -286,7 +286,7 @@ function OrderDetail(){
                                       <Col sm={6} className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDelivery.current.click()}>
                                         <div className='background-front'>
                                             <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                            <p className='driving-txt'>Change the Image</p>
+                                            <p className='driving-txt'>Post the Image</p>
                                         </div>
                                         <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
                                       </Col>
@@ -458,13 +458,13 @@ function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, p
                                 <Form.Group className='txt-center'>
                                   <FieldArray name='receivedImages' render={(arrayHelpers) =>{
                                     return <>
-                                      <Row style={{paddingRight:'20px'}}>
+                                      <Row style={{flexDirection:'column'}}>
                                         {/* ReceivedImages have been in showcase  */}
-                                        {values?.receivedImages?.map(({url}, ind) =>(<Col sm={8}>
-                                          <div className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDone.current.click()}>
+                                        {values?.receivedImages?.map(({url}, ind) =>(<Col sm={8} style={{margin:'0 auto'}}>
+                                          <div className='img-front-frame' style={{margin:'0 auto',maxWidth:'unset'}} onClick={() => imgDone.current.click()}>
                                             <div className='background-front' style={{maxWidth:'470px'}}>
                                                 <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                                <p className='driving-txt'>Change the Image</p>
+                                                <p className='driving-txt'>Post the Image</p>
                                             </div>
                                             <img className='img-front' src={url || 'https://tinyurl.com/5ehpcctt'}/>
                                           </div>
@@ -472,12 +472,14 @@ function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, p
                                         </Col>))}
 
                                         {/* A trigger button to upload new receivedImages */}
-                                        <Col ms={4} className='img-front-frame' style={{margin:'0 auto'}} onClick={() => imgDone.current.click()}>
-                                          <div className='background-front'>
-                                              <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
-                                              <p className='driving-txt'>Change the Image</p>
+                                        <Col sm={8} style={{margin:'0 auto'}}>
+                                          <div className='img-front-frame' style={{margin:'0 auto',maxWidth:'unset'}} onClick={() => imgDone.current.click()}>
+                                            <div className='background-front'>
+                                                <RiImageEditFill style={{position:'relative',color:'gray',fontSize:'50px',opacity:'70%'}}></RiImageEditFill>
+                                                <p className='driving-txt'>Post the Image</p>
+                                            </div>
+                                            <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
                                           </div>
-                                          <img className='img-front' src={'https://tinyurl.com/5ehpcctt'}/>
                                         </Col>
                                       </Row>
 
