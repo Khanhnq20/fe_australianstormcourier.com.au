@@ -1,21 +1,81 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './style.css';
 import { useReactToPrint } from 'react-to-print';
+import {Elements} from '@stripe/react-stripe-js';
+import {loadStripe} from '@stripe/stripe-js';
+import { authConstraints, authInstance, config } from '../../api';
+import { useLocation } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import { CustomSpinner } from '../../layout';
+import { NonRouting } from '..';
 
-export default function Invoice() {
+const stripePromise = loadStripe(config.StripePublicKey);
+
+export default function Index(){
+    const [allowed, setAllow] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const {state} = useLocation();
+    
+    const options = {
+        // passing the client secret obtained from the server
+        clientSecret: '{{CLIENT_SECRET}}',
+    };
+
+    useEffect(() =>{
+        if(!state.fromPaymentDetail){
+            setAllow(false);
+        }
+        setLoading(false);
+    },[]);
+
+    useEffect(() =>{
+        if(state.paymentId){
+            const paymentId = state.paymentId;
+            authInstance.get([authConstraints.userHub, authConstraints.getSinglePayment].join(" "), {
+                headers: {
+                    'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+                },
+                params: {
+                    paymentId
+                }
+            })
+        }
+    });
+
+    if(loading) return (
+        <Container>
+            <CustomSpinner></CustomSpinner>
+        </Container>
+    )
+
+    if(!allowed) return (
+        <Container>
+            <NonRouting></NonRouting>
+        </Container>
+    )
+
+    return (
+        <Elements stripe={stripePromise} options={options}>
+            <Invoice />
+        </Elements>
+    )
+}
+
+
+function Invoice() {
     const componentRef = useRef();
     const handlePrint = useReactToPrint({
         content:()=> componentRef.current,
         documentTitle : 'new document',
         onafterprint:()=>alert('Print Success')
     })
-  return (
+    return (
     <div>
         <div className='invoice mb-4' >
                 <div style={{textAlign:'right',maxWidth:"1500px"}}>
                     <button className='my-btn-yellow' onClick={handlePrint}>Print Invoice</button>
                 </div>
-             <div className='invoice-form' ref={componentRef}>
+            <div className='invoice-form' ref={componentRef}>
                 <div className='invoice-header'>
                     <div style={{maxWidth: "100px",marginBottom:'20px'}}>
                         <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" width="100%"/>

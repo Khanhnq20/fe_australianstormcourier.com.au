@@ -660,8 +660,10 @@ function ProductDetail(){
                                                             <Button className="w-100 mb-2" variant="warning">
                                                                 Support
                                                             </Button>
-                                                            <Button className="w-100 mb-2">View Invoice</Button>
-                                                            <Button className="w-100 mb-2" variant="success">Print Invoice</Button>
+                                                            <Link to="payment/checkout/invoice">
+                                                                <Button className="w-100 mb-2">View Invoice</Button>
+                                                            </Link>
+                                                            
                                                         </Stack>
                                                         ) :
                                                         // Case 4: Text Completed

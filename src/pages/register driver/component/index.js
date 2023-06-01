@@ -13,6 +13,8 @@ import { CustomSpinner, Message } from '../../../layout';
 import { authConstraints, config } from '../../../api';
 import {GrDocumentPdf} from 'react-icons/gr'
 import { useNavigate } from 'react-router-dom';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -133,6 +135,7 @@ function RegisterDriver() {
     const [showPass,setShowPass] = React.useState(false);
     const [showPassConfirm,setShowPassConfirm] = React.useState(false);
     const [next,setNext] = React.useState(true);
+    const [phoneError ,setPhoneError] = React.useState("");
     const showPassHandler = () => {
         setShowPass(e=>!e);
     }
@@ -144,8 +147,7 @@ function RegisterDriver() {
 
 
     const isLoading = authState?.tasks?.[authConstraints.signupDriver] && authState?.tasks?.[authConstraints.signupDriver] === taskStatus.InProgress;
-    return (
-    <Formik
+    return (<Formik
         initialValues={{
             userName:'',
             phone:'',
@@ -178,15 +180,14 @@ function RegisterDriver() {
             });
         }}> 
     {
-        ({values,touched, errors, setFieldValue, handleSubmit, handleChange, handleBlur,isValid}) =>{
+        ({values, touched, errors, setFieldValue,setErrors, handleSubmit, handleChange, handleBlur,isValid}) =>{
             const permitedNext = !errors.userName &&
                 !errors.phone &&
                 !errors.email &&
                 !errors.password; 
 
             return ( 
-                <>
-                    <div style={{minHeight:"calc(90vh - 54px)"}} className='container p-5'>
+                <div style={{minHeight:"calc(90vh - 54px)"}} className='container p-5'>
                         <div className="text-center">
                             <h3 className='ui-header'>Become driver</h3>
                         </div>
@@ -290,23 +291,42 @@ function RegisterDriver() {
                                     </Form.Group>
 
                                     {/* Phone */}
-                                    <Form.Group className="form-group" >
+                                    <Form.Group className="form-group mb-2">
                                         <div className='mb-2'>
                                             <Form.Label className='label'>Phone Number</Form.Label>
                                             <p className='asterisk'>*</p>
                                         </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="phone"
-                                            placeholder="Enter Your Full Address"
-                                            isInvalid={touched.phone && errors.phone}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
-                                    </Form.Group>
+                                        <PhoneInput
+                                        country={'au'}
+                                        value={values?.phone}
+                                        onChange={phone => setFieldValue("phone", phone)}
+                                        onlyCountries={['au', 'vn', 'us']}
+                                        preferredCountries={['au']}
+                                        placeholder="Enter Your Phone number"
+                                        autoFormat={true}
+                                        isValid={(inputNumber, _, countries) => {
+                                            const isValid = countries.some((country) => {
+                                                return inputNumber.startsWith(country.dialCode) || country.dialCode.startsWith(inputNumber);
+                                            });
+                                            setPhoneError('');
+                                            
+                                            if(!isValid){
+                                                setPhoneError("Your phone is not match with dial code");
+                                            }
 
-                                    <Button variant="warning" disabled={!permitedNext} onClick={()=>setNext(e => !e)} className='my-btn-yellow'>Next</Button>
+                                            return isValid;
+                                        }}
+                                        ></PhoneInput>
+                                        <Form.Control
+                                            type="hidden"
+                                            name="phone"
+                                            defaultValue={values?.phone}
+                                            isInvalid={!!errors.phone || !!phoneError}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.phone || phoneError}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    
+                                    <Button variant="warning" disabled={!permitedNext || !!phoneError} onClick={()=>setNext(e => !e)} className='my-btn-yellow'>Next</Button>
                                 </Col>
 
                                 <Col className={!next ? "step2-show" : "step2-hide"}>
@@ -412,7 +432,6 @@ function RegisterDriver() {
                                         </Form.Group>
 
                                         {/* Driving Liense Images */}
-                                        
                                         <Form.Group className="form-group" >
                                             <div className='mb-2'>
                                                 <Form.Label className='label py-3 mb-2'>Driving License (Front and Back)</Form.Label>
@@ -474,7 +493,7 @@ function RegisterDriver() {
                                                 />
                                                 <Form.Control.Feedback className='mb-2' type="invalid">{errors?.backDrivingLiense}</Form.Control.Feedback>
                                             </div>
-                                            <label class="fr-checkbox mb-2">
+                                            <label className="fr-checkbox mb-2">
                                                 <input type="checkbox" name="isAusDrivingLiense" checked={values.isAusDrivingLiense} onChange={handleChange} onBlur={handleBlur}/>
                                                 <span className="checkmark"></span>
                                                 <span className='txt-checkbox' style={{fontWeight:'500'}}>Your driving license is from australian</span>
@@ -523,7 +542,7 @@ function RegisterDriver() {
                                                 {vehicles.map((item,index) => {
                                                     return(
                                                         <div key={index}>
-                                                            <label class="fr-checkbox mb-2">
+                                                            <label className="fr-checkbox mb-2">
                                                                 <input type="checkbox" name="vehicles" value={item?.id} onChange={handleChange} onBlur={handleBlur}/>
                                                                 <span className="checkmark"></span>
                                                                 <span className='txt-checkbox' style={{fontWeight:'500'}}>{item?.name}</span>
@@ -576,7 +595,6 @@ function RegisterDriver() {
                             </Row>
                         </Form>
                     </div>
-                </>
             )
         }
     }

@@ -9,6 +9,8 @@ import '../style/createProduct.css'
 import moment from 'moment';
 import { dotnetFormDataSerialize } from "../../../ultitlies";
 import Barcode from "react-barcode";
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -346,8 +348,6 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
                         </Form.Select>
                         <Form.Control.Feedback type="invalid">{errors?.orderItems?.[index]?.packageType}</Form.Control.Feedback>
                     </Form.Group>
-
-                    <Button type="submit" variant="warning" disabled={!isValid} className='my-btn-yellow'>Search for driver</Button>
                 </Col>
             </Row>
         </>
@@ -357,6 +357,7 @@ function ItemCreation({name, index, touched, errors, values, handleChange, handl
 function OrderCreation(){
     const [authState] = useContext(AuthContext);
     const [orderState, {postOrder}] = useContext(OrderContext);
+    const [phoneError ,setPhoneError] = React.useState("");
 
     return(
         <Formik
@@ -408,7 +409,7 @@ function OrderCreation(){
             }}
         >
         {(formProps) =>{
-            const {touched, errors,setFieldValue, handleSubmit, handleChange, handleBlur,values} = formProps;
+            const {touched, isValid, errors, setFieldValue, handleSubmit, handleChange, handleBlur,values} = formProps;
             return(   
                 <div className='p-3'>
                     <Modal show={orderState.loading} 
@@ -427,6 +428,7 @@ function OrderCreation(){
                             // className='form-order'
                         >
                             {/* Sending location & Destination */}
+                            {JSON.stringify(errors, 4, 4)}
                             <h3 className="my-3">Order Location</h3>
 
                             <Row>
@@ -559,7 +561,7 @@ function OrderCreation(){
                                     </Form.Group>
                                 </Col>
                                 <Col>
-                                    <Form.Group>
+                                    {/* <Form.Group>
                                         <div className='mb-2'>
                                             <Form.Label className='label'>Receiver Phone</Form.Label>
                                             <p className='asterisk'>*</p>
@@ -573,6 +575,42 @@ function OrderCreation(){
                                             onBlur={handleBlur}
                                         />
                                         <Form.Control.Feedback type="invalid">{errors?.receiverPhone}</Form.Control.Feedback>
+                                    </Form.Group> */}
+                                    {/* Phone */}
+                                    <Form.Group>
+                                        <div className='mb-2'>
+                                            <Form.Label className='label'>Phone Number</Form.Label>
+                                            <p className='asterisk'>*</p>
+                                        </div>
+                                        <PhoneInput
+                                        country={'au'}
+                                        value={values?.phone}
+                                        onChange={phone => setFieldValue("receiverPhone", phone)}
+                                        onlyCountries={['au', 'vn', 'us']}
+                                        preferredCountries={['au']}
+                                        placeholder="Enter Receiver Phone number"
+                                        autoFormat={true}
+                                        isValid={(inputNumber, _, countries) => {
+                                            const isValid = countries.some((country) => {
+                                                return inputNumber.startsWith(country.dialCode) || country.dialCode.startsWith(inputNumber);
+                                            });
+
+                                            setPhoneError('');
+                                            
+                                            if(!isValid){
+                                                setPhoneError("Your phone is not match with dial code");
+                                            }
+
+                                            return isValid;
+                                        }}
+                                        ></PhoneInput>
+                                        <Form.Control
+                                            type="hidden"
+                                            name="receiverPhone"
+                                            defaultValue={values?.phone}
+                                            isInvalid={!!errors.phone || !!phoneError}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors.phone || phoneError}</Form.Control.Feedback>
                                     </Form.Group>
                                 </Col>
                             </Row>
@@ -651,6 +689,8 @@ function OrderCreation(){
                                     </>
                                 }}
                             />
+
+                            <Button type="submit" variant="warning" disabled={!isValid || !!phoneError} className='my-btn-yellow'>Search for driver</Button>
                         </div>
                     </Form>
                 </div>)
