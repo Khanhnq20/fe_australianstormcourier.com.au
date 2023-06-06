@@ -428,7 +428,6 @@ function OrderCreation(){
                             // className='form-order'
                         >
                             {/* Sending location & Destination */}
-                            {JSON.stringify(errors, 4, 4)}
                             <h3 className="my-3">Order Location</h3>
 
                             <Row>
@@ -561,21 +560,6 @@ function OrderCreation(){
                                     </Form.Group>
                                 </Col>
                                 <Col>
-                                    {/* <Form.Group>
-                                        <div className='mb-2'>
-                                            <Form.Label className='label'>Receiver Phone</Form.Label>
-                                            <p className='asterisk'>*</p>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="receiverPhone"
-                                            placeholder="Enter Receiver Phone Number"
-                                            isInvalid={touched.receiverPhone && !!errors?.receiverPhone}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors?.receiverPhone}</Form.Control.Feedback>
-                                    </Form.Group> */}
                                     {/* Phone */}
                                     <Form.Group>
                                         <div className='mb-2'>
@@ -586,7 +570,7 @@ function OrderCreation(){
                                         country={'au'}
                                         value={values?.phone}
                                         onChange={phone => setFieldValue("receiverPhone", phone)}
-                                        onlyCountries={['au', 'vn', 'us']}
+                                        onlyCountries={['au', 'vn']}
                                         preferredCountries={['au']}
                                         placeholder="Enter Receiver Phone number"
                                         autoFormat={true}
@@ -596,7 +580,7 @@ function OrderCreation(){
                                             });
 
                                             setPhoneError('');
-                                            
+
                                             if(!isValid){
                                                 setPhoneError("Your phone is not match with dial code");
                                             }

@@ -183,6 +183,7 @@ function Product() {
                                                         || offer?.order?.status === "Prepared"
                                                         || offer?.order?.status === "Delivering"
                                                         || offer?.order?.status === "Completed" );
+                                                    const waiting = offer?.status === "Waiting";    
                                                     const isCorrectDriver =offer?.order?.driverId === authState?.accountInfo?.id;
                                                     return (
                                                         <tr key={index}>
@@ -217,24 +218,28 @@ function Product() {
                                                                         </Link>
                                                                     </Col>
                                                                 </Row> :
+                                                                (waiting) ? 
+                                                                (<div className='p-2'>
+                                                                    <p className='content-yellow text-center'>This order are being popup</p>
+                                                                </div>) :
                                                                 (offer?.order?.status === "Cancel") ?
-                                                                <div className='p-2'>
+                                                                (<div className='p-2'>
                                                                     <p className='content-yellow text-center'>This order has been removed</p>
-                                                                </div> : 
+                                                                </div>) : 
                                                                 (offer?.status === "Cancelled") ?
-                                                                <div className='p-2'>
+                                                                (<div className='p-2'>
                                                                     <p className='content-yellow text-center'>This offer has been cancelled</p>
-                                                                </div> :
+                                                                </div>) :
                                                                 !allowDelivery ?  
                                                                 (<div className='p-2'>
                                                                     <p className='content-red text-center'>Order has completed transaction</p>
                                                                 </div>) :
-                                                                <div className='p-2'>
+                                                                (<div className='p-2'>
                                                                     <Button className='w-100' variant='danger' onClick={() => {
                                                                         setModalShow(true);
                                                                         setModalData(offer);
                                                                     }}>Cancel</Button>
-                                                                </div>
+                                                                </div>)
                                                             }
                                                             </td>
                                                         </tr>

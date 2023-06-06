@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef } from 'react'
-import { Col, Container, Row, Stack } from 'react-bootstrap';
+import { Col, Container, Row, Spinner, Stack } from 'react-bootstrap';
 import '../style/orderDetail.css';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
@@ -117,7 +117,7 @@ function OrderDetail(){
       });
     }
 
-    if(loading) return (
+    if(loading || orderState?.loading) return (
       <Container>
         <CustomSpinner></CustomSpinner>
       </Container>);
@@ -240,6 +240,11 @@ function OrderDetail(){
                                                 result?.order?.status === "Cancelled"  )? 
                       (<Process 
                         orderId={result?.orderId}
+                        isLoading={
+                          orderState?.tasks?.[authConstraints.putDeliverOrder] === taskStatus.Inprogress ||
+                          orderState?.tasks?.[authConstraints.putCancelOffer] === taskStatus.Inprogress ||
+                          orderState?.tasks?.[authConstraints.putReceiveOrder] === taskStatus.Inprogress 
+                        }
                         putDeliveryOrder={() => putDeliveryOrder(result?.orderId)}
                         putReceiveOrder={putReceiveOrder}
                         putCancelOrder={() => putCancelOrder(result?.orderId)}
@@ -277,6 +282,7 @@ function OrderDetail(){
                           }}
                         >
                           {({errors,isValid,handleSubmit,handleBlur,values}) =>{
+                            const isLoading = orderState.tasks?.[authConstraints.putPrepareOrder] === taskStatus.Inprogress;
                             return(
                               <Form onSubmit={handleSubmit}>
                                 <div className='txt-center'>
@@ -339,8 +345,8 @@ function OrderDetail(){
                                   <Button 
                                     type="submit"
                                     className='my-btn-yellow mx-2' 
-                                    disabled={!isValid && !values.deliveryImages?.length} 
-                                  >Start</Button>
+                                    disabled={!isValid || !values.deliveryImages?.length || isLoading} 
+                                  >{isLoading? <Spinner></Spinner> : "Start"}</Button>
                                 </div>
                                 </div>
                               </Form>
@@ -357,7 +363,7 @@ function OrderDetail(){
     )
 }
 
-function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, putReceiveOrder,putCancelOrder, preparedTime, deliveryTime, completedTime, cancelledTime}){
+function Process({orderStatus,isLoading, orderId, deliveryImages = [], putDeliveryOrder, putReceiveOrder,putCancelOrder, preparedTime, deliveryTime, completedTime, cancelledTime}){
     const [active] = React.useState(orderStatus);
     const [complete,setComplete] = React.useState(false);
     const [modalShow, setModalShow] = React.useState(false);
@@ -422,10 +428,10 @@ function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, p
                     {!active ? 
                       (<button className='my-btn-yellow mx-5 my-2' onClick={()=>{
                         putDeliveryOrder();
-                      }}>Start Deliver Now</button>)
+                      }}>{isLoading ? <Spinner></Spinner> : "Start Deliver Now"}</button>)
                     : <button className='my-btn-yellow mx-5 my-2' onClick={()=>{
                       setComplete(true);
-                    }}>Next Step</button>}
+                    }}>{isLoading ? <Spinner></Spinner> :"Next Step"}</button>}
 
                     {/* Modal show form to submit the received package */}
                     <Modal
@@ -530,18 +536,18 @@ function Process({orderStatus, orderId, deliveryImages = [], putDeliveryOrder, p
                                       <p className='asterisk'>*</p>
                                   </div>
                                   <Form.Control
-                                      type="number"
-                                      name="barcode"
-                                      placeholder="Enter The Barcode"
-                                      isInvalid={touched.barcode && errors.barcode}
-                                      onBlur={handleBlur}
-                                      onChange={handleChange}
+                                    type="number"
+                                    name="barcode"
+                                    placeholder="Enter The Barcode"
+                                    isInvalid={touched.barcode && errors.barcode}
+                                    onBlur={handleBlur}
+                                    onChange={handleChange}
                                   />
                                   <Form.Control.Feedback type="invalid">{errors.barcode}</Form.Control.Feedback>
                                 </Form.Group>
 
                                 <Stack direction='horizontal' gap={5} style={{justifyContent: 'right'}} className='w-100'>
-                                  <button type='submit' className='my-btn-yellow'>Done</button>
+                                  <button type='submit' className='my-btn-yellow' disabled={isLoading}>{isLoading ? <Spinner></Spinner> : "Done"}</button>
                                 </Stack>
                               </Form>
                             )
@@ -668,7 +674,7 @@ function StatusFail(){
     >
       {({touched, errors, handleSubmit, handleChange, handleBlur}) =>{
         return(
-          <Form>
+          <Form onSubmit={handleSubmit}>
               <Form.Group className="form-group">
                 <div className='mb-2'>
                     <Form.Label className='product-label-fit my-0'>Reason fail</Form.Label>
@@ -687,7 +693,7 @@ function StatusFail(){
                     </div>
                 </div>
               </Form.Group>
-              <Button variant="warning" className='my-btn-yellow'>Submit</Button>
+              <Button type="submit" variant="warning" className='my-btn-yellow'>Submit</Button>
           </Form>
         )
       }}

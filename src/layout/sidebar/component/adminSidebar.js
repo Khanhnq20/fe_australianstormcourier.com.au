@@ -7,6 +7,7 @@ import { Breadcrumbs } from "./breadscrumb"
 import {HiOutlineUserGroup} from 'react-icons/hi';
 import {TbReportMoney} from 'react-icons/tb';
 import {BsPersonCheck} from 'react-icons/bs';
+import {ImBlogger} from 'react-icons/im'
 
 export function AdminSideBar({children}) {
   const [toggle,setToggle] = React.useState(false);
@@ -74,6 +75,16 @@ export function AdminSideBar({children}) {
                         </div>
                         <p className='sbar-txt'>Invoices</p>
                       </NavLink>
+                      {/* <NavLink  
+                        className={({isActive}) =>{
+                          return isActive  ? 'sbar-link active' : 'sbar-link'
+                        }}
+                        to={'blog'}>
+                        <div className='sbar-icon-frame'>
+                          <ImBlogger className="sbar-icon"></ImBlogger>
+                        </div>
+                        <p className='sbar-txt'>Blog</p>
+                      </NavLink> */}
                     </div>
                   </div>
                 </div>

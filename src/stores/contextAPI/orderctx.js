@@ -240,6 +240,10 @@ export default function Index({children}) {
                     toast.error(response.data?.error);
                 }
             }).catch(error => {
+                setState(i =>({
+                    ...i,
+                    tasks: {[authConstraints.putPrepareOrder]: taskStatus.Failed }
+                }));
                 toast.error(error?.status + ": " + error?.message);
             });
         },

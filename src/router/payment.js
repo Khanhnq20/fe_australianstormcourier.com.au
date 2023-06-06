@@ -8,31 +8,33 @@ export const paymentChildrens = [
       path: "checkout",
       element: <Outlet></Outlet>,
       children: [
-        {path: "return", 
-        element: <Outlet></Outlet>,
-        children:[{
-          path:'',
-          element:<>
-            <PaymentComponents.SuccessPayment></PaymentComponents.SuccessPayment>
+        { 
+          path: "return", 
+          element: <Outlet></Outlet>,
+          children:[
+            {
+              path:'',
+              element:<>
+                <PaymentComponents.SuccessPayment></PaymentComponents.SuccessPayment>
+                <Footer.Custom></Footer.Custom>
+              </>
+            },
+            {
+              path:'invoice',
+              element:<>
+                <Invoice></Invoice>
+                <Footer></Footer>
+              </>
+            }
+          ]
+        },
+        {
+          path: "failed", 
+          element: <>
+            <PaymentComponents.FailurePayment></PaymentComponents.FailurePayment>
             <Footer.Custom></Footer.Custom>
           </>
         },
-        {
-          path:'invoice',
-          element:<>
-            <Invoice></Invoice>
-            <Footer></Footer>
-          </>
-        }
-      ]
-        
-      },
-        {path: "failed", 
-        element: <>
-          <PaymentComponents.FailurePayment></PaymentComponents.FailurePayment>
-          <Footer.Custom></Footer.Custom>
-        </>
-      }
       ]
     },
     {
