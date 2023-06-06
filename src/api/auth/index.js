@@ -35,6 +35,7 @@ const constraints = {
 
     getUserOrders: "order",
     getUserOrderHistory: "history",
+    getSinglePayment: "payment",
 
     getDriverJobs: "job",
     postDriverOffers: "offer",

@@ -194,9 +194,8 @@ function ProductDetail(){
             <CustomSpinner></CustomSpinner>
         </Container>);
 
-    if(error === "Forbiden"){
+    if(error === "Forbiden")
         return (<Navigate to="/user/order"></Navigate>);
-    }
 
     return(
         <div>
@@ -586,7 +585,7 @@ function ProductDetail(){
                     {offerLoading ? <Spinner></Spinner> : offers.length === 0 ? (<div className='txt-center'>
                             <h5>No Data Found</h5>
                     </div>) :
-                    (<>
+                    (<div style={{maxWidth: '100%', overflowX: "scroll" }}>
                         <Table bordered >
                             <thead>
                                 <tr>
@@ -620,12 +619,12 @@ function ProductDetail(){
                                                     </Row>
                                                     <Row>
                                                         <Col>Total</Col>
-                                                        <Col>{(offer?.ratePrice * (1 + 0.1 + 0.1)).toFixed(2)}</Col>
+                                                        <Col>{(offer?.ratePrice * (1 + 0.1) * (1 + 0.1)).toFixed(2)}</Col>
                                                     </Row>
                                                 </td>
                                                 <td>
                                                     {<div className={offer.status === 'Accepted' ? 'content-green' : 
-                                                    offer.status === 'Denied' ? 'content-danger' : 'content-yellow'}>
+                                                        offer.status === 'Denied' ? 'content-danger' : 'content-yellow'}>
                                                         {offer.status}
                                                     </div>}
                                                 </td>
@@ -638,7 +637,7 @@ function ProductDetail(){
                                                         // Case 1: Button Accept 
                                                         ((order.status === "LookingForDriver" || order.status === "Trading" || order.status === "WaitingForPayment") && offer.status === "Waiting") ?
                                                         (<div className='txt-success'>
-                                                            <Button className="w-100 mb-2" variant="success" onClick={() => acceptDriver(offer?.driverId)}>Accept</Button>
+                                                            <Button className="w-100 mb-2" variant="success" disabled={loading} onClick={() => acceptDriver(offer?.driverId)}>{!loading ? "Accept" : <Spinner></Spinner>}</Button>
                                                         </div>) :
                                                         // Case 2: Button Checkout
                                                         (order.status === "WaitingForPayment" && offer?.status === 'Accepted') ? 
@@ -652,7 +651,7 @@ function ProductDetail(){
                                                                     <MdPayment></MdPayment><span className='ms-auto' style={{fontSize: '1rem'}}>Checkout Now</span>
                                                                 </p>
                                                             </div>
-                                                            <Button className='w-100' variant="danger" onClick={() => cancelDriver(offer?.driverId)}>Cancel</Button>
+                                                            <Button className='w-100' variant="danger" disabled={loading} onClick={() => cancelDriver(offer?.driverId)}>{!loading ? "Cancel" : <Spinner></Spinner>}</Button>
                                                         </div>) : 
                                                         // Case 3: Button Support, View and Print invoice
                                                         ((order.status === "Paid" || order.status === "Prepared" || order.status === "Delivering") && offer?.status === 'Accepted') ? 
@@ -660,18 +659,24 @@ function ProductDetail(){
                                                             <Button className="w-100 mb-2" variant="warning">
                                                                 Support
                                                             </Button>
-                                                            <Button className="w-100 mb-2">View Invoice</Button>
-                                                            <Button className="w-100 mb-2" variant="success">Print Invoice</Button>
+                                                            <Link to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}>
+                                                                <Button className="w-100 mb-2">View Invoice</Button>
+                                                            </Link>
                                                         </Stack>
                                                         ) :
                                                         // Case 4: Text Completed
                                                         (order.status === "Completed" && offer?.status === 'Accepted') ? 
-                                                        (<p className='content-green'>Completed</p>) :
+                                                        (<Stack>    
+                                                            <Link to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}>
+                                                                <Button variant="warning">
+                                                                    View Invoice
+                                                                </Button>
+                                                            </Link>
+                                                        </Stack>
+                                                        ) :
                                                         // Default
                                                         (<></>)
                                                     }
-                                                    {/* (!!order?.driverId && post.driverId !== order?.driverId) ? 
-                                                    (<p className='content-yellow text-center'>Your package had been delivered</p>) : */}
                                                 </td>
                                             </tr>
                                         )
@@ -684,7 +689,7 @@ function ProductDetail(){
                             <Pagination.Prev onClick={prevPage} className='pg-first' />
                             {Array.from(Array(total).keys()).map((item,index) => {
                                 return (
-                                    <div>
+                                    <div key={index}>
                                         <div key={index}>
                                             <Pagination.Item 
                                                 className={item + 1 === currentPage ? "pg-no pg-active" : "pg-no"}
@@ -697,7 +702,7 @@ function ProductDetail(){
                             <Pagination.Next onClick={nextPage} className='pg-first' />
                             {/* <Pagination.Last onClick={last} className='pg-first'/> */}
                         </Pagination>
-                    </>)}
+                    </div>)}
                 </div>
             </div>
             
@@ -1026,7 +1031,6 @@ function Driver({createdTime,preparedTime, deliveringTime, completedTime,cancell
 
 function PopUpCenteredModal({driver, ...props}) {
     return (
-    <>
         <Modal
         {...props}
         closeButton
@@ -1165,8 +1169,7 @@ function PopUpCenteredModal({driver, ...props}) {
             </Modal.Body>
         </div>
         </Modal>
-    </>
-  );
+    );
 }
 
 function PaymentPopup({show,onHide,clientSecret,loading,checkoutServerAPI, order,...props}){
@@ -1180,8 +1183,11 @@ function PaymentPopup({show,onHide,clientSecret,loading,checkoutServerAPI, order
             >
             <Modal.Header closebutton>
             </Modal.Header>
-            <Modal.Body className='p-4'>
-                <PaymentComponents.Payment clientSecret={clientSecret} checkoutServerAPI={checkoutServerAPI}></PaymentComponents.Payment>
+            <Modal.Body className='p-4' style={{overflow: 'scroll'}}>
+                <PaymentComponents.Payment 
+                    clientSecret={clientSecret} 
+                    checkoutServerAPI={checkoutServerAPI}
+                />
             </Modal.Body>
         </Modal>
     </>)

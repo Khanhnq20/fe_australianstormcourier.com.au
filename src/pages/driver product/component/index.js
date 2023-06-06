@@ -167,9 +167,6 @@ function Product() {
                                         }}>Sender Offer</th>
                                         <th style={{
                                             minWidth: '140px'
-                                        }}>Required Vehicles</th>
-                                        <th style={{
-                                            minWidth: '140px'
                                         }}>Actions</th>
                                     </tr>
                                 </thead> 
@@ -196,15 +193,15 @@ function Product() {
                                                     <td>{!!post?.createdDate ? moment(post?.createdDate).format("DD-MM-YYYY") : ""}</td>
                                                     <td>{!!post?.deliverableDate ? moment(post?.deliverableDate).format("DD-MM-YYYY") : ""}</td>
                                                     <td>{post?.timeFrame}</td>
-                                                    <td><>
-                                                        {post?.vehicles?.map?.(str => {
-                                                            return <li>{str}</li>
-                                                        })}
-                                                    </>
+                                                    <td>
+                                                        <ul>
+                                                            {post?.vehicles?.map?.(str => {
+                                                                return <li>{str}</li>
+                                                            })}
+                                                        </ul>
                                                     </td>
                                                     <td>{post?.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</td>
                                                     <td>{post?.orderItems?.reduce?.((i,c) => i + c?.startingRate,0)} aud</td>
-                                                    <td>{post?.vehicles?.join(" - ")}</td>
                                                     <td>
                                                         <Formik
                                                             initialValues={{

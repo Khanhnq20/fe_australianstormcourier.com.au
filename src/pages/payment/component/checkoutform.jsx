@@ -1,8 +1,6 @@
 import { PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { useEffect, useState } from "react";
-import { authConstraints } from "../../../api";
 import { Message } from "../../../layout";
-import { useNavigate } from "react-router-dom";
 import { Spinner } from "react-bootstrap";
 import SuccessPayment from "./success";
 
@@ -42,25 +40,17 @@ const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
             redirect: "if_required"
         })
         .then(result =>{
-          // console.log("payment result", result);
           if (!!result?.error) {
             if(result?.error?.payment_intent?.status === "succeeded"){
               checkoutServerAPI();
             }
             // Show error to your customer (for example, payment details incomplete);
-              setError(i => {
-                return result?.error?.payment_intent?.status === "succeeded" ?
-                "This payment has been resolved. Please select others":
-                result?.error?.message
-              });
-              
-
+            setError(i => {
+              return result?.error?.payment_intent?.status === "succeeded" ?
+              "This payment has been resolved. Please select others":
+              result?.error?.message
+            });
           } else {
-            // Your customer will be redirected to your `return_url`. For some payment
-            // methods like iDEAL, your customer will be redirected to an intermediate
-            // site first to authorize the payment, then redirected to the `return_url`
-            // navigate("/payment/checkout/success");
-            // navigate("/payment/checkout/failed");
             setSuccess(true);
             setJSON(result.paymentIntent);
             checkoutServerAPI();
@@ -68,7 +58,6 @@ const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
           setLoading(false);
         })
         .catch(error =>{
-          console.log(error);
           setLoading(false);
         });
     };
@@ -89,11 +78,8 @@ const CheckoutForm = ({clientSecret, checkoutServerAPI}) => {
       }
     },[clientSecret,stripe,elements])
 
-    if(success){
-      return (<div>
-        <SuccessPayment result={resultJSON}></SuccessPayment>
-      </div>)
-    }
+    if(success)
+      return (<SuccessPayment result={resultJSON}></SuccessPayment>);
 
     return (
       <form className="container-fit p-3" onSubmit={handleSubmit}>

@@ -12,6 +12,8 @@ import { CustomSpinner, Message } from '../../../layout';
 import { authConstraints, config } from '../../../api';
 import { useNavigate, useNavigation } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
+import PhoneInput from 'react-phone-input-2';
+import 'react-phone-input-2/lib/style.css';
 
 
 let registerSchema = yup.object().shape({
@@ -32,6 +34,7 @@ export default function Index() {
 
     const [showPass,setShowPass] = React.useState(false);
     const [showPassConfirm,setShowPassConfirm] = React.useState(false);
+    const [phoneError ,setPhoneError] = React.useState("");
     const navigate = useNavigate();
 
     const showPassHandler = () => {
@@ -61,7 +64,7 @@ export default function Index() {
                 });
             }}
         >
-        {({values, touched, errors, handleSubmit, handleChange, handleBlur}) =>{
+        {({values, touched, errors,isValid,setFieldValue, handleSubmit, handleChange, handleBlur}) =>{
             return(
                 <div className='reg-user'>  
                     <div className='container p-5'>
@@ -158,8 +161,43 @@ export default function Index() {
                                         </div>
                                     </div>
                                 </Form.Group>
+                                {/* Phone */}
+                                <Form.Group className="form-group mb-2">
+                                    <div className='mb-2'>
+                                        <Form.Label className='label'>Phone Number</Form.Label>
+                                        <p className='asterisk'>*</p>
+                                    </div>
+                                    <PhoneInput
+                                    country={'au'}
+                                    value={values?.phone}
+                                    onChange={phone => setFieldValue("phone", phone)}
+                                    onlyCountries={['au', 'vn', 'us']}
+                                    preferredCountries={['au']}
+                                    placeholder="Enter Your Phone number"
+                                    autoFormat={true}
+                                    isValid={(inputNumber, _, countries) => {
+                                        const isValid = countries.some((country) => {
+                                            return inputNumber.startsWith(country.dialCode) || country.dialCode.startsWith(inputNumber);
+                                        });
 
-                                <Form.Group className="form-group" >
+                                        setPhoneError('');
+                                        
+                                        if(!isValid){
+                                            setPhoneError("Your phone is not match with dial code");
+                                        }
+
+                                        return isValid;
+                                    }}
+                                    ></PhoneInput>
+                                    <Form.Control
+                                        type="hidden"
+                                        name="phone"
+                                        defaultValue={values?.phone}
+                                        isInvalid={!!errors.phone || !!phoneError}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{errors.phone || phoneError}</Form.Control.Feedback>
+                                </Form.Group>
+                                {/* <Form.Group className="form-group" >
                                     <div className='mb-2'>
                                         <Form.Label className='label'>Phone Number</Form.Label>
                                         <p className='asterisk'>*</p>
@@ -173,7 +211,8 @@ export default function Index() {
                                         onBlur={handleBlur}
                                     />
                                     <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
-                                </Form.Group>
+                                </Form.Group> */}
+                                
 
                                 <Form.Group className="form-group" >
                                     <div className='mb-2'>
@@ -203,7 +242,7 @@ export default function Index() {
                                     />
                                 </Form.Group>
 
-                                <Button type="submit" variant="warning" className='my-btn-yellow' disabled={isLoading}>
+                                <Button type="submit" variant="warning" className='my-btn-yellow' disabled={isLoading || !isValid || !!phoneError}>
                                     {isLoading ? <Spinner></Spinner> : "Register"}
                                 </Button>
                             </Form>

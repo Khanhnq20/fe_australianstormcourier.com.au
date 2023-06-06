@@ -6,7 +6,7 @@ import CheckoutForm from './checkoutform';
 import { config } from '../../../api';
 import { Navigate } from 'react-router-dom';
 
-function Index({clientSecret,checkoutServerAPI, ...props}) {
+function Index({clientSecret,checkoutServerAPI}) {
   const stripePromise = loadStripe(config.StripePublicKey);
   
   if(!clientSecret){
@@ -22,7 +22,9 @@ function Index({clientSecret,checkoutServerAPI, ...props}) {
           clientSecret: clientSecret,
         }}
       >
-        <CheckoutForm clientSecret={clientSecret} checkoutServerAPI={checkoutServerAPI}/>
+        <CheckoutForm 
+          clientSecret={clientSecret} 
+          checkoutServerAPI={checkoutServerAPI}/>
       </Elements>
     </Container>
   )
