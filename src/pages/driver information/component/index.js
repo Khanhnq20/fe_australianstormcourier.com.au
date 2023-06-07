@@ -8,6 +8,10 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import { AuthContext } from '../../../stores';
 import { Link } from 'react-router-dom';
+import { authConstraints, authInstance, config } from '../../../api';
+import { toast } from 'react-toastify';
+import { Modal, Spinner } from 'react-bootstrap';
+import PhoneInput from 'react-phone-input-2';
 
 
 let updateDriverSchema = yup.object().shape({
@@ -19,6 +23,54 @@ let updateDriverSchema = yup.object().shape({
 
 function UpdateDriver() {
     const [authState,{updateDriverProfile}] = useContext(AuthContext);
+    const [phoneError ,setPhoneError] = React.useState("");
+    const [showPhoneVerification, setShowPhoneVerification] = React.useState(false);
+    const [loading, setLoading] = React.useState(false);
+
+    function sendPhoneDigit(){
+        setLoading(true);
+        authInstance.get([authConstraints.root, authConstraints.sendPhoneDigit].join('/'), {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+            }
+        }).then(response => {
+            if(response.data?.successed){
+                toast.success("Check your whatsapp to receive confirmation digit");
+                setLoading(false);
+            }
+            else {
+                toast.error("Failed");
+                setLoading(false);
+            }
+        }).catch(error =>{
+            toast.error(error.message);
+            setLoading(false);
+        });
+    }
+
+    function confirmPhone(digit){
+        setLoading(true);
+        authInstance.get([authConstraints.root, authConstraints.verifiedPhone].join('/'), {
+            headers: {
+                'Authorization': [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(" ")
+            },
+            params: {
+                digit
+            }
+        }).then(response => {
+            if(response.data?.successed){
+                toast.success("Your account has been confirmed phone");
+                setLoading(false);
+            }
+            else{
+                toast.error("Failed");
+                setLoading(false);
+            }
+        }).catch(error =>{
+            toast.error(error.message);
+            setLoading(false);
+        });
+    }
 
     return (
         <Formik
@@ -38,7 +90,7 @@ function UpdateDriver() {
                 updateDriverProfile(values);
             }}
         >
-        {({values, touched, errors, handleSubmit, handleChange, handleBlur,isValid}) =>{
+        {({values, touched, errors, setFieldValue, handleSubmit, handleChange, handleBlur,isValid}) =>{
             return( 
                 <div className='container py-sm-3 py-lg-5'>
                     <Row>
@@ -83,8 +135,61 @@ function UpdateDriver() {
                                         Confirmed phone number
                                     </p>
                                     <p className='product-content'>
-                                        {authState?.accountInfo?.phoneNumberConfirmed ? <span>Confirmed</span> : <span>Not confirmed</span>}
+                                        {authState?.accountInfo?.phoneNumberConfirmed ? <span>Confirmed</span> : <Button variant='success' onClick={() =>{setShowPhoneVerification(true)}}>Not confirmed</Button>}
                                     </p>
+                                    <Modal show={showPhoneVerification} onHide={() => setShowPhoneVerification(false)}>
+                                        <Modal.Header closeButton></Modal.Header>
+                                        <Modal.Body style={{minHeight: '200px'}}>
+                                        {loading ? <Spinner></Spinner> : 
+                                            <div>
+                                                <Row>
+                                                    <Col>
+                                                        <b>Step 1:</b>
+                                                    </Col>
+                                                    <Col>
+                                                        <p>Download <a href='https://www.whatsapp.com/download' target='_blank'>Whatsapp</a> on your phone</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>
+                                                        <b>Step 2:</b>
+                                                    </Col>
+                                                    <Col>
+                                                        <p><b>Signin</b> with your phone number</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>
+                                                        <b>Step 3:</b>
+                                                    </Col>
+                                                    <Col>
+                                                        <p>Check new message and copy 6-digit code. Return website and paste <b>code</b> to the below</p>
+                                                        <img src=""></img>
+                                                            <Formik initialValues={{
+                                                                digit: ''
+                                                            }}
+                                                            onSubmit={value => {
+                                                                confirmPhone(value?.digit);
+                                                            }}>
+                                                            {({handleChange,handleSubmit, values}) =>(
+                                                                <Form onSubmit={handleSubmit}>
+                                                                    <Form.Group>
+                                                                        <Form.Control type="text" name="digit" value={values.digit} className="mb-2" onChange={handleChange}></Form.Control>
+                                                                        <Button variant="success" type="submit">Send</Button>
+                                                                    </Form.Group>
+                                                                </Form>
+                                                            )}
+                                                            </Formik>
+                                                            <div>
+                                                                if you are not receiving any code? <Button variant="primary" className="me-2" onClick={() => sendPhoneDigit()}>Resend code</Button>
+                                                            </div>
+                                                            
+                                                    </Col>
+                                                </Row>
+                                            </div>
+                                        }
+                                        </Modal.Body>
+                                    </Modal>
                                 </div>
                                 <div className='product-label-info'>
                                     <p className='product-label'>
@@ -175,21 +280,40 @@ function UpdateDriver() {
                                     <Form.Control.Feedback type="invalid">{errors?.fullName}</Form.Control.Feedback>
                                 </Form.Group>
                                 {/* Phone */}
-                                <Form.Group className="form-group" >
+                                <Form.Group>
                                     <div className='mb-2'>
                                         <Form.Label className='label'>Phone Number</Form.Label>
                                         <p className='asterisk'>*</p>
                                     </div>
+                                    <PhoneInput
+                                        country={'au'}
+                                        value={values?.phone}
+                                        onChange={phone => setFieldValue("phone", phone)}
+                                        onlyCountries={['au', 'vn']}
+                                        preferredCountries={['au']}
+                                        placeholder="Enter your phone"
+                                        autoFormat={true}
+                                        isValid={(inputNumber, _, countries) => {
+                                            const isValid = countries.some((country) => {
+                                                return inputNumber.startsWith(country.dialCode) || country.dialCode.startsWith(inputNumber);
+                                            });
+
+                                            setPhoneError('');
+
+                                            if(!isValid){
+                                                setPhoneError("Your phone is not match with dial code");
+                                            }
+
+                                            return isValid;
+                                        }}
+                                    ></PhoneInput>
                                     <Form.Control
-                                        type="text"
+                                        type="hidden"
                                         name="phone"
-                                        placeholder="Enter Your Phone Number"
-                                        value={values.phone}
-                                        isInvalid={touched.phone && !!errors?.phone}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
+                                        defaultValue={values?.phoneNumber}
+                                        isInvalid={!!errors?.phoneNumber || !!phoneError}
                                     />
-                                    <Form.Control.Feedback type="invalid">{!!errors?.phone}</Form.Control.Feedback>
+                                    <Form.Control.Feedback type="invalid">{errors?.phoneNumber || phoneError}</Form.Control.Feedback>
                                 </Form.Group>
                                 {/* Address */}
                                 <Form.Group className="form-group" >

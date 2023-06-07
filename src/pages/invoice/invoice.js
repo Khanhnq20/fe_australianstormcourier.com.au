@@ -46,7 +46,7 @@ export default function Index(){
                         clientSecret: response.data?.secreteKey
                     });
                     setPayment(response.data?.result);
-                    toast.success(response.data?.secreteKey);
+                    // toast.success(response.data?.secreteKey);
                 }
                 else{
                     toast.error(response.data?.error);
@@ -158,9 +158,9 @@ function Invoice({clientSecrete, payment}) {
                                         <p>From: {Object.entries(payment?.order?.sendingLocation).map(([_,v]) => v).join(", ")}</p>
                                         <p>To: {payment?.order?.destination}</p>
                                     </td>
-                                    <td>{payment?.order?.total}</td>
+                                    <td>{payment?.order?.shipFee}</td>
                                     <td>1</td>
-                                    <td>{payment?.order?.total}</td>
+                                    <td>{payment?.order?.shipFee}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -170,11 +170,15 @@ function Invoice({clientSecrete, payment}) {
                             <tbody>
                                 <tr>
                                     <th>Subtotal</th>
-                                    <td>${payment?.order?.cod}</td>
+                                    <td>${payment?.order?.shipFee}</td>
+                                </tr>
+                                <tr>
+                                    <th>Freight</th>
+                                    <td>${payment?.order?.cod - payment?.order?.shipFee}</td>
                                 </tr>
                                 <tr>
                                     <th>GST</th>
-                                    <td>${payment?.order?.gst}</td>
+                                    <td>${payment?.order?.gst - payment?.order?.cod}</td>
                                 </tr>
                                 <tr>
                                 <th>Total Cost</th>
@@ -196,7 +200,7 @@ function Invoice({clientSecrete, payment}) {
                                 <div style={{marginBottom: "10px",textTransform: "uppercase"}}>bank transfer</div>
                                 <div style={{marginBottom: "10px",textTransform: "uppercase"}}>sameday courier services pty ltd</div>
                                 <div className='invoice-txt-content'>013-437</div>
-                                <div className='invoice-txt-content'> 123 456 788</div>
+                                <div className='invoice-txt-content'>1555 00392</div>
                             </div>
                     </div>
                 </div>
