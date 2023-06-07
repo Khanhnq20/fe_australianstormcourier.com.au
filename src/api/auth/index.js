@@ -18,7 +18,10 @@ const constraints = {
 
     signupUser: "register/customer",
     signupDriver: "register/driver",
+    sendPhoneDigit: "phone/confirm",
     verifiedUser: "verified/user",
+    verifiedPhone: "verified/phone",
+
 
     vehicles: "vehicles",
 

@@ -401,16 +401,17 @@ export default function Index({children}) {
     }
 
     const accountActions = {
-        updateProfile(body, userId) {
+        updateProfile(body) {
             setState(i =>({
                 ...i,
                 loading: true,
+                tasks: {...i.tasks, [authConstraints.updateUser]: taskStatus.Inprogress}
             }));
 
             return authInstance.post([authConstraints.root, authConstraints.updateUser].join("/"), body, {
-                params: {
-                    userId
-                },
+                // params: {
+                //     userId
+                // },
                 headers: {
                     "Authorization": [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(' ')
                 }
@@ -418,7 +419,8 @@ export default function Index({children}) {
                 if(!!response.data?.userInfo && !!response.data?.successed){
                     setState(i => ({
                         ...i,
-                        accountInfo: response.data.userInfo
+                        accountInfo: response.data.userInfo,
+                        tasks: {...i.tasks, [authConstraints.updateUser]: taskStatus.Completed}
                     }));
 
                     toast.success("Updated user information");
@@ -427,11 +429,20 @@ export default function Index({children}) {
                         loading: false
                     }));
                 }
+                else {
+                    toast.error("Updated failed");
+                    setState(i => ({
+                        ...i,
+                        loading: false,
+                        tasks: {...i.tasks, [authConstraints.updateUser]: taskStatus.Failed}
+                    }));
+                }
             }).catch(err =>{
                 toast.error(err.response);
                 setState(i =>({
                     ...i,
-                    loading: false
+                    loading: false,
+                    tasks: {...i.tasks, [authConstraints.updateUser]: taskStatus.Failed}
                 }));
             });
         },

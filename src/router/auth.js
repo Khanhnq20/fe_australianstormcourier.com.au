@@ -80,8 +80,13 @@ export const authChildrens = [
     },
     {
       path:"verify",
-      element:<>
-        <Verify></Verify>
-      </>
+      element:<Outlet></Outlet>,
+      children: [{
+        path: '',
+        element: <Verify></Verify>
+      },{
+        path: 'phone',
+        element: <></>
+      }]
     }
   ]
