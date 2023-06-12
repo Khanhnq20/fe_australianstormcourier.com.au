@@ -534,7 +534,7 @@ function RegisterDriver() {
 
                                         {/* Vehicles */}
                                         <Form.Group className="form-group" >
-                                            <div className='mb-2'>
+                                            <div className='mb-2' style={{paddingTop:'20px'}}>
                                                 <Form.Label className='label'>Vehicles</Form.Label>
                                                 <p className='asterisk'>*</p>
                                             </div>
