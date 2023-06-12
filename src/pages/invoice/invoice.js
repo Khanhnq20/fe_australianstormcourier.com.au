@@ -108,9 +108,6 @@ function Invoice({clientSecrete, payment}) {
 
     return (
     <div>
-        {/* <pre>
-            {JSON.stringify(invoice, 4, 4)}
-        </pre> */}
         <div className='invoice mb-4' >
                 <div style={{textAlign:'right',maxWidth:"1500px"}}>
                     <button className='my-btn-yellow' onClick={handlePrint}>Print Invoice</button>

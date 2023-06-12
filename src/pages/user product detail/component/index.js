@@ -1161,7 +1161,7 @@ function PopUpCenteredModal({driver, ...props}) {
                             Review
                         </p>
                         <p className='product-content'>
-                            Loadding....
+                            Loading....
                         </p>
                     </div>
                 </Col>
