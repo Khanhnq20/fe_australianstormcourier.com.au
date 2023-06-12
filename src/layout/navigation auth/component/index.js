@@ -9,6 +9,7 @@ import {FiLogOut,FiChevronDown} from 'react-icons/fi';
 import {BsChevronDown} from 'react-icons/bs'
 import { AuthContext } from '../../../stores/contextAPI/authctx';
 import {BsPersonWorkspace} from 'react-icons/bs';
+import logo from "../../../image/as-logo.png";
 
 export default function Index() {
     const [notify,setNotify] = React.useState(false);
@@ -18,7 +19,7 @@ export default function Index() {
                 <Navbar bg="light" variant="light" expand="lg">
                     <div className="nav-auth px-1">
                         <Navbar.Brand className="nav-logo-frame" href="/">
-                            <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" width="50px"/>
+                            <img src={logo} width="50px"/>
                         </Navbar.Brand>
                         
                         <div className='nav-auth-form'>
