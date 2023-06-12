@@ -187,7 +187,7 @@ function Marketing(){
                             <Col sm="12" lg="6" className={inView ? 'fadeLeft' : ''}>
                                 <div className='mar-item'>
                                     <div>
-                                        <img src='https://australianstormcourier.com.au/wp-content/uploads/2023/04/truck-300x300.png' width={"60px"}/>
+                                        <img src={truck} width={"60px"}/>
                                     </div>
                                     <div>
                                         <div>
