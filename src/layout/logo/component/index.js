@@ -1,9 +1,10 @@
-import React from 'react'
+import React from 'react';
+import logo from '../../../image/as-logo.png'
 
 export default function Index() {
   return (
     <div>
-        <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" width="50px"/>
+        <img src={logo} width="50px"/>
     </div>
   )
 }
