@@ -4,6 +4,7 @@ import { AuthContext, taskStatus } from '../../../stores';
 import { useSearchParams } from 'react-router-dom';
 import { authConstraints } from '../../../api';
 import { CustomSpinner } from '../../../layout';
+import logo from '../../../image/as-logo.png'
 
 export default function Index() {
   const [authState, {
@@ -37,7 +38,7 @@ export default function Index() {
     <div className='my-5'>
         <Container className='pt-4 text-center'> 
             <div className='py-3 mx-auto' style={{ maxWidth: "160px" }}>
-                <img src="https://australianstormcourier.com.au/wp-content/uploads/2023/04/as-logo.png" className='w-100'></img>
+                <img src={logo} className='w-100'></img>
             </div>
             <h2 className='mb-3 text-center'>
                 Your account was verified, welcome to Australian Storm Courier
