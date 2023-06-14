@@ -1,16 +1,16 @@
-.ft-content{
+.ft-content {
     text-align: center;
     color: var(--clr-txt-primary);
     margin: 0;
     padding: 15px;
 }
-.ft-root{
-    background-color: #FFF4E5;
+.ft-root {
+    background-color: #fff4e5;
     width: 100%;
 }
-.ft-root-cus{
-    background-color: #FFF4E5;
+.ft-root-cus {
+    background-color: #fff4e5;
     width: 100%;
-    position: absolute;
+    position: fixed;
     bottom: 0;
 }
