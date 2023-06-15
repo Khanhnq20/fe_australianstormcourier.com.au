@@ -152,7 +152,9 @@ function Product() {
                                 <p className="m-0">Show</p>
                                 <Dropdown
                                     className="reg-dr"
-                                    style={{ width: "fit-content" }}
+                                    style={{
+                                        width: "fit-content",
+                                    }}
                                 >
                                     <Dropdown.Toggle
                                         className="dr-btn py-1"
