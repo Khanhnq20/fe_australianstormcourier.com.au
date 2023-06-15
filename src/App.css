@@ -19,9 +19,11 @@
     --font-size: 15px;
     --font-family: "Montserrat", sans-serif;
 }
+
 .root {
     min-height: 90vh;
 }
+
 * {
     box-sizing: border-box;
 }
@@ -32,6 +34,11 @@ html {
 
 body {
     font-family: var(--font-family);
+    overflow-y: hidden;
+}
+
+#root {
+    overflow-y: hidden;
 }
 
 .container-define {

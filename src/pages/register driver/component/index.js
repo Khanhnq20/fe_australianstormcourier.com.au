@@ -211,7 +211,7 @@ function RegisterDriver() {
                 return (
                     <div
                         style={{ minHeight: "calc(90vh - 54px)" }}
-                        className="container p-5"
+                        className="container p-sm-2 p-lg-5"
                     >
                         <div className="text-center">
                             <h3 className="ui-header">Become driver</h3>
@@ -392,7 +392,7 @@ function RegisterDriver() {
                                     </Form.Group>
 
                                     {/* Phone */}
-                                    <Form.Group className="form-group mb-2">
+                                    <Form.Group className="form-group mb-4">
                                         <div className="mb-2">
                                             <Form.Label className="label">
                                                 Phone Number
@@ -400,6 +400,8 @@ function RegisterDriver() {
                                             <p className="asterisk">*</p>
                                         </div>
                                         <PhoneInput
+                                            containerClass="w-100"
+                                            inputClass="w-100"
                                             country={"au"}
                                             value={values?.phone}
                                             onChange={(phone) =>
@@ -454,7 +456,7 @@ function RegisterDriver() {
                                         variant="warning"
                                         disabled={!permitedNext || !!phoneError}
                                         onClick={() => setNext((e) => !e)}
-                                        className="my-btn-yellow"
+                                        className="my-btn-yellow w-100 w-lg-40"
                                     >
                                         Next
                                     </Button>
