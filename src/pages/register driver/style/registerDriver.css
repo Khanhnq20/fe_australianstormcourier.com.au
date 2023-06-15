@@ -1,32 +1,36 @@
-.reg-form{
+.reg-form {
     padding: 20px;
     border-radius: 10px;
 }
-.reg-dr{
+.reg-dr {
     background-color: var(--clr-input);
 }
-.dr-btn{
+.dr-btn {
     background-color: var(--clr-btn-light);
     color: var(--clr-txt-primary);
-    border: 1px solid #DDDDDD;
+    border: 1px solid #dddddd;
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 8px 12px;
 }
-.dr-btn:hover{
-    background-color: var(--clr-btn-light) ;
-    color: var(--clr-txt-primary) ;
-    border: 1px solid #DDDDDD;
+.dr-btn:hover {
+    background-color: var(--clr-btn-light);
+    color: var(--clr-txt-primary);
+    border: 1px solid #dddddd;
 }
-.btn-check:checked+.btn, .btn.active, .btn.show, .btn:first-child:active, :not(.btn-check)+.btn:active {
-    color:  var(--clr-txt-primary);
-    background-color:var(--clr-btn-light);
-    border: 1px solid #DDDDDD;
+.btn-check:checked + .btn,
+.btn.active,
+.btn.show,
+.btn:first-child:active,
+:not(.btn-check) + .btn:active {
+    color: var(--clr-txt-primary);
+    background-color: var(--clr-btn-light);
+    border: 1px solid #dddddd;
 }
-.background-front{
-    background-color: #DDDDDD;
+.background-front {
+    background-color: #dddddd;
     opacity: 50%;
     width: 100%;
     height: 200px;
@@ -37,38 +41,40 @@
     position: absolute;
     border-radius: 15px;
 }
-.list-vehicle{
+.list-vehicle {
     display: grid;
     grid-template-columns: auto auto auto;
     gap: 5px;
     margin-top: 10px;
 }
-@media only screen and (max-width: 480px){
-    .list-vehicle{
+@media only screen and (max-width: 480px) {
+    .list-vehicle {
         grid-template-columns: auto auto;
     }
 }
-.reg-header{
+.reg-header {
     font-weight: 800;
 }
-#driver_image_front, #driver_image_back,#driver_pdf {
+#driver_image_front,
+#driver_image_back,
+#driver_pdf {
     display: none;
 }
 
-.driving-txt{
+.driving-txt {
     color: gray;
     opacity: 70%;
     font-size: 14px;
 }
-.step2-show{
+.step2-show {
     display: block;
 }
-.step2-hide{
+.step2-hide {
     display: none;
 }
-.step1-show{
+.step1-show {
     display: block;
 }
-.step1-hide{
+.step1-hide {
     display: none;
 }
