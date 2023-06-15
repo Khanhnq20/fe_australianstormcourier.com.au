@@ -191,7 +191,7 @@ function Product() {
                                                             <td>
                                                             <Row>
                                                                 <Col sm="5">
-                                                                    <img src={offer?.order?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
+                                                                    <img src={offer?.order?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%", maxWidth: '120px'}}></img>
                                                                 </Col>
                                                                 <Col sm="7">
                                                                     <b>{offer?.order?.orderItems?.[0]?.itemName}</b>

@@ -57,7 +57,6 @@ function Product() {
 
     useEffect(() =>{
         onOrderReceive(orderId =>{
-            console.log("Driver Active Order Page has changed status :" + orderId);
             refresh();
         });
     }, [socketConnection]);
@@ -179,9 +178,7 @@ function Product() {
                                                     <td>
                                                         <Row>
                                                             <Col sm="5">
-                                                                <>
-                                                                    <img src={post?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%"}}></img>
-                                                                </>
+                                                                <img src={post?.orderItems?.[0]?.itemImages?.split?.("[space]")?.[0]} style={{width: "100%", maxWidth: '100px'}}></img>
                                                             </Col>
                                                             <Col sm="7">
                                                                 <b>{post?.orderItems?.[0]?.itemName}</b>
