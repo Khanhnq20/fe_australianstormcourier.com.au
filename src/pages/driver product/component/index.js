@@ -70,11 +70,8 @@ function Product() {
         totalPages: 1,
     });
 
-    useEffect(() => {
-        onOrderReceive((orderId) => {
-            console.log(
-                "Driver Active Order Page has changed status :" + orderId
-            );
+    useEffect(() =>{
+        onOrderReceive(orderId =>{
             refresh();
         });
     }, [socketConnection]);
