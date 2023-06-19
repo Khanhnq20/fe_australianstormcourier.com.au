@@ -143,7 +143,7 @@ export default function Index({children}) {
                             [authConstraints.postDriverOffers] : taskStatus.Failed
                         }
                     }));
-                    toast.warning("Post offer incompletely");
+                    toast.warning(response.data?.error || "Post offer incompletely");
                 }
             })
             .catch(error => {

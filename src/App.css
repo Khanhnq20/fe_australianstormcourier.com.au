@@ -20,6 +20,10 @@
     --font-family: "Montserrat", sans-serif;
 }
 
+.root {
+    min-height: 90vh;
+}
+
 * {
     box-sizing: border-box;
 }
@@ -32,7 +36,6 @@ body {
     font-family: var(--font-family);
     /* overflow-y: hidden; */
 }
-
 /* #root {
     overflow-y: hidden;
 } */
