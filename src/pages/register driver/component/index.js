@@ -618,15 +618,16 @@ function RegisterDriver() {
                                     </Form.Group>
 
                                     {/* Driving Liense Images */}
-                                    <Form.Group className="form-group">
+                                    <Form.Group className="form-group mb-2">
                                         <div className="mb-2">
                                             <Form.Label className="label py-3 mb-2">
-                                                Driving License (Front and Back)
+                                                Driving License (Front an d
+                                                Back)
                                             </Form.Label>
                                             <p className="asterisk">*</p>
                                         </div>
                                         <div className="front-up">
-                                            <h6>Front</h6>
+                                            <i>Front</i>
                                             <div
                                                 className="img-front-frame"
                                                 onClick={() =>
@@ -697,9 +698,7 @@ function RegisterDriver() {
                                             </Form.Control.Feedback>
                                         </div>
                                         <div className="back-up">
-                                            <div>
-                                                <h6>Back</h6>
-                                            </div>
+                                            <i>Back</i>
                                             <div
                                                 className="img-front-frame"
                                                 onClick={() =>
@@ -887,7 +886,10 @@ function RegisterDriver() {
 
                                     {/* Vehicles */}
                                     <Form.Group className="form-group">
-                                        <div className="mb-2">
+                                        <div
+                                            className="mb-2"
+                                            style={{ paddingTop: "20px" }}
+                                        >
                                             <Form.Label className="label">
                                                 Vehicles
                                             </Form.Label>
