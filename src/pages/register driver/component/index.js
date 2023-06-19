@@ -505,6 +505,7 @@ function RegisterDriver() {
                                             <Form.Label className="label">
                                                 ABN
                                             </Form.Label>
+                                            <p className="asterisk">*</p>
                                         </div>
                                         <Form.Control
                                             type="text"
@@ -785,8 +786,8 @@ function RegisterDriver() {
                                                 className="txt-checkbox"
                                                 style={{ fontWeight: "500" }}
                                             >
-                                                Your driving license is from
-                                                australian
+                                                Is it Australian driver's
+                                                license?
                                             </span>
                                         </label>
                                         {!values.isAusDrivingLiense && (
