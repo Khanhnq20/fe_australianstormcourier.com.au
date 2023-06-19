@@ -1,14 +1,15 @@
-.reg-user{
+.reg-user {
+    min-height: calc(90vh - 54px);
 }
-.reg-txt-u{
+.reg-txt-u {
     color: var(--clr-primary);
 }
-.date-input{
+.date-input {
     border: 1px solid var(--clr-txt-secondary);
     padding: 8px 12px;
-    color:gray;
+    color: gray;
     background-color: var(--clr-input) !important;
 }
-.date-input input{
+.date-input input {
     font-size: 15px !important;
 }

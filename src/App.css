@@ -30,12 +30,12 @@ html {
 
 body {
     font-family: var(--font-family);
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
 }
 
-#root {
+/* #root {
     overflow-y: hidden;
-}
+} */
 
 .container-define {
     min-height: calc(100vh - 96px - 54px);
