@@ -30,7 +30,7 @@ export const authChildrens = [
                         element: (
                             <>
                                 <RegisterUser></RegisterUser>
-                                <Footer></Footer>
+                                <Footer.Custom></Footer.Custom>
                             </>
                         ),
                     },
@@ -69,7 +69,7 @@ export const authChildrens = [
         element: (
             <>
                 <Login></Login>
-                <Footer></Footer>
+                <Footer.Custom></Footer.Custom>
             </>
         ),
     },
@@ -78,7 +78,7 @@ export const authChildrens = [
         element: (
             <>
                 <Outlet></Outlet>
-                <Footer></Footer>
+                <Footer.Custom></Footer.Custom>
             </>
         ),
         children: [
@@ -105,7 +105,7 @@ export const authChildrens = [
         element: (
             <>
                 <ResetPassword></ResetPassword>
-                <Footer></Footer>
+                <Footer.Custom></Footer.Custom>
             </>
         ),
     },

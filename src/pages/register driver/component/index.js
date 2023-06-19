@@ -210,7 +210,7 @@ function RegisterDriver() {
 
                 return (
                     <div
-                        style={{ minHeight: "calc(90vh - 54px)" }}
+                        style={{ minHeight: "86vh" }}
                         className="container p-sm-2 p-lg-5"
                     >
                         <div className="text-center">
@@ -505,6 +505,7 @@ function RegisterDriver() {
                                             <Form.Label className="label">
                                                 ABN
                                             </Form.Label>
+                                            <p className="asterisk">*</p>
                                         </div>
                                         <Form.Control
                                             type="text"
@@ -784,14 +785,22 @@ function RegisterDriver() {
                                                 className="txt-checkbox"
                                                 style={{ fontWeight: "500" }}
                                             >
-                                                Your driving license is from
-                                                australian
+                                                Is it Australian driver's
+                                                license?
                                             </span>
                                         </label>
                                         {!values.isAusDrivingLiense && (
                                             <div className="drivingCertificate">
-                                                <i>Driving Certificate</i>
-
+                                                <div>
+                                                    <h6
+                                                        style={{
+                                                            paddingTop: "15px",
+                                                        }}
+                                                    >
+                                                        Address Confirmation
+                                                        Documents
+                                                    </h6>
+                                                </div>
                                                 <div
                                                     className="img-front-frame"
                                                     style={{
