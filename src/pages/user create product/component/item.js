@@ -25,10 +25,12 @@ export default function ItemCreation({
     const [authState] = useContext(AuthContext);
 
     return (
-        <>
+        <div>
             <Form.Group className="mb-4">
                 {/* Receiver Information */}
-                <h5 className="my-3">Receiver Information</h5>
+                <h5 className="my-3" style={{ userSelect: "none" }}>
+                    Item {index + 1}
+                </h5>
                 <Row>
                     <Col>
                         <Form.Group>
@@ -66,6 +68,8 @@ export default function ItemCreation({
                             <PhoneInput
                                 country={"au"}
                                 value={values?.phone}
+                                containerClass="w-100"
+                                inputClass="w-100"
                                 onChange={(phone) =>
                                     setFieldValue("receiverPhone", phone)
                                 }
@@ -659,6 +663,6 @@ export default function ItemCreation({
                     </Form.Group>
                 </Col>
             </Row>
-        </>
+        </div>
     );
 }

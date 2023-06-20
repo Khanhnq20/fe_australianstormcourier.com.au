@@ -11,6 +11,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { dotnetFormDataSerialize } from "../../../ultitlies";
 import "react-phone-input-2/lib/style.css";
 import ItemCreation from "./item";
+import { FaTimes } from "react-icons/fa";
 
 const PERMIT_FILE_FORMATS = ["image/jpeg", "image/png", "image/jpg"];
 
@@ -504,64 +505,88 @@ function OrderCreation() {
                                     name="orderItems"
                                     render={(arrayHelpers) => {
                                         return (
-                                            <>
-                                                <Swiper
-                                                    pagination={pagination}
-                                                    modules={[Pagination]}
-                                                >
-                                                    {values.orderItems.map(
-                                                        (item, index) => {
-                                                            return (
-                                                                <SwiperSlide>
-                                                                    <ItemCreation
-                                                                        key={
-                                                                            index
-                                                                        }
-                                                                        index={
-                                                                            index
-                                                                        }
-                                                                        name={`orderItems[${index}]`}
-                                                                        phoneError={
-                                                                            phoneError
-                                                                        }
-                                                                        setPhoneError={
-                                                                            setPhoneError
-                                                                        }
-                                                                        {...formProps}
-                                                                    ></ItemCreation>
-                                                                    {values
-                                                                        .orderItems
-                                                                        .length >
-                                                                        1 && (
-                                                                        <Button
-                                                                            onClick={() =>
-                                                                                arrayHelpers.remove(
+                                            <div className="list-item">
+                                                <div className="item-root">
+                                                    <Swiper
+                                                        pagination={pagination}
+                                                        modules={[Pagination]}
+                                                    >
+                                                        {values.orderItems.map(
+                                                            (item, index) => {
+                                                                return (
+                                                                    <div>
+                                                                        <SwiperSlide>
+                                                                            {values
+                                                                                .orderItems
+                                                                                .length >
+                                                                                1 && (
+                                                                                <div className="times-createProduct-form">
+                                                                                    <FaTimes
+                                                                                        className="times-createProduct"
+                                                                                        onClick={() =>
+                                                                                            arrayHelpers.remove(
+                                                                                                index
+                                                                                            )
+                                                                                        }
+                                                                                    ></FaTimes>
+                                                                                </div>
+                                                                            )}
+                                                                            <ItemCreation
+                                                                                key={
                                                                                     index
-                                                                                )
-                                                                            }
-                                                                        >
-                                                                            Remove
-                                                                        </Button>
-                                                                    )}
-                                                                </SwiperSlide>
-                                                            );
-                                                        }
-                                                    )}
-                                                </Swiper>
-                                                <Button
-                                                    onClick={() =>
-                                                        arrayHelpers.push(
-                                                            values.orderItems?.[
+                                                                                }
+                                                                                index={
+                                                                                    index
+                                                                                }
+                                                                                name={`orderItems[${index}]`}
+                                                                                phoneError={
+                                                                                    phoneError
+                                                                                }
+                                                                                setPhoneError={
+                                                                                    setPhoneError
+                                                                                }
+                                                                                {...formProps}
+                                                                            ></ItemCreation>
+                                                                        </SwiperSlide>
+                                                                    </div>
+                                                                );
+                                                            }
+                                                        )}
+                                                    </Swiper>
+                                                </div>
+                                                <div className="table-product">
+                                                    <table>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Product</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Peter</td>
+                                                            <td>Griffin</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Lois</td>
+                                                            <td>Griffin</td>
+                                                        </tr>
+                                                    </table>
+                                                    <Button
+                                                        className="my-btn-yellow"
+                                                        onClick={() =>
+                                                            arrayHelpers.push(
                                                                 values
-                                                                    .orderItems
-                                                                    .length - 1
-                                                            ]
-                                                        )
-                                                    }
-                                                >
-                                                    Push
-                                                </Button>
-                                            </>
+                                                                    .orderItems?.[
+                                                                    values
+                                                                        .orderItems
+                                                                        .length -
+                                                                        1
+                                                                ]
+                                                            )
+                                                        }
+                                                    >
+                                                        Add
+                                                    </Button>
+                                                </div>
+                                            </div>
                                         );
                                     }}
                                 />
