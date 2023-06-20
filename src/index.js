@@ -18,15 +18,15 @@ import "react-datepicker/dist/react-datepicker.css";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-    <>
-        <AuthContextComponent>
-            <RouterProvider
-                router={router}
-                fallbackElement={<Spinner />}
-            ></RouterProvider>
-        </AuthContextComponent>
-        <ToastContainer />
-    </>
+  <>
+    <AuthContextComponent>
+      <RouterProvider
+        router={router}
+        fallbackElement={<Spinner />}
+      ></RouterProvider>
+    </AuthContextComponent>
+    <ToastContainer />
+  </>
 );
 
 // If you want to start measuring performance in your app, pass a function

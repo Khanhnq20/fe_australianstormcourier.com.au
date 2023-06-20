@@ -1,22 +1,22 @@
-.em-form{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: calc(90vh - 50px);
-    padding: 20px;
-    flex-direction: column;
-    position: relative;
+.em-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(90vh - 50px);
+  padding: 20px;
+  flex-direction: column;
+  position: relative;
 }
-.em-root{
-    background-color: #F6F6F6;
-    margin: 0 auto;
-    width: 100%;
+.em-root {
+  background-color: #f6f6f6;
+  margin: 0 auto;
+  width: 100%;
 }
-.em-txt{
-    max-width: 600px;
-    margin-top: 20px;
-    text-align: center;
+.em-txt {
+  max-width: 600px;
+  margin-top: 20px;
+  text-align: center;
 }
-.em-title{
-    margin-bottom: 20px;
+.em-title {
+  margin-bottom: 20px;
 }

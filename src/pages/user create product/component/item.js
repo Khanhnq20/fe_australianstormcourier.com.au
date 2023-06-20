@@ -1,12 +1,12 @@
-import { FieldArray } from "formik";
-import Form from "react-bootstrap/Form";
-import React, { useContext, useRef } from "react";
-import { Button, Col, InputGroup, Row } from "react-bootstrap";
-import { AuthContext } from "../../../stores";
-import "../style/createProduct.css";
-import PhoneInput from "react-phone-input-2";
-import Barcode from "react-barcode";
-import { RiImageEditFill } from "react-icons/ri";
+import { FieldArray } from 'formik';
+import Form from 'react-bootstrap/Form';
+import React, { useContext, useRef } from 'react';
+import { Button, Col, InputGroup, Row } from 'react-bootstrap';
+import { AuthContext } from '../../../stores';
+import '../style/createProduct.css';
+import PhoneInput from 'react-phone-input-2';
+import Barcode from 'react-barcode';
+import { RiImageEditFill } from 'react-icons/ri';
 
 export default function ItemCreation({
     name,
@@ -25,34 +25,34 @@ export default function ItemCreation({
     const [authState] = useContext(AuthContext);
 
     return (
-        <div>
+        <div className="p-sm-1 p-md-2">
             <Form.Group className="mb-4">
                 {/* Receiver Information */}
                 <h5 className="my-3" style={{ userSelect: "none" }}>
                     Item {index + 1}
                 </h5>
+                <h5 className="my-3">Receiver Information</h5>
+                {/* <pre>{JSON.stringify(errors, 4, 4)}</pre> */}   
                 <Row>
                     <Col>
                         <Form.Group>
                             <div className="mb-2">
-                                <Form.Label className="label">
-                                    Receiver Name
-                                </Form.Label>
+                                <Form.Label className="label">Receiver Name</Form.Label>
                                 <p className="asterisk">*</p>
                             </div>
                             <Form.Control
                                 type="text"
-                                name="receiverName"
+                                name={`${name}.receiverName`}
                                 placeholder="Enter Receiver Name"
                                 isInvalid={
-                                    touched?.receiverName &&
-                                    !!errors?.receiverName
+                                    touched.orderItems?.[index]?.receiverName &&
+                                    !!errors?.orderItems?.[index]?.receiverName
                                 }
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {errors?.receiverName}
+                                {errors?.orderItems?.[index]?.receiverName}
                             </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
@@ -60,14 +60,12 @@ export default function ItemCreation({
                         {/* Phone */}
                         <Form.Group>
                             <div className="mb-2">
-                                <Form.Label className="label">
-                                    Phone Number
-                                </Form.Label>
+                                <Form.Label className="label">Phone Number</Form.Label>
                                 <p className="asterisk">*</p>
                             </div>
                             <PhoneInput
                                 country={"au"}
-                                value={values?.phone}
+                                value={values.orderItems?.[index]?.phone}
                                 containerClass="w-100"
                                 inputClass="w-100"
                                 onChange={(phone) =>
@@ -78,25 +76,17 @@ export default function ItemCreation({
                                 placeholder="Enter Receiver Phone number"
                                 autoFormat={true}
                                 isValid={(inputNumber, _, countries) => {
-                                    const isValid = countries.some(
-                                        (country) => {
-                                            return (
-                                                inputNumber.startsWith(
-                                                    country.dialCode
-                                                ) ||
-                                                country.dialCode.startsWith(
-                                                    inputNumber
-                                                )
-                                            );
-                                        }
-                                    );
+                                    const isValid = countries.some((country) => {
+                                        return (
+                                            inputNumber.startsWith(country.dialCode) ||
+                                            country.dialCode.startsWith(inputNumber)
+                                        );
+                                    });
 
-                                    setPhoneError("");
+                                    setPhoneError('');
 
                                     if (!isValid) {
-                                        setPhoneError(
-                                            "Your phone is not match with dial code"
-                                        );
+                                        setPhoneError('Your phone is not match with dial code');
                                     }
 
                                     return isValid;
@@ -104,136 +94,130 @@ export default function ItemCreation({
                             ></PhoneInput>
                             <Form.Control
                                 type="hidden"
-                                name="receiverPhone"
-                                defaultValue={values?.phone}
-                                isInvalid={!!errors.phone || !!phoneError}
+                                name={`${name}.receiverPhone`}
+                                defaultValue={values.orderItems?.[index]?.phone}
+                                isInvalid={!!errors.orderItems?.[index]?.phone || !!phoneError}
                             />
                             <Form.Control.Feedback type="invalid">
-                                {errors.phone || phoneError}
+                                {errors.orderItems?.[index]?.phone || phoneError}
                             </Form.Control.Feedback>
                         </Form.Group>
                     </Col>
                 </Row>
             </Form.Group>
+            {/* Destination */}
             <Form.Group className="mb-4">
-                <div>
-                    {/* Destination */}
+                <div className="mb-2">
+                    <Form.Label className="label">Destination</Form.Label>
+                    <p className="asterisk">*</p>
+                </div>
+                <div className="pickup-post">
+                    {/* Unit Number */}
                     <Form.Group>
-                        <div className="mb-2">
-                            <Form.Label className="label">
-                                Destination
-                            </Form.Label>
-                            <p className="asterisk">*</p>
-                        </div>
-                        <div className="pickup-post">
-                            {/* Unit Number */}
-                            <Form.Group>
-                                <Form.Control
-                                    type="text"
-                                    name={`${name}.destination.unitNumber`}
-                                    placeholder="Enter Unit number (apartment, room,...)"
-                                    isInvalid={
-                                        touched.destination?.unitNumber &&
-                                        !!errors?.destination?.unitNumber
-                                    }
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors?.destination?.unitNumber}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.unitNumber`}
+                            placeholder="Enter Unit number (apartment, room,...)"
+                            isInvalid={
+                                touched.orderItems?.[index]?.destination?.unitNumber &&
+                                !!errors?.orderItems?.[index]?.destination?.unitNumber
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors.orderItems?.[index]?.destination?.unitNumber}
+                        </Form.Control.Feedback>
+                    </Form.Group>
 
-                            {/* Street Number */}
-                            <Form.Group>
-                                <Form.Control
-                                    type="text"
-                                    name="destination.streetNumber"
-                                    placeholder="Enter street number"
-                                    isInvalid={
-                                        touched.destination?.streetNumber &&
-                                        !!errors?.destination?.streetNumber
-                                    }
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors?.destination?.streetNumber}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                    {/* Street Number */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.streetNumber`}
+                            placeholder="Enter street number"
+                            isInvalid={
+                                touched.orderItems?.[index]?.destination?.streetNumber &&
+                                !!errors?.orderItems?.[index]?.destination?.streetNumber
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.orderItems?.[index]?.destination?.streetNumber}
+                        </Form.Control.Feedback>
+                    </Form.Group>
 
-                            {/* Street Name */}
-                            <Form.Group>
-                                <Form.Control
-                                    type="text"
-                                    name="destination.streetName"
-                                    placeholder="Enter Street Name"
-                                    isInvalid={
-                                        touched.destination?.streetName &&
-                                        !!errors?.destination?.streetName
-                                    }
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors?.destination?.streetName}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                    {/* Street Name */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.streetName`}
+                            placeholder="Enter Street Name"
+                            isInvalid={
+                                touched.orderItems?.[index]?.destination?.streetName &&
+                                !!errors?.orderItems?.[index]?.destination?.streetName
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.orderItems?.[index]?.destination?.streetName}
+                        </Form.Control.Feedback>
+                    </Form.Group>
 
-                            {/* Suburb */}
-                            <Form.Group>
-                                <Form.Control
-                                    type="text"
-                                    name="destination.suburb"
-                                    placeholder="Enter Suburb"
-                                    isInvalid={
-                                        touched.destination?.suburb &&
-                                        !!errors?.destination?.suburb
-                                    }
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors?.destination?.suburb}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                    {/* Suburb */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.suburb`}
+                            placeholder="Enter Suburb"
+                            isInvalid={
+                                touched.orderItems?.[index]?.destination?.suburb &&
+                                !!errors?.orderItems?.[index]?.destination?.suburb
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.orderItems?.[index]?.destination?.suburb}
+                        </Form.Control.Feedback>
+                    </Form.Group>
 
-                            {/* State */}
-                            <Form.Group>
-                                <Form.Control
-                                    type="text"
-                                    name="destination.state"
-                                    placeholder="Enter state"
-                                    isInvalid={
-                                        touched.destination?.state &&
-                                        !!errors?.destination?.state
-                                    }
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors?.destination?.state}
-                                </Form.Control.Feedback>
-                            </Form.Group>
+                    {/* State */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.state`}
+                            placeholder="Enter state"
+                            isInvalid={
+                                touched.orderItems?.[index]?.destination?.state &&
+                                !!errors?.orderItems?.[index]?.destination?.state
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.orderItems?.[index]?.destination?.state}
+                        </Form.Control.Feedback>
+                    </Form.Group>
 
-                            {/* State */}
-                            <Form.Group>
-                                <Form.Control
-                                    type="text"
-                                    name="destination.postCode"
-                                    placeholder="Enter post code"
-                                    isInvalid={
-                                        touched.destination?.postCode &&
-                                        !!errors?.destination?.postCode
-                                    }
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                />
-                                <Form.Control.Feedback type="invalid">
-                                    {errors?.destination?.postCode}
-                                </Form.Control.Feedback>
-                            </Form.Group>
-                        </div>
+                    {/* State */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.postCode`}
+                            placeholder="Enter post code"
+                            isInvalid={
+                                touched.orderItems?.[index]?.destination?.postCode &&
+                                !!errors?.orderItems?.[index]?.destination?.postCode
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.orderItems?.[index]?.destination?.postCode}
+                        </Form.Control.Feedback>
                     </Form.Group>
                 </div>
             </Form.Group>
@@ -247,16 +231,11 @@ export default function ItemCreation({
                     type="text"
                     name={`${name}.itemName`}
                     placeholder="Enter Product Name"
-                    isInvalid={
-                        touched.orderItems?.[index]?.itemName &&
-                        errors.orderItems?.[index]?.itemName
-                    }
+                    isInvalid={touched.orderItems?.[index]?.itemName && errors.orderItems?.[index]?.itemName}
                     onChange={handleChange}
                     onBlur={handleBlur}
                 />
-                <Form.Control.Feedback type="invalid">
-                    {errors.orderItems?.[index]?.itemName}
-                </Form.Control.Feedback>
+                <Form.Control.Feedback type="invalid">{errors.orderItems?.[index]?.itemName}</Form.Control.Feedback>
             </Form.Group>
             {/* Item BarCode  */}
             <Form.Group className="mb-3">
@@ -264,16 +243,12 @@ export default function ItemCreation({
                     <Form.Label className="label">Barcode</Form.Label>
                     <p className="asterisk">*</p>
                 </div>
-                <Barcode
-                    value={values.orderItems[index].itemCharCode.toString()}
-                ></Barcode>
+                <Barcode value={values.orderItems[index].itemCharCode.toString()}></Barcode>
             </Form.Group>
             {/* Item Description  */}
             <Form.Group className="mb-3">
                 <div className="mb-2">
-                    <Form.Label className="label">
-                        Product Description
-                    </Form.Label>
+                    <Form.Label className="label">Product Description</Form.Label>
                     <p className="asterisk">*</p>
                 </div>
                 <Form.Control
@@ -282,8 +257,7 @@ export default function ItemCreation({
                     placeholder="Enter Product Description"
                     name={`${name}.itemDescription`}
                     isInvalid={
-                        touched.orderItems?.[index]?.itemDescription &&
-                        !!errors.orderItems?.[index]?.itemDescription
+                        touched.orderItems?.[index]?.itemDescription && !!errors.orderItems?.[index]?.itemDescription
                     }
                     onChange={handleChange}
                     onBlur={handleBlur}
@@ -309,8 +283,7 @@ export default function ItemCreation({
                             name={`${name}.quantity`}
                             placeholder="Enter Quantity"
                             isInvalid={
-                                touched?.orderItems?.[index]?.quantity &&
-                                !!errors?.orderItems?.[index]?.quantity
+                                touched?.orderItems?.[index]?.quantity && !!errors?.orderItems?.[index]?.quantity
                             }
                             onChange={handleChange}
                             onBlur={handleBlur}
@@ -333,16 +306,13 @@ export default function ItemCreation({
                                 name={`${name}.weight`}
                                 placeholder="Enter item weight"
                                 isInvalid={
-                                    touched?.orderItems?.[index]?.weight &&
-                                    !!errors?.orderItems?.[index]?.weight
+                                    touched?.orderItems?.[index]?.weight && !!errors?.orderItems?.[index]?.weight
                                 }
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 aria-describedby="weight"
                             />
-                            <InputGroup.Text id="weight">
-                                Kilogram
-                            </InputGroup.Text>
+                            <InputGroup.Text id="weight">Kilogram</InputGroup.Text>
                             <Form.Control.Feedback type="invalid">
                                 {errors?.orderItems?.[index]?.weight}
                             </Form.Control.Feedback>
@@ -356,9 +326,7 @@ export default function ItemCreation({
                 <Col sm="12" lg="6">
                     <Form.Group className="mb-3">
                         <div className="mb-2">
-                            <Form.Label className="label">
-                                Product Images
-                            </Form.Label>
+                            <Form.Label className="label">Product Images</Form.Label>
                             <p className="asterisk">*</p>
                         </div>
                         <div className="back-up">
@@ -372,142 +340,85 @@ export default function ItemCreation({
                                                 id="driver_image_back"
                                                 ref={product_img_ipt}
                                                 multiple
-                                                isInvalid={
-                                                    !!errors?.orderItems?.[
-                                                        index
-                                                    ]?.productPictures
-                                                }
+                                                isInvalid={!!errors?.orderItems?.[index]?.productPictures}
                                                 onChange={(e) => {
-                                                    const files =
-                                                        e.target.files;
-                                                    for (
-                                                        var i = 0;
-                                                        i < files.length;
-                                                        i++
-                                                    ) {
+                                                    const files = e.target.files;
+                                                    for (var i = 0; i < files.length; i++) {
                                                         //for multiple files
                                                         (function (file) {
-                                                            const fileReader =
-                                                                new FileReader();
-                                                            fileReader.onload =
-                                                                function (e) {
-                                                                    // get file content
-                                                                    fileReader.addEventListener(
-                                                                        "loadend",
-                                                                        (e) => {
-                                                                            arrayHelpers.push(
-                                                                                {
-                                                                                    file,
-                                                                                    url: fileReader.result,
-                                                                                }
-                                                                            );
-                                                                        }
-                                                                    );
-                                                                };
-                                                            fileReader.readAsDataURL(
-                                                                file
-                                                            );
+                                                            const fileReader = new FileReader();
+                                                            fileReader.onload = function (e) {
+                                                                // get file content
+                                                                fileReader.addEventListener('loadend', (e) => {
+                                                                    arrayHelpers.push({
+                                                                        file,
+                                                                        url: fileReader.result,
+                                                                    });
+                                                                });
+                                                            };
+                                                            fileReader.readAsDataURL(file);
                                                         })(files[i]);
                                                     }
                                                 }}
                                                 accept="img"
                                             />
                                             <Form.Control.Feedback type="invalid">
-                                                {
-                                                    errors?.orderItems?.[index]
-                                                        ?.productPictures
-                                                }
+                                                {errors?.orderItems?.[index]?.productPictures}
                                             </Form.Control.Feedback>
                                             <Row
                                                 style={{
-                                                    flexDirection: "column",
+                                                    flexDirection: 'column',
                                                 }}
                                             >
-                                                {values?.orderItems?.[
-                                                    index
-                                                ]?.productPictures?.map?.(
-                                                    (picture, ind) => {
-                                                        return (
-                                                            <Col key={ind}>
-                                                                <div className="img-front-frame">
-                                                                    <div className="background-front">
-                                                                        <RiImageEditFill
-                                                                            style={{
-                                                                                position:
-                                                                                    "relative",
-                                                                                color: "gray",
-                                                                                fontSize:
-                                                                                    "50px",
-                                                                                opacity:
-                                                                                    "70%",
-                                                                            }}
-                                                                        ></RiImageEditFill>
-                                                                        <p className="driving-txt">
-                                                                            Change
-                                                                            Product
-                                                                            Images
-                                                                        </p>
-                                                                    </div>
-                                                                    <img
-                                                                        className="img-front"
-                                                                        src={
-                                                                            picture?.url ||
-                                                                            "https://tinyurl.com/5ehpcctt"
-                                                                        }
-                                                                    />
+                                                {values?.orderItems?.[index]?.productPictures?.map?.((picture, ind) => {
+                                                    return (
+                                                        <Col key={ind}>
+                                                            <div className="img-front-frame">
+                                                                <div className="background-front">
+                                                                    <RiImageEditFill
+                                                                        style={{
+                                                                            position: 'relative',
+                                                                            color: 'gray',
+                                                                            fontSize: '50px',
+                                                                            opacity: '70%',
+                                                                        }}
+                                                                    ></RiImageEditFill>
+                                                                    <p className="driving-txt">Change Product Images</p>
                                                                 </div>
-                                                                <Button
-                                                                    variant="danger"
-                                                                    onClick={() =>
-                                                                        arrayHelpers.remove(
-                                                                            ind
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Remove
-                                                                </Button>
-                                                                {
-                                                                    errors
-                                                                        ?.orderItems?.[
-                                                                        index
-                                                                    ]
-                                                                        ?.productPictures?.[
-                                                                        ind
-                                                                    ]?.file
-                                                                }
-                                                            </Col>
-                                                        );
-                                                    }
-                                                )}
+                                                                <img
+                                                                    className="img-front"
+                                                                    src={picture?.url || 'https://tinyurl.com/5ehpcctt'}
+                                                                />
+                                                            </div>
+                                                            <Button
+                                                                variant="danger"
+                                                                onClick={() => arrayHelpers.remove(ind)}
+                                                            >
+                                                                Remove
+                                                            </Button>
+                                                            {errors?.orderItems?.[index]?.productPictures?.[ind]?.file}
+                                                        </Col>
+                                                    );
+                                                })}
                                                 <Col>
                                                     <div
                                                         className="img-front-frame"
-                                                        onClick={() =>
-                                                            product_img_ipt.current.click()
-                                                        }
+                                                        onClick={() => product_img_ipt.current.click()}
                                                     >
                                                         <div className="background-front">
                                                             <RiImageEditFill
                                                                 style={{
-                                                                    position:
-                                                                        "relative",
-                                                                    color: "gray",
-                                                                    fontSize:
-                                                                        "50px",
-                                                                    opacity:
-                                                                        "70%",
+                                                                    position: 'relative',
+                                                                    color: 'gray',
+                                                                    fontSize: '50px',
+                                                                    opacity: '70%',
                                                                 }}
                                                             ></RiImageEditFill>
-                                                            <p className="driving-txt">
-                                                                Change Product
-                                                                Images
-                                                            </p>
+                                                            <p className="driving-txt">Change Product Images</p>
                                                         </div>
                                                         <img
                                                             className="img-front"
-                                                            src={
-                                                                "https://tinyurl.com/5ehpcctt"
-                                                            }
+                                                            src={'https://tinyurl.com/5ehpcctt'}
                                                         />
                                                     </div>
                                                 </Col>
@@ -517,39 +428,23 @@ export default function ItemCreation({
                                                 id="driver_image_back"
                                                 ref={product_img_ipt}
                                                 multiple
-                                                isInvalid={
-                                                    !!errors?.productPictures
-                                                }
+                                                isInvalid={!!errors?.productPictures}
                                                 onChange={(e) => {
-                                                    const files =
-                                                        e.target.files;
-                                                    for (
-                                                        var i = 0;
-                                                        i < files.length;
-                                                        i++
-                                                    ) {
+                                                    const files = e.target.files;
+                                                    for (var i = 0; i < files.length; i++) {
                                                         //for multiple files
                                                         (function (file) {
-                                                            const fileReader =
-                                                                new FileReader();
-                                                            fileReader.onload =
-                                                                function (e) {
-                                                                    // get file content
-                                                                    fileReader.addEventListener(
-                                                                        "loadend",
-                                                                        (e) => {
-                                                                            arrayHelpers.push(
-                                                                                {
-                                                                                    file,
-                                                                                    url: fileReader.result,
-                                                                                }
-                                                                            );
-                                                                        }
-                                                                    );
-                                                                };
-                                                            fileReader.readAsDataURL(
-                                                                file
-                                                            );
+                                                            const fileReader = new FileReader();
+                                                            fileReader.onload = function (e) {
+                                                                // get file content
+                                                                fileReader.addEventListener('loadend', (e) => {
+                                                                    arrayHelpers.push({
+                                                                        file,
+                                                                        url: fileReader.result,
+                                                                    });
+                                                                });
+                                                            };
+                                                            fileReader.readAsDataURL(file);
                                                         })(files[i]);
                                                     }
                                                 }}
@@ -571,9 +466,7 @@ export default function ItemCreation({
                     {/* Start shipping rate */}
                     <Form.Group className="mb-3">
                         <div className="mb-2">
-                            <Form.Label className="label">
-                                Your preference rate
-                            </Form.Label>
+                            <Form.Label className="label">Your preference rate</Form.Label>
                             <p className="asterisk">*</p>
                         </div>
                         <Form.Control
@@ -612,10 +505,7 @@ export default function ItemCreation({
                                                 onBlur={handleBlur}
                                             />
                                             <span className="checkmark"></span>
-                                            <span
-                                                className="txt-checkbox"
-                                                style={{ fontWeight: "500" }}
-                                            >
+                                            <span className="txt-checkbox" style={{ fontWeight: '500' }}>
                                                 {item?.name}
                                             </span>
                                         </label>
@@ -629,9 +519,7 @@ export default function ItemCreation({
                     {/* Package Type */}
                     <Form.Group className="mb-3">
                         <div className="mb-2">
-                            <Form.Label className="label">
-                                Package Type
-                            </Form.Label>
+                            <Form.Label className="label">Package Type</Form.Label>
                             <p className="asterisk">*</p>
                         </div>
 
@@ -640,14 +528,11 @@ export default function ItemCreation({
                             name={`${name}.packageType`}
                             placeholder="Select your type of package"
                             isInvalid={
-                                touched?.orderItems?.[index]?.packageType &&
-                                !!errors?.orderItems?.[index]?.packageType
+                                touched?.orderItems?.[index]?.packageType && !!errors?.orderItems?.[index]?.packageType
                             }
                             onChange={handleChange}
                             onBlur={handleBlur}
-                            defaultValue={
-                                values?.["orderItems"]?.[index]?.packageType
-                            }
+                            defaultValue={values?.['orderItems']?.[index]?.packageType}
                         >
                             {authState?.packageTypes?.map((type, index) => {
                                 return (

@@ -1,201 +1,201 @@
 .sbar-root {
-    display: block;
-    background-color: white;
-    width: 230px;
-    min-height: calc(90vh - 54px);
-    position: relative;
-    transition: all 140ms ease-in-out;
+  display: block;
+  background-color: white;
+  width: 230px;
+  min-height: calc(90vh - 54px);
+  position: relative;
+  transition: all 140ms ease-in-out;
 }
 .sbar-root .sbar-text {
-    opacity: 0;
+  opacity: 0;
 }
 .hide {
-    width: 70px;
-    min-height: calc(90vh - 54px);
+  width: 70px;
+  min-height: calc(90vh - 54px);
 }
 .form-label {
-    width: 70px;
-    overflow: hidden;
+  width: 70px;
+  overflow: hidden;
 }
 .sbar-toggle {
-    margin-bottom: 10px;
-    position: absolute;
-    cursor: pointer;
-    right: 0;
-    background-color: white;
-    border-radius: 50%;
-    top: 0;
-    font-size: 25px;
-    color: var(--clr-primary);
-    transform: translate(50%, 50%);
-    transition: all 400ms ease-in-out;
+  margin-bottom: 10px;
+  position: absolute;
+  cursor: pointer;
+  right: 0;
+  background-color: white;
+  border-radius: 50%;
+  top: 0;
+  font-size: 25px;
+  color: var(--clr-primary);
+  transform: translate(50%, 50%);
+  transition: all 400ms ease-in-out;
 }
 .txt-hide {
-    display: none;
-    opacity: 0;
+  display: none;
+  opacity: 0;
 }
 .right {
-    transform: translate(50%, 50%) rotate(180deg);
+  transform: translate(50%, 50%) rotate(180deg);
 }
 @media only screen and (max-width: 768px) {
-    .hide {
-        width: 16px;
-        min-height: calc(90vh - 45px);
-    }
-    .hide .sbar-title {
-        display: none;
-    }
-    .hide .form-label {
-        display: none;
-    }
-    .sbar-root {
-        position: absolute;
-        z-index: 20;
-    }
-    .sbar-times {
-        display: block;
-        cursor: pointer;
-    }
-    .sbar-toggle {
-        margin-bottom: 10px;
-        display: block;
-        cursor: pointer;
-    }
-    .showNav {
-        display: block;
-        background-color: white;
-        min-height: calc(90vh - 50px);
-        width: 290px;
-        position: absolute;
-        z-index: 20;
-    }
-    .hero {
-        background-color: black !important;
-        width: 100vw;
-        display: block;
-        min-height: calc(90vh - 50px);
-        position: fixed;
-        z-index: 10;
-        opacity: 0.5;
-    }
+  .hide {
+    width: 16px;
+    min-height: calc(90vh - 45px);
+  }
+  .hide .sbar-title {
+    display: none;
+  }
+  .hide .form-label {
+    display: none;
+  }
+  .sbar-root {
+    position: absolute;
+    z-index: 20;
+  }
+  .sbar-times {
+    display: block;
+    cursor: pointer;
+  }
+  .sbar-toggle {
+    margin-bottom: 10px;
+    display: block;
+    cursor: pointer;
+  }
+  .showNav {
+    display: block;
+    background-color: white;
+    min-height: calc(90vh - 50px);
+    width: 290px;
+    position: absolute;
+    z-index: 20;
+  }
+  .hero {
+    background-color: black !important;
+    width: 100vw;
+    display: block;
+    min-height: calc(90vh - 50px);
+    position: fixed;
+    z-index: 10;
+    opacity: 0.5;
+  }
 }
 .breadcrumb-link ol {
-    margin: 0;
+  margin: 0;
 }
 .sbar-header {
-    font-size: 14px;
-    font-weight: 600;
-    padding: 15px 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 15px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .sbar-txt {
-    font-weight: 600;
-    margin: 0;
-    padding: 0 20px;
-    white-space: nowrap;
-    transition: all 0.4s ease;
+  font-weight: 600;
+  margin: 0;
+  padding: 0 20px;
+  white-space: nowrap;
+  transition: all 0.4s ease;
 }
 
 .sbar-icon-frame {
-    font-size: 18px;
+  font-size: 18px;
 }
 .sbar-icon {
-    font-size: 20px;
-    transform: translateY(-1px);
-    margin-right: 10px;
+  font-size: 20px;
+  transform: translateY(-1px);
+  margin-right: 10px;
 }
 
 .sbar-link {
-    text-decoration: none;
-    color: var(--clr-txt-primary);
-    display: flex;
-    margin: 12px 0;
-    align-items: center;
-    border-left: 4px solid white;
-    padding: 10px 20px;
+  text-decoration: none;
+  color: var(--clr-txt-primary);
+  display: flex;
+  margin: 12px 0;
+  align-items: center;
+  border-left: 4px solid white;
+  padding: 10px 20px;
 }
 .sbar-link:hover {
-    text-decoration: none;
-    color: var(--clr-txt-primary);
+  text-decoration: none;
+  color: var(--clr-txt-primary);
 }
 .active {
-    background-color: var(--clr-primary-light);
-    color: var(--clr-primary);
-    border-left: 4px solid var(--clr-primary);
+  background-color: var(--clr-primary-light);
+  color: var(--clr-primary);
+  border-left: 4px solid var(--clr-primary);
 }
 .active:hover {
-    color: var(--clr-primary);
-    text-decoration: none;
+  color: var(--clr-primary);
+  text-decoration: none;
 }
 .h-root {
-    background-color: var(--clr-bgr-home);
-    position: fixed;
-    width: 100vw;
+  background-color: var(--clr-bgr-home);
+  position: fixed;
+  width: 100vw;
 }
 .h-del-frame {
-    padding: 10px;
-    border: 1px dashed var(--clr-txt-secondary);
-    border-radius: 10px;
-    flex-grow: 1;
+  padding: 10px;
+  border: 1px dashed var(--clr-txt-secondary);
+  border-radius: 10px;
+  flex-grow: 1;
 }
 .h-content-frame {
-    background-color: white;
-    border-radius: 10px;
-    padding: 20px;
-    min-height: 80vh;
-    position: relative;
+  background-color: white;
+  border-radius: 10px;
+  padding: 20px;
+  min-height: 80vh;
+  position: relative;
 }
 .h-content {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  gap: 20px;
 }
 .h-ctn {
-    flex-grow: 1;
-    padding: 20px 25px 0 25px;
-    overflow-y: scroll;
-    height: calc(84vh + 8px);
+  flex-grow: 1;
+  padding: 20px 25px 0 25px;
+  overflow-y: scroll;
+  height: calc(84vh + 8px);
 }
 .h-form {
-    display: flex;
-    min-height: calc(100vh - 96px - 54px);
+  display: flex;
+  min-height: calc(100vh - 96px - 54px);
 }
 .h-header {
-    font-size: 23px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    display: flex;
-    gap: 15px;
-    align-items: center;
+  font-size: 23px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 15px;
+  align-items: center;
 }
 .h-header-content {
-    text-align: center;
-    padding: 5px;
+  text-align: center;
+  padding: 5px;
 }
 .h-txt-header {
-    font-weight: 600;
+  font-weight: 600;
 }
 .user-name {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 .path a {
-    text-decoration: none;
-    color: var(--clr-primary);
-    font-size: 20px;
-    text-transform: capitalize;
-    font-weight: 500;
+  text-decoration: none;
+  color: var(--clr-primary);
+  font-size: 20px;
+  text-transform: capitalize;
+  font-weight: 500;
 }
 .path a:hover {
-    text-decoration: none;
-    color: var(--clr-primary);
+  text-decoration: none;
+  color: var(--clr-primary);
 }
 .active-link a {
-    color: var(--clr-txt-primary);
+  color: var(--clr-txt-primary);
 }
 .active-link a:hover {
-    color: var(--clr-txt-primary);
+  color: var(--clr-txt-primary);
 }
