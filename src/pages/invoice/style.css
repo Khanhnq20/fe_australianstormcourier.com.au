@@ -1,41 +1,65 @@
-.invoice{
-    padding: 30px;
+.invoice {
+  padding: 30px;
 }
-.invoice-form{
-    display: flex;justify-content: center;align-items: center;gap: 20px;flex-direction: column;min-width: 600px;
+.invoice-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-direction: column;
+  min-width: 600px;
 }
-.invoice-header{
-    display: flex;align-items: center;gap: 20px;min-width: 600px;margin-bottom: 10px;
+.invoice-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-width: 600px;
+  margin-bottom: 10px;
 }
-.invoice-txt-header{
-    margin: 5px;text-transform: uppercase;color: #f2a13b;font-weight: 600;
+.invoice-txt-header {
+  margin: 5px;
+  text-transform: uppercase;
+  color: #f2a13b;
+  font-weight: 600;
 }
-.invoice-txt-label{
-    margin-bottom: 10px;font-weight: 600;
+.invoice-txt-label {
+  margin-bottom: 10px;
+  font-weight: 600;
 }
-.invoice-txt-content{
-    margin-bottom: 10px;
+.invoice-txt-content {
+  margin-bottom: 10px;
 }
 
-.invoice-table{
-    border-collapse: collapse;margin: 0 auto;min-width: 600px;border:2px solid #025464;
+.invoice-table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  min-width: 600px;
+  border: 2px solid #025464;
 }
-.invoice-tablen > th,td{
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
+.invoice-tablen > th,
+td {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
 }
-.invoice-table-fee-form{
-    margin-top: 30px;display: flex;justify-content: right;
+.invoice-table-fee-form {
+  margin-top: 30px;
+  display: flex;
+  justify-content: right;
 }
-.invoice-table-fee{
-    border-collapse: collapse;min-width: 400px;border:2px solid #025464;
+.invoice-table-fee {
+  border-collapse: collapse;
+  min-width: 400px;
+  border: 2px solid #025464;
 }
-.invoice-table-fee > td,th{
-    border: 1px solid #dddddd;
-    text-align: left;
-    padding: 8px;
+.invoice-table-fee > td,
+th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
 }
-.invoice-last-info{
-    display: flex;gap: 30px;margin-top: 30px;
+.invoice-last-info {
+  display: flex;
+  gap: 30px;
+  margin-top: 30px;
 }

@@ -1,90 +1,89 @@
-.form-order{
-    display: grid;
-    grid-template-columns: auto auto;
-    gap: 20px;
+.form-order {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 20px;
 }
-@media only screen and (max-width: 768px){
-.form-order{
+@media only screen and (max-width: 768px) {
+  .form-order {
     grid-template-columns: auto;
+  }
 }
+.product-btn-search {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 20px;
 }
-.product-btn-search{
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding:10px 20px;
+.pg-first a {
+  color: var(--clr-txt-primary);
+  border: none;
 }
-.pg-first a{
-    color: var(--clr-txt-primary);
-    border: none;
+.pg-first a:focus {
+  color: var(--clr-txt-primary);
+  background: none;
+  box-shadow: none;
+  border: none;
 }
-.pg-first a:focus{
-    color: var(--clr-txt-primary);
-    background: none;
-    box-shadow: none;
-    border: none;
-}
-.pg-first a:hover{
-    color: var(--clr-txt-primary);
-    background: none;
-    box-shadow: none;
-    border: none;
+.pg-first a:hover {
+  color: var(--clr-txt-primary);
+  background: none;
+  box-shadow: none;
+  border: none;
 }
 
-.pg-no a{
-    color: var(--clr-txt-primary);
-    border: none;
-    padding: 0;
+.pg-no a {
+  color: var(--clr-txt-primary);
+  border: none;
+  padding: 0;
 }
-.pg-no a:hover{
-    background-color: unset;
-    color: var(--clr-primary);
+.pg-no a:hover {
+  background-color: unset;
+  color: var(--clr-primary);
 }
-.pg-no{
-    color: var(--clr-txt-primary);
-    padding: 5px 10px !important;
-    border: none;
-    border-radius: 5px;
+.pg-no {
+  color: var(--clr-txt-primary);
+  padding: 5px 10px !important;
+  border: none;
+  border-radius: 5px;
 }
-.pg-form{
-    align-items: center;
-    justify-content: flex-end;
+.pg-form {
+  align-items: center;
+  justify-content: flex-end;
 }
-.pg-active{
-    background-color: var(--clr-primary) !important;
+.pg-active {
+  background-color: var(--clr-primary) !important;
 }
-.pg-active a{
-    background: none !important;
-    color: white;
-    transition: none;
+.pg-active a {
+  background: none !important;
+  color: white;
+  transition: none;
 }
-.pg-no a:hover{
-    background-color: none;
-    
+.pg-no a:hover {
+  background-color: none;
 }
-.pg-no a:focus{
-    background: none !important;
-    box-shadow: none;
-    color: var(--clr-txt-primary);
+.pg-no a:focus {
+  background: none !important;
+  box-shadow: none;
+  color: var(--clr-txt-primary);
 }
-.pg-active a:focus{
-    background: var(--clr-primary) !important; 
-    background-color: var(--clr-primary) !important; 
-    box-shadow: none;
-    color: white;
+.pg-active a:focus {
+  background: var(--clr-primary) !important;
+  background-color: var(--clr-primary) !important;
+  box-shadow: none;
+  color: white;
 }
-.pg-active a:hover{
-    background-color:var(--clr-primary);
-    color: white;
+.pg-active a:hover {
+  background-color: var(--clr-primary);
+  color: white;
 }
-.pg-rows{
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 10px;
+.pg-rows {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+  margin-bottom: 10px;
 }
-.product-txt-empty{
-    text-align: center;
-    width: 100%;
+.product-txt-empty {
+  text-align: center;
+  width: 100%;
 }

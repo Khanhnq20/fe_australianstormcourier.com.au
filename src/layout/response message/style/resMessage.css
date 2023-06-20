@@ -1,21 +1,20 @@
-
-.mes-success{
-    padding:15px;
-    background-color:var(--clr-mes-success);
-    color: var(--clr-txt-success);
-    width: fit-content;
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    gap: 10px;
+.mes-success {
+  padding: 15px;
+  background-color: var(--clr-mes-success);
+  color: var(--clr-txt-success);
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  gap: 10px;
 }
-.mes-error{
-    padding:15px;
-    background-color:var(--clr-mes-error);
-    color: var(--clr-txt-error);
-    margin-bottom: 10px;
-    width: fit-content;
-    display: flex;
-    align-items: center;
-    gap: 10px;
+.mes-error {
+  padding: 15px;
+  background-color: var(--clr-mes-error);
+  color: var(--clr-txt-error);
+  margin-bottom: 10px;
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }

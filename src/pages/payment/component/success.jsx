@@ -1,12 +1,12 @@
-import { useStripe } from '@stripe/react-stripe-js';
-import React, { useEffect, useState } from 'react'
-import { Button, Col, Container, Row } from 'react-bootstrap';
-import {BsClipboard2Check} from 'react-icons/bs';
-import '../style/index.css'
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { CustomSpinner } from '../../../layout';
-import moment from 'moment';
+import { useStripe } from "@stripe/react-stripe-js";
+import React, { useEffect, useState } from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { BsClipboard2Check } from "react-icons/bs";
+import "../style/index.css";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { CustomSpinner } from "../../../layout";
+import moment from "moment";
 
 // const a = {
 //   "id": "pi_3NFZCcKfaw4OxeNd0fF9Wast",
@@ -41,7 +41,7 @@ import moment from 'moment';
 //   "source": null,
 //   "status": "succeeded"
 // };
-function SuccessPayment({result}) {
+function SuccessPayment({ result }) {
   const navigate = useNavigate();
   const stripe = useStripe();
   const [intent, setIntent] = useState(null);
@@ -49,48 +49,56 @@ function SuccessPayment({result}) {
 
   useEffect(() => {
     setLoading(true);
-    console.log(result)
+    console.log(result);
     console.log(result.client_secret);
-    if(stripe){
-      stripe.retrievePaymentIntent(result.client_secret).then(response =>{
-        console.log(response);
-        if(response.data?.id){
-          setIntent(intent);
-        }
-        setLoading(false);
-      }).catch(err =>{
-        toast.error(err?.message);
-        setLoading(false);
-      });
+    if (stripe) {
+      stripe
+        .retrievePaymentIntent(result.client_secret)
+        .then((response) => {
+          console.log(response);
+          if (response.data?.id) {
+            setIntent(intent);
+          }
+          setLoading(false);
+        })
+        .catch((err) => {
+          toast.error(err?.message);
+          setLoading(false);
+        });
     }
   }, [result]);
 
-  if(loading) return (<Container>
-    <CustomSpinner></CustomSpinner>
-  </Container>)
+  if (loading)
+    return (
+      <Container>
+        <CustomSpinner></CustomSpinner>
+      </Container>
+    );
 
   return (
-    <Container className='p-success-root'>
-      <div className='p-success-icon-form'>
-        <BsClipboard2Check className='p-success-icon'></BsClipboard2Check>
+    <Container className="p-success-root">
+      <div className="p-success-icon-form">
+        <BsClipboard2Check className="p-success-icon"></BsClipboard2Check>
       </div>
-      <div className='w-100'>
-        <h2 className='txt-center'>
-          Transaction Completed Successfully
-        </h2>
-        <p className='p-txt-grey txt-center'>Thanks for your billing</p>
-        <div className='txt-center'>
-          <Button className='my-btn-yellow mx-2' onClick={()=>{
-            if(result.status === "succeeded")
-              navigate(`/payment/checkout/return/invoice?id=${result?.id}`);
-            else
-              toast.error("Please");
-          }}>Invoice View</Button>
+      <div className="w-100">
+        <h2 className="txt-center">Transaction Completed Successfully</h2>
+        <p className="p-txt-grey txt-center">Thanks for your billing</p>
+        <div className="txt-center">
+          <Button
+            className="my-btn-yellow mx-2"
+            onClick={() => {
+              if (result.status === "succeeded")
+                navigate(`/payment/checkout/return/invoice?id=${result?.id}`);
+              else toast.error("Please");
+            }}
+          >
+            Invoice View
+          </Button>
         </div>
         <SuccessPayment.Intent intent={result}></SuccessPayment.Intent>
       </div>
     </Container>
-  )
+  );
 }
 
 // {
@@ -127,43 +135,45 @@ function SuccessPayment({result}) {
 //   "status": "succeeded"
 // }
 
-SuccessPayment.Intent = function({intent}){
-  return (<div className='w-100 pt-2'>
-    <Row>
-      <Col sm="4">
-        <b>Id</b>
-      </Col>
-      <Col sm="8">{intent?.id}</Col>
-    </Row>
-    <Row>
-      <Col sm="4">
-        <b>Amount</b>
-      </Col>
-      <Col sm="8">{intent?.amount/100}$</Col>
-    </Row>
-    {/* <Row>
+SuccessPayment.Intent = function ({ intent }) {
+  return (
+    <div className="w-100 pt-2">
+      <Row>
+        <Col sm="4">
+          <b>Id</b>
+        </Col>
+        <Col sm="8">{intent?.id}</Col>
+      </Row>
+      <Row>
+        <Col sm="4">
+          <b>Amount</b>
+        </Col>
+        <Col sm="8">{intent?.amount / 100}$</Col>
+      </Row>
+      {/* <Row>
       <Col sm="4">Created</Col>
       <Col sm="8">{moment(intent?.created).format("hh:mm DD/MM/YYYY")}</Col>
     </Row> */}
-    <Row>
-      <Col sm="4">
-        <b>Currency</b>
-      </Col>
-      <Col sm="8">{intent?.currency}</Col>
-    </Row>
-    <Row>
-      <Col sm="4">
-        <b>Status</b>
-      </Col>
-      <Col sm="8">{intent?.status}</Col>
-    </Row>
-    <Row>
-      <Col sm="4">
-        <b>Receipt Email</b>
-      </Col>
-      <Col sm="8">{intent?.receipt_email}</Col>
-    </Row>
-  </div>)
-}
+      <Row>
+        <Col sm="4">
+          <b>Currency</b>
+        </Col>
+        <Col sm="8">{intent?.currency}</Col>
+      </Row>
+      <Row>
+        <Col sm="4">
+          <b>Status</b>
+        </Col>
+        <Col sm="8">{intent?.status}</Col>
+      </Row>
+      <Row>
+        <Col sm="4">
+          <b>Receipt Email</b>
+        </Col>
+        <Col sm="8">{intent?.receipt_email}</Col>
+      </Row>
+    </div>
+  );
+};
 
-export default SuccessPayment
+export default SuccessPayment;
