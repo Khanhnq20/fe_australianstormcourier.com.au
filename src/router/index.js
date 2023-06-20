@@ -1,111 +1,143 @@
-import React from 'react';
+import React from "react";
+import { Outlet, createBrowserRouter } from "react-router-dom";
 import {
-  Outlet,
-  createBrowserRouter,
-} from "react-router-dom";
-import { Navigation, Footer, UserSideBar, DriverSideBar, AdminSideBar } from "../layout";
-import { EmailCheck, Home, PreventDriver } from '../pages';
+  Navigation,
+  Footer,
+  UserSideBar,
+  DriverSideBar,
+  AdminSideBar,
+} from "../layout";
+import { EmailCheck, Home, PreventDriver } from "../pages";
 
-import { AuthValidator, OrderContextComponent, SocketContainer, SocketContext} from '../stores'
+import {
+  AuthValidator,
+  OrderContextComponent,
+  SocketContainer,
+  SocketContext,
+} from "../stores";
 
-import { authChildrens } from './auth';
+import { authChildrens } from "./auth";
 import { userChildrens } from "./user";
 import { driverChildrens } from "./driver";
-import { errorChildrens } from './error';
-import { paymentChildrens } from './payment';
+import { errorChildrens } from "./error";
+import { paymentChildrens } from "./payment";
 import { adminChildrens } from "./admin";
-
+import { NotFound } from "../pages/errors";
 
 export const router = createBrowserRouter([
   {
     path: "",
-    element: <>
-      <Navigation />
-      <Outlet />
-    </>,
+    element: (
+      <>
+        <Navigation />
+        <Outlet />
+      </>
+    ),
     children: [
       {
         path: "",
-        element: <>
-          <Home></Home>
-          <Footer/>
-        </>
+        element: (
+          <>
+            <Home></Home>
+            <Footer />
+          </>
+        ),
       },
       {
         path: "prevent",
-        element:<>
-          <PreventDriver></PreventDriver>
-          <Footer.Custom></Footer.Custom>
-        </>
-      }
-      ,
+        element: (
+          <>
+            <PreventDriver></PreventDriver>
+            <Footer.Custom></Footer.Custom>
+          </>
+        ),
+      },
       {
         path: "auth",
-        element: <AuthValidator.LoggedContainer>
-          <Outlet></Outlet>
-        </AuthValidator.LoggedContainer>,
-        children: authChildrens
+        element: (
+          <AuthValidator.LoggedContainer>
+            <Outlet></Outlet>
+          </AuthValidator.LoggedContainer>
+        ),
+        children: authChildrens,
       },
       {
         path: "user",
-        element: <AuthValidator roles={["User"]}>
-          <SocketContainer>
-            <OrderContextComponent>
-              <UserSideBar>
-                <Outlet></Outlet>
-              </UserSideBar>
-              <Footer.Custom></Footer.Custom>
-            </OrderContextComponent>
-          </SocketContainer>
-        </AuthValidator>,
-        children: userChildrens
+        element: (
+          <AuthValidator roles={["User"]}>
+            <SocketContainer>
+              <OrderContextComponent>
+                <UserSideBar>
+                  <Outlet></Outlet>
+                </UserSideBar>
+                <Footer.Custom></Footer.Custom>
+              </OrderContextComponent>
+            </SocketContainer>
+          </AuthValidator>
+        ),
+        children: userChildrens,
       },
       {
         path: "driver",
-        element: <AuthValidator roles={["Driver"]}>
-          <SocketContainer>
-            <OrderContextComponent>
-              <DriverSideBar>
-                <Outlet></Outlet>
-              </DriverSideBar>
-              <Footer.Custom></Footer.Custom>
-            </OrderContextComponent>
-          </SocketContainer>
-        </AuthValidator>,
+        element: (
+          <AuthValidator roles={["Driver"]}>
+            <SocketContainer>
+              <OrderContextComponent>
+                <DriverSideBar>
+                  <Outlet></Outlet>
+                </DriverSideBar>
+                <Footer.Custom></Footer.Custom>
+              </OrderContextComponent>
+            </SocketContainer>
+          </AuthValidator>
+        ),
 
-        children: driverChildrens
+        children: driverChildrens,
       },
       {
         path: "admin",
-        element: <AuthValidator roles={["SuperAdmin"]}>
-          <SocketContainer>
-            <OrderContextComponent>
-              <AdminSideBar>
-                <Outlet></Outlet>
-              </AdminSideBar>
-              <Footer.Custom></Footer.Custom>
-            </OrderContextComponent>
-          </SocketContainer>
-        </AuthValidator>,
-        children: adminChildrens
+        element: (
+          <AuthValidator roles={["SuperAdmin"]}>
+            <SocketContainer>
+              <OrderContextComponent>
+                <AdminSideBar>
+                  <Outlet></Outlet>
+                </AdminSideBar>
+                <Footer.Custom></Footer.Custom>
+              </OrderContextComponent>
+            </SocketContainer>
+          </AuthValidator>
+        ),
+        children: adminChildrens,
       },
       {
-        path: 'payment',
-        element: <>
-        <Outlet></Outlet>
-        </>,
-        
+        path: "payment",
+        element: (
+          <>
+            <Outlet></Outlet>
+          </>
+        ),
+
         children: paymentChildrens,
       },
       {
-        path: 'error',
-        element: <>
-        <Outlet></Outlet>
-        <Footer.Custom></Footer.Custom>
-        </>,
-        children: errorChildrens
-      }
-    ]
-  }
+        path: "error",
+        element: (
+          <>
+            <Outlet></Outlet>
+            <Footer.Custom></Footer.Custom>
+          </>
+        ),
+        children: errorChildrens,
+      },
+      {
+        path: "*",
+        element: (
+          <>
+            <NotFound></NotFound>
+          </>
+        ),
+      },
+    ],
+  },
 ]);
-

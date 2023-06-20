@@ -1,1 +1,1 @@
-export {default as dotnetFormDataSerialize} from './objectToFormData';
+export { default as dotnetFormDataSerialize } from "./objectToFormData";
