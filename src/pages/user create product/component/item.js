@@ -28,11 +28,11 @@ export default function ItemCreation({
         <div className="p-sm-1 p-md-2">
             <Form.Group className="mb-4">
                 {/* Receiver Information */}
-                <h5 className="my-3" style={{ userSelect: "none" }}>
+                <h5 className="my-3" style={{ userSelect: 'none' }}>
                     Item {index + 1}
                 </h5>
                 <h5 className="my-3">Receiver Information</h5>
-                {/* <pre>{JSON.stringify(errors, 4, 4)}</pre> */}   
+                {/* <pre>{JSON.stringify(errors, 4, 4)}</pre> */}
                 <Row>
                     <Col>
                         <Form.Group>
@@ -44,6 +44,7 @@ export default function ItemCreation({
                                 type="text"
                                 name={`${name}.receiverName`}
                                 placeholder="Enter Receiver Name"
+                                value={values.orderItems?.[index]?.receiverName}
                                 isInvalid={
                                     touched.orderItems?.[index]?.receiverName &&
                                     !!errors?.orderItems?.[index]?.receiverName
@@ -64,15 +65,13 @@ export default function ItemCreation({
                                 <p className="asterisk">*</p>
                             </div>
                             <PhoneInput
-                                country={"au"}
-                                value={values.orderItems?.[index]?.phone}
+                                country={'au'}
+                                value={values.orderItems?.[index]?.receiverPhone}
                                 containerClass="w-100"
                                 inputClass="w-100"
-                                onChange={(phone) =>
-                                    setFieldValue("receiverPhone", phone)
-                                }
-                                onlyCountries={["au", "vn"]}
-                                preferredCountries={["au"]}
+                                onChange={(phone) => setFieldValue(`${name}.receiverPhone`, phone)}
+                                onlyCountries={['au', 'vn']}
+                                preferredCountries={['au']}
                                 placeholder="Enter Receiver Phone number"
                                 autoFormat={true}
                                 isValid={(inputNumber, _, countries) => {
@@ -118,6 +117,7 @@ export default function ItemCreation({
                             type="text"
                             name={`${name}.destination.unitNumber`}
                             placeholder="Enter Unit number (apartment, room,...)"
+                            value={values.orderItems?.[index]?.destination?.unitNumber}
                             isInvalid={
                                 touched.orderItems?.[index]?.destination?.unitNumber &&
                                 !!errors?.orderItems?.[index]?.destination?.unitNumber
@@ -135,6 +135,7 @@ export default function ItemCreation({
                         <Form.Control
                             type="text"
                             name={`${name}.destination.streetNumber`}
+                            value={values.orderItems?.[index]?.destination?.streetNumber}
                             placeholder="Enter street number"
                             isInvalid={
                                 touched.orderItems?.[index]?.destination?.streetNumber &&
@@ -154,6 +155,7 @@ export default function ItemCreation({
                             type="text"
                             name={`${name}.destination.streetName`}
                             placeholder="Enter Street Name"
+                            value={values.orderItems?.[index]?.destination?.streetName}
                             isInvalid={
                                 touched.orderItems?.[index]?.destination?.streetName &&
                                 !!errors?.orderItems?.[index]?.destination?.streetName
@@ -172,6 +174,7 @@ export default function ItemCreation({
                             type="text"
                             name={`${name}.destination.suburb`}
                             placeholder="Enter Suburb"
+                            value={values.orderItems?.[index]?.destination?.suburb}
                             isInvalid={
                                 touched.orderItems?.[index]?.destination?.suburb &&
                                 !!errors?.orderItems?.[index]?.destination?.suburb
@@ -190,6 +193,7 @@ export default function ItemCreation({
                             type="text"
                             name={`${name}.destination.state`}
                             placeholder="Enter state"
+                            value={values.orderItems?.[index]?.destination?.state}
                             isInvalid={
                                 touched.orderItems?.[index]?.destination?.state &&
                                 !!errors?.orderItems?.[index]?.destination?.state
@@ -208,6 +212,7 @@ export default function ItemCreation({
                             type="text"
                             name={`${name}.destination.postCode`}
                             placeholder="Enter post code"
+                            value={values.orderItems?.[index]?.destination?.postCode}
                             isInvalid={
                                 touched.orderItems?.[index]?.destination?.postCode &&
                                 !!errors?.orderItems?.[index]?.destination?.postCode
@@ -230,6 +235,7 @@ export default function ItemCreation({
                 <Form.Control
                     type="text"
                     name={`${name}.itemName`}
+                    value={values.orderItems?.[index]?.itemName}
                     placeholder="Enter Product Name"
                     isInvalid={touched.orderItems?.[index]?.itemName && errors.orderItems?.[index]?.itemName}
                     onChange={handleChange}
@@ -256,6 +262,7 @@ export default function ItemCreation({
                     row="3"
                     placeholder="Enter Product Description"
                     name={`${name}.itemDescription`}
+                    value={values.orderItems?.[index]?.itemDescription}
                     isInvalid={
                         touched.orderItems?.[index]?.itemDescription && !!errors.orderItems?.[index]?.itemDescription
                     }
@@ -282,6 +289,7 @@ export default function ItemCreation({
                             max={10}
                             name={`${name}.quantity`}
                             placeholder="Enter Quantity"
+                            value={values?.orderItems?.[index]?.quantity}
                             isInvalid={
                                 touched?.orderItems?.[index]?.quantity && !!errors?.orderItems?.[index]?.quantity
                             }
@@ -305,6 +313,7 @@ export default function ItemCreation({
                                 type="text"
                                 name={`${name}.weight`}
                                 placeholder="Enter item weight"
+                                value={values?.orderItems?.[index]?.weight}
                                 isInvalid={
                                     touched?.orderItems?.[index]?.weight && !!errors?.orderItems?.[index]?.weight
                                 }
@@ -499,7 +508,7 @@ export default function ItemCreation({
                                         <label className="fr-checkbox mb-2">
                                             <input
                                                 type="checkbox"
-                                                name="vehicles"
+                                                name={`${name}.vehicles`}
                                                 value={item?.id}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
@@ -513,7 +522,7 @@ export default function ItemCreation({
                                 );
                             })}
                         </div>
-                        <p className="content-red mt-2">{errors?.vehicles}</p>
+                        <p className="content-red mt-2">{errors?.orderItems?.[index]?.vehicles}</p>
                     </Form.Group>
 
                     {/* Package Type */}

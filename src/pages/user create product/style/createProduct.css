@@ -59,7 +59,6 @@
     max-width: 1400px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 4px;
-    padding: 20px 40px;
     flex-grow: 1;
 }
 .times-createProduct-form {
