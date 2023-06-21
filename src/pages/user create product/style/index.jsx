@@ -10,7 +10,7 @@ import { Pagination } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { dotnetFormDataSerialize } from '../../../ultitlies';
 import 'react-phone-input-2/lib/style.css';
-import ItemCreation from './item';
+import ItemCreation from '../component/item';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
