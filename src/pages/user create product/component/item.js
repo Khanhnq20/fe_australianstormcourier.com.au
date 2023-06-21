@@ -15,20 +15,20 @@ export default function ItemCreation({
     errors,
     values,
     setFieldValue,
-    setPhoneError,
-    phoneError,
     handleChange,
     handleBlur,
     isValid,
+    setParentPhoneError,
 }) {
     const product_img_ipt = useRef();
+    const [phoneError, setPhoneError] = React.useState('');
     const [authState] = useContext(AuthContext);
 
     return (
-        <div className="p-sm-1 p-md-2">
+        <div className="p-2">
             <Form.Group className="mb-4">
                 {/* Receiver Information */}
-                <h5 className="my-3" style={{ userSelect: 'none' }}>
+                <h5 className="my-xl-3" style={{ userSelect: 'none' }}>
                     Item {index + 1}
                 </h5>
                 <h5 className="my-3">Receiver Information</h5>
@@ -83,9 +83,11 @@ export default function ItemCreation({
                                     });
 
                                     setPhoneError('');
+                                    setParentPhoneError('');
 
                                     if (!isValid) {
                                         setPhoneError('Your phone is not match with dial code');
+                                        setParentPhoneError('Phone number is invalid');
                                     }
 
                                     return isValid;
@@ -472,59 +474,6 @@ export default function ItemCreation({
 
                 {/* Shipping Rate & Package Type & Vehicles */}
                 <Col sm="12" lg="6">
-                    {/* Start shipping rate */}
-                    <Form.Group className="mb-3">
-                        <div className="mb-2">
-                            <Form.Label className="label">Your preference rate</Form.Label>
-                            <p className="asterisk">*</p>
-                        </div>
-                        <Form.Control
-                            type="number"
-                            name={`${name}.startingRate`}
-                            placeholder="Enter your shipping rate"
-                            value={values?.orderItems?.[index]?.startingRate}
-                            isInvalid={
-                                touched?.orderItems?.[index]?.startingRate &&
-                                !!errors?.orderItems?.[index]?.startingRate
-                            }
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            {errors?.orderItems?.[index]?.startingRate}
-                        </Form.Control.Feedback>
-                    </Form.Group>
-
-                    {/* Vehicles */}
-                    <Form.Group className="form-group">
-                        <div className="mb-2">
-                            <Form.Label className="label">Vehicles</Form.Label>
-                            <p className="asterisk">*</p>
-                        </div>
-                        <div className="list-vehicle">
-                            {authState.vehicles.map((item, index) => {
-                                return (
-                                    <div key={index}>
-                                        <label className="fr-checkbox mb-2">
-                                            <input
-                                                type="checkbox"
-                                                name={`${name}.vehicles`}
-                                                value={item?.id}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <span className="checkmark"></span>
-                                            <span className="txt-checkbox" style={{ fontWeight: '500' }}>
-                                                {item?.name}
-                                            </span>
-                                        </label>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <p className="content-red mt-2">{errors?.orderItems?.[index]?.vehicles}</p>
-                    </Form.Group>
-
                     {/* Package Type */}
                     <Form.Group className="mb-3">
                         <div className="mb-2">

@@ -26,6 +26,7 @@ let orderSchema = yup.object().shape({
         postCode: yup.number().required('Post code is required'),
     }),
     deliverableDate: yup.date().required(),
+    startingRate: yup.number().positive().required('Your Reference Rate value is required'),
     timeFrame: yup
         .string()
         .test('TIME INCORRECT', 'The time format is incorrect', (value) => {
@@ -38,7 +39,7 @@ let orderSchema = yup.object().shape({
             var end = moment(timeFrames[1], 'HH:mm');
             return end.diff(start) > 0;
         }),
-
+    vehicles: yup.array().of(yup.string()).min(1, 'Vehicle must be selected 1 unit at least'),
     orderItems: yup.array().of(
         yup.object().shape({
             itemName: yup.string().required('Item Name is required field'),
@@ -54,7 +55,6 @@ let orderSchema = yup.object().shape({
             itemDescription: yup.string().nullable(),
             receiverName: yup.string().required('Receiver Name is required'),
             receiverPhone: yup.string().required('Receiver Phone is required'),
-            vehicles: yup.array().of(yup.string()).min(1, 'Vehicle must be selected 1 unit at least'),
             quantity: yup
                 .number()
                 .positive()
@@ -62,7 +62,6 @@ let orderSchema = yup.object().shape({
                 .max(10, 'Quantity should be larger then 1 and least than 10')
                 .required('Quantity is required field'),
             weight: yup.number().positive().required('Weight is required field'),
-            startingRate: yup.number().positive().required('Starting Rate is required field'),
             packageType: yup.string().required('Package Type is required field'),
             productPictures: yup
                 .array()
@@ -95,6 +94,7 @@ function OrderCreation() {
     const [orderState, { postOrder }] = useContext(OrderContext);
     const [phoneError, setPhoneError] = React.useState('');
     const [currentItemForm, setCurrent] = React.useState(0);
+    const [devModal, setDevModal] = React.useState(false);
 
     const pagination = {
         clickable: true,
@@ -117,6 +117,7 @@ function OrderCreation() {
                 },
                 deliverableDate: Date.now(),
                 timeFrame: '-',
+                startingRate: 5,
                 vehicles: [],
                 orderItems: [
                     {
@@ -135,7 +136,6 @@ function OrderCreation() {
                         itemDescription: '',
                         quantity: '',
                         weight: '',
-                        startingRate: '',
                         packageType: authState?.packageTypes?.[0],
                         productPictures: [],
                     },
@@ -174,15 +174,29 @@ function OrderCreation() {
                                 </p>
                             </Modal.Body>
                         </Modal>
+
+                        <Modal show={devModal} size="lg" centered onHide={() => setDevModal(false)}>
+                            <Modal.Header closeButton></Modal.Header>
+                            <Modal.Body>
+                                <Row>
+                                    <Col sm="6">
+                                        <pre>values: {JSON.stringify(values, 4, 4)}</pre>
+                                    </Col>
+                                    <Col sm="6">
+                                        <pre>errors: {JSON.stringify(errors, 4, 4)}</pre>
+                                    </Col>
+                                </Row>
+                            </Modal.Body>
+                        </Modal>
+
                         <Form onSubmit={handleSubmit}>
                             <div
                             // className='form-order'
                             >
-                                {/* Sending location & Destination */}
-                                <h3 className="my-3">Order Location</h3>
-
                                 <Row>
-                                    <Col>
+                                    {/* Sending location & Destination */}
+                                    <Col lg="6">
+                                        <h3 className="mb-3">Order Location</h3>
                                         {/* Sending Location */}
                                         <Form.Group>
                                             <div className="mb-2">
@@ -300,71 +314,74 @@ function OrderCreation() {
                                             </div>
                                         </Form.Group>
                                     </Col>
-                                </Row>
-                                {/* Delivery Date */}
-                                <h3 className="my-3">Delivery Capability</h3>
-                                <Row>
                                     <Col>
-                                        {/* Deliverable Date */}
-                                        <Form.Group>
-                                            <div className="mb-2">
-                                                <Form.Label className="label">Deliverable Date</Form.Label>
-                                                <p className="asterisk">*</p>
-                                            </div>
-                                            <Form.Control
-                                                type="date"
-                                                name="deliverableDate"
-                                                placeholder="Enter deliverable date"
-                                                isInvalid={touched.deliverableDate && !!errors?.deliverableDate}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                                {errors?.deliverableDate}
-                                            </Form.Control.Feedback>
-                                        </Form.Group>
-                                    </Col>
-                                    <Col>
-                                        {/* Time Frame */}
-                                        <Form.Group>
-                                            <div className="mb-2">
-                                                <Form.Label className="label">Time Frame From</Form.Label>
-                                                <p className="asterisk">*</p>
-                                            </div>
-                                            <Form.Control
-                                                type="time"
-                                                name="timeFrame"
-                                                placeholder="Enter time frame start"
-                                                isInvalid={touched?.timeFrame && !!errors?.timeFrame}
-                                                onChange={(e) => {
-                                                    var timeFrames = values[e.target.name].split('-');
+                                        {/* Delivery Date */}
+                                        <h3 className="mb-3">Delivery Capability</h3>
+                                        <Row className="mb-lg-3">
+                                            <Col>
+                                                {/* Deliverable Date */}
+                                                <Form.Group>
+                                                    <div className="mb-2">
+                                                        <Form.Label className="label">Deliverable Date</Form.Label>
+                                                        <p className="asterisk">*</p>
+                                                    </div>
+                                                    <Form.Control
+                                                        type="date"
+                                                        name="deliverableDate"
+                                                        placeholder="Enter deliverable date"
+                                                        isInvalid={touched.deliverableDate && !!errors?.deliverableDate}
+                                                        onChange={handleChange}
+                                                        onBlur={handleBlur}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {errors?.deliverableDate}
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                            </Col>
+                                            <Col>
+                                                {/* Time Frame */}
+                                                <Form.Group>
+                                                    <div className="mb-2">
+                                                        <Form.Label className="label">Time Frame From</Form.Label>
+                                                        <p className="asterisk">*</p>
+                                                    </div>
+                                                    <Form.Control
+                                                        className="mb-2"
+                                                        type="time"
+                                                        name="timeFrame"
+                                                        placeholder="Enter time frame start"
+                                                        isInvalid={touched?.timeFrame && !!errors?.timeFrame}
+                                                        onChange={(e) => {
+                                                            var timeFrames = values[e.target.name].split('-');
 
-                                                    timeFrames[0] = e.target.value;
-                                                    setFieldValue(e.target.name, timeFrames.join('-'), true);
-                                                }}
-                                                onBlur={handleBlur}
-                                            />
-                                            <div className="mb-2">
-                                                <Form.Label className="label">Time Frame To</Form.Label>
-                                                <p className="asterisk">*</p>
-                                            </div>
-                                            <Form.Control
-                                                type="time"
-                                                name="timeFrame"
-                                                placeholder="Enter time frame end"
-                                                isInvalid={touched.timeFrame && !!errors?.timeFrame}
-                                                onChange={(e) => {
-                                                    var timeFrames = values[e.target.name].split('-');
+                                                            timeFrames[0] = e.target.value;
+                                                            setFieldValue(e.target.name, timeFrames.join('-'), true);
+                                                        }}
+                                                        onBlur={handleBlur}
+                                                    />
+                                                    <div className="mb-2">
+                                                        <Form.Label className="label">Time Frame To</Form.Label>
+                                                        <p className="asterisk">*</p>
+                                                    </div>
+                                                    <Form.Control
+                                                        type="time"
+                                                        name="timeFrame"
+                                                        placeholder="Enter time frame end"
+                                                        isInvalid={touched.timeFrame && !!errors?.timeFrame}
+                                                        onChange={(e) => {
+                                                            var timeFrames = values[e.target.name].split('-');
 
-                                                    timeFrames[1] = e.target.value;
-                                                    setFieldValue(e.target.name, timeFrames.join('-'), true);
-                                                }}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                                {errors?.timeFrame}
-                                            </Form.Control.Feedback>
-                                        </Form.Group>
+                                                            timeFrames[1] = e.target.value;
+                                                            setFieldValue(e.target.name, timeFrames.join('-'), true);
+                                                        }}
+                                                        onBlur={handleBlur}
+                                                    />
+                                                    <Form.Control.Feedback type="invalid">
+                                                        {errors?.timeFrame}
+                                                    </Form.Control.Feedback>
+                                                </Form.Group>
+                                            </Col>
+                                        </Row>
                                     </Col>
                                 </Row>
 
@@ -377,7 +394,7 @@ function OrderCreation() {
                                         return (
                                             <Row>
                                                 <Col sm="8" md="6">
-                                                    <div className="item-root py-2 px-lg-5">
+                                                    <div className="item-root py-2 px-xl-5">
                                                         <Swiper
                                                             pagination={pagination}
                                                             modules={[Pagination]}
@@ -391,20 +408,9 @@ function OrderCreation() {
                                                                             key={index}
                                                                             index={index}
                                                                             name={`orderItems[${index}]`}
-                                                                            phoneError={phoneError}
-                                                                            setPhoneError={setPhoneError}
+                                                                            setParentPhoneError={setPhoneError}
                                                                             {...formProps}
                                                                         ></ItemCreation>
-                                                                        {values.orderItems.length > 1 && (
-                                                                            <div className="times-createProduct-form">
-                                                                                <FaTimes
-                                                                                    className="times-createProduct"
-                                                                                    onClick={() =>
-                                                                                        arrayHelpers.remove(index)
-                                                                                    }
-                                                                                ></FaTimes>
-                                                                            </div>
-                                                                        )}
                                                                     </SwiperSlide>
                                                                 );
                                                             })}
@@ -412,61 +418,159 @@ function OrderCreation() {
                                                     </div>
                                                 </Col>
                                                 <Col sm="4" md="6">
-                                                    <h5 className="my-3">Item List Table</h5>
-                                                    <Row
+                                                    <div
                                                         style={{
                                                             position: 'sticky',
                                                             top: '0',
                                                         }}
                                                     >
-                                                        {values.orderItems.map((item, index) => {
-                                                            return (
-                                                                <Col className="p-2" sm="3">
-                                                                    <div
-                                                                        className={
-                                                                            currentItemForm === index && 'text-danger'
-                                                                        }
-                                                                        data-active="true"
-                                                                        style={{
-                                                                            border: '1px solid #010101',
-                                                                            minHeight: '40px',
-                                                                        }}
-                                                                    >
-                                                                        {item?.itemName || `Item ${index + 1}`}
-                                                                    </div>
+                                                        <h5 className="my-3">Item List Table</h5>
+                                                        <Row>
+                                                            {values.orderItems.map((item, index) => {
+                                                                return (
+                                                                    <Col className="p-2" sm="3">
+                                                                        <div
+                                                                            className={
+                                                                                currentItemForm === index &&
+                                                                                'text-danger'
+                                                                            }
+                                                                            data-active="true"
+                                                                            style={{
+                                                                                border: '1px solid var(--clr-txt-secondary)',
+                                                                                height: 'fit-content',
+                                                                                display: 'flex',
+                                                                                padding: '5px 10px',
+                                                                                borderRadius: '5px',
+                                                                                alignItems: 'center',
+                                                                                justifyContent: 'space-between',
+                                                                                cursor: 'pointer',
+                                                                            }}
+                                                                            title={item?.itemName}
+                                                                        >
+                                                                            {item?.itemName || `Item ${index + 1}`}
+                                                                            {values.orderItems.length > 1 && (
+                                                                                <FaTimes
+                                                                                    className="times-createProduct"
+                                                                                    onClick={() =>
+                                                                                        arrayHelpers.remove(index)
+                                                                                    }
+                                                                                ></FaTimes>
+                                                                            )}
+                                                                        </div>
+                                                                    </Col>
+                                                                );
+                                                            })}
+                                                            <Col className="p-2" sm="3">
+                                                                <Button
+                                                                    onClick={() =>
+                                                                        arrayHelpers.push(
+                                                                            values.orderItems?.[
+                                                                                values.orderItems.length - 1
+                                                                            ],
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Push
+                                                                </Button>
+                                                            </Col>
+                                                        </Row>
+
+                                                        {/* Start shipping rate */}
+                                                        <Form.Group className="mb-2 mb-lg-3">
+                                                            <Row>
+                                                                <Col className="mb-2" xl="12">
+                                                                    <Form.Label className="label">
+                                                                        Your preference rate
+                                                                    </Form.Label>
+                                                                    <p className="asterisk">*</p>
                                                                 </Col>
-                                                            );
-                                                        })}
-                                                        <Col className="p-2" sm="3">
-                                                            <Button
-                                                                onClick={() =>
-                                                                    arrayHelpers.push(
-                                                                        values.orderItems?.[
-                                                                            values.orderItems.length - 1
-                                                                        ],
-                                                                    )
-                                                                }
-                                                            >
-                                                                Push
-                                                            </Button>
-                                                        </Col>
-                                                    </Row>
+                                                                <Col xl="6">
+                                                                    <Form.Group className="mb-2 mb-xl-3">
+                                                                        <Form.Control
+                                                                            type="number"
+                                                                            name={`startingRate`}
+                                                                            placeholder="Enter your shipping rate"
+                                                                            value={values?.startingRate}
+                                                                            min={5}
+                                                                            isInvalid={
+                                                                                touched?.startingRate &&
+                                                                                !!errors?.startingRate
+                                                                            }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                        />
+                                                                        <Form.Control.Feedback type="invalid">
+                                                                            {errors?.startingRate}
+                                                                        </Form.Control.Feedback>
+                                                                    </Form.Group>
+                                                                </Col>
+                                                                <Col xl="6"></Col>
+                                                            </Row>
+                                                        </Form.Group>
+
+                                                        {/* Vehicles */}
+                                                        <Form.Group className="form-group">
+                                                            <div className="mb-2">
+                                                                <Form.Label className="label">Vehicles</Form.Label>
+                                                                <p className="asterisk">*</p>
+                                                            </div>
+                                                            <Row>
+                                                                {authState.vehicles.map((item, index) => {
+                                                                    return (
+                                                                        <Col key={index} sm="6" md="12" lg="6">
+                                                                            <label className="fr-checkbox mb-2">
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    name={`vehicles`}
+                                                                                    value={item?.id}
+                                                                                    onChange={handleChange}
+                                                                                    onBlur={handleBlur}
+                                                                                />
+                                                                                <span className="checkmark"></span>
+                                                                                <span
+                                                                                    className="txt-checkbox"
+                                                                                    style={{
+                                                                                        display: 'inline-block',
+                                                                                        fontWeight: '500',
+                                                                                        overflow: 'hidden',
+                                                                                        whiteSpace: 'nowrap',
+                                                                                        wordBreak: 'break-word',
+                                                                                        textOverflow: 'ellipsis',
+                                                                                        maxWidth: '80%',
+                                                                                    }}
+                                                                                    title={item?.name}
+                                                                                >
+                                                                                    {item?.name}
+                                                                                </span>
+                                                                            </label>
+                                                                        </Col>
+                                                                    );
+                                                                })}
+                                                            </Row>
+                                                            <p className="content-red mt-2">{errors?.vehicles}</p>
+                                                        </Form.Group>
+
+                                                        <Button
+                                                            type="submit"
+                                                            variant="warning"
+                                                            disabled={!isValid || !!phoneError}
+                                                            className="my-btn-yellow mr-2"
+                                                        >
+                                                            Search for driver
+                                                        </Button>
+                                                        {process.env.NODE_ENV === 'development' && (
+                                                            <>
+                                                                <Button onClick={() => setDevModal(true)}>
+                                                                    See the form value for dev
+                                                                </Button>
+                                                            </>
+                                                        )}
+                                                    </div>
                                                 </Col>
                                             </Row>
                                         );
                                     }}
                                 />
-
-                                <pre>{JSON.stringify(errors, 4, 4)}</pre>
-
-                                <Button
-                                    type="submit"
-                                    variant="warning"
-                                    disabled={!isValid || !!phoneError}
-                                    className="my-btn-yellow"
-                                >
-                                    Search for driver
-                                </Button>
                             </div>
                         </Form>
                     </div>
