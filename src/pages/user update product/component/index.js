@@ -4,10 +4,9 @@ import Form from 'react-bootstrap/Form';
 import React, { useContext } from 'react';
 import { Button, Col, Modal, Row, Spinner } from 'react-bootstrap';
 import { AuthContext, OrderContext } from '../../../stores';
-import '../style/createProduct.css';
 import moment from 'moment';
 import { Pagination } from 'swiper';
-import { Swiper, SwiperSlide, useSwiper, useSwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { dotnetFormDataSerialize } from '../../../ultitlies';
 import 'react-phone-input-2/lib/style.css';
 import ItemCreation from './item';
@@ -95,7 +94,6 @@ function OrderCreation() {
     const [phoneError, setPhoneError] = React.useState('');
     const [currentItemForm, setCurrent] = React.useState(0);
     const [devModal, setDevModal] = React.useState(false);
-    const [swiperRef, setSwiperRef] = React.useState(null);
 
     const pagination = {
         clickable: true,
@@ -103,9 +101,7 @@ function OrderCreation() {
             return '<span class="' + className + '">' + (index + 1) + '</span>';
         },
     };
-    const slideTo = (index) => {
-        swiperRef?.slideTo(index, 0);
-    };
+
     return (
         <Formik
             initialValues={{
@@ -125,7 +121,7 @@ function OrderCreation() {
                 orderItems: [
                     {
                         itemName: '',
-                        itemCharcode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
+                        itemCharCode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
                         destination: {
                             unitNumber: '',
                             streetNumber: '',
@@ -148,13 +144,10 @@ function OrderCreation() {
             onSubmit={(values) => {
                 const handledObjects = {
                     ...values,
-                    orderItems: values.orderItems.map((item) => {
-                        console.log(item);
-                        return {
-                            ...item,
-                            productPictures: item.productPictures.map((item) => item?.file),
-                        };
-                    }),
+                    orderItems: values.orderItems.map((item) => ({
+                        ...item,
+                        productPictures: item.productPictures.map((item) => item?.file),
+                    })),
                 };
 
                 const formData = dotnetFormDataSerialize(handledObjects, {
@@ -204,7 +197,7 @@ function OrderCreation() {
                                     <Col lg="6">
                                         <h3 className="mb-3">Order Location</h3>
                                         {/* Sending Location */}
-                                        <Form.Group className="mb-3">
+                                        <Form.Group>
                                             <div className="mb-2">
                                                 <Form.Label className="label">Pick Up</Form.Label>
                                                 <p className="asterisk">*</p>
@@ -326,7 +319,7 @@ function OrderCreation() {
                                         <Row className="mb-lg-3">
                                             <Col>
                                                 {/* Deliverable Date */}
-                                                <Form.Group className="mb-2">
+                                                <Form.Group>
                                                     <div className="mb-2">
                                                         <Form.Label className="label">Deliverable Date</Form.Label>
                                                         <p className="asterisk">*</p>
@@ -394,14 +387,14 @@ function OrderCreation() {
                                 {/* OrderItems */}
                                 <h3 className="my-3">Item Information</h3>
 
-                                <FieldArray name="orderItems" shouldUpdate={(next, props) => true}>
-                                    {(arrayHelpers) => {
+                                <FieldArray
+                                    name="orderItems"
+                                    render={(arrayHelpers) => {
                                         return (
                                             <Row>
-                                                <Col sm="12" md="6">
+                                                <Col sm="8" md="6">
                                                     <div className="item-root py-2 px-xl-5">
                                                         <Swiper
-                                                            onSwiper={setSwiperRef}
                                                             pagination={pagination}
                                                             modules={[Pagination]}
                                                             initialSlide={values.orderItems.length - 1}
@@ -423,7 +416,7 @@ function OrderCreation() {
                                                         </Swiper>
                                                     </div>
                                                 </Col>
-                                                <Col sm="12" md="6">
+                                                <Col sm="4" md="6">
                                                     <div
                                                         style={{
                                                             position: 'sticky',
@@ -453,11 +446,7 @@ function OrderCreation() {
                                                                             }}
                                                                             title={item?.itemName}
                                                                         >
-                                                                            {item?.itemName || (
-                                                                                <div
-                                                                                    onClick={() => slideTo(index)}
-                                                                                >{`Item ${index + 1}`}</div>
-                                                                            )}
+                                                                            {item?.itemName || `Item ${index + 1}`}
                                                                             {values.orderItems.length > 1 && (
                                                                                 <FaTimes
                                                                                     className="times-createProduct"
@@ -531,11 +520,8 @@ function OrderCreation() {
                                                                             <label className="fr-checkbox mb-2">
                                                                                 <input
                                                                                     type="checkbox"
-                                                                                    name={'vehicles'}
+                                                                                    name={`vehicles`}
                                                                                     value={item?.id}
-                                                                                    defaultChecked={values.vehicles.some(
-                                                                                        (v) => v === item.id,
-                                                                                    )}
                                                                                     onChange={handleChange}
                                                                                     onBlur={handleBlur}
                                                                                 />
@@ -562,25 +548,28 @@ function OrderCreation() {
                                                             </Row>
                                                             <p className="content-red mt-2">{errors?.vehicles}</p>
                                                         </Form.Group>
+
                                                         <Button
                                                             type="submit"
                                                             variant="warning"
                                                             disabled={!isValid || !!phoneError}
-                                                            className="my-btn-yellow me-2"
+                                                            className="my-btn-yellow mr-2"
                                                         >
                                                             Search for driver
                                                         </Button>
                                                         {process.env.NODE_ENV === 'development' && (
-                                                            <Button onClick={() => setDevModal(true)}>
-                                                                See the form value for dev
-                                                            </Button>
+                                                            <>
+                                                                <Button onClick={() => setDevModal(true)}>
+                                                                    See the form value for dev
+                                                                </Button>
+                                                            </>
                                                         )}
                                                     </div>
                                                 </Col>
                                             </Row>
                                         );
                                     }}
-                                </FieldArray>
+                                />
                             </div>
                         </Form>
                     </div>

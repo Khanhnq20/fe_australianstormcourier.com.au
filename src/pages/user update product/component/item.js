@@ -3,7 +3,6 @@ import Form from 'react-bootstrap/Form';
 import React, { useContext, useRef } from 'react';
 import { Button, Col, InputGroup, Row } from 'react-bootstrap';
 import { AuthContext } from '../../../stores';
-import '../style/createProduct.css';
 import PhoneInput from 'react-phone-input-2';
 import Barcode from 'react-barcode';
 import { RiImageEditFill } from 'react-icons/ri';
@@ -32,6 +31,7 @@ export default function ItemCreation({
                     Item {index + 1}
                 </h5>
                 <h5 className="my-3">Receiver Information</h5>
+                {/* <pre>{JSON.stringify(errors, 4, 4)}</pre> */}
                 <Row>
                     <Col>
                         <Form.Group>
@@ -250,7 +250,7 @@ export default function ItemCreation({
                     <Form.Label className="label">Barcode</Form.Label>
                     <p className="asterisk">*</p>
                 </div>
-                <Barcode value={values.orderItems[index].itemCharcode.toString()}></Barcode>
+                <Barcode value={values.orderItems[index].itemCharCode.toString()}></Barcode>
             </Form.Group>
             {/* Item Description  */}
             <Form.Group className="mb-3">
@@ -332,41 +332,8 @@ export default function ItemCreation({
             </Row>
             {/* Product Pictures & Shipping Rate & PackageType & Vehicles*/}
             <Row>
-                {/* Shipping Rate & Package Type & Vehicles */}
-                <Col sm="12" xl="6">
-                    {/* Package Type */}
-                    <Form.Group className="mb-3">
-                        <div className="mb-2">
-                            <Form.Label className="label">Package Type</Form.Label>
-                            <p className="asterisk">*</p>
-                        </div>
-
-                        <Form.Select
-                            type="string"
-                            name={`${name}.packageType`}
-                            placeholder="Select your type of package"
-                            isInvalid={
-                                touched?.orderItems?.[index]?.packageType && !!errors?.orderItems?.[index]?.packageType
-                            }
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            defaultValue={values?.['orderItems']?.[index]?.packageType}
-                        >
-                            {authState?.packageTypes?.map((type, index) => {
-                                return (
-                                    <option key={index} value={type}>
-                                        {type}
-                                    </option>
-                                );
-                            })}
-                        </Form.Select>
-                        <Form.Control.Feedback type="invalid">
-                            {errors?.orderItems?.[index]?.packageType}
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Col>
                 {/* Product pictures */}
-                <Col sm="12" xl="6">
+                <Col sm="12" lg="6">
                     <Form.Group className="mb-3">
                         <div className="mb-2">
                             <Form.Label className="label">Product Images</Form.Label>
@@ -417,23 +384,17 @@ export default function ItemCreation({
                                                     return (
                                                         <Col key={ind}>
                                                             <div className="img-front-frame">
-                                                                {picture?.url ? (
-                                                                    <></>
-                                                                ) : (
-                                                                    <div className="background-front">
-                                                                        <RiImageEditFill
-                                                                            style={{
-                                                                                position: 'relative',
-                                                                                color: 'gray',
-                                                                                fontSize: '50px',
-                                                                                opacity: '70%',
-                                                                            }}
-                                                                        ></RiImageEditFill>
-                                                                        <p className="driving-txt">
-                                                                            Change Product Images
-                                                                        </p>
-                                                                    </div>
-                                                                )}
+                                                                <div className="background-front">
+                                                                    <RiImageEditFill
+                                                                        style={{
+                                                                            position: 'relative',
+                                                                            color: 'gray',
+                                                                            fontSize: '50px',
+                                                                            opacity: '70%',
+                                                                        }}
+                                                                    ></RiImageEditFill>
+                                                                    <p className="driving-txt">Change Product Images</p>
+                                                                </div>
                                                                 <img
                                                                     className="img-front"
                                                                     src={picture?.url || 'https://tinyurl.com/5ehpcctt'}
@@ -507,6 +468,40 @@ export default function ItemCreation({
                                 }}
                             />
                         </div>
+                    </Form.Group>
+                </Col>
+
+                {/* Shipping Rate & Package Type & Vehicles */}
+                <Col sm="12" lg="6">
+                    {/* Package Type */}
+                    <Form.Group className="mb-3">
+                        <div className="mb-2">
+                            <Form.Label className="label">Package Type</Form.Label>
+                            <p className="asterisk">*</p>
+                        </div>
+
+                        <Form.Select
+                            type="string"
+                            name={`${name}.packageType`}
+                            placeholder="Select your type of package"
+                            isInvalid={
+                                touched?.orderItems?.[index]?.packageType && !!errors?.orderItems?.[index]?.packageType
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            defaultValue={values?.['orderItems']?.[index]?.packageType}
+                        >
+                            {authState?.packageTypes?.map((type, index) => {
+                                return (
+                                    <option key={index} value={type}>
+                                        {type}
+                                    </option>
+                                );
+                            })}
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.orderItems?.[index]?.packageType}
+                        </Form.Control.Feedback>
                     </Form.Group>
                 </Col>
             </Row>

@@ -472,8 +472,8 @@ function ProductDetail() {
                     modules={[Navigation, SwiperPagination]}
                     slideNextClass={'aus-swiper-slider-next'}
                     slidePrevClass={'aus-swiper-slider-prev'}
-                    // currentClass="aus-swiper-current",
-                    //     totalClass="aus-swiper-total"
+                    currentClass="aus-swiper-current"
+                    totalClass="aus-swiper-total"
                 >
                     {order?.orderItems?.map?.((item, index) => {
                         return (
@@ -637,8 +637,6 @@ function ProductDetail() {
                         );
                     })}
                 </Swiper>
-
-                {/* Order Status And Table of Offer*/}
                 <div className="py-4">
                     <div className="product-label-info my">
                         <p className="product-label-fit">Status</p>
@@ -1288,14 +1286,12 @@ function PopUpCenteredModal({ driver, ...props }) {
 
 function PaymentPopup({ show, onHide, clientSecret, loading, checkoutServerAPI, order, ...props }) {
     return (
-        <>
-            <Modal show={show} onHide={onHide} closeButton aria-labelledby="contained-modal-title-vcenter" centered>
-                <Modal.Header closebutton></Modal.Header>
-                <Modal.Body className="p-4" style={{ overflow: 'scroll' }}>
-                    <PaymentComponents.Payment clientSecret={clientSecret} checkoutServerAPI={checkoutServerAPI} />
-                </Modal.Body>
-            </Modal>
-        </>
+        <Modal show={show} onHide={onHide} closeButton aria-labelledby="contained-modal-title-vcenter" centered>
+            <Modal.Header closebutton></Modal.Header>
+            <Modal.Body className="p-4" style={{ overflow: 'scroll' }}>
+                <PaymentComponents.Payment clientSecret={clientSecret} checkoutServerAPI={checkoutServerAPI} />
+            </Modal.Body>
+        </Modal>
     );
 }
 
