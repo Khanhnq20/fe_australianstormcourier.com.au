@@ -3,7 +3,6 @@ import Form from 'react-bootstrap/Form';
 import React, { useContext, useRef } from 'react';
 import { Button, Col, InputGroup, Row } from 'react-bootstrap';
 import { AuthContext } from '../../../stores';
-import '../style/createProduct.css';
 import PhoneInput from 'react-phone-input-2';
 import Barcode from 'react-barcode';
 import { RiImageEditFill } from 'react-icons/ri';
@@ -385,23 +384,17 @@ export default function ItemCreation({
                                                     return (
                                                         <Col key={ind}>
                                                             <div className="img-front-frame">
-                                                                {picture?.url ? (
-                                                                    <></>
-                                                                ) : (
-                                                                    <div className="background-front">
-                                                                        <RiImageEditFill
-                                                                            style={{
-                                                                                position: 'relative',
-                                                                                color: 'gray',
-                                                                                fontSize: '50px',
-                                                                                opacity: '70%',
-                                                                            }}
-                                                                        ></RiImageEditFill>
-                                                                        <p className="driving-txt">
-                                                                            Change Product Images
-                                                                        </p>
-                                                                    </div>
-                                                                )}
+                                                                <div className="background-front">
+                                                                    <RiImageEditFill
+                                                                        style={{
+                                                                            position: 'relative',
+                                                                            color: 'gray',
+                                                                            fontSize: '50px',
+                                                                            opacity: '70%',
+                                                                        }}
+                                                                    ></RiImageEditFill>
+                                                                    <p className="driving-txt">Change Product Images</p>
+                                                                </div>
                                                                 <img
                                                                     className="img-front"
                                                                     src={picture?.url || 'https://tinyurl.com/5ehpcctt'}

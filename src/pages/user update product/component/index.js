@@ -4,10 +4,9 @@ import Form from 'react-bootstrap/Form';
 import React, { useContext } from 'react';
 import { Button, Col, Modal, Row, Spinner } from 'react-bootstrap';
 import { AuthContext, OrderContext } from '../../../stores';
-import '../style/createProduct.css';
 import moment from 'moment';
 import { Pagination } from 'swiper';
-import { Swiper, SwiperSlide, useSwiper, useSwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
 import { dotnetFormDataSerialize } from '../../../ultitlies';
 import 'react-phone-input-2/lib/style.css';
 import ItemCreation from './item';
@@ -95,7 +94,6 @@ function OrderCreation() {
     const [phoneError, setPhoneError] = React.useState('');
     const [currentItemForm, setCurrent] = React.useState(0);
     const [devModal, setDevModal] = React.useState(false);
-    const [swiperRef, setSwiperRef] = React.useState(null);
 
     const pagination = {
         clickable: true,
@@ -103,9 +101,7 @@ function OrderCreation() {
             return '<span class="' + className + '">' + (index + 1) + '</span>';
         },
     };
-    const slideTo = (index) => {
-        swiperRef?.slideTo(index, 0);
-    };
+
     return (
         <Formik
             initialValues={{
@@ -399,7 +395,6 @@ function OrderCreation() {
                                                 <Col sm="8" md="6">
                                                     <div className="item-root py-2 px-xl-5">
                                                         <Swiper
-                                                            onSwiper={setSwiperRef}
                                                             pagination={pagination}
                                                             modules={[Pagination]}
                                                             initialSlide={values.orderItems.length - 1}
@@ -451,11 +446,7 @@ function OrderCreation() {
                                                                             }}
                                                                             title={item?.itemName}
                                                                         >
-                                                                            {item?.itemName || (
-                                                                                <div
-                                                                                    onClick={() => slideTo(index)}
-                                                                                >{`Item ${index + 1}`}</div>
-                                                                            )}
+                                                                            {item?.itemName || `Item ${index + 1}`}
                                                                             {values.orderItems.length > 1 && (
                                                                                 <FaTimes
                                                                                     className="times-createProduct"
