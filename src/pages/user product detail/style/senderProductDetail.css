@@ -1,30 +1,40 @@
 .sender-product-title {
-  display: flex;
-  justify-content: space-between;
+    display: flex;
+    justify-content: space-between;
 }
 .product-edit-icon {
-  margin-right: 5px;
-  color: white;
-  transform: translateY(-1px);
+    margin-right: 5px;
+    color: white;
+    transform: translateY(-1px);
 }
 .sender-action {
-  display: flex;
-  gap: 25px;
+    display: flex;
+    gap: 25px;
 }
 .license-form {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #ececec;
-  padding: 7px 10px;
-  border: 1px solid rgb(194, 191, 191);
-  border-radius: 5px;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: #ececec;
+    padding: 7px 10px;
+    border: 1px solid rgb(194, 191, 191);
+    border-radius: 5px;
+    cursor: pointer;
 }
 .license-icon {
-  font-size: 26px;
+    font-size: 26px;
 }
 .license-info-form {
-  display: flex;
-  gap: 30px;
+    display: flex;
+    gap: 30px;
+}
+.aus-swiper-slider-next {
+    opacity: 0;
+}
+
+.aus-swiper-slider-next .active {
+}
+
+.aus-swiper-slider-prev {
+    opacity: 0;
 }

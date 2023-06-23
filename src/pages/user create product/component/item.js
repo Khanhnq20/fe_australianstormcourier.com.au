@@ -32,7 +32,6 @@ export default function ItemCreation({
                     Item {index + 1}
                 </h5>
                 <h5 className="my-3">Receiver Information</h5>
-                {/* <pre>{JSON.stringify(errors, 4, 4)}</pre> */}
                 <Row>
                     <Col>
                         <Form.Group>
@@ -251,7 +250,7 @@ export default function ItemCreation({
                     <Form.Label className="label">Barcode</Form.Label>
                     <p className="asterisk">*</p>
                 </div>
-                <Barcode value={values.orderItems[index].itemCharCode.toString()}></Barcode>
+                <Barcode value={values.orderItems[index].itemCharcode.toString()}></Barcode>
             </Form.Group>
             {/* Item Description  */}
             <Form.Group className="mb-3">
@@ -333,8 +332,41 @@ export default function ItemCreation({
             </Row>
             {/* Product Pictures & Shipping Rate & PackageType & Vehicles*/}
             <Row>
+                {/* Shipping Rate & Package Type & Vehicles */}
+                <Col sm="12" xl="6">
+                    {/* Package Type */}
+                    <Form.Group className="mb-3">
+                        <div className="mb-2">
+                            <Form.Label className="label">Package Type</Form.Label>
+                            <p className="asterisk">*</p>
+                        </div>
+
+                        <Form.Select
+                            type="string"
+                            name={`${name}.packageType`}
+                            placeholder="Select your type of package"
+                            isInvalid={
+                                touched?.orderItems?.[index]?.packageType && !!errors?.orderItems?.[index]?.packageType
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            defaultValue={values?.['orderItems']?.[index]?.packageType}
+                        >
+                            {authState?.packageTypes?.map((type, index) => {
+                                return (
+                                    <option key={index} value={type}>
+                                        {type}
+                                    </option>
+                                );
+                            })}
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.orderItems?.[index]?.packageType}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                </Col>
                 {/* Product pictures */}
-                <Col sm="12" lg="6">
+                <Col sm="12" xl="6">
                     <Form.Group className="mb-3">
                         <div className="mb-2">
                             <Form.Label className="label">Product Images</Form.Label>
@@ -469,40 +501,6 @@ export default function ItemCreation({
                                 }}
                             />
                         </div>
-                    </Form.Group>
-                </Col>
-
-                {/* Shipping Rate & Package Type & Vehicles */}
-                <Col sm="12" lg="6">
-                    {/* Package Type */}
-                    <Form.Group className="mb-3">
-                        <div className="mb-2">
-                            <Form.Label className="label">Package Type</Form.Label>
-                            <p className="asterisk">*</p>
-                        </div>
-
-                        <Form.Select
-                            type="string"
-                            name={`${name}.packageType`}
-                            placeholder="Select your type of package"
-                            isInvalid={
-                                touched?.orderItems?.[index]?.packageType && !!errors?.orderItems?.[index]?.packageType
-                            }
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            defaultValue={values?.['orderItems']?.[index]?.packageType}
-                        >
-                            {authState?.packageTypes?.map((type, index) => {
-                                return (
-                                    <option key={index} value={type}>
-                                        {type}
-                                    </option>
-                                );
-                            })}
-                        </Form.Select>
-                        <Form.Control.Feedback type="invalid">
-                            {errors?.orderItems?.[index]?.packageType}
-                        </Form.Control.Feedback>
                     </Form.Group>
                 </Col>
             </Row>
