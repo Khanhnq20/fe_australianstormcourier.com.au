@@ -7,6 +7,7 @@ import '../style/createProduct.css';
 import PhoneInput from 'react-phone-input-2';
 import Barcode from 'react-barcode';
 import { RiImageEditFill } from 'react-icons/ri';
+import Input from 'antd/es/input/Input';
 
 export default function ItemCreation({
     name,
@@ -18,6 +19,7 @@ export default function ItemCreation({
     handleChange,
     handleBlur,
     isValid,
+    itemName,
     setParentPhoneError,
 }) {
     const product_img_ipt = useRef();
@@ -28,9 +30,9 @@ export default function ItemCreation({
         <div className="p-2">
             <Form.Group className="mb-4">
                 {/* Receiver Information */}
-                <h5 className="my-xl-3" style={{ userSelect: 'none' }}>
-                    Item {index + 1}
-                </h5>
+                <div className="my-xl-3" style={{ userSelect: 'none' }}>
+                    {itemName ? <h5>{itemName}</h5> : <h5>Item {index + 1}</h5>}
+                </div>
                 <h5 className="my-3">Receiver Information</h5>
                 {/* <pre>{JSON.stringify(errors, 4, 4)}</pre> */}
                 <Row>
@@ -250,6 +252,9 @@ export default function ItemCreation({
                 <div className="mb-2">
                     <Form.Label className="label">Barcode</Form.Label>
                     <p className="asterisk">*</p>
+                </div>
+                <div style={{ fontStyle: 'italic' }}>
+                    *Please send this barcode to receiver in order to receive the delivery
                 </div>
                 <Barcode value={values.orderItems[index].itemCharCode.toString()}></Barcode>
             </Form.Group>

@@ -75,3 +75,46 @@
     gap: 20px;
     flex-wrap: wrap;
 }
+.t-invoice-root {
+    width: 100%;
+    font-family: var(--font-family);
+}
+.t-invoice-form {
+    margin: 0 auto;
+    width: fit-content;
+    height: fit-content;
+    padding: 20px;
+}
+.t-invoice-header-txt {
+    font-weight: 600;
+    font-size: 20px;
+}
+.t-invoice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+    border-bottom: 2px solid var(--clr-txt-primary);
+}
+.t-invoice-form-suburb {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    margin: 10px 0;
+}
+.t-invoice-to {
+    display: flex;
+    gap: 30px;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid var(--clr-txt-primary);
+}
+.t-invoice-to-child {
+    font-weight: 600;
+}
+.t-invoice-item {
+    padding-top: 5px;
+}
+.t-invoice-to-content {
+    flex-grow: 1;
+}
