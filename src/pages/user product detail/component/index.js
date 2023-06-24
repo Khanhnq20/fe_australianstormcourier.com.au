@@ -230,13 +230,13 @@ function ProductDetail() {
     return (
         <div>
             <div>
-                <p className="product-detail-header">Details</p>
+                <p className="product-detail-header px-4 py-2">Details</p>
             </div>
 
-            <div>
+            <div className="px-4">
                 {/* Delivery Information Title*/}
                 <div className="sender-product-title">
-                    <p className="product-content-title my-3">Delivery Information</p>
+                    <p className="product-content-title">Delivery Information</p>
                 </div>
                 {/* Delivery Information Body*/}
                 <Row className="product-form-content">
