@@ -235,10 +235,6 @@ function ProductDetail() {
     return (
         <div className="p-2 p-lg-3">
             <div>
-                <p className="product-detail-header">Details</p>
-            </div>
-
-            <div>
                 {/* Delivery Information Title*/}
                 <div className="sender-product-title">
                     <p className="product-content-title my-3">Delivery Information</p>
@@ -293,11 +289,13 @@ function ProductDetail() {
                         <div>
                             <div className="product-label-info">
                                 <p className="product-label-fit">Starting shipping rates</p>
-                                <p className="product-content">{order?.orderItems?.[0]?.startingRate} AUD</p>
+                                <p className="product-content">{order?.startingRate} AUD</p>
                             </div>
                             <div className="product-label-info">
                                 <p className="product-label-fit">Selected shipping rates</p>
-                                <p className="product-content">{order?.orderItems?.[0]?.selectedRate} AUD</p>
+                                <p className="product-content">
+                                    {order?.selectedRate ? order?.selectedRate + ' AUD' : 'NULL'}
+                                </p>
                             </div>
                             <div className="product-label-info">
                                 <p className="product-label-fit">Status</p>
@@ -382,67 +380,6 @@ function ProductDetail() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="product-label-info" style={{ alignItems: 'unset' }}>
-                                <p className="product-label-fit">Received Images</p>
-                                <div>
-                                    <div
-                                        className="img-front-frame"
-                                        style={{ padding: '10px 0 ' }}
-                                        onClick={() => {
-                                            setReceiveImg(true);
-                                        }}
-                                    >
-                                        <div className="background-front">
-                                            <div
-                                                style={{
-                                                    position: 'relative',
-                                                    color: 'gray',
-                                                    fontSize: '50px',
-                                                    opacity: '70%',
-                                                }}
-                                            >
-                                                {order?.receivedItemImages?.split('[space]')?.length || 0}
-                                            </div>
-                                            <p className="driving-txt">view image</p>
-                                        </div>
-                                        <img
-                                            className="img-front"
-                                            src={order?.receivedItemImages?.split?.('[space]')?.[0]}
-                                        />
-                                    </div>
-                                    <Modal
-                                        size="lg"
-                                        aria-labelledby="contained-modal-title-vcenter"
-                                        centered
-                                        show={receiveImg}
-                                    >
-                                        <Modal.Header>
-                                            <Modal.Title
-                                                className="txt-center w-100"
-                                                onClick={() => {
-                                                    setReceiveImg(false);
-                                                }}
-                                            >
-                                                <div style={{ textAlign: 'right' }}>
-                                                    <FaTimes style={{ color: 'grey', cursor: 'pointer' }}></FaTimes>
-                                                </div>
-                                            </Modal.Title>
-                                        </Modal.Header>
-                                        <Modal.Body className="link-slider">
-                                            <Carousel>
-                                                {order.receivedItemImages?.split?.('[space]')?.map((url, index) => {
-                                                    return (
-                                                        <Carousel.Item style={{ borderLeft: 'none' }} key={index}>
-                                                            <img className="w-100" src={url} alt="First slide" />
-                                                            <Carousel.Caption></Carousel.Caption>
-                                                        </Carousel.Item>
-                                                    );
-                                                })}
-                                            </Carousel>
-                                        </Modal.Body>
-                                    </Modal>
-                                </div>
-                            </div>
                         </div>
                     </Col>
                 </Row>
@@ -478,17 +415,17 @@ function ProductDetail() {
                     {order?.orderItems?.map?.((item, index) => {
                         return (
                             <SwiperSlide key={index}>
-                                <Row className="product-form-content" key={index + 1}>
-                                    <Col>
+                                <Row className="product-form-content justify-content-center" key={index + 1}>
+                                    <Col sm="12" md="8" lg="6">
                                         <div className="product-form-info">
                                             {/* Item name */}
                                             <div className="product-label-info">
-                                                <p className="product-label">Item Name</p>
+                                                <p className="product-label text-end">Item Name</p>
                                                 <p className="product-content">{item.itemName}</p>
                                             </div>
                                             {/* Charcode */}
                                             <div className="product-label-info">
-                                                <p className="product-label">Charcode</p>
+                                                <p className="product-label text-end">Charcode</p>
                                                 <p className="product-content">
                                                     {'000000'.substring(0, 6 - item.itemCharCode.toString().length) +
                                                         item.itemCharCode}
@@ -496,139 +433,215 @@ function ProductDetail() {
                                             </div>
                                             {/* Note */}
                                             <div className="product-label-info">
-                                                <p className="product-label">Note</p>
+                                                <p className="product-label text-end">Note</p>
                                                 <p className="product-content">{item.itemDescription}</p>
                                             </div>
                                             {/* Quantity */}
                                             <div className="product-label-info">
-                                                <p className="product-label">Quantity</p>
+                                                <p className="product-label text-end">Quantity</p>
                                                 <p className="product-content">{item.quantity}</p>
                                             </div>
                                             {/* Weight */}
                                             <div className="product-label-info">
-                                                <p className="product-label">Weight</p>
+                                                <p className="product-label text-end">Weight</p>
                                                 <p className="product-content">{item?.weight} Kilograms</p>
                                             </div>
                                             {/* Package type */}
                                             <div className="product-label-info">
-                                                <p className="product-label">Package Type</p>
+                                                <p className="product-label text-end">Package Type</p>
                                                 <p className="product-content">{item.packageType}</p>
                                             </div>
                                             {/* From */}
                                             <div className="product-label-info">
-                                                <p className="product-label">From</p>
+                                                <p className="product-label text-end">From</p>
                                                 <p className="product-content">{order?.sendingLocation}</p>
                                             </div>
                                             {/* To */}
                                             <div className="product-label-info">
-                                                <p className="product-label">To</p>
+                                                <p className="product-label text-end">To</p>
                                                 <p className="product-content">{item?.destination}</p>
                                             </div>
                                             {/* Receiver Name */}
                                             <div className="product-label-info">
-                                                <p className="product-label">Receiver Name</p>
+                                                <p className="product-label text-end">Receiver Name</p>
                                                 <p className="product-content">{item?.receiverName || 'Provide now'}</p>
                                             </div>
                                             {/* Receiver Phone */}
                                             <div className="product-label-info">
-                                                <p className="product-label">Receiver Phone</p>
+                                                <p className="product-label text-end">Receiver Phone</p>
                                                 <p className="product-content">{item?.receiverPhone}</p>
                                             </div>
                                         </div>
                                     </Col>
-                                    <Col>
-                                        <div>
-                                            <div className="product-label-info" style={{ alignItems: 'unset' }}>
-                                                <p className="product-label-fit">Received Barcode</p>
-                                                <p>{item?.itemCharCode}</p>
-                                            </div>
-                                            <div className="product-label-info" style={{ alignItems: 'unset' }}>
-                                                <p className="product-label-fit">Product pictures</p>
-                                                <div>
-                                                    <div
-                                                        className="img-front-frame"
-                                                        style={{ padding: '10px 0 ' }}
-                                                        onClick={() => {
-                                                            setSlider(true);
-                                                        }}
-                                                    >
-                                                        <div className="background-front">
-                                                            <div
-                                                                style={{
-                                                                    position: 'relative',
-                                                                    color: 'gray',
-                                                                    fontSize: '50px',
-                                                                    opacity: '70%',
-                                                                }}
-                                                            >
-                                                                {
-                                                                    order?.orderItems?.[0]?.itemImages?.split('[space]')
-                                                                        ?.length
-                                                                }
-                                                            </div>
-                                                            <p className="driving-txt">view image</p>
+                                    <Col sm="12" md="8" lg="6">
+                                        <div className="product-label-info" style={{ alignItems: 'unset' }}>
+                                            <p className="product-label-fit text-sm-end text-md-start">
+                                                Received Barcode
+                                            </p>
+                                            <p>{item?.itemCharCode}</p>
+                                        </div>
+                                        <div className="product-label-info" style={{ alignItems: 'unset' }}>
+                                            <p className="product-label-fit text-sm-end text-md-start">
+                                                Product pictures
+                                            </p>
+                                            <div>
+                                                <div
+                                                    className="img-front-frame"
+                                                    style={{ padding: '10px 0 ' }}
+                                                    onClick={() => {
+                                                        setSlider(true);
+                                                    }}
+                                                >
+                                                    <div className="background-front">
+                                                        <div
+                                                            style={{
+                                                                position: 'relative',
+                                                                color: 'gray',
+                                                                fontSize: '50px',
+                                                                opacity: '70%',
+                                                            }}
+                                                        >
+                                                            {
+                                                                order?.orderItems?.[0]?.itemImages?.split('[space]')
+                                                                    ?.length
+                                                            }
                                                         </div>
-                                                        <img
-                                                            className="img-front"
-                                                            src={item.itemImages?.split?.('[space]')?.[0]}
-                                                        />
+                                                        <p className="driving-txt">view image</p>
                                                     </div>
-                                                    <div>
-                                                        {slider ? (
-                                                            <div>
-                                                                <Modal
-                                                                    size="lg"
-                                                                    aria-labelledby="contained-modal-title-vcenter"
-                                                                    centered
-                                                                    show={slider}
-                                                                >
-                                                                    <Modal.Header>
-                                                                        <Modal.Title
-                                                                            className="txt-center w-100"
-                                                                            onClick={() => {
-                                                                                setSlider(false);
-                                                                            }}
-                                                                        >
-                                                                            <div style={{ textAlign: 'right' }}>
-                                                                                <FaTimes
-                                                                                    style={{
-                                                                                        color: 'grey',
-                                                                                        cursor: 'pointer',
-                                                                                    }}
-                                                                                ></FaTimes>
-                                                                            </div>
-                                                                        </Modal.Title>
-                                                                    </Modal.Header>
-                                                                    <Modal.Body className="link-slider">
-                                                                        <Carousel>
-                                                                            {item.itemImages
-                                                                                ?.split?.('[space]')
-                                                                                ?.map((url, index) => {
-                                                                                    return (
-                                                                                        <Carousel.Item
-                                                                                            style={{
-                                                                                                borderLeft: 'none',
-                                                                                            }}
-                                                                                            key={index}
-                                                                                        >
-                                                                                            <img
-                                                                                                className="w-100"
-                                                                                                src={url}
-                                                                                                alt="First slide"
-                                                                                            />
-                                                                                            <Carousel.Caption></Carousel.Caption>
-                                                                                        </Carousel.Item>
-                                                                                    );
-                                                                                })}
-                                                                        </Carousel>
-                                                                    </Modal.Body>
-                                                                </Modal>
-                                                            </div>
-                                                        ) : (
-                                                            <></>
-                                                        )}
-                                                    </div>
+                                                    <img
+                                                        className="img-front"
+                                                        src={item.itemImages?.split?.('[space]')?.[0]}
+                                                    />
                                                 </div>
+                                                <div>
+                                                    {slider ? (
+                                                        <div>
+                                                            <Modal
+                                                                size="lg"
+                                                                aria-labelledby="contained-modal-title-vcenter"
+                                                                centered
+                                                                show={slider}
+                                                            >
+                                                                <Modal.Header>
+                                                                    <Modal.Title
+                                                                        className="txt-center w-100"
+                                                                        onClick={() => {
+                                                                            setSlider(false);
+                                                                        }}
+                                                                    >
+                                                                        <div style={{ textAlign: 'right' }}>
+                                                                            <FaTimes
+                                                                                style={{
+                                                                                    color: 'grey',
+                                                                                    cursor: 'pointer',
+                                                                                }}
+                                                                            ></FaTimes>
+                                                                        </div>
+                                                                    </Modal.Title>
+                                                                </Modal.Header>
+                                                                <Modal.Body className="link-slider">
+                                                                    <Carousel>
+                                                                        {item.itemImages
+                                                                            ?.split?.('[space]')
+                                                                            ?.map((url, index) => {
+                                                                                return (
+                                                                                    <Carousel.Item
+                                                                                        style={{
+                                                                                            borderLeft: 'none',
+                                                                                        }}
+                                                                                        key={index}
+                                                                                    >
+                                                                                        <img
+                                                                                            className="w-100"
+                                                                                            src={url}
+                                                                                            alt="First slide"
+                                                                                        />
+                                                                                        <Carousel.Caption></Carousel.Caption>
+                                                                                    </Carousel.Item>
+                                                                                );
+                                                                            })}
+                                                                    </Carousel>
+                                                                </Modal.Body>
+                                                            </Modal>
+                                                        </div>
+                                                    ) : (
+                                                        <></>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="product-label-info" style={{ alignItems: 'unset' }}>
+                                            <p className="product-label-fit text-sm-end text-md-start">
+                                                Received Images
+                                            </p>
+                                            <div>
+                                                <div
+                                                    className="img-front-frame"
+                                                    style={{ padding: '10px 0 ' }}
+                                                    onClick={() => {
+                                                        setReceiveImg(true);
+                                                    }}
+                                                >
+                                                    <div className="background-front">
+                                                        <div
+                                                            style={{
+                                                                position: 'relative',
+                                                                color: 'gray',
+                                                                fontSize: '50px',
+                                                                opacity: '70%',
+                                                            }}
+                                                        >
+                                                            {order?.receivedItemImages?.split('[space]')?.length || 0}
+                                                        </div>
+                                                        <p className="driving-txt">view image</p>
+                                                    </div>
+                                                    <img
+                                                        className="img-front"
+                                                        src={order?.receivedItemImages?.split?.('[space]')?.[0]}
+                                                    />
+                                                </div>
+                                                <Modal
+                                                    size="lg"
+                                                    aria-labelledby="contained-modal-title-vcenter"
+                                                    centered
+                                                    show={receiveImg}
+                                                >
+                                                    <Modal.Header>
+                                                        <Modal.Title
+                                                            className="txt-center w-100"
+                                                            onClick={() => {
+                                                                setReceiveImg(false);
+                                                            }}
+                                                        >
+                                                            <div style={{ textAlign: 'right' }}>
+                                                                <FaTimes
+                                                                    style={{ color: 'grey', cursor: 'pointer' }}
+                                                                ></FaTimes>
+                                                            </div>
+                                                        </Modal.Title>
+                                                    </Modal.Header>
+                                                    <Modal.Body className="link-slider">
+                                                        <Carousel>
+                                                            {order.receivedItemImages
+                                                                ?.split?.('[space]')
+                                                                ?.map((url, index) => {
+                                                                    return (
+                                                                        <Carousel.Item
+                                                                            style={{ borderLeft: 'none' }}
+                                                                            key={index}
+                                                                        >
+                                                                            <img
+                                                                                className="w-100"
+                                                                                src={url}
+                                                                                alt="First slide"
+                                                                            />
+                                                                            <Carousel.Caption></Carousel.Caption>
+                                                                        </Carousel.Item>
+                                                                    );
+                                                                })}
+                                                        </Carousel>
+                                                    </Modal.Body>
+                                                </Modal>
                                             </div>
                                         </div>
                                     </Col>
@@ -1272,10 +1285,10 @@ function PopUpCenteredModal({ driver, ...props }) {
                                 <p className="product-label">Additional Information</p>
                                 <p className="product-content">Additional Information</p>
                             </div>
-                            <div className="product-label-info">
+                            {/* <div className="product-label-info">
                                 <p className="product-label">Review</p>
                                 <p className="product-content">Loading....</p>
-                            </div>
+                            </div> */}
                         </Col>
                     </Row>
                 </Modal.Body>

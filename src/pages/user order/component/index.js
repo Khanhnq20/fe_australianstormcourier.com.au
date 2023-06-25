@@ -165,13 +165,13 @@ const UserOrders = () => {
                                                         >
                                                             Pickup Location
                                                         </th>
-                                                        <th
+                                                        {/* <th
                                                             style={{
                                                                 minWidth: '150px',
                                                             }}
                                                         >
                                                             Destination
-                                                        </th>
+                                                        </th> */}
                                                         <th
                                                             style={{
                                                                 minWidth: '150px',
@@ -212,7 +212,14 @@ const UserOrders = () => {
                                                                 minWidth: '150px',
                                                             }}
                                                         >
-                                                            Offer Amount
+                                                            Your Offer Price
+                                                        </th>
+                                                        <th
+                                                            style={{
+                                                                minWidth: '150px',
+                                                            }}
+                                                        >
+                                                            Driver Offers
                                                         </th>
                                                         <th
                                                             style={{
@@ -251,7 +258,7 @@ const UserOrders = () => {
                                                                     </Row>
                                                                 </td>
                                                                 <td>{post?.sendingLocation}</td>
-                                                                <td>{post?.destination}</td>
+                                                                {/* <td>{post?.destination}</td> */}
                                                                 <td>
                                                                     {!!post?.createdDate
                                                                         ? moment(post?.createdDate).format('DD-MM-YYYY')
@@ -259,7 +266,7 @@ const UserOrders = () => {
                                                                 </td>
                                                                 <td>
                                                                     {!!post?.deliveredDate
-                                                                        ? moment(post?.deliveredDate).format(
+                                                                        ? moment(post?.deliverableDate).format(
                                                                               'DD-MM-YYYY',
                                                                           )
                                                                         : ''}
@@ -271,6 +278,7 @@ const UserOrders = () => {
                                                                         ?.trim?.()}
                                                                 </td>
                                                                 <td>{post?.vehicles?.join?.(' - ')}</td>
+                                                                <td>{post?.startingRate} AUD</td>
                                                                 <td>{post?.offerNumber}</td>
                                                                 <td>
                                                                     <Link
