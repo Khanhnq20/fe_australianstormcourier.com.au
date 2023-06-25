@@ -126,7 +126,7 @@ function OrderCreation() {
                 orderItems: [
                     {
                         itemName: '',
-                        itemCharCode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
+                        itemCharcode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
                         destination: {
                             unitNumber: '',
                             streetNumber: '',
@@ -149,10 +149,13 @@ function OrderCreation() {
             onSubmit={(values) => {
                 const handledObjects = {
                     ...values,
-                    orderItems: values.orderItems.map((item) => ({
-                        ...item,
-                        productPictures: item.productPictures.map((item) => item?.file),
-                    })),
+                    orderItems: values.orderItems.map((item) => {
+                        console.log(item);
+                        return {
+                            ...item,
+                            productPictures: item.productPictures.map((item) => item?.file),
+                        };
+                    }),
                 };
 
                 const formData = dotnetFormDataSerialize(handledObjects, {
@@ -202,7 +205,7 @@ function OrderCreation() {
                                     <Col lg="6">
                                         <h3 className="mb-3">Order Location</h3>
                                         {/* Sending Location */}
-                                        <Form.Group>
+                                        <Form.Group className="mb-3">
                                             <div className="mb-2">
                                                 <Form.Label className="label">Pick Up</Form.Label>
                                                 <p className="asterisk">*</p>
@@ -324,7 +327,7 @@ function OrderCreation() {
                                         <Row className="mb-lg-3">
                                             <Col>
                                                 {/* Deliverable Date */}
-                                                <Form.Group>
+                                                <Form.Group className="mb-2">
                                                     <div className="mb-2">
                                                         <Form.Label className="label">Deliverable Date</Form.Label>
                                                         <p className="asterisk">*</p>
@@ -392,12 +395,11 @@ function OrderCreation() {
                                 {/* OrderItems */}
                                 <h3 className="my-3">Item Information</h3>
 
-                                <FieldArray
-                                    name="orderItems"
-                                    render={(arrayHelpers) => {
+                                <FieldArray name="orderItems" shouldUpdate={(next, props) => true}>
+                                    {(arrayHelpers) => {
                                         return (
                                             <Row>
-                                                <Col sm="8" md="6">
+                                                <Col sm="12" md="6">
                                                     <div className="item-root py-2 px-xl-5">
                                                         <Swiper
                                                             onSwiper={setSwiperRef}
@@ -423,7 +425,7 @@ function OrderCreation() {
                                                         </Swiper>
                                                     </div>
                                                 </Col>
-                                                <Col sm="4" md="6">
+                                                <Col sm="12" md="6">
                                                     <div
                                                         style={{
                                                             position: 'sticky',
@@ -531,8 +533,11 @@ function OrderCreation() {
                                                                             <label className="fr-checkbox mb-2">
                                                                                 <input
                                                                                     type="checkbox"
-                                                                                    name={`vehicles`}
+                                                                                    name={'vehicles'}
                                                                                     value={item?.id}
+                                                                                    defaultChecked={values.vehicles.some(
+                                                                                        (v) => v === item.id,
+                                                                                    )}
                                                                                     onChange={handleChange}
                                                                                     onBlur={handleBlur}
                                                                                 />
@@ -559,28 +564,25 @@ function OrderCreation() {
                                                             </Row>
                                                             <p className="content-red mt-2">{errors?.vehicles}</p>
                                                         </Form.Group>
-
                                                         <Button
                                                             type="submit"
                                                             variant="warning"
                                                             disabled={!isValid || !!phoneError}
-                                                            className="my-btn-yellow mr-2"
+                                                            className="my-btn-yellow me-2"
                                                         >
                                                             Search for driver
                                                         </Button>
                                                         {process.env.NODE_ENV === 'development' && (
-                                                            <>
-                                                                <Button onClick={() => setDevModal(true)}>
-                                                                    See the form value for dev
-                                                                </Button>
-                                                            </>
+                                                            <Button onClick={() => setDevModal(true)}>
+                                                                See the form value for dev
+                                                            </Button>
                                                         )}
                                                     </div>
                                                 </Col>
                                             </Row>
                                         );
                                     }}
-                                />
+                                </FieldArray>
                             </div>
                         </Form>
                     </div>
