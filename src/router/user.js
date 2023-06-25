@@ -12,6 +12,7 @@ import {
 } from '../pages';
 import { Container } from 'react-bootstrap';
 import { NotFound } from '../pages/errors';
+import TotalInvoice from '../pages/user create product/component/totalInvoice';
 
 export const userChildrens = [
     {
@@ -33,6 +34,10 @@ export const userChildrens = [
             {
                 path: 'update',
                 element: <UserUpdateProduct></UserUpdateProduct>,
+            },
+            {
+                path: 'label',
+                element: <TotalInvoice></TotalInvoice>,
             },
         ],
     },

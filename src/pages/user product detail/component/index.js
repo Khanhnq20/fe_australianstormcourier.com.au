@@ -237,7 +237,7 @@ function ProductDetail() {
             <div>
                 {/* Delivery Information Title*/}
                 <div className="sender-product-title">
-                    <p className="product-content-title my-3">Delivery Information</p>
+                    <p className="product-content-title">Delivery Information</p>
                 </div>
                 {/* Delivery Information Body*/}
                 <Row className="product-form-content">
