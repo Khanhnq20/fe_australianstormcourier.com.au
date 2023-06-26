@@ -1,0 +1,6 @@
+.review-form {
+    border: 1px solid var(--clr-input);
+    margin: 15px 0;
+    padding: 10px;
+    border-radius: 5px;
+}

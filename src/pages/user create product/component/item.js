@@ -256,7 +256,7 @@ export default function ItemCreation({
                 <div style={{ fontStyle: 'italic' }}>
                     *Please send this barcode to receiver in order to receive the delivery
                 </div>
-                <Barcode value={values.orderItems[index].itemCharCode.toString()}></Barcode>
+                <Barcode value={values?.orderItems?.[index]?.itemCharcode?.toString()}></Barcode>
             </Form.Group>
             {/* Item Description  */}
             <Form.Group className="mb-3">
