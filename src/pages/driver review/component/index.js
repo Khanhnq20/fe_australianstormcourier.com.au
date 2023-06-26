@@ -50,7 +50,9 @@ export default function Index() {
 
     return (
         <div className="container">
-            <div></div>
+            <div className="py-3">
+                Total Review <b>{evaluate.length}</b>
+            </div>
             {evaluate?.map((item, index) => {
                 return (
                     <div key={index} className="review-form">
@@ -65,14 +67,14 @@ export default function Index() {
                                 <p style={{ fontWeight: '600' }}>{item.author}</p>
                                 <p style={{ fontSize: '13px', marginTop: '5px' }}>{item.emailAth}</p>
                             </div>
-                            <div style={{ display: 'flex', transform: 'translate(40%)' }}>
-                                {stars.map((star, i) => (
-                                    <Star key={star} starId={star} rating={item.rate} />
-                                ))}
-                            </div>
+                        </div>
+                        <div style={{ display: 'flex' }}>
+                            {stars.map((star, i) => (
+                                <Star key={star} starId={star} rating={item.rate} />
+                            ))}
                         </div>
                         <div>
-                            <p style={{ margin: '12px 5px' }}>{item.content}</p>
+                            <p className="review-content">{item.content}</p>
                         </div>
                     </div>
                 );
