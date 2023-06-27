@@ -12,6 +12,7 @@ import { dotnetFormDataSerialize } from '../../../ultitlies';
 import 'react-phone-input-2/lib/style.css';
 import ItemCreation from './item';
 import { FaTimes } from 'react-icons/fa';
+import TotalInvoice from './totalInvoice';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -412,6 +413,7 @@ function OrderCreation() {
                                                                         <ItemCreation
                                                                             key={index}
                                                                             index={index}
+                                                                            itemName={item?.itemName}
                                                                             name={`orderItems[${index}]`}
                                                                             setParentPhoneError={setPhoneError}
                                                                             {...formProps}
@@ -479,7 +481,7 @@ function OrderCreation() {
                                                                         )
                                                                     }
                                                                 >
-                                                                    Push
+                                                                    Add Item
                                                                 </Button>
                                                             </Col>
                                                         </Row>

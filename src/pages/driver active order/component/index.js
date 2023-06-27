@@ -170,6 +170,13 @@ function Product() {
                                                         minWidth: '140px',
                                                     }}
                                                 >
+                                                    Destination
+                                                </th>
+                                                <th
+                                                    style={{
+                                                        minWidth: '140px',
+                                                    }}
+                                                >
                                                     Expected date
                                                 </th>
                                                 <th
@@ -253,6 +260,7 @@ function Product() {
                                                                 </Row>
                                                             </td>
                                                             <td>{offer?.order?.sendingLocation}</td>
+                                                            <td>{item?.destination}</td>
                                                             <td>
                                                                 {!!offer?.order?.deliverableDate
                                                                     ? moment(offer?.order?.deliverableDate).format(
