@@ -7,7 +7,6 @@ import '../style/createProduct.css';
 import PhoneInput from 'react-phone-input-2';
 import Barcode from 'react-barcode';
 import { RiImageEditFill } from 'react-icons/ri';
-import Input from 'antd/es/input/Input';
 
 export default function ItemCreation({
     name,
@@ -18,7 +17,6 @@ export default function ItemCreation({
     setFieldValue,
     handleChange,
     handleBlur,
-    isValid,
     itemName,
     setParentPhoneError,
 }) {

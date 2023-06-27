@@ -10,7 +10,6 @@ import {
     UserProductHistoryDetails,
     UserUpdateProduct,
 } from '../pages';
-import { Container } from 'react-bootstrap';
 import { NotFound } from '../pages/errors';
 import TotalInvoice from '../pages/user create product/component/totalInvoice';
 

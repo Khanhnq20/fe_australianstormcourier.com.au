@@ -150,7 +150,6 @@ function OrderCreation() {
                 const handledObjects = {
                     ...values,
                     orderItems: values.orderItems.map((item) => {
-                        console.log(item);
                         return {
                             ...item,
                             productPictures: item.productPictures.map((item) => item?.file),
@@ -564,6 +563,7 @@ function OrderCreation() {
                                                             </Row>
                                                             <p className="content-red mt-2">{errors?.vehicles}</p>
                                                         </Form.Group>
+
                                                         <Button
                                                             type="submit"
                                                             variant="warning"

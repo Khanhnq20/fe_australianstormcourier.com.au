@@ -81,7 +81,7 @@ function Product() {
 
     return (
         <div>
-            <div className="p-3">
+            <div className="p-2 p-lg-3">
                 <div className="form-order">
                     <Form.Group>
                         <div className="mb-2">
@@ -108,7 +108,7 @@ function Product() {
                 </div>
             </div>
 
-            <div>
+            <div className="p-2 p-lg-3">
                 <div className="pg-rows">
                     <p className="m-0">Show</p>
                     <Dropdown className="reg-dr" style={{ width: 'fit-content' }}>
