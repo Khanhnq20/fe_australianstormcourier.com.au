@@ -10,7 +10,6 @@ import {
     UserProductHistoryDetails,
     UserUpdateProduct,
 } from '../pages';
-import { Container } from 'react-bootstrap';
 import { NotFound } from '../pages/errors';
 
 export const userChildrens = [

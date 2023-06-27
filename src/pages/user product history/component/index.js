@@ -14,39 +14,29 @@ import { Link } from 'react-router-dom';
 import { CustomSpinner } from '../../../layout';
 
 function UserHistory() {
-    const {
-        currentPage,
-        perPageAmount,
-        total,
-        loading,
-        error,
-        items,
-        nextPage,
-        prevPage,
-        setCurrent,
-        setPerPageAmount,
-        search,
-    } = usePagination({
-        fetchingAPIInstance: ({ controller, page, take, ...queries }) =>
-            authInstance.get([authConstraints.userRoot, authConstraints.getUserOrderHistory].join('/'), {
-                headers: {
-                    Authorization: [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(
-                        ' ',
-                    ),
-                },
-                signal: controller.signal,
-                params: {
-                    page,
-                    amount: take,
-                    ...queries,
-                },
-            }),
-        propToGetItem: 'results',
-        propToGetTotalPage: 'total',
-        amountPerPage: 10,
-        startingPage: 1,
-        totalPages: 1,
-    });
+    const { currentPage, perPageAmount, loading, items, nextPage, prevPage, setCurrent, setPerPageAmount, search } =
+        usePagination({
+            fetchingAPIInstance: ({ controller, page, take, ...queries }) =>
+                authInstance.get([authConstraints.userRoot, authConstraints.getUserOrderHistory].join('/'), {
+                    headers: {
+                        Authorization: [
+                            config.AuthenticationSchema,
+                            localStorage.getItem(authConstraints.LOCAL_KEY),
+                        ].join(' '),
+                    },
+                    signal: controller.signal,
+                    params: {
+                        page,
+                        amount: take,
+                        ...queries,
+                    },
+                }),
+            propToGetItem: 'results',
+            propToGetTotalPage: 'total',
+            amountPerPage: 10,
+            startingPage: 1,
+            totalPages: 1,
+        });
     const rows = [10, 15, 20, 25, 30, 35, 40];
 
     return (
@@ -272,7 +262,10 @@ function UserHistory() {
                                                                             <Col>
                                                                                 <Link
                                                                                     to={`/user/order/detail?orderid=${post?.id}`}
-                                                                                    state={post}
+                                                                                    state={{
+                                                                                        ...post,
+                                                                                        from: 'user/history',
+                                                                                    }}
                                                                                 >
                                                                                     <Button variant="primary">
                                                                                         Detail

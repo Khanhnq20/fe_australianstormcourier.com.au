@@ -17,7 +17,6 @@ export default function ItemCreation({
     setFieldValue,
     handleChange,
     handleBlur,
-    isValid,
     setParentPhoneError,
 }) {
     const product_img_ipt = useRef();

@@ -1,177 +1,175 @@
-import axios from "axios";
-import config from "../config";
-import { authConstraints } from "..";
+import axios from 'axios';
+import config from '../config';
+import { authConstraints } from '..';
 
 const constraints = {
-  root: "/api/auth",
-  userRoot: "/api/user",
-  driverRoot: "/api/driver",
-  adminRoot: "/api/admin",
-  userHub: "/hubs/user",
-  // Local storage key of access token
-  LOCAL_KEY: "actoken",
-  // Local storage key of refresh token
-  LOCAL_KEY_2: "ractoken",
-  // URL of API endpoints
-  signin: "signin",
-  signout: "signout",
+    root: '/api/auth',
+    userRoot: '/api/user',
+    driverRoot: '/api/driver',
+    adminRoot: '/api/admin',
+    userHub: '/hubs/user',
+    // Local storage key of access token
+    LOCAL_KEY: 'actoken',
+    // Local storage key of refresh token
+    LOCAL_KEY_2: 'ractoken',
+    // URL of API endpoints
+    signin: 'signin',
+    signout: 'signout',
 
-  signupUser: "register/customer",
-  signupDriver: "register/driver",
-  sendPhoneDigit: "phone/confirm",
-  verifiedUser: "verified/user",
-  verifiedPhone: "verified/phone",
+    signupUser: 'register/customer',
+    signupDriver: 'register/driver',
+    sendPhoneDigit: 'phone/confirm',
+    verifiedUser: 'verified/user',
+    verifiedPhone: 'verified/phone',
 
-  vehicles: "vehicles",
+    vehicles: 'vehicles',
 
-  updateUser: "update/user",
-  updateDriver: "update/driver",
-  resetPwd: "password/reset",
-  changePwd: "password/update",
+    updateUser: 'update/user',
+    updateDriver: 'update/driver',
+    resetPwd: 'password/reset',
+    changePwd: 'password/update',
 
-  getAccount: "account",
-  refreshToken: "refresh",
+    getAccount: 'account',
+    refreshToken: 'refresh',
 
-  packageTypes: "package/types",
-  postOrder: "order",
+    packageTypes: 'package/types',
+    postOrder: 'order',
+    putUpdateOrder: 'order',
+    putUpdateItem: 'item',
+    postNewItem: 'item',
+    getUserOrders: 'order',
+    getUserOrderHistory: 'history',
+    getSinglePayment: 'payment',
 
-  getUserOrders: "order",
-  getUserOrderHistory: "history",
-  getSinglePayment: "payment",
+    getDriverJobs: 'job',
+    postDriverOffers: 'offer',
+    getDriverHistory: 'history',
+    getDriverActiveOrders: 'order/active',
 
-  getDriverJobs: "job",
-  postDriverOffers: "offer",
-  getDriverHistory: "history",
-  getDriverActiveOrders: "order/active",
+    getAllOrderInfo: 'order/detail',
+    getOrderOffers: 'order/offers',
 
-  getAllOrderInfo: "order/detail",
-  getOrderOffers: "order/offers",
+    acceptDriverOffer: 'order/accept',
+    cancelDriverOffer: 'order/cancel',
+    postCheckoutIntentSessions: 'order/checkout-intent-session',
+    postCheckout: 'order/checkout',
 
-  acceptDriverOffer: "order/accept",
-  cancelDriverOffer: "order/cancel",
-  postCheckoutIntentSessions: "order/checkout-intent-session",
-  postCheckout: "order/checkout",
+    putCancelOffer: 'offer/cancel',
 
-  putCancelOffer: "offer/cancel",
+    getAccountsDriver: 'accounts/driver',
+    acceptAccountDriver: 'accounts/driver/accept',
+    getAllAccounts: 'accounts/customer',
+    blockAccount: 'account/block',
 
-  getAccountsDriver: "accounts/driver",
-  acceptAccountDriver: "accounts/driver/accept",
-  getAllAccounts: "accounts/customer",
-  blockAccount: "account/block",
+    getAllPayments: 'payments',
+    putPayoutPayments: 'payments/payout',
 
-  getAllPayments: "payments",
-  putPayoutPayments: "payments/payout",
+    putPrepareOrder: 'order/prepare',
+    putDeliverOrder: 'order/deliver',
+    putReceiveOrder: 'order/receive',
+    putCancelOrder: 'order/cancel',
 
-  putPrepareOrder: "order/prepare",
-  putDeliverOrder: "order/deliver",
-  putReceiveOrder: "order/receive",
-  putCancelOrder: "order/cancel",
+    postFeedback: 'feedback',
 
-  hubOnline: "online",
-  hubReceiveOnline: "online",
-  hubOnCreatedOrder: "order/create",
-  hubOnCreatedOrderReceived: "order/create",
-  hubOnChangeOrderStatus: "order/status",
-  hubOnReceiveOrderStatus: "order/status",
+    hubOnline: 'online',
+    hubReceiveOnline: 'online',
+    hubOnCreatedOrder: 'order/create',
+    hubOnCreatedOrderReceived: 'order/create',
+    hubOnChangeOrderStatus: 'order/status',
+    hubOnReceiveOrderStatus: 'order/status',
 
-  test: "test/authorizedUser",
-  getAccessToken: () => localStorage.getItem(constraints.LOCAL_KEY),
+    test: 'test/authorizedUser',
+    getAccessToken: () => localStorage.getItem(constraints.LOCAL_KEY),
 };
 
 export const authInstance = axios.create({
-  baseURL: config.APIHost,
+    baseURL: config.APIHost,
 });
 
 export function tryingToRefresh(trialTime, error, callback) {
-  const accessToken = localStorage.getItem(constraints.LOCAL_KEY);
-  const r_accesssToken = localStorage.getItem(constraints.LOCAL_KEY_2);
+    const accessToken = localStorage.getItem(constraints.LOCAL_KEY);
+    const r_accesssToken = localStorage.getItem(constraints.LOCAL_KEY_2);
 
-  if (trialTime > 0 && !!accessToken && !!r_accesssToken) {
-    return authInstance
-      .get([constraints.root, constraints.refreshToken].join("/"), {
-        params: {
-          accessToken: accessToken,
-          rtoken: r_accesssToken,
-        },
-      })
-      .then((response) => {
-        if (!!response?.data?.token) {
-          const { accessToken, refreshToken } = response.data?.token;
+    if (trialTime > 0 && !!accessToken && !!r_accesssToken) {
+        return authInstance
+            .get([constraints.root, constraints.refreshToken].join('/'), {
+                params: {
+                    accessToken: accessToken,
+                    rtoken: r_accesssToken,
+                },
+            })
+            .then((response) => {
+                if (!!response?.data?.token) {
+                    const { accessToken, refreshToken } = response.data?.token;
 
-          localStorage.removeItem(constraints.LOCAL_KEY);
-          localStorage.removeItem(constraints.LOCAL_KEY_2);
+                    localStorage.removeItem(constraints.LOCAL_KEY);
+                    localStorage.removeItem(constraints.LOCAL_KEY_2);
 
-          localStorage.setItem(constraints.LOCAL_KEY, accessToken);
-          localStorage.setItem(constraints.LOCAL_KEY_2, refreshToken);
+                    localStorage.setItem(constraints.LOCAL_KEY, accessToken);
+                    localStorage.setItem(constraints.LOCAL_KEY_2, refreshToken);
 
-          callback(accessToken);
-        }
-      })
-      .catch((err) => {
-        return tryingToRefresh(trialTime - 1, err);
-      });
-  }
-
-  return Promise.reject(error);
-}
-
-authInstance.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  async (error) => {
-    const isDevelopment = process.env.NODE_ENV === "development";
-    let originalRequest = error.config;
-    // if(error.message === "Network Error"){
-    //     window.location.replace("/error/500");
-    // }
-    if (
-      error?.response?.status === 401 &&
-      !originalRequest._retry &&
-      localStorage.getItem(authConstraints.LOCAL_KEY) &&
-      localStorage.getItem(authConstraints.LOCAL_KEY_2)
-    ) {
-      originalRequest._retry = true;
-
-      const response = await axios.get(
-        [constraints.root, constraints.refreshToken].join("/"),
-        {
-          baseURL: config.APIHost,
-          params: {
-            accessToken: localStorage.getItem(constraints.LOCAL_KEY),
-            rtoken: localStorage.getItem(constraints.LOCAL_KEY_2),
-          },
-        }
-      );
-
-      if (response?.data?.token) {
-        const { accessToken, refreshToken } = response?.data?.token;
-
-        localStorage.removeItem(constraints.LOCAL_KEY);
-        localStorage.removeItem(constraints.LOCAL_KEY_2);
-        localStorage.setItem(constraints.LOCAL_KEY, accessToken);
-        localStorage.setItem(constraints.LOCAL_KEY_2, refreshToken);
-
-        originalRequest.headers["Authorization"] = [
-          config.AuthenticationSchema,
-          accessToken,
-        ].join(" ");
-
-        return authInstance(originalRequest);
-      }
-    }
-    if (error?.response?.status === 400 && !isDevelopment) {
-      window.location.replace("/error/400");
-    }
-    if (error?.response?.status === 404 && !isDevelopment) {
-      window.location.replace("/error/404");
-    }
-    if (error?.response?.status === 500 && !isDevelopment) {
-      window.location.replace("/error/500");
+                    callback(accessToken);
+                }
+            })
+            .catch((err) => {
+                return tryingToRefresh(trialTime - 1, err);
+            });
     }
 
     return Promise.reject(error);
-  }
+}
+
+authInstance.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    async (error) => {
+        const isDevelopment = process.env.NODE_ENV === 'development';
+        let originalRequest = error.config;
+        // if(error.message === "Network Error"){
+        //     window.location.replace("/error/500");
+        // }
+        if (
+            error?.response?.status === 401 &&
+            !originalRequest._retry &&
+            localStorage.getItem(authConstraints.LOCAL_KEY) &&
+            localStorage.getItem(authConstraints.LOCAL_KEY_2)
+        ) {
+            originalRequest._retry = true;
+
+            const response = await axios.get([constraints.root, constraints.refreshToken].join('/'), {
+                baseURL: config.APIHost,
+                params: {
+                    accessToken: localStorage.getItem(constraints.LOCAL_KEY),
+                    rtoken: localStorage.getItem(constraints.LOCAL_KEY_2),
+                },
+            });
+
+            if (response?.data?.token) {
+                const { accessToken, refreshToken } = response?.data?.token;
+
+                localStorage.removeItem(constraints.LOCAL_KEY);
+                localStorage.removeItem(constraints.LOCAL_KEY_2);
+                localStorage.setItem(constraints.LOCAL_KEY, accessToken);
+                localStorage.setItem(constraints.LOCAL_KEY_2, refreshToken);
+
+                originalRequest.headers['Authorization'] = [config.AuthenticationSchema, accessToken].join(' ');
+
+                return authInstance(originalRequest);
+            }
+        }
+        if (error?.response?.status === 400 && !isDevelopment) {
+            window.location.replace('/error/400');
+        }
+        if (error?.response?.status === 404 && !isDevelopment) {
+            window.location.replace('/error/404');
+        }
+        if (error?.response?.status === 500 && !isDevelopment) {
+            window.location.replace('/error/500');
+        }
+
+        return Promise.reject(error);
+    },
 );
 
 export default constraints;

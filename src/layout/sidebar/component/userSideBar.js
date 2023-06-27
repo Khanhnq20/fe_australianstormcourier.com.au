@@ -86,8 +86,7 @@ export function UserSideBar({ children }) {
                                 </div>
                             </div>
                         </span>
-                        <span className="h-ctn">
-                            <div className=""></div>
+                        <span className="h-ctn" style={{ paddingBottom: '5rem' }}>
                             <div className="h-ctn-inner">
                                 <div className="h-header">
                                     <Breadcrumbs></Breadcrumbs>
