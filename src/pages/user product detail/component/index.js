@@ -11,21 +11,19 @@ import {
     Modal,
     Stack,
     Spinner,
-    FloatingLabel,
     InputGroup,
 } from 'react-bootstrap';
+import PaymentPopup from './paymentPopup';
 import '../style/senderProductDetail.css';
 import { MdPayment } from 'react-icons/md';
 import { FieldArray, Formik } from 'formik';
 import * as yup from 'yup';
 import { RiImageEditFill } from 'react-icons/ri';
-import { BsFillPersonVcardFill } from 'react-icons/bs';
-import { Navigate, useLocation, useSearchParams } from 'react-router-dom';
+import { Navigate, useSearchParams } from 'react-router-dom';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import { authConstraints, authInstance, config } from '../../../api';
 import { usePagination } from '../../../hooks';
-import { PaymentComponents } from '../..';
 import { CustomSpinner } from '../../../layout';
 import Carousel from 'react-bootstrap/Carousel';
 import { FaTimes } from 'react-icons/fa';
@@ -36,9 +34,9 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { AuthContext } from '../../../stores';
-import Barcode from 'react-barcode';
 import PhoneInput from 'react-phone-input-2';
 import { dotnetFormDataSerialize } from '../../../ultitlies';
+import Driver from './driver';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -888,1190 +886,1254 @@ function ProductDetail() {
                 </Row>
 
                 {/* Item Information */}
-                <div className="sender-product-title">
-                    <p className="product-content-title my-4">Product Information</p>
-                </div>
-                <Swiper
-                    pagination={{
-                        type: 'fraction',
-                        renderFraction: (currentClass, totalClass) => {
+                <div>
+                    <div className="sender-product-title">
+                        <p className="product-content-title my-4">Product Information</p>
+                    </div>
+                    <Swiper
+                        pagination={{
+                            type: 'fraction',
+                            renderFraction: (currentClass, totalClass) => {
+                                return (
+                                    '<span class="' +
+                                    currentClass +
+                                    '"></span>' +
+                                    ' of ' +
+                                    '<span class="' +
+                                    totalClass +
+                                    '"></span>'
+                                );
+                            },
+                        }}
+                        autoHeight={true}
+                        navigation={true}
+                        spaceBetween={20}
+                        modules={[Navigation, SwiperPagination]}
+                        slideNextClass={'aus-swiper-slider-next'}
+                        slidePrevClass={'aus-swiper-slider-prev'}
+                        currentClass="aus-swiper-current"
+                        totalClass="aus-swiper-total"
+                    >
+                        {order?.orderItems?.map?.((item, index) => {
                             return (
-                                '<span class="' +
-                                currentClass +
-                                '"></span>' +
-                                ' of ' +
-                                '<span class="' +
-                                totalClass +
-                                '"></span>'
-                            );
-                        },
-                    }}
-                    autoHeight={true}
-                    navigation={true}
-                    spaceBetween={20}
-                    modules={[Navigation, SwiperPagination]}
-                    slideNextClass={'aus-swiper-slider-next'}
-                    slidePrevClass={'aus-swiper-slider-prev'}
-                    currentClass="aus-swiper-current"
-                    totalClass="aus-swiper-total"
-                >
-                    {order?.orderItems?.map?.((item, index) => {
-                        return (
-                            <SwiperSlide key={index} className="pb-5">
-                                <Button variant="success" className="mb-3" onClick={() => setEditItemodal(index)}>
-                                    Edit
-                                </Button>
-                                <Modal show={editItemModal === index} onHide={() => setEditItemodal(null)}>
-                                    <Modal.Header closeButton>
-                                        <h4 style={{ margin: 0 }}>Edit Item</h4>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                        <Formik
-                                            initialValues={{
-                                                itemName: item.itemName,
-                                                destination: {
-                                                    unitNumber: '',
-                                                    streetNumber: '',
-                                                    streetName: '',
-                                                    suburb: '',
-                                                    state: '',
-                                                    postCode: '',
-                                                },
-                                                receiverName: item.receiverName,
-                                                receiverPhone: item.receiverPhone,
-                                                itemDescription: item.itemDescription,
-                                                quantity: item?.quantity,
-                                                weight: item?.weight,
-                                                packageType: authState?.packageTypes?.[0],
-                                                productPictures: [],
-                                            }}
-                                            validationSchema={yup.object().shape({
-                                                itemName: yup.string().required('Item Name is required field'),
-                                                destination: yup.object().shape({
-                                                    unitNumber: yup.string().required('Unit Number is required'),
-                                                    streetNumber: yup.string().required('Street Number is required'),
-                                                    streetName: yup.string().required('Street Name is required'),
-                                                    suburb: yup.string().required('Suburb is required'),
-                                                    state: yup.string().required('State is required'),
-                                                    postCode: yup.number().required('Post code is required'),
-                                                }),
-                                                itemDescription: yup.string().nullable(),
-                                                receiverName: yup.string().required('Receiver Name is required'),
-                                                receiverPhone: yup.string().required('Receiver Phone is required'),
-                                                quantity: yup
-                                                    .number()
-                                                    .positive()
-                                                    .min(1, 'Quantity should be larger then 1 and least than 10')
-                                                    .max(10, 'Quantity should be larger then 1 and least than 10')
-                                                    .required('Quantity is required field'),
-                                                weight: yup.number().positive().required('Weight is required field'),
-                                                packageType: yup.string().required('Package Type is required field'),
-                                                productPictures: yup
-                                                    .array()
-                                                    .of(
-                                                        yup.object().shape({
-                                                            file: yup.mixed().required(),
-                                                            url: yup.string().required(),
-                                                        }),
-                                                    )
-                                                    .min(1, 'Adding more pictures for product')
-                                                    .required('Adding more pictures for product')
-                                                    .test('FILE SIZE', 'the file collection is too large', (files) => {
-                                                        if (!files) {
-                                                            return true;
-                                                        }
-                                                        return (
-                                                            files.reduce((p, c) => c.file.size + p, 0) <=
-                                                            2 * 1024 * 1024
-                                                        );
-                                                    })
-                                                    .test(
-                                                        'FILE FORMAT',
-                                                        `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
-                                                        (files) => {
-                                                            if (!files.length) {
-                                                                return true;
-                                                            }
-                                                            return files.every((c) =>
-                                                                PERMIT_FILE_FORMATS.includes(c.file.type),
-                                                            );
-                                                        },
-                                                    ),
-                                            })}
-                                            onSubmit={(values) => {
-                                                const handledObjects = {
-                                                    ...values,
-                                                    productPictures: values.productPictures
-                                                        .filter((item) => item?.file)
-                                                        .map((item) => item?.file),
-                                                };
-                                                console.log(handledObjects);
+                                <SwiperSlide key={index} className="pb-5">
+                                    <Button variant="success" className="mb-3" onClick={() => setEditItemodal(index)}>
+                                        Edit
+                                    </Button>
+                                    <Modal show={editItemModal === index} onHide={() => setEditItemodal(null)}>
+                                        <Modal.Header closeButton>
+                                            <h4 style={{ margin: 0 }}>Edit Item</h4>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            <Formik
+                                                initialValues={{
+                                                    itemName: item.itemName,
+                                                    destination: {
+                                                        unitNumber: '',
+                                                        streetNumber: '',
+                                                        streetName: '',
+                                                        suburb: '',
+                                                        state: '',
+                                                        postCode: '',
+                                                    },
+                                                    receiverName: item.receiverName,
+                                                    receiverPhone: item.receiverPhone,
+                                                    itemDescription: item.itemDescription,
+                                                    quantity: item?.quantity,
+                                                    weight: item?.weight,
+                                                    packageType: authState?.packageTypes?.[0],
+                                                    productPictures: [],
+                                                }}
+                                                validationSchema={yup.object().shape({
+                                                    itemName: yup.string().required('Item Name is required field'),
+                                                    destination: yup.object().shape({
+                                                        unitNumber: yup.string().required('Unit Number is required'),
+                                                        streetNumber: yup
+                                                            .string()
+                                                            .required('Street Number is required'),
+                                                        streetName: yup.string().required('Street Name is required'),
+                                                        suburb: yup.string().required('Suburb is required'),
+                                                        state: yup.string().required('State is required'),
+                                                        postCode: yup.number().required('Post code is required'),
+                                                    }),
+                                                    itemDescription: yup.string().nullable(),
+                                                    receiverName: yup.string().required('Receiver Name is required'),
+                                                    receiverPhone: yup.string().required('Receiver Phone is required'),
+                                                    quantity: yup
+                                                        .number()
+                                                        .positive()
+                                                        .min(1, 'Quantity should be larger then 1 and least than 10')
+                                                        .max(10, 'Quantity should be larger then 1 and least than 10')
+                                                        .required('Quantity is required field'),
+                                                    weight: yup
+                                                        .number()
+                                                        .positive()
+                                                        .required('Weight is required field'),
+                                                    packageType: yup
+                                                        .string()
+                                                        .required('Package Type is required field'),
+                                                    productPictures: yup
+                                                        .array()
+                                                        .of(
+                                                            yup.object().shape({
+                                                                file: yup.mixed().required(),
+                                                                url: yup.string().required(),
+                                                            }),
+                                                        )
+                                                        .min(1, 'Adding more pictures for product')
+                                                        .required('Adding more pictures for product')
+                                                        .test(
+                                                            'FILE SIZE',
+                                                            'the file collection is too large',
+                                                            (files) => {
+                                                                if (!files) {
+                                                                    return true;
+                                                                }
+                                                                return (
+                                                                    files.reduce((p, c) => c.file.size + p, 0) <=
+                                                                    2 * 1024 * 1024
+                                                                );
+                                                            },
+                                                        )
+                                                        .test(
+                                                            'FILE FORMAT',
+                                                            `the file format should be ${PERMIT_FILE_FORMATS.join()}`,
+                                                            (files) => {
+                                                                if (!files.length) {
+                                                                    return true;
+                                                                }
+                                                                return files.every((c) =>
+                                                                    PERMIT_FILE_FORMATS.includes(c.file.type),
+                                                                );
+                                                            },
+                                                        ),
+                                                })}
+                                                onSubmit={(values) => {
+                                                    const handledObjects = {
+                                                        ...values,
+                                                        productPictures: values.productPictures
+                                                            .filter((item) => item?.file)
+                                                            .map((item) => item?.file),
+                                                    };
+                                                    console.log(handledObjects);
 
-                                                const formData = dotnetFormDataSerialize(handledObjects, {
-                                                    indices: true,
-                                                    dotsForObjectNotation: true,
-                                                });
+                                                    const formData = dotnetFormDataSerialize(handledObjects, {
+                                                        indices: true,
+                                                        dotsForObjectNotation: true,
+                                                    });
 
-                                                editItem(item?.id, formData);
-                                            }}
-                                        >
-                                            {({
-                                                handleChange,
-                                                handleSubmit,
-                                                handleBlur,
-                                                setFieldValue,
-                                                values,
-                                                errors,
-                                                isValid,
-                                                touched,
-                                            }) => {
-                                                return (
-                                                    <Form className="p-2" onSubmit={handleSubmit}>
-                                                        <Form.Group className="mb-4">
-                                                            {/* Receiver Information */}
-                                                            <h5 className="my-3">Receiver Information</h5>
-                                                            <Row>
-                                                                <Col>
+                                                    editItem(item?.id, formData);
+                                                }}
+                                            >
+                                                {({
+                                                    handleChange,
+                                                    handleSubmit,
+                                                    handleBlur,
+                                                    setFieldValue,
+                                                    values,
+                                                    errors,
+                                                    isValid,
+                                                    touched,
+                                                }) => {
+                                                    return (
+                                                        <Form className="p-2" onSubmit={handleSubmit}>
+                                                            <Form.Group className="mb-4">
+                                                                {/* Receiver Information */}
+                                                                <h5 className="my-3">Receiver Information</h5>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <Form.Group>
+                                                                            <div className="mb-2">
+                                                                                <Form.Label className="label">
+                                                                                    Receiver Name
+                                                                                </Form.Label>
+                                                                                <p className="asterisk">*</p>
+                                                                            </div>
+                                                                            <Form.Control
+                                                                                type="text"
+                                                                                name={`receiverName`}
+                                                                                placeholder="Enter Receiver Name"
+                                                                                value={values?.receiverName}
+                                                                                isInvalid={
+                                                                                    touched?.receiverName &&
+                                                                                    !!errors?.receiverName
+                                                                                }
+                                                                                onChange={handleChange}
+                                                                                onBlur={handleBlur}
+                                                                            />
+                                                                            <Form.Control.Feedback type="invalid">
+                                                                                {errors?.receiverName}
+                                                                            </Form.Control.Feedback>
+                                                                        </Form.Group>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        {/* Phone */}
+                                                                        <Form.Group>
+                                                                            <div className="mb-2">
+                                                                                <Form.Label className="label">
+                                                                                    Phone Number
+                                                                                </Form.Label>
+                                                                                <p className="asterisk">*</p>
+                                                                            </div>
+                                                                            <PhoneInput
+                                                                                country={'au'}
+                                                                                value={values?.receiverPhone}
+                                                                                containerClass="w-100"
+                                                                                inputClass="w-100"
+                                                                                onChange={(phone) =>
+                                                                                    setFieldValue(
+                                                                                        `receiverPhone`,
+                                                                                        phone,
+                                                                                    )
+                                                                                }
+                                                                                onlyCountries={['au', 'vn']}
+                                                                                preferredCountries={['au']}
+                                                                                placeholder="Enter Receiver Phone number"
+                                                                                autoFormat={true}
+                                                                                isValid={(
+                                                                                    inputNumber,
+                                                                                    _,
+                                                                                    countries,
+                                                                                ) => {
+                                                                                    const isValid = countries.some(
+                                                                                        (country) => {
+                                                                                            return (
+                                                                                                inputNumber.startsWith(
+                                                                                                    country.dialCode,
+                                                                                                ) ||
+                                                                                                country.dialCode.startsWith(
+                                                                                                    inputNumber,
+                                                                                                )
+                                                                                            );
+                                                                                        },
+                                                                                    );
+
+                                                                                    setPhoneError('');
+
+                                                                                    if (!isValid) {
+                                                                                        setPhoneError(
+                                                                                            'Your phone is not match with dial code',
+                                                                                        );
+                                                                                    }
+
+                                                                                    return isValid;
+                                                                                }}
+                                                                            ></PhoneInput>
+                                                                            <Form.Control
+                                                                                type="hidden"
+                                                                                name={`receiverPhone`}
+                                                                                defaultValue={values?.phone}
+                                                                                isInvalid={
+                                                                                    !!errors?.phone || !!phoneError
+                                                                                }
+                                                                            />
+                                                                            <Form.Control.Feedback type="invalid">
+                                                                                {errors?.phone || phoneError}
+                                                                            </Form.Control.Feedback>
+                                                                        </Form.Group>
+                                                                    </Col>
+                                                                </Row>
+                                                            </Form.Group>
+                                                            {/* Destination */}
+                                                            <Form.Group className="mb-4">
+                                                                <div className="mb-2">
+                                                                    <Form.Label className="label">
+                                                                        Destination
+                                                                    </Form.Label>
+                                                                    <p className="asterisk">*</p>
+                                                                </div>
+                                                                <div className="pickup-post">
+                                                                    {/* Unit Number */}
                                                                     <Form.Group>
-                                                                        <div className="mb-2">
-                                                                            <Form.Label className="label">
-                                                                                Receiver Name
-                                                                            </Form.Label>
-                                                                            <p className="asterisk">*</p>
-                                                                        </div>
                                                                         <Form.Control
                                                                             type="text"
-                                                                            name={`receiverName`}
-                                                                            placeholder="Enter Receiver Name"
-                                                                            value={values?.receiverName}
+                                                                            name={`destination.unitNumber`}
+                                                                            placeholder="Enter Unit number (apartment, room,...)"
+                                                                            value={values?.destination?.unitNumber}
                                                                             isInvalid={
-                                                                                touched?.receiverName &&
-                                                                                !!errors?.receiverName
+                                                                                touched?.destination?.unitNumber &&
+                                                                                !!errors?.destination?.unitNumber
                                                                             }
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
                                                                         />
                                                                         <Form.Control.Feedback type="invalid">
-                                                                            {errors?.receiverName}
+                                                                            {errors?.destination?.unitNumber}
+                                                                        </Form.Control.Feedback>
+                                                                    </Form.Group>
+
+                                                                    {/* Street Number */}
+                                                                    <Form.Group>
+                                                                        <Form.Control
+                                                                            type="text"
+                                                                            name={`destination.streetNumber`}
+                                                                            value={values?.destination?.streetNumber}
+                                                                            placeholder="Enter street number"
+                                                                            isInvalid={
+                                                                                touched?.destination?.streetNumber &&
+                                                                                !!errors?.destination?.streetNumber
+                                                                            }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                        />
+                                                                        <Form.Control.Feedback type="invalid">
+                                                                            {errors?.destination?.streetNumber}
+                                                                        </Form.Control.Feedback>
+                                                                    </Form.Group>
+
+                                                                    {/* Street Name */}
+                                                                    <Form.Group>
+                                                                        <Form.Control
+                                                                            type="text"
+                                                                            name={`destination.streetName`}
+                                                                            placeholder="Enter Street Name"
+                                                                            value={values?.destination?.streetName}
+                                                                            isInvalid={
+                                                                                touched?.destination?.streetName &&
+                                                                                !!errors?.destination?.streetName
+                                                                            }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                        />
+                                                                        <Form.Control.Feedback type="invalid">
+                                                                            {errors?.destination?.streetName}
+                                                                        </Form.Control.Feedback>
+                                                                    </Form.Group>
+
+                                                                    {/* Suburb */}
+                                                                    <Form.Group>
+                                                                        <Form.Control
+                                                                            type="text"
+                                                                            name={`destination.suburb`}
+                                                                            placeholder="Enter Suburb"
+                                                                            value={values?.destination?.suburb}
+                                                                            isInvalid={
+                                                                                touched?.destination?.suburb &&
+                                                                                !!errors?.destination?.suburb
+                                                                            }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                        />
+                                                                        <Form.Control.Feedback type="invalid">
+                                                                            {errors?.destination?.suburb}
+                                                                        </Form.Control.Feedback>
+                                                                    </Form.Group>
+
+                                                                    {/* State */}
+                                                                    <Form.Group>
+                                                                        <Form.Control
+                                                                            type="text"
+                                                                            name={`destination.state`}
+                                                                            placeholder="Enter state"
+                                                                            value={
+                                                                                values.orderItems?.[index]?.destination
+                                                                                    ?.state
+                                                                            }
+                                                                            isInvalid={
+                                                                                touched?.destination?.state &&
+                                                                                !!errors?.destination?.state
+                                                                            }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                        />
+                                                                        <Form.Control.Feedback type="invalid">
+                                                                            {errors?.destination?.state}
+                                                                        </Form.Control.Feedback>
+                                                                    </Form.Group>
+
+                                                                    {/* State */}
+                                                                    <Form.Group>
+                                                                        <Form.Control
+                                                                            type="text"
+                                                                            name={`destination.postCode`}
+                                                                            placeholder="Enter post code"
+                                                                            value={values?.destination?.postCode}
+                                                                            isInvalid={
+                                                                                touched?.destination?.postCode &&
+                                                                                !!errors?.destination?.postCode
+                                                                            }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                        />
+                                                                        <Form.Control.Feedback type="invalid">
+                                                                            {errors?.destination?.postCode}
+                                                                        </Form.Control.Feedback>
+                                                                    </Form.Group>
+                                                                </div>
+                                                            </Form.Group>
+                                                            {/* Item Name  */}
+                                                            <Form.Group className="mb-3">
+                                                                <div className="mb-2">
+                                                                    <Form.Label className="label">Item Name</Form.Label>
+                                                                    <p className="asterisk">*</p>
+                                                                </div>
+                                                                <Form.Control
+                                                                    type="text"
+                                                                    name={`itemName`}
+                                                                    value={values?.itemName}
+                                                                    placeholder="Enter Product Name"
+                                                                    isInvalid={touched?.itemName && errors?.itemName}
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors?.itemName}
+                                                                </Form.Control.Feedback>
+                                                            </Form.Group>
+                                                            {/* Item Description  */}
+                                                            <Form.Group className="mb-3">
+                                                                <div className="mb-2">
+                                                                    <Form.Label className="label">
+                                                                        Product Description
+                                                                    </Form.Label>
+                                                                    <p className="asterisk">*</p>
+                                                                </div>
+                                                                <Form.Control
+                                                                    as="textarea"
+                                                                    row="3"
+                                                                    placeholder="Enter Product Description"
+                                                                    name={`itemDescription`}
+                                                                    value={values?.itemDescription}
+                                                                    isInvalid={
+                                                                        touched?.itemDescription &&
+                                                                        !!errors?.itemDescription
+                                                                    }
+                                                                    onChange={handleChange}
+                                                                    onBlur={handleBlur}
+                                                                />
+                                                                <Form.Control.Feedback type="invalid">
+                                                                    {errors?.itemDescription}
+                                                                </Form.Control.Feedback>
+                                                            </Form.Group>
+                                                            {/* Quantity and Weight */}
+                                                            <Row>
+                                                                <Col>
+                                                                    {/* Quantity  */}
+                                                                    <Form.Group className="mb-3">
+                                                                        <div className="mb-2">
+                                                                            <Form.Label className="label">
+                                                                                Quantity
+                                                                            </Form.Label>
+                                                                            <p className="asterisk">*</p>
+                                                                        </div>
+                                                                        <Form.Control
+                                                                            type="number"
+                                                                            className="product-form-input"
+                                                                            min={0}
+                                                                            max={10}
+                                                                            name={`quantity`}
+                                                                            placeholder="Enter Quantity"
+                                                                            value={values?.quantity}
+                                                                            isInvalid={
+                                                                                touched?.quantity && !!errors?.quantity
+                                                                            }
+                                                                            onChange={handleChange}
+                                                                            onBlur={handleBlur}
+                                                                        />
+                                                                        <Form.Control.Feedback type="invalid">
+                                                                            {errors?.quantity}
                                                                         </Form.Control.Feedback>
                                                                     </Form.Group>
                                                                 </Col>
                                                                 <Col>
-                                                                    {/* Phone */}
-                                                                    <Form.Group>
+                                                                    {/* Weight  */}
+                                                                    <Form.Group className="mb-3">
                                                                         <div className="mb-2">
                                                                             <Form.Label className="label">
-                                                                                Phone Number
+                                                                                Weight
                                                                             </Form.Label>
                                                                             <p className="asterisk">*</p>
                                                                         </div>
-                                                                        <PhoneInput
-                                                                            country={'au'}
-                                                                            value={values?.receiverPhone}
-                                                                            containerClass="w-100"
-                                                                            inputClass="w-100"
-                                                                            onChange={(phone) =>
-                                                                                setFieldValue(`receiverPhone`, phone)
-                                                                            }
-                                                                            onlyCountries={['au', 'vn']}
-                                                                            preferredCountries={['au']}
-                                                                            placeholder="Enter Receiver Phone number"
-                                                                            autoFormat={true}
-                                                                            isValid={(inputNumber, _, countries) => {
-                                                                                const isValid = countries.some(
-                                                                                    (country) => {
-                                                                                        return (
-                                                                                            inputNumber.startsWith(
-                                                                                                country.dialCode,
-                                                                                            ) ||
-                                                                                            country.dialCode.startsWith(
-                                                                                                inputNumber,
-                                                                                            )
-                                                                                        );
-                                                                                    },
-                                                                                );
-
-                                                                                setPhoneError('');
-
-                                                                                if (!isValid) {
-                                                                                    setPhoneError(
-                                                                                        'Your phone is not match with dial code',
-                                                                                    );
+                                                                        <InputGroup>
+                                                                            <Form.Control
+                                                                                type="text"
+                                                                                name={`weight`}
+                                                                                placeholder="Enter item weight"
+                                                                                value={values?.weight}
+                                                                                isInvalid={
+                                                                                    touched?.weight && !!errors?.weight
                                                                                 }
-
-                                                                                return isValid;
-                                                                            }}
-                                                                        ></PhoneInput>
-                                                                        <Form.Control
-                                                                            type="hidden"
-                                                                            name={`receiverPhone`}
-                                                                            defaultValue={values?.phone}
-                                                                            isInvalid={!!errors?.phone || !!phoneError}
-                                                                        />
-                                                                        <Form.Control.Feedback type="invalid">
-                                                                            {errors?.phone || phoneError}
-                                                                        </Form.Control.Feedback>
+                                                                                onChange={handleChange}
+                                                                                onBlur={handleBlur}
+                                                                                aria-describedby="weight"
+                                                                            />
+                                                                            <InputGroup.Text id="weight">
+                                                                                Kilogram
+                                                                            </InputGroup.Text>
+                                                                            <Form.Control.Feedback type="invalid">
+                                                                                {errors?.weight}
+                                                                            </Form.Control.Feedback>
+                                                                        </InputGroup>
                                                                     </Form.Group>
                                                                 </Col>
                                                             </Row>
-                                                        </Form.Group>
-                                                        {/* Destination */}
-                                                        <Form.Group className="mb-4">
-                                                            <div className="mb-2">
-                                                                <Form.Label className="label">Destination</Form.Label>
-                                                                <p className="asterisk">*</p>
-                                                            </div>
-                                                            <div className="pickup-post">
-                                                                {/* Unit Number */}
-                                                                <Form.Group>
-                                                                    <Form.Control
-                                                                        type="text"
-                                                                        name={`destination.unitNumber`}
-                                                                        placeholder="Enter Unit number (apartment, room,...)"
-                                                                        value={values?.destination?.unitNumber}
-                                                                        isInvalid={
-                                                                            touched?.destination?.unitNumber &&
-                                                                            !!errors?.destination?.unitNumber
-                                                                        }
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                    />
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors?.destination?.unitNumber}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
+                                                            {/* Product Pictures & Shipping Rate & PackageType & Vehicles*/}
+                                                            <Row>
+                                                                {/* Shipping Rate & Package Type & Vehicles */}
+                                                                <Col sm="12" xl="6">
+                                                                    {/* Package Type */}
+                                                                    <Form.Group className="mb-3">
+                                                                        <div className="mb-2">
+                                                                            <Form.Label className="label">
+                                                                                Package Type
+                                                                            </Form.Label>
+                                                                            <p className="asterisk">*</p>
+                                                                        </div>
 
-                                                                {/* Street Number */}
-                                                                <Form.Group>
-                                                                    <Form.Control
-                                                                        type="text"
-                                                                        name={`destination.streetNumber`}
-                                                                        value={values?.destination?.streetNumber}
-                                                                        placeholder="Enter street number"
-                                                                        isInvalid={
-                                                                            touched?.destination?.streetNumber &&
-                                                                            !!errors?.destination?.streetNumber
-                                                                        }
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                    />
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors?.destination?.streetNumber}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
-
-                                                                {/* Street Name */}
-                                                                <Form.Group>
-                                                                    <Form.Control
-                                                                        type="text"
-                                                                        name={`destination.streetName`}
-                                                                        placeholder="Enter Street Name"
-                                                                        value={values?.destination?.streetName}
-                                                                        isInvalid={
-                                                                            touched?.destination?.streetName &&
-                                                                            !!errors?.destination?.streetName
-                                                                        }
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                    />
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors?.destination?.streetName}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
-
-                                                                {/* Suburb */}
-                                                                <Form.Group>
-                                                                    <Form.Control
-                                                                        type="text"
-                                                                        name={`destination.suburb`}
-                                                                        placeholder="Enter Suburb"
-                                                                        value={values?.destination?.suburb}
-                                                                        isInvalid={
-                                                                            touched?.destination?.suburb &&
-                                                                            !!errors?.destination?.suburb
-                                                                        }
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                    />
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors?.destination?.suburb}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
-
-                                                                {/* State */}
-                                                                <Form.Group>
-                                                                    <Form.Control
-                                                                        type="text"
-                                                                        name={`destination.state`}
-                                                                        placeholder="Enter state"
-                                                                        value={
-                                                                            values.orderItems?.[index]?.destination
-                                                                                ?.state
-                                                                        }
-                                                                        isInvalid={
-                                                                            touched?.destination?.state &&
-                                                                            !!errors?.destination?.state
-                                                                        }
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                    />
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors?.destination?.state}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
-
-                                                                {/* State */}
-                                                                <Form.Group>
-                                                                    <Form.Control
-                                                                        type="text"
-                                                                        name={`destination.postCode`}
-                                                                        placeholder="Enter post code"
-                                                                        value={values?.destination?.postCode}
-                                                                        isInvalid={
-                                                                            touched?.destination?.postCode &&
-                                                                            !!errors?.destination?.postCode
-                                                                        }
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                    />
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors?.destination?.postCode}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
-                                                            </div>
-                                                        </Form.Group>
-                                                        {/* Item Name  */}
-                                                        <Form.Group className="mb-3">
-                                                            <div className="mb-2">
-                                                                <Form.Label className="label">Item Name</Form.Label>
-                                                                <p className="asterisk">*</p>
-                                                            </div>
-                                                            <Form.Control
-                                                                type="text"
-                                                                name={`itemName`}
-                                                                value={values?.itemName}
-                                                                placeholder="Enter Product Name"
-                                                                isInvalid={touched?.itemName && errors?.itemName}
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                            />
-                                                            <Form.Control.Feedback type="invalid">
-                                                                {errors?.itemName}
-                                                            </Form.Control.Feedback>
-                                                        </Form.Group>
-                                                        {/* Item Description  */}
-                                                        <Form.Group className="mb-3">
-                                                            <div className="mb-2">
-                                                                <Form.Label className="label">
-                                                                    Product Description
-                                                                </Form.Label>
-                                                                <p className="asterisk">*</p>
-                                                            </div>
-                                                            <Form.Control
-                                                                as="textarea"
-                                                                row="3"
-                                                                placeholder="Enter Product Description"
-                                                                name={`itemDescription`}
-                                                                value={values?.itemDescription}
-                                                                isInvalid={
-                                                                    touched?.itemDescription &&
-                                                                    !!errors?.itemDescription
-                                                                }
-                                                                onChange={handleChange}
-                                                                onBlur={handleBlur}
-                                                            />
-                                                            <Form.Control.Feedback type="invalid">
-                                                                {errors?.itemDescription}
-                                                            </Form.Control.Feedback>
-                                                        </Form.Group>
-                                                        {/* Quantity and Weight */}
-                                                        <Row>
-                                                            <Col>
-                                                                {/* Quantity  */}
-                                                                <Form.Group className="mb-3">
-                                                                    <div className="mb-2">
-                                                                        <Form.Label className="label">
-                                                                            Quantity
-                                                                        </Form.Label>
-                                                                        <p className="asterisk">*</p>
-                                                                    </div>
-                                                                    <Form.Control
-                                                                        type="number"
-                                                                        className="product-form-input"
-                                                                        min={0}
-                                                                        max={10}
-                                                                        name={`quantity`}
-                                                                        placeholder="Enter Quantity"
-                                                                        value={values?.quantity}
-                                                                        isInvalid={
-                                                                            touched?.quantity && !!errors?.quantity
-                                                                        }
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                    />
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors?.quantity}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
-                                                            </Col>
-                                                            <Col>
-                                                                {/* Weight  */}
-                                                                <Form.Group className="mb-3">
-                                                                    <div className="mb-2">
-                                                                        <Form.Label className="label">
-                                                                            Weight
-                                                                        </Form.Label>
-                                                                        <p className="asterisk">*</p>
-                                                                    </div>
-                                                                    <InputGroup>
-                                                                        <Form.Control
-                                                                            type="text"
-                                                                            name={`weight`}
-                                                                            placeholder="Enter item weight"
-                                                                            value={values?.weight}
+                                                                        <Form.Select
+                                                                            type="string"
+                                                                            name={`packageType`}
+                                                                            placeholder="Select your type of package"
                                                                             isInvalid={
-                                                                                touched?.weight && !!errors?.weight
+                                                                                touched?.packageType &&
+                                                                                !!errors?.packageType
                                                                             }
                                                                             onChange={handleChange}
                                                                             onBlur={handleBlur}
-                                                                            aria-describedby="weight"
-                                                                        />
-                                                                        <InputGroup.Text id="weight">
-                                                                            Kilogram
-                                                                        </InputGroup.Text>
-                                                                        <Form.Control.Feedback type="invalid">
-                                                                            {errors?.weight}
-                                                                        </Form.Control.Feedback>
-                                                                    </InputGroup>
-                                                                </Form.Group>
-                                                            </Col>
-                                                        </Row>
-                                                        {/* Product Pictures & Shipping Rate & PackageType & Vehicles*/}
-                                                        <Row>
-                                                            {/* Shipping Rate & Package Type & Vehicles */}
-                                                            <Col sm="12" xl="6">
-                                                                {/* Package Type */}
-                                                                <Form.Group className="mb-3">
-                                                                    <div className="mb-2">
-                                                                        <Form.Label className="label">
-                                                                            Package Type
-                                                                        </Form.Label>
-                                                                        <p className="asterisk">*</p>
-                                                                    </div>
-
-                                                                    <Form.Select
-                                                                        type="string"
-                                                                        name={`packageType`}
-                                                                        placeholder="Select your type of package"
-                                                                        isInvalid={
-                                                                            touched?.packageType &&
-                                                                            !!errors?.packageType
-                                                                        }
-                                                                        onChange={handleChange}
-                                                                        onBlur={handleBlur}
-                                                                        defaultValue={values?.packageType}
-                                                                    >
-                                                                        {authState?.packageTypes?.map((type, index) => {
-                                                                            return (
-                                                                                <option key={index} value={type}>
-                                                                                    {type}
-                                                                                </option>
-                                                                            );
-                                                                        })}
-                                                                    </Form.Select>
-                                                                    <Form.Control.Feedback type="invalid">
-                                                                        {errors?.orderItems?.[index]?.packageType}
-                                                                    </Form.Control.Feedback>
-                                                                </Form.Group>
-                                                            </Col>
-                                                            {/* Old Product Pictures */}
-                                                            <Col>
-                                                                <Form.Group className="mb-3">
-                                                                    <div className="mb-2">
-                                                                        <Form.Label className="label">
-                                                                            Old Pictures
-                                                                        </Form.Label>
-                                                                    </div>
-                                                                </Form.Group>
-                                                                <Row>
-                                                                    {item?.itemImages.split('[space]').map((image) => (
-                                                                        <Col>
-                                                                            <img
-                                                                                src={image}
-                                                                                className="w-100"
-                                                                                style={{ maxWidth: '120px' }}
-                                                                            ></img>
-                                                                        </Col>
-                                                                    ))}
-                                                                </Row>
-                                                            </Col>
-                                                            {/* Product pictures */}
-                                                            <Col sm="12" xl="6">
-                                                                <Form.Group className="mb-3">
-                                                                    <div className="mb-2">
-                                                                        <Form.Label className="label">
-                                                                            Product Images
-                                                                        </Form.Label>
-                                                                        <p className="asterisk">*</p>
-                                                                    </div>
-                                                                    <div className="back-up">
-                                                                        <FieldArray
-                                                                            name={`productPictures`}
-                                                                            render={(arrayHelpers) => {
-                                                                                return (
-                                                                                    <>
-                                                                                        <Form.Control
-                                                                                            type="file"
-                                                                                            id="driver_image_back"
-                                                                                            ref={product_img_ipt}
-                                                                                            multiple
-                                                                                            isInvalid={
-                                                                                                !!errors?.productPictures
-                                                                                            }
-                                                                                            onChange={(e) => {
-                                                                                                const files =
-                                                                                                    e.target.files;
-                                                                                                for (
-                                                                                                    var i = 0;
-                                                                                                    i < files.length;
-                                                                                                    i++
-                                                                                                ) {
-                                                                                                    //for multiple files
-                                                                                                    (function (file) {
-                                                                                                        const fileReader =
-                                                                                                            new FileReader();
-                                                                                                        fileReader.onload =
-                                                                                                            function (
-                                                                                                                e,
-                                                                                                            ) {
-                                                                                                                // get file content
-                                                                                                                fileReader.addEventListener(
-                                                                                                                    'loadend',
-                                                                                                                    (
-                                                                                                                        e,
-                                                                                                                    ) => {
-                                                                                                                        arrayHelpers.push(
-                                                                                                                            {
-                                                                                                                                file,
-                                                                                                                                url: fileReader.result,
-                                                                                                                            },
-                                                                                                                        );
-                                                                                                                    },
-                                                                                                                );
-                                                                                                            };
-                                                                                                        fileReader.readAsDataURL(
-                                                                                                            file,
-                                                                                                        );
-                                                                                                    })(files[i]);
-                                                                                                }
-                                                                                            }}
-                                                                                            accept="img"
-                                                                                        />
-                                                                                        <Form.Control.Feedback type="invalid">
-                                                                                            {errors?.productPictures}
-                                                                                        </Form.Control.Feedback>
-                                                                                        <Row
-                                                                                            style={{
-                                                                                                flexDirection: 'column',
-                                                                                            }}
+                                                                            defaultValue={values?.packageType}
+                                                                        >
+                                                                            {authState?.packageTypes?.map(
+                                                                                (type, index) => {
+                                                                                    return (
+                                                                                        <option
+                                                                                            key={index}
+                                                                                            value={type}
                                                                                         >
-                                                                                            {values?.productPictures?.map?.(
-                                                                                                (picture, ind) => {
-                                                                                                    return (
-                                                                                                        <Col key={ind}>
-                                                                                                            <div className="img-front-frame">
-                                                                                                                {picture?.url ? (
-                                                                                                                    <>
-
-                                                                                                                    </>
-                                                                                                                ) : (
-                                                                                                                    <div className="background-front">
-                                                                                                                        <RiImageEditFill
-                                                                                                                            style={{
-                                                                                                                                position:
-                                                                                                                                    'relative',
-                                                                                                                                color: 'gray',
-                                                                                                                                fontSize:
-                                                                                                                                    '50px',
-                                                                                                                                opacity:
-                                                                                                                                    '70%',
-                                                                                                                            }}
-                                                                                                                        ></RiImageEditFill>
-                                                                                                                        <p className="driving-txt">
-                                                                                                                            Change
-                                                                                                                            Product
-                                                                                                                            Images
-                                                                                                                        </p>
-                                                                                                                    </div>
-                                                                                                                )}
-                                                                                                                <img
-                                                                                                                    className="img-front"
-                                                                                                                    src={
-                                                                                                                        picture?.url ||
-                                                                                                                        'https://tinyurl.com/5ehpcctt'
-                                                                                                                    }
-                                                                                                                />
-                                                                                                            </div>
-                                                                                                            <Button
-                                                                                                                variant="danger"
-                                                                                                                onClick={() =>
-                                                                                                                    arrayHelpers.remove(
-                                                                                                                        ind,
-                                                                                                                    )
+                                                                                            {type}
+                                                                                        </option>
+                                                                                    );
+                                                                                },
+                                                                            )}
+                                                                        </Form.Select>
+                                                                        <Form.Control.Feedback type="invalid">
+                                                                            {errors?.orderItems?.[index]?.packageType}
+                                                                        </Form.Control.Feedback>
+                                                                    </Form.Group>
+                                                                </Col>
+                                                                {/* Old Product Pictures */}
+                                                                <Col>
+                                                                    <Form.Group className="mb-3">
+                                                                        <div className="mb-2">
+                                                                            <Form.Label className="label">
+                                                                                Old Pictures
+                                                                            </Form.Label>
+                                                                        </div>
+                                                                    </Form.Group>
+                                                                    <Row>
+                                                                        {item?.itemImages
+                                                                            .split('[space]')
+                                                                            .map((image) => (
+                                                                                <Col>
+                                                                                    <img
+                                                                                        src={image}
+                                                                                        className="w-100"
+                                                                                        style={{ maxWidth: '120px' }}
+                                                                                    ></img>
+                                                                                </Col>
+                                                                            ))}
+                                                                    </Row>
+                                                                </Col>
+                                                                {/* Product pictures */}
+                                                                <Col sm="12" xl="6">
+                                                                    <Form.Group className="mb-3">
+                                                                        <div className="mb-2">
+                                                                            <Form.Label className="label">
+                                                                                Product Images
+                                                                            </Form.Label>
+                                                                            <p className="asterisk">*</p>
+                                                                        </div>
+                                                                        <div className="back-up">
+                                                                            <FieldArray
+                                                                                name={`productPictures`}
+                                                                                render={(arrayHelpers) => {
+                                                                                    return (
+                                                                                        <>
+                                                                                            <Form.Control
+                                                                                                type="file"
+                                                                                                id="driver_image_back"
+                                                                                                ref={product_img_ipt}
+                                                                                                multiple
+                                                                                                isInvalid={
+                                                                                                    !!errors?.productPictures
+                                                                                                }
+                                                                                                onChange={(e) => {
+                                                                                                    const files =
+                                                                                                        e.target.files;
+                                                                                                    for (
+                                                                                                        var i = 0;
+                                                                                                        i <
+                                                                                                        files.length;
+                                                                                                        i++
+                                                                                                    ) {
+                                                                                                        //for multiple files
+                                                                                                        (function (
+                                                                                                            file,
+                                                                                                        ) {
+                                                                                                            const fileReader =
+                                                                                                                new FileReader();
+                                                                                                            fileReader.onload =
+                                                                                                                function (
+                                                                                                                    e,
+                                                                                                                ) {
+                                                                                                                    // get file content
+                                                                                                                    fileReader.addEventListener(
+                                                                                                                        'loadend',
+                                                                                                                        (
+                                                                                                                            e,
+                                                                                                                        ) => {
+                                                                                                                            arrayHelpers.push(
+                                                                                                                                {
+                                                                                                                                    file,
+                                                                                                                                    url: fileReader.result,
+                                                                                                                                },
+                                                                                                                            );
+                                                                                                                        },
+                                                                                                                    );
+                                                                                                                };
+                                                                                                            fileReader.readAsDataURL(
+                                                                                                                file,
+                                                                                                            );
+                                                                                                        })(files[i]);
+                                                                                                    }
+                                                                                                }}
+                                                                                                accept="img"
+                                                                                            />
+                                                                                            <Form.Control.Feedback type="invalid">
+                                                                                                {
+                                                                                                    errors?.productPictures
+                                                                                                }
+                                                                                            </Form.Control.Feedback>
+                                                                                            <Row
+                                                                                                style={{
+                                                                                                    flexDirection:
+                                                                                                        'column',
+                                                                                                }}
+                                                                                            >
+                                                                                                {values?.productPictures?.map?.(
+                                                                                                    (picture, ind) => {
+                                                                                                        return (
+                                                                                                            <Col
+                                                                                                                key={
+                                                                                                                    ind
                                                                                                                 }
                                                                                                             >
-                                                                                                                Remove
-                                                                                                            </Button>
-                                                                                                            {
-                                                                                                                errors
-                                                                                                                    ?.productPictures?.[
-                                                                                                                    ind
-                                                                                                                ]?.file
-                                                                                                            }
-                                                                                                        </Col>
-                                                                                                    );
-                                                                                                },
-                                                                                            )}
-                                                                                            <Col>
-                                                                                                <div
-                                                                                                    className="img-front-frame"
-                                                                                                    onClick={() =>
-                                                                                                        product_img_ipt.current.click()
-                                                                                                    }
-                                                                                                >
-                                                                                                    <div className="background-front">
-                                                                                                        <RiImageEditFill
-                                                                                                            style={{
-                                                                                                                position:
-                                                                                                                    'relative',
-                                                                                                                color: 'gray',
-                                                                                                                fontSize:
-                                                                                                                    '50px',
-                                                                                                                opacity:
-                                                                                                                    '70%',
-                                                                                                            }}
-                                                                                                        ></RiImageEditFill>
-                                                                                                        <p className="driving-txt">
-                                                                                                            Change
-                                                                                                            Product
-                                                                                                            Images
-                                                                                                        </p>
-                                                                                                    </div>
-                                                                                                    <img
-                                                                                                        className="img-front"
-                                                                                                        src={
-                                                                                                            'https://tinyurl.com/5ehpcctt'
-                                                                                                        }
-                                                                                                    />
-                                                                                                </div>
-                                                                                            </Col>
-                                                                                        </Row>
-                                                                                        <Form.Control
-                                                                                            type="file"
-                                                                                            id="driver_image_back"
-                                                                                            ref={product_img_ipt}
-                                                                                            multiple
-                                                                                            isInvalid={
-                                                                                                !!errors?.productPictures
-                                                                                            }
-                                                                                            onChange={(e) => {
-                                                                                                const files =
-                                                                                                    e.target.files;
-                                                                                                for (
-                                                                                                    var i = 0;
-                                                                                                    i < files.length;
-                                                                                                    i++
-                                                                                                ) {
-                                                                                                    //for multiple files
-                                                                                                    (function (file) {
-                                                                                                        const fileReader =
-                                                                                                            new FileReader();
-                                                                                                        fileReader.onload =
-                                                                                                            function (
-                                                                                                                e,
-                                                                                                            ) {
-                                                                                                                // get file content
-                                                                                                                fileReader.addEventListener(
-                                                                                                                    'loadend',
-                                                                                                                    (
-                                                                                                                        e,
-                                                                                                                    ) => {
-                                                                                                                        arrayHelpers.push(
-                                                                                                                            {
-                                                                                                                                file,
-                                                                                                                                url: fileReader.result,
-                                                                                                                            },
-                                                                                                                        );
-                                                                                                                    },
-                                                                                                                );
-                                                                                                            };
-                                                                                                        fileReader.readAsDataURL(
-                                                                                                            file,
+                                                                                                                <div className="img-front-frame">
+                                                                                                                    {picture?.url ? (
+                                                                                                                        <>
+
+                                                                                                                        </>
+                                                                                                                    ) : (
+                                                                                                                        <div className="background-front">
+                                                                                                                            <RiImageEditFill
+                                                                                                                                style={{
+                                                                                                                                    position:
+                                                                                                                                        'relative',
+                                                                                                                                    color: 'gray',
+                                                                                                                                    fontSize:
+                                                                                                                                        '50px',
+                                                                                                                                    opacity:
+                                                                                                                                        '70%',
+                                                                                                                                }}
+                                                                                                                            ></RiImageEditFill>
+                                                                                                                            <p className="driving-txt">
+                                                                                                                                Change
+                                                                                                                                Product
+                                                                                                                                Images
+                                                                                                                            </p>
+                                                                                                                        </div>
+                                                                                                                    )}
+                                                                                                                    <img
+                                                                                                                        className="img-front"
+                                                                                                                        src={
+                                                                                                                            picture?.url ||
+                                                                                                                            'https://tinyurl.com/5ehpcctt'
+                                                                                                                        }
+                                                                                                                    />
+                                                                                                                </div>
+                                                                                                                <Button
+                                                                                                                    variant="danger"
+                                                                                                                    onClick={() =>
+                                                                                                                        arrayHelpers.remove(
+                                                                                                                            ind,
+                                                                                                                        )
+                                                                                                                    }
+                                                                                                                >
+                                                                                                                    Remove
+                                                                                                                </Button>
+                                                                                                                {
+                                                                                                                    errors
+                                                                                                                        ?.productPictures?.[
+                                                                                                                        ind
+                                                                                                                    ]
+                                                                                                                        ?.file
+                                                                                                                }
+                                                                                                            </Col>
                                                                                                         );
-                                                                                                    })(files[i]);
+                                                                                                    },
+                                                                                                )}
+                                                                                                <Col>
+                                                                                                    <div
+                                                                                                        className="img-front-frame"
+                                                                                                        onClick={() =>
+                                                                                                            product_img_ipt.current.click()
+                                                                                                        }
+                                                                                                    >
+                                                                                                        <div className="background-front">
+                                                                                                            <RiImageEditFill
+                                                                                                                style={{
+                                                                                                                    position:
+                                                                                                                        'relative',
+                                                                                                                    color: 'gray',
+                                                                                                                    fontSize:
+                                                                                                                        '50px',
+                                                                                                                    opacity:
+                                                                                                                        '70%',
+                                                                                                                }}
+                                                                                                            ></RiImageEditFill>
+                                                                                                            <p className="driving-txt">
+                                                                                                                Change
+                                                                                                                Product
+                                                                                                                Images
+                                                                                                            </p>
+                                                                                                        </div>
+                                                                                                        <img
+                                                                                                            className="img-front"
+                                                                                                            src={
+                                                                                                                'https://tinyurl.com/5ehpcctt'
+                                                                                                            }
+                                                                                                        />
+                                                                                                    </div>
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                            <Form.Control
+                                                                                                type="file"
+                                                                                                id="driver_image_back"
+                                                                                                ref={product_img_ipt}
+                                                                                                multiple
+                                                                                                isInvalid={
+                                                                                                    !!errors?.productPictures
                                                                                                 }
-                                                                                            }}
-                                                                                            accept="img"
-                                                                                        />
-                                                                                        <Form.Control.Feedback type="invalid">
-                                                                                            {errors?.productPictures}
-                                                                                        </Form.Control.Feedback>
-                                                                                    </>
-                                                                                );
+                                                                                                onChange={(e) => {
+                                                                                                    const files =
+                                                                                                        e.target.files;
+                                                                                                    for (
+                                                                                                        var i = 0;
+                                                                                                        i <
+                                                                                                        files.length;
+                                                                                                        i++
+                                                                                                    ) {
+                                                                                                        //for multiple files
+                                                                                                        (function (
+                                                                                                            file,
+                                                                                                        ) {
+                                                                                                            const fileReader =
+                                                                                                                new FileReader();
+                                                                                                            fileReader.onload =
+                                                                                                                function (
+                                                                                                                    e,
+                                                                                                                ) {
+                                                                                                                    // get file content
+                                                                                                                    fileReader.addEventListener(
+                                                                                                                        'loadend',
+                                                                                                                        (
+                                                                                                                            e,
+                                                                                                                        ) => {
+                                                                                                                            arrayHelpers.push(
+                                                                                                                                {
+                                                                                                                                    file,
+                                                                                                                                    url: fileReader.result,
+                                                                                                                                },
+                                                                                                                            );
+                                                                                                                        },
+                                                                                                                    );
+                                                                                                                };
+                                                                                                            fileReader.readAsDataURL(
+                                                                                                                file,
+                                                                                                            );
+                                                                                                        })(files[i]);
+                                                                                                    }
+                                                                                                }}
+                                                                                                accept="img"
+                                                                                            />
+                                                                                            <Form.Control.Feedback type="invalid">
+                                                                                                {
+                                                                                                    errors?.productPictures
+                                                                                                }
+                                                                                            </Form.Control.Feedback>
+                                                                                        </>
+                                                                                    );
+                                                                                }}
+                                                                            />
+                                                                        </div>
+                                                                    </Form.Group>
+                                                                </Col>
+                                                            </Row>
+
+                                                            <Button type="submit" disabled={popupLoading || !isValid}>
+                                                                {popupLoading ? <Spinner></Spinner> : 'Edit'}
+                                                            </Button>
+                                                        </Form>
+                                                    );
+                                                }}
+                                            </Formik>
+                                        </Modal.Body>
+                                    </Modal>
+                                    <Row className="product-form-content justify-content-center" key={index + 1}>
+                                        <Col sm="12" md="8" lg="6">
+                                            <div className="product-form-info">
+                                                {/* Item name */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">Item Name</p>
+                                                    <p className="product-content">{item.itemName}</p>
+                                                </div>
+                                                {/* Charcode */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">Charcode</p>
+                                                    <p className="product-content">
+                                                        {'000000'.substring(
+                                                            0,
+                                                            6 - item.itemCharCode.toString().length,
+                                                        ) + item.itemCharCode}
+                                                    </p>
+                                                </div>
+                                                {/* Note */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">Note</p>
+                                                    <p className="product-content">{item.itemDescription}</p>
+                                                </div>
+                                                {/* Quantity */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">Quantity</p>
+                                                    <p className="product-content">{item.quantity}</p>
+                                                </div>
+                                                {/* Weight */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">Weight</p>
+                                                    <p className="product-content">{item?.weight} Kilograms</p>
+                                                </div>
+                                                {/* Package type */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">
+                                                        Package Type
+                                                    </p>
+                                                    <p className="product-content">{item.packageType}</p>
+                                                </div>
+                                                {/* From */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">From</p>
+                                                    <p className="product-content">{order?.sendingLocation}</p>
+                                                </div>
+                                                {/* To */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">To</p>
+                                                    <p className="product-content">{item?.destination}</p>
+                                                </div>
+                                                {/* Receiver Name */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">
+                                                        Receiver Name
+                                                    </p>
+                                                    <p className="product-content">
+                                                        {item?.receiverName || 'Provide now'}
+                                                    </p>
+                                                </div>
+                                                {/* Receiver Phone */}
+                                                <div className="product-label-info">
+                                                    <p className="product-label text-sm-start text-lg-end">
+                                                        Receiver Phone
+                                                    </p>
+                                                    <p className="product-content">{item?.receiverPhone}</p>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                        <Col sm="12" md="8" lg="6">
+                                            <div className="product-label-info" style={{ alignItems: 'unset' }}>
+                                                <p className="product-label-fit text-sm-end text-md-start">
+                                                    Received Barcode
+                                                </p>
+                                                <p>{item?.itemCharCode}</p>
+                                            </div>
+                                            <div className="product-label-info" style={{ alignItems: 'unset' }}>
+                                                <p className="product-label-fit text-sm-end text-md-start">
+                                                    Product pictures
+                                                </p>
+                                                <div>
+                                                    <div
+                                                        className="img-front-frame"
+                                                        style={{ padding: '10px 0 ' }}
+                                                        onClick={() => {
+                                                            setSlider(true);
+                                                        }}
+                                                    >
+                                                        <div className="background-front">
+                                                            <div
+                                                                style={{
+                                                                    position: 'relative',
+                                                                    color: 'gray',
+                                                                    fontSize: '50px',
+                                                                    opacity: '70%',
+                                                                }}
+                                                            >
+                                                                {
+                                                                    order?.orderItems?.[0]?.itemImages?.split('[space]')
+                                                                        ?.length
+                                                                }
+                                                            </div>
+                                                            <p className="driving-txt">view image</p>
+                                                        </div>
+                                                        <img
+                                                            className="img-front"
+                                                            src={item.itemImages?.split?.('[space]')?.[0]}
+                                                        />
+                                                    </div>
+                                                    <div>
+                                                        {slider ? (
+                                                            <div>
+                                                                <Modal
+                                                                    size="lg"
+                                                                    aria-labelledby="contained-modal-title-vcenter"
+                                                                    centered
+                                                                    show={slider}
+                                                                >
+                                                                    <Modal.Header>
+                                                                        <Modal.Title
+                                                                            className="txt-center w-100"
+                                                                            onClick={() => {
+                                                                                setSlider(false);
                                                                             }}
-                                                                        />
-                                                                    </div>
-                                                                </Form.Group>
+                                                                        >
+                                                                            <div style={{ textAlign: 'right' }}>
+                                                                                <FaTimes
+                                                                                    style={{
+                                                                                        color: 'grey',
+                                                                                        cursor: 'pointer',
+                                                                                    }}
+                                                                                ></FaTimes>
+                                                                            </div>
+                                                                        </Modal.Title>
+                                                                    </Modal.Header>
+                                                                    <Modal.Body className="link-slider">
+                                                                        <Carousel>
+                                                                            {item.itemImages
+                                                                                ?.split?.('[space]')
+                                                                                ?.map((url, index) => {
+                                                                                    return (
+                                                                                        <Carousel.Item
+                                                                                            style={{
+                                                                                                borderLeft: 'none',
+                                                                                            }}
+                                                                                            key={index}
+                                                                                        >
+                                                                                            <img
+                                                                                                className="w-100"
+                                                                                                src={url}
+                                                                                                alt="First slide"
+                                                                                            />
+                                                                                            <Carousel.Caption></Carousel.Caption>
+                                                                                        </Carousel.Item>
+                                                                                    );
+                                                                                })}
+                                                                        </Carousel>
+                                                                    </Modal.Body>
+                                                                </Modal>
+                                                            </div>
+                                                        ) : (
+                                                            <></>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="product-label-info" style={{ alignItems: 'unset' }}>
+                                                <p className="product-label-fit text-sm-end text-md-start">
+                                                    Received Images
+                                                </p>
+                                                <div>
+                                                    <div
+                                                        className="img-front-frame"
+                                                        style={{ padding: '10px 0 ' }}
+                                                        onClick={() => {
+                                                            setReceiveImg(true);
+                                                        }}
+                                                    >
+                                                        <div className="background-front">
+                                                            <div
+                                                                style={{
+                                                                    position: 'relative',
+                                                                    color: 'gray',
+                                                                    fontSize: '50px',
+                                                                    opacity: '70%',
+                                                                }}
+                                                            >
+                                                                {order?.receivedItemImages?.split('[space]')?.length ||
+                                                                    0}
+                                                            </div>
+                                                            <p className="driving-txt">view image</p>
+                                                        </div>
+                                                        <img
+                                                            className="img-front"
+                                                            src={item?.receivedItemImages?.split?.('[space]')?.[0]}
+                                                        />
+                                                    </div>
+                                                    <Modal
+                                                        size="lg"
+                                                        aria-labelledby="contained-modal-title-vcenter"
+                                                        centered
+                                                        show={receiveImg}
+                                                    >
+                                                        <Modal.Header>
+                                                            <Modal.Title
+                                                                className="txt-center w-100"
+                                                                onClick={() => {
+                                                                    setReceiveImg(false);
+                                                                }}
+                                                            >
+                                                                <div style={{ textAlign: 'right' }}>
+                                                                    <FaTimes
+                                                                        style={{ color: 'grey', cursor: 'pointer' }}
+                                                                    ></FaTimes>
+                                                                </div>
+                                                            </Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body className="link-slider">
+                                                            <Carousel>
+                                                                {order.receivedItemImages
+                                                                    ?.split?.('[space]')
+                                                                    ?.map((url, index) => {
+                                                                        return (
+                                                                            <Carousel.Item
+                                                                                style={{ borderLeft: 'none' }}
+                                                                                key={index}
+                                                                            >
+                                                                                <img
+                                                                                    className="w-100"
+                                                                                    src={url}
+                                                                                    alt="First slide"
+                                                                                />
+                                                                                <Carousel.Caption></Carousel.Caption>
+                                                                            </Carousel.Item>
+                                                                        );
+                                                                    })}
+                                                            </Carousel>
+                                                        </Modal.Body>
+                                                    </Modal>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                </SwiperSlide>
+                            );
+                        })}
+                    </Swiper>
+                    <div className="py-4">
+                        <div className="product-label-info my">
+                            <p className="product-label-fit">Status</p>
+                            <p className="content-blue">{order.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</p>
+                        </div>
+                        <div>
+                            <p style={{ fontWeight: '600' }}>The driver requested {order?.offerNumber} offers</p>
+                        </div>
+                        <div className="pg-rows">
+                            <p className="m-0">Show</p>
+                            <div>
+                                <Dropdown className="reg-dr" style={{ width: 'fit-content' }}>
+                                    <Dropdown.Toggle className="dr-btn py-1" id="dropdown-basic">
+                                        {perPageAmount}
+                                    </Dropdown.Toggle>
+                                    <Dropdown.Menu>
+                                        {rows.map((item, index) => {
+                                            return (
+                                                <Dropdown.Item key={index} onClick={() => setPerPageAmount(item)}>
+                                                    {item}
+                                                </Dropdown.Item>
+                                            );
+                                        })}
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            </div>
+                            <p className="m-0">Rows</p>
+                        </div>
+                        {offerLoading ? (
+                            <Spinner></Spinner>
+                        ) : offers.length === 0 ? (
+                            <div className="txt-center">
+                                <h5>No Data Found</h5>
+                            </div>
+                        ) : (
+                            <div style={{ maxWidth: '100%', overflowX: 'scroll' }}>
+                                <Table bordered>
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th style={{ minWidth: '150px' }}>Rate</th>
+                                            <th>Status</th>
+                                            <th>Sent at</th>
+                                            <th>Driver Vehicles</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {offers?.map?.((offer, index) => {
+                                            return (
+                                                <tr key={index}>
+                                                    <td>
+                                                        {'000000'.substring(0, 6 - (index + 1)?.toString().length) +
+                                                            (index + 1)}
+                                                    </td>
+                                                    <td>
+                                                        <Row>
+                                                            <Col>ShipFee:</Col>
+                                                            <Col>{offer?.ratePrice}</Col>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col>GST:</Col>
+                                                            <Col>10%</Col>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col>Freight:</Col>
+                                                            <Col>10%</Col>
+                                                        </Row>
+                                                        <Row>
+                                                            <Col>Total</Col>
+                                                            <Col>
+                                                                {(offer?.ratePrice * (1 + 0.1) * (1 + 0.1)).toFixed(2)}
                                                             </Col>
                                                         </Row>
-
-                                                        <Button type="submit" disabled={popupLoading || !isValid}>
-                                                            {popupLoading ? <Spinner></Spinner> : 'Edit'}
-                                                        </Button>
-                                                    </Form>
-                                                );
-                                            }}
-                                        </Formik>
-                                    </Modal.Body>
-                                </Modal>
-                                <Row className="product-form-content justify-content-center" key={index + 1}>
-                                    <Col sm="12" md="8" lg="6">
-                                        <div className="product-form-info">
-                                            {/* Item name */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">Item Name</p>
-                                                <p className="product-content">{item.itemName}</p>
-                                            </div>
-                                            {/* Charcode */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">Charcode</p>
-                                                <p className="product-content">
-                                                    {'000000'.substring(0, 6 - item.itemCharCode.toString().length) +
-                                                        item.itemCharCode}
-                                                </p>
-                                            </div>
-                                            {/* Note */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">Note</p>
-                                                <p className="product-content">{item.itemDescription}</p>
-                                            </div>
-                                            {/* Quantity */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">Quantity</p>
-                                                <p className="product-content">{item.quantity}</p>
-                                            </div>
-                                            {/* Weight */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">Weight</p>
-                                                <p className="product-content">{item?.weight} Kilograms</p>
-                                            </div>
-                                            {/* Package type */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">Package Type</p>
-                                                <p className="product-content">{item.packageType}</p>
-                                            </div>
-                                            {/* From */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">From</p>
-                                                <p className="product-content">{order?.sendingLocation}</p>
-                                            </div>
-                                            {/* To */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">To</p>
-                                                <p className="product-content">{item?.destination}</p>
-                                            </div>
-                                            {/* Receiver Name */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">Receiver Name</p>
-                                                <p className="product-content">{item?.receiverName || 'Provide now'}</p>
-                                            </div>
-                                            {/* Receiver Phone */}
-                                            <div className="product-label-info">
-                                                <p className="product-label text-sm-start text-lg-end">
-                                                    Receiver Phone
-                                                </p>
-                                                <p className="product-content">{item?.receiverPhone}</p>
-                                            </div>
-                                        </div>
-                                    </Col>
-                                    <Col sm="12" md="8" lg="6">
-                                        <div className="product-label-info" style={{ alignItems: 'unset' }}>
-                                            <p className="product-label-fit text-sm-end text-md-start">
-                                                Received Barcode
-                                            </p>
-                                            <p>{item?.itemCharCode}</p>
-                                        </div>
-                                        <div className="product-label-info" style={{ alignItems: 'unset' }}>
-                                            <p className="product-label-fit text-sm-end text-md-start">
-                                                Product pictures
-                                            </p>
-                                            <div>
-                                                <div
-                                                    className="img-front-frame"
-                                                    style={{ padding: '10px 0 ' }}
-                                                    onClick={() => {
-                                                        setSlider(true);
-                                                    }}
-                                                >
-                                                    <div className="background-front">
-                                                        <div
-                                                            style={{
-                                                                position: 'relative',
-                                                                color: 'gray',
-                                                                fontSize: '50px',
-                                                                opacity: '70%',
-                                                            }}
-                                                        >
-                                                            {
-                                                                order?.orderItems?.[0]?.itemImages?.split('[space]')
-                                                                    ?.length
-                                                            }
-                                                        </div>
-                                                        <p className="driving-txt">view image</p>
-                                                    </div>
-                                                    <img
-                                                        className="img-front"
-                                                        src={item.itemImages?.split?.('[space]')?.[0]}
-                                                    />
-                                                </div>
-                                                <div>
-                                                    {slider ? (
-                                                        <div>
-                                                            <Modal
-                                                                size="lg"
-                                                                aria-labelledby="contained-modal-title-vcenter"
-                                                                centered
-                                                                show={slider}
+                                                    </td>
+                                                    <td>
+                                                        {
+                                                            <div
+                                                                className={
+                                                                    offer.status === 'Accepted'
+                                                                        ? 'content-green'
+                                                                        : offer.status === 'Denied'
+                                                                        ? 'content-danger'
+                                                                        : 'content-yellow'
+                                                                }
                                                             >
-                                                                <Modal.Header>
-                                                                    <Modal.Title
-                                                                        className="txt-center w-100"
-                                                                        onClick={() => {
-                                                                            setSlider(false);
-                                                                        }}
+                                                                {offer.status}
+                                                            </div>
+                                                        }
+                                                    </td>
+                                                    <td>{new moment(offer?.createdDate).format('DD/MM/YYYY')}</td>
+                                                    <td>
+                                                        {offer?.driver?.vehicles?.join?.(' - ') ||
+                                                            offer?.driverVehicles?.join(' - ')}
+                                                    </td>
+                                                    <td className="sender-action justify-content-center">
+                                                        {
+                                                            // Case 1: Button Accept
+                                                            (order.status === 'LookingForDriver' ||
+                                                                order.status === 'Trading' ||
+                                                                order.status === 'WaitingForPayment') &&
+                                                            offer.status === 'Waiting' ? (
+                                                                <div className="txt-success">
+                                                                    <Button
+                                                                        className="w-100 mb-2"
+                                                                        variant="success"
+                                                                        disabled={loading}
+                                                                        onClick={() => acceptDriver(offer?.driverId)}
                                                                     >
-                                                                        <div style={{ textAlign: 'right' }}>
-                                                                            <FaTimes
-                                                                                style={{
-                                                                                    color: 'grey',
-                                                                                    cursor: 'pointer',
-                                                                                }}
-                                                                            ></FaTimes>
-                                                                        </div>
-                                                                    </Modal.Title>
-                                                                </Modal.Header>
-                                                                <Modal.Body className="link-slider">
-                                                                    <Carousel>
-                                                                        {item.itemImages
-                                                                            ?.split?.('[space]')
-                                                                            ?.map((url, index) => {
-                                                                                return (
-                                                                                    <Carousel.Item
-                                                                                        style={{
-                                                                                            borderLeft: 'none',
-                                                                                        }}
-                                                                                        key={index}
-                                                                                    >
-                                                                                        <img
-                                                                                            className="w-100"
-                                                                                            src={url}
-                                                                                            alt="First slide"
-                                                                                        />
-                                                                                        <Carousel.Caption></Carousel.Caption>
-                                                                                    </Carousel.Item>
-                                                                                );
-                                                                            })}
-                                                                    </Carousel>
-                                                                </Modal.Body>
-                                                            </Modal>
-                                                        </div>
-                                                    ) : (
-                                                        <></>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="product-label-info" style={{ alignItems: 'unset' }}>
-                                            <p className="product-label-fit text-sm-end text-md-start">
-                                                Received Images
-                                            </p>
-                                            <div>
-                                                <div
-                                                    className="img-front-frame"
-                                                    style={{ padding: '10px 0 ' }}
-                                                    onClick={() => {
-                                                        setReceiveImg(true);
-                                                    }}
-                                                >
-                                                    <div className="background-front">
-                                                        <div
-                                                            style={{
-                                                                position: 'relative',
-                                                                color: 'gray',
-                                                                fontSize: '50px',
-                                                                opacity: '70%',
-                                                            }}
-                                                        >
-                                                            {order?.receivedItemImages?.split('[space]')?.length || 0}
-                                                        </div>
-                                                        <p className="driving-txt">view image</p>
-                                                    </div>
-                                                    <img
-                                                        className="img-front"
-                                                        src={item?.receivedItemImages?.split?.('[space]')?.[0]}
-                                                    />
-                                                </div>
-                                                <Modal
-                                                    size="lg"
-                                                    aria-labelledby="contained-modal-title-vcenter"
-                                                    centered
-                                                    show={receiveImg}
-                                                >
-                                                    <Modal.Header>
-                                                        <Modal.Title
-                                                            className="txt-center w-100"
-                                                            onClick={() => {
-                                                                setReceiveImg(false);
-                                                            }}
-                                                        >
-                                                            <div style={{ textAlign: 'right' }}>
-                                                                <FaTimes
-                                                                    style={{ color: 'grey', cursor: 'pointer' }}
-                                                                ></FaTimes>
-                                                            </div>
-                                                        </Modal.Title>
-                                                    </Modal.Header>
-                                                    <Modal.Body className="link-slider">
-                                                        <Carousel>
-                                                            {order.receivedItemImages
-                                                                ?.split?.('[space]')
-                                                                ?.map((url, index) => {
-                                                                    return (
-                                                                        <Carousel.Item
-                                                                            style={{ borderLeft: 'none' }}
-                                                                            key={index}
-                                                                        >
-                                                                            <img
-                                                                                className="w-100"
-                                                                                src={url}
-                                                                                alt="First slide"
-                                                                            />
-                                                                            <Carousel.Caption></Carousel.Caption>
-                                                                        </Carousel.Item>
-                                                                    );
-                                                                })}
-                                                        </Carousel>
-                                                    </Modal.Body>
-                                                </Modal>
-                                            </div>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </SwiperSlide>
-                        );
-                    })}
-                </Swiper>
-                <div className="py-4">
-                    <div className="product-label-info my">
-                        <p className="product-label-fit">Status</p>
-                        <p className="content-blue">{order.status?.replace?.(/([A-Z])/g, ' $1')?.trim?.()}</p>
-                    </div>
-                    <div>
-                        <p style={{ fontWeight: '600' }}>The driver requested {order?.offerNumber} offers</p>
-                    </div>
-                    <div className="pg-rows">
-                        <p className="m-0">Show</p>
-                        <div>
-                            <Dropdown className="reg-dr" style={{ width: 'fit-content' }}>
-                                <Dropdown.Toggle className="dr-btn py-1" id="dropdown-basic">
-                                    {perPageAmount}
-                                </Dropdown.Toggle>
-                                <Dropdown.Menu>
-                                    {rows.map((item, index) => {
-                                        return (
-                                            <Dropdown.Item key={index} onClick={() => setPerPageAmount(item)}>
-                                                {item}
-                                            </Dropdown.Item>
-                                        );
-                                    })}
-                                </Dropdown.Menu>
-                            </Dropdown>
-                        </div>
-                        <p className="m-0">Rows</p>
-                    </div>
-                    {offerLoading ? (
-                        <Spinner></Spinner>
-                    ) : offers.length === 0 ? (
-                        <div className="txt-center">
-                            <h5>No Data Found</h5>
-                        </div>
-                    ) : (
-                        <div style={{ maxWidth: '100%', overflowX: 'scroll' }}>
-                            <Table bordered>
-                                <thead>
-                                    <tr>
-                                        <th>ID</th>
-                                        <th style={{ minWidth: '150px' }}>Rate</th>
-                                        <th>Status</th>
-                                        <th>Sent at</th>
-                                        <th>Driver Vehicles</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {offers?.map?.((offer, index) => {
-                                        return (
-                                            <tr key={index}>
-                                                <td>
-                                                    {'000000'.substring(0, 6 - (index + 1)?.toString().length) +
-                                                        (index + 1)}
-                                                </td>
-                                                <td>
-                                                    <Row>
-                                                        <Col>ShipFee:</Col>
-                                                        <Col>{offer?.ratePrice}</Col>
-                                                    </Row>
-                                                    <Row>
-                                                        <Col>GST:</Col>
-                                                        <Col>10%</Col>
-                                                    </Row>
-                                                    <Row>
-                                                        <Col>Freight:</Col>
-                                                        <Col>10%</Col>
-                                                    </Row>
-                                                    <Row>
-                                                        <Col>Total</Col>
-                                                        <Col>
-                                                            {(offer?.ratePrice * (1 + 0.1) * (1 + 0.1)).toFixed(2)}
-                                                        </Col>
-                                                    </Row>
-                                                </td>
-                                                <td>
-                                                    {
-                                                        <div
-                                                            className={
-                                                                offer.status === 'Accepted'
-                                                                    ? 'content-green'
-                                                                    : offer.status === 'Denied'
-                                                                    ? 'content-danger'
-                                                                    : 'content-yellow'
-                                                            }
-                                                        >
-                                                            {offer.status}
-                                                        </div>
-                                                    }
-                                                </td>
-                                                <td>{new moment(offer?.createdDate).format('DD/MM/YYYY')}</td>
-                                                <td>
-                                                    {offer?.driver?.vehicles?.join?.(' - ') ||
-                                                        offer?.driverVehicles?.join(' - ')}
-                                                </td>
-                                                <td className="sender-action justify-content-center">
-                                                    {
-                                                        // Case 1: Button Accept
-                                                        (order.status === 'LookingForDriver' ||
-                                                            order.status === 'Trading' ||
-                                                            order.status === 'WaitingForPayment') &&
-                                                        offer.status === 'Waiting' ? (
-                                                            <div className="txt-success">
-                                                                <Button
-                                                                    className="w-100 mb-2"
-                                                                    variant="success"
-                                                                    disabled={loading}
-                                                                    onClick={() => acceptDriver(offer?.driverId)}
-                                                                >
-                                                                    {!loading ? 'Accept' : <Spinner></Spinner>}
-                                                                </Button>
-                                                            </div>
-                                                        ) : // Case 2: Button Checkout
-                                                        order.status === 'WaitingForPayment' &&
-                                                          offer?.status === 'Accepted' ? (
-                                                            <div className="txt-success">
-                                                                <div
-                                                                    style={{
-                                                                        cursor: 'pointer',
-                                                                        fontSize: '1.4rem',
-                                                                    }}
-                                                                    onClick={() =>
-                                                                        createOrderPayment(order?.id, offer?.driverId)
-                                                                    }
-                                                                >
-                                                                    <p>
-                                                                        <MdPayment></MdPayment>
-                                                                        <span
-                                                                            className="ms-auto"
-                                                                            style={{ fontSize: '1rem' }}
-                                                                        >
-                                                                            Checkout Now
-                                                                        </span>
-                                                                    </p>
+                                                                        {!loading ? 'Accept' : <Spinner></Spinner>}
+                                                                    </Button>
                                                                 </div>
-                                                                <Button
-                                                                    className="w-100"
-                                                                    variant="danger"
-                                                                    disabled={loading}
-                                                                    onClick={() => cancelDriver(offer?.driverId)}
-                                                                >
-                                                                    {!loading ? 'Cancel' : <Spinner></Spinner>}
-                                                                </Button>
-                                                            </div>
-                                                        ) : // Case 3: Button Support, View and Print invoice
-                                                        (order.status === 'Paid' ||
-                                                              order.status === 'Prepared' ||
-                                                              order.status === 'Delivering') &&
-                                                          offer?.status === 'Accepted' ? (
-                                                            <Stack>
-                                                                <Button className="w-100 mb-2" variant="warning">
-                                                                    Support
-                                                                </Button>
-                                                                <Link
-                                                                    to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}
-                                                                >
-                                                                    <Button className="w-100 mb-2">View Invoice</Button>
-                                                                </Link>
-                                                            </Stack>
-                                                        ) : // Case 4: Text Completed
-                                                        order.status === 'Completed' && offer?.status === 'Accepted' ? (
-                                                            <Stack>
-                                                                <Link
-                                                                    to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}
-                                                                >
-                                                                    <Button variant="warning">View Invoice</Button>
-                                                                </Link>
-                                                            </Stack>
-                                                        ) : (
-                                                            // Default
-                                                            <></>
-                                                        )
-                                                    }
-                                                </td>
-                                            </tr>
+                                                            ) : // Case 2: Button Checkout
+                                                            order.status === 'WaitingForPayment' &&
+                                                              offer?.status === 'Accepted' ? (
+                                                                <div className="txt-success">
+                                                                    <div
+                                                                        style={{
+                                                                            cursor: 'pointer',
+                                                                            fontSize: '1.4rem',
+                                                                        }}
+                                                                        onClick={() =>
+                                                                            createOrderPayment(
+                                                                                order?.id,
+                                                                                offer?.driverId,
+                                                                            )
+                                                                        }
+                                                                    >
+                                                                        <p>
+                                                                            <MdPayment></MdPayment>
+                                                                            <span
+                                                                                className="ms-auto"
+                                                                                style={{ fontSize: '1rem' }}
+                                                                            >
+                                                                                Checkout Now
+                                                                            </span>
+                                                                        </p>
+                                                                    </div>
+                                                                    <Button
+                                                                        className="w-100"
+                                                                        variant="danger"
+                                                                        disabled={loading}
+                                                                        onClick={() => cancelDriver(offer?.driverId)}
+                                                                    >
+                                                                        {!loading ? 'Cancel' : <Spinner></Spinner>}
+                                                                    </Button>
+                                                                </div>
+                                                            ) : // Case 3: Button Support, View and Print invoice
+                                                            (order.status === 'Paid' ||
+                                                                  order.status === 'Prepared' ||
+                                                                  order.status === 'Delivering') &&
+                                                              offer?.status === 'Accepted' ? (
+                                                                <Stack>
+                                                                    <Button className="w-100 mb-2" variant="warning">
+                                                                        Support
+                                                                    </Button>
+                                                                    <Link
+                                                                        to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}
+                                                                    >
+                                                                        <Button className="w-100 mb-2">
+                                                                            View Invoice
+                                                                        </Button>
+                                                                    </Link>
+                                                                </Stack>
+                                                            ) : // Case 4: Text Completed
+                                                            order.status === 'Completed' &&
+                                                              offer?.status === 'Accepted' ? (
+                                                                <Stack>
+                                                                    <Link
+                                                                        to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}
+                                                                    >
+                                                                        <Button variant="warning">View Invoice</Button>
+                                                                    </Link>
+                                                                </Stack>
+                                                            ) : (
+                                                                // Default
+                                                                <></>
+                                                            )
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </Table>
+                                <Pagination className="pg-form w-100">
+                                    {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
+                                    <Pagination.Prev onClick={prevPage} className="pg-first" />
+                                    {Array.from(Array(total).keys()).map((item, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <div key={index}>
+                                                    <Pagination.Item
+                                                        className={
+                                                            item + 1 === currentPage ? 'pg-no pg-active' : 'pg-no'
+                                                        }
+                                                        onClick={() => setCurrent(item + 1)}
+                                                    >
+                                                        {item + 1}
+                                                    </Pagination.Item>
+                                                </div>
+                                            </div>
                                         );
                                     })}
-                                </tbody>
-                            </Table>
-                            <Pagination className="pg-form w-100">
-                                {/* <Pagination.First onClick={first} className='pg-first' style={{color:'black'}}/> */}
-                                <Pagination.Prev onClick={prevPage} className="pg-first" />
-                                {Array.from(Array(total).keys()).map((item, index) => {
-                                    return (
-                                        <div key={index}>
-                                            <div key={index}>
-                                                <Pagination.Item
-                                                    className={item + 1 === currentPage ? 'pg-no pg-active' : 'pg-no'}
-                                                    onClick={() => setCurrent(item + 1)}
-                                                >
-                                                    {item + 1}
-                                                </Pagination.Item>
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                                <Pagination.Next onClick={nextPage} className="pg-first" />
-                                {/* <Pagination.Last onClick={last} className='pg-first'/> */}
-                            </Pagination>
-                        </div>
-                    )}
+                                    <Pagination.Next onClick={nextPage} className="pg-first" />
+                                    {/* <Pagination.Last onClick={last} className='pg-first'/> */}
+                                </Pagination>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 
@@ -2114,382 +2176,6 @@ function ProductDetail() {
                     ></Driver>
                 )}
         </div>
-    );
-}
-
-function Driver({
-    createdTime,
-    preparedTime,
-    deliveringTime,
-    completedTime,
-    cancelledTime,
-    driver,
-    orderId,
-    reviews = [],
-    deliveryImages,
-    orderStatus,
-}) {
-    const [active, setActive] = React.useState(orderStatus);
-    const [modalShow, setModalShow] = React.useState(false);
-    const [modalDeliveryImage, setModalDeliveryImage] = React.useState(false);
-    // const location = useLocation();
-    const stepTemplate = [
-        {
-            type: 'Waiting',
-            message: 'We has sent the request to delivery of driver',
-            date: moment(createdTime).format('YYYY-MM-DD HH:mm:ss'),
-        },
-        {
-            type: 'Prepared',
-            message: 'Driver has received the order',
-            date: moment(preparedTime).format('YYYY-MM-DD HH:mm:ss'),
-        },
-        {
-            type: 'Delivering',
-            message: 'Driver are on his way',
-            date: moment(deliveringTime).format('YYYY-MM-DD HH:mm:ss'),
-        },
-        {
-            type: 'Completed',
-            message: 'Driver has come to you',
-            date: moment(completedTime).format('YYYY-MM-DD HH:mm:ss'),
-        },
-        {
-            type: 'Cancelled',
-            message: 'Driver has cancelled',
-            date: moment(cancelledTime).format('YYYY-MM-DD HH:mm:ss'),
-        },
-    ];
-    const [showReview, setShowReview] = React.useState(
-        stepTemplate?.[active]?.type === 'Completed' && !reviews?.length,
-    );
-
-    return (
-        <div>
-            {/* Driver Name  */}
-            <div className="product-label-info">
-                <p className="product-label-fit">Driver</p>
-                <p>{driver.name}</p>
-            </div>
-            {/* Driver License Detail */}
-            <div className="product-label-info">
-                <p className="product-label-fit">Driving license</p>
-                <div className="license-form" onClick={() => setModalShow(true)}>
-                    <BsFillPersonVcardFill className="license-icon"></BsFillPersonVcardFill>
-                    <p className="m-0">{driver.name}</p>
-                </div>
-                <PopUpCenteredModal show={modalShow} driver={driver} onHide={() => setModalShow(false)} />
-            </div>
-            {/* Process */}
-            <div className="product-label-info" style={{ alignItems: 'unset' }}>
-                <p className="product-label-fit py-2">Process</p>
-                <div>
-                    <section className="step-wizard">
-                        <ul className="order-progress">
-                            {stepTemplate?.map?.((template, index) => {
-                                return (
-                                    <li className="order-progress-item" key={index} data-active={index <= active}>
-                                        <div className="progress-circle"></div>
-                                        <div className="progress-label">
-                                            <h2 className="progress-txt-header">{template.type}</h2>
-                                            <p className="order-progress-description">
-                                                At <b>{template.date}</b>, {template.message}
-                                            </p>
-                                        </div>
-                                    </li>
-                                );
-                            })}
-                        </ul>
-                    </section>
-                </div>
-            </div>
-            {/* Delivery Pictures */}
-            <div className="product-label-info py-3" style={{ alignItems: 'unset' }}>
-                <p className="product-label-fit py-1">Delivery pictures</p>
-                <div>
-                    <div className="img-front-frame" style={{ padding: '10px 0 ' }}>
-                        <div className="background-front">
-                            <div
-                                style={{
-                                    position: 'relative',
-                                    color: 'gray',
-                                    fontSize: '50px',
-                                    opacity: '70%',
-                                }}
-                            >
-                                {deliveryImages?.length}
-                            </div>
-                            <p className="driving-txt">view image</p>
-                        </div>
-                        <img className="img-front" src={deliveryImages?.[0] || 'https://tinyurl.com/5ehpcctt'} />
-                    </div>
-                    <Modal centered show={modalDeliveryImage} onHide={() => setModalDeliveryImage(false)}>
-                        <Modal.Header></Modal.Header>
-                        <Modal.Body>
-                            <Carousel>
-                                {deliveryImages &&
-                                    deliveryImages?.map?.((image, index) => {
-                                        return (
-                                            <Carousel.Item key={index}>
-                                                <img src={image} />
-                                            </Carousel.Item>
-                                        );
-                                    })}
-                            </Carousel>
-                        </Modal.Body>
-                    </Modal>
-                </div>
-            </div>
-            {/* Review Driver */}
-            {reviews.map((review) => {
-                return (
-                    <div className="p-3">
-                        <b>feedback: {review?.feedback}</b>
-                        <p>star: {review?.star}</p>
-                        <p>{moment(review?.createdAt).format('hh:mm DD/MM/YYYY')}</p>
-                    </div>
-                );
-            })}
-            {stepTemplate?.[active]?.type === 'Completed' && (
-                <div className="product-label-info py-3" style={{ alignItems: 'unset' }}>
-                    <p className="product-label-fit py-1">Review driver</p>
-                    <div className="py-3" style={{ alignItems: 'unset' }}>
-                        <Comment driverId={driver?.id} orderId={orderId}></Comment>
-                    </div>
-                </div>
-            )}
-            <Modal show={showReview} onHide={() => setShowReview(false)}>
-                <Modal.Header closeButton>
-                    <p className="product-label-fit py-1" style={{ margin: 0 }}>
-                        Review driver
-                    </p>
-                </Modal.Header>
-                <Modal.Body>
-                    <div className="py-3" style={{ alignItems: 'unset' }}>
-                        <Comment driverId={driver?.id} orderId={orderId}></Comment>
-                    </div>
-                </Modal.Body>
-            </Modal>
-        </div>
-    );
-}
-
-function PopUpCenteredModal({ driver, ...props }) {
-    return (
-        <Modal {...props} closeButton size="xl" aria-labelledby="contained-modal-title-vcenter" centered>
-            <Modal.Header closeButton></Modal.Header>
-            <div>
-                <Modal.Body className="p-4">
-                    <Row className="license-info-form">
-                        <Col>
-                            <div className="product-label-info">
-                                <p className="product-label">Full Name</p>
-                                <p className="product-content">{driver?.name}</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Phone number</p>
-                                <p className="product-content">{driver?.phoneNumber}</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Email</p>
-                                <p className="product-content">{driver?.email}</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">ABNnumber</p>
-                                <p className="product-content">{driver?.abnNumber}</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Address</p>
-                                <p className="product-content">{driver?.address}</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">City</p>
-                                <p className="product-content">{driver?.city}</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Driving license</p>
-                                <img width={'400px'} src={driver?.frontDrivingLiense} />
-                            </div>
-                        </Col>
-                        <Col>
-                            <div className="product-label-info">
-                                <p className="product-label">State</p>
-                                <p className="product-content">Australian</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Zipcode</p>
-                                <p className="product-content">{driver?.zipCode}</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Vehicles</p>
-                                <p className="product-content" style={{ wordWrap: 'break-word', maxWidth: '200px' }}>
-                                    {driver?.vehicles?.join?.(', ')}
-                                </p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Status</p>
-                                <p className="content-green">Actived</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Birthday</p>
-                                <p className="product-content">22/02/1991</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Gender</p>
-                                <p className="product-content">Male</p>
-                            </div>
-                            <div className="product-label-info">
-                                <p className="product-label">Additional Information</p>
-                                <p className="product-content">Additional Information</p>
-                            </div>
-                            {/* <div className="product-label-info">
-                                <p className="product-label">Review</p>
-                                <p className="product-content">Loading....</p>
-                            </div> */}
-                        </Col>
-                    </Row>
-                </Modal.Body>
-            </div>
-        </Modal>
-    );
-}
-
-function PaymentPopup({ show, onHide, clientSecret, loading, checkoutServerAPI, order, ...props }) {
-    return (
-        <Modal show={show} onHide={onHide} closeButton aria-labelledby="contained-modal-title-vcenter" centered>
-            <Modal.Header closebutton></Modal.Header>
-            <Modal.Body className="p-4" style={{ overflow: 'scroll' }}>
-                <PaymentComponents.Payment clientSecret={clientSecret} checkoutServerAPI={checkoutServerAPI} />
-            </Modal.Body>
-        </Modal>
-    );
-}
-
-function Comment({
-    driverId,
-    orderId,
-    avatar = 'https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg',
-}) {
-    const [rating, setRating] = React.useState(0);
-    const [hoverRating, setHoverRating] = React.useState(0);
-    const [authState] = React.useContext(AuthContext);
-    const [loading, setLoading] = React.useState(false);
-
-    const Star = ({ starId, rating, onMouseEnter, onMouseLeave, onClick }) => {
-        let styleClass = 'star-rating-blank';
-        if (rating >= starId) {
-            styleClass = 'star-rating-filled';
-        }
-
-        return (
-            <div className="star" onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={onClick}>
-                <svg height="30px" width="30px" class={styleClass} viewBox="0 0 25 23" data-rating="1">
-                    <polygon stroke-width="0" points="9.9, 1.1, 3.3, 21.78, 19.8, 8.58, 0, 8.58, 16.5, 21.78" />
-                </svg>
-            </div>
-        );
-    };
-    function sendFeedback(values) {
-        setLoading(true);
-        authInstance
-            .post([authConstraints.userRoot, authConstraints.postFeedback].join('/'), values, {
-                headers: {
-                    Authorization: [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(
-                        ' ',
-                    ),
-                },
-            })
-            .then((response) => {
-                if (response.data?.successed) {
-                    toast.success('Send feedback successful');
-                } else if (response.data?.error) {
-                    toast.error(response.data?.error);
-                }
-                setLoading(false);
-            })
-            .catch((error) => {
-                setLoading(false);
-            });
-    }
-
-    const stars = [1, 2, 3, 4, 5];
-
-    return (
-        <>
-            <Formik
-                initialValues={{
-                    driverId: driverId,
-                    orderId: orderId,
-                    star: 0,
-                    feedback: 0,
-                }}
-                validationSchema={yup.object().shape({
-                    driverId: yup.string().required(),
-                    orderId: yup.number().required(),
-                    star: yup.number().moreThan(0).required(),
-                    feedback: yup.string(),
-                })}
-                // enableReinitialize={true}
-                onSubmit={(values) => {
-                    sendFeedback(values);
-                }}
-            >
-                {({ values, errors, touched, handleSubmit, setFieldValue, handleChange, handleBlur, isValid }) => {
-                    return (
-                        <Form onSubmit={handleSubmit}>
-                            <div class="header">
-                                <img style={{ margin: 0, padding: 0 }} height="45px" weight="45px" src={avatar} />
-                                <div>
-                                    <h5 style={{ fontWeight: '600' }}>{authState?.accountInfo?.username}</h5>
-                                    <p>{authState?.accountInfo?.email}</p>
-                                </div>
-                            </div>
-                            <div>
-                                <div className="mb-2" style={{ display: 'flex' }}>
-                                    {stars.map((i) => (
-                                        <Star
-                                            key={i}
-                                            starId={i}
-                                            rating={hoverRating || rating}
-                                            onMouseEnter={() => setHoverRating(i)}
-                                            onMouseLeave={() => setHoverRating(0)}
-                                            onClick={() => {
-                                                setFieldValue('star', i);
-                                            }}
-                                        />
-                                    ))}
-                                </div>
-                                <Form.Group>
-                                    <Form.Control
-                                        name="star"
-                                        type="hidden"
-                                        value={values.star}
-                                        isInvalid={!!errors?.star}
-                                    ></Form.Control>
-                                    <Form.Control.Feedback type="invalid">{errors?.star}</Form.Control.Feedback>
-                                </Form.Group>
-                            </div>
-                            <Form.Group className="">
-                                <FloatingLabel controlId="floatingTextarea" label="Comment" className="mb-3">
-                                    <Form.Control
-                                        className="w-100"
-                                        as="textarea"
-                                        name="feedback"
-                                        isInvalid={touched?.feedback && !!errors?.feedback}
-                                        onChange={handleChange}
-                                        onBlur={handleBlur}
-                                    />
-                                    <Form.Control.Feedback type="invalid">{errors?.feedback}</Form.Control.Feedback>
-                                </FloatingLabel>
-                            </Form.Group>
-                            <Button type="submit" className="my-btn-yellow" disabled={!isValid || loading}>
-                                {loading ? <Spinner></Spinner> : 'Review'}
-                            </Button>
-                        </Form>
-                    );
-                }}
-            </Formik>
-        </>
     );
 }
 
