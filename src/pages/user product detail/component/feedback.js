@@ -10,7 +10,7 @@ function Feedback({
 }) {
     return (
         <div className="text-center py-2" style={{ background: 'var(--clr-primary)' }}>
-            <img src={avatar} style={{ margin: 0, padding: 0 }} height="45px" weight="45px"></img>
+            <img src={avatar} style={{ margin: 0, padding: 0, borderRadius: '50%' }} height="45px" weight="45px"></img>
             <div>
                 <Rater total={5} rating={review?.star || 1} interactive={false}>
                     {/* <Star isActive={true}></Star> */}
