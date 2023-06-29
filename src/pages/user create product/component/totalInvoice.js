@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import logo from '../../../image/as-logo.png';
+import { useReactToPrint } from 'react-to-print';
 
 export default function TotalInvoice({ values }) {
+    const componentRef = useRef();
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+        documentTitle: 'new document',
+        onafterprint: () => alert('Print Success'),
+    });
     return (
         <div className="t-invoice-root">
-            <div className="t-invoice-form">
+            <div className="w-100" style={{ textAlign: 'center', padding: '20px', paddingBottom: '0' }}>
+                <button className="my-btn-yellow" onClick={handlePrint}>
+                    Print Invoice
+                </button>
+            </div>
+            <div className="t-invoice-form" ref={componentRef}>
                 <div>
                     <div className="t-invoice-header">
                         <div style={{ width: '70px' }}>
