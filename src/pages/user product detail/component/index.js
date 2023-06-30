@@ -47,7 +47,7 @@ function ProductDetail() {
     const [slider, setSlider] = React.useState(false);
     const [receiveImg, setReceiveImg] = React.useState(false);
     const [deliveryImg, setDeliveryImg] = React.useState(false);
-    const [isLabel, setIsLabel] = React.useState(false);
+    const [showLabel, setShowLabel] = React.useState(null);
     const [order, setResult] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
     const [popupLoading, setPopupLoading] = React.useState(false);
@@ -930,7 +930,7 @@ function ProductDetail() {
                                             variant="warning"
                                             className="mb-3 mx-3"
                                             onClick={() => {
-                                                setIsLabel(true);
+                                                setShowLabel(index);
                                             }}
                                         >
                                             View Label
@@ -939,25 +939,35 @@ function ProductDetail() {
                                     <div>
                                         <Modal
                                             onHide={() => {
-                                                setIsLabel(false);
+                                                setShowLabel(null);
                                             }}
                                             size="lg"
-                                            show={isLabel}
+                                            show={index === showLabel}
                                         >
                                             <Modal.Header>
                                                 <Modal.Title
-                                                    className="txt-center w-100"
+                                                    className="txt-center w-100 d-flex align-items-center"
                                                     onClick={() => {
-                                                        setIsLabel(false);
+                                                        setShowLabel(null);
                                                     }}
                                                 >
-                                                    <div style={{ textAlign: 'right' }}>
+                                                    <h5 className="m-1">Print Label</h5>
+                                                    <div style={{ textAlign: 'right', flexGrow: 1 }}>
                                                         <FaTimes style={{ color: 'grey', cursor: 'pointer' }}></FaTimes>
                                                     </div>
                                                 </Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body className="link-slider p-0">
-                                                <TotalInvoice></TotalInvoice>
+                                                <TotalInvoice
+                                                    destination={item?.destination}
+                                                    itemName={item?.itemName}
+                                                    weight={item?.weight}
+                                                    quantity={item?.quantity}
+                                                    receiverName={item?.receiverName}
+                                                    receiverPhone={item?.receiverPhone}
+                                                    note={item?.itemDescription}
+                                                    packageType={item?.packageType}
+                                                ></TotalInvoice>
                                             </Modal.Body>
                                         </Modal>
                                     </div>
@@ -2009,6 +2019,7 @@ function ProductDetail() {
                                                     </Modal>
                                                 </div>
                                             </div>
+                                            0
                                         </Col>
                                     </Row>
                                 </SwiperSlide>
