@@ -6,6 +6,35 @@ import { Breadcrumbs } from './breadscrumb';
 import { NavLink } from 'react-router-dom';
 import { TbPackages } from 'react-icons/tb';
 import { AiFillLeftCircle, AiOutlineIdcard, AiOutlineHistory } from 'react-icons/ai';
+import { VscFeedback } from 'react-icons/vsc';
+
+const links = [
+    {
+        title: 'Job Availables',
+        link: '/driver/offer',
+        icon: <TbPackages className="sbar-icon"></TbPackages>,
+    },
+    {
+        title: 'Information',
+        link: '/driver/info',
+        icon: <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>,
+    },
+    {
+        title: 'History',
+        link: '/driver/history',
+        icon: <AiOutlineHistory className="sbar-icon"></AiOutlineHistory>,
+    },
+    {
+        title: 'Your Actived Job',
+        link: '/driver/order',
+        icon: <FiShoppingCart className="sbar-icon"></FiShoppingCart>,
+    },
+    {
+        title: 'Your rating',
+        link: '/driver/review',
+        icon: <VscFeedback className="sbar-icon"></VscFeedback>,
+    },
+];
 
 export function DriverSideBar({ children }) {
     const [toggle, setToggle] = React.useState(false);
@@ -33,54 +62,17 @@ export function DriverSideBar({ children }) {
                                 </div>
                                 <div>
                                     <div className={toggle ? 'form-label' : ''}>
-                                        <NavLink
-                                            className={({ isActive, isPending }) => {
-                                                return isPending
-                                                    ? 'sbar-link'
-                                                    : isActive
-                                                    ? 'sbar-link active'
-                                                    : 'sbar-link';
-                                            }}
-                                            to={'/driver/offer'}
-                                        >
-                                            <div className="sbar-icon-frame">
-                                                <TbPackages className="sbar-icon"></TbPackages>
-                                            </div>
-                                            <p className="sbar-txt">Job Availables</p>
-                                        </NavLink>
-                                        <NavLink
-                                            className={({ isActive }) => {
-                                                return isActive ? 'sbar-link active' : 'sbar-link';
-                                            }}
-                                            to={'/driver/info'}
-                                        >
-                                            <div className="sbar-icon-frame">
-                                                <AiOutlineIdcard className="sbar-icon"></AiOutlineIdcard>
-                                            </div>
-                                            <p className="sbar-txt">Information</p>
-                                        </NavLink>
-                                        <NavLink
-                                            className={({ isActive }) => {
-                                                return isActive ? 'sbar-link active' : 'sbar-link';
-                                            }}
-                                            to={'/driver/history'}
-                                        >
-                                            <div className="sbar-icon-frame">
-                                                <AiOutlineHistory className="sbar-icon"></AiOutlineHistory>
-                                            </div>
-                                            <p className="sbar-txt">History</p>
-                                        </NavLink>
-                                        <NavLink
-                                            className={({ isActive }) => {
-                                                return isActive ? 'sbar-link active' : 'sbar-link';
-                                            }}
-                                            to={'/driver/order'}
-                                        >
-                                            <div className="sbar-icon-frame">
-                                                <FiShoppingCart className="sbar-icon"></FiShoppingCart>
-                                            </div>
-                                            <p className="sbar-txt">Your Actived Job</p>
-                                        </NavLink>
+                                        {links.map((i) => (
+                                            <NavLink
+                                                className={({ isActive }) => {
+                                                    return isActive ? 'sbar-link active' : 'sbar-link';
+                                                }}
+                                                to={i.link}
+                                            >
+                                                <div className="sbar-icon-frame">{i.icon}</div>
+                                                <p className="sbar-txt">{i.title}</p>
+                                            </NavLink>
+                                        ))}
                                     </div>
                                 </div>
                             </div>

@@ -7,12 +7,17 @@ import { AuthContext, OrderContext } from '../../../stores';
 import '../style/createProduct.css';
 import moment from 'moment';
 import { Pagination } from 'swiper';
-import { Swiper, SwiperSlide, useSwiper, useSwiperSlide } from 'swiper/react';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css';
+import 'swiper/css/navigation';
 import { dotnetFormDataSerialize } from '../../../ultitlies';
 import 'react-phone-input-2/lib/style.css';
 import ItemCreation from './item';
 import { FaTimes } from 'react-icons/fa';
-import TotalInvoice from './totalInvoice';
+import { MdEdit } from 'react-icons/md';
+import { RiArrowDropDownLine } from 'react-icons/ri';
+import PhoneInput from 'react-phone-input-2';
+import { toast } from 'react-toastify';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -27,7 +32,7 @@ let orderSchema = yup.object().shape({
         postCode: yup.number().required('Post code is required'),
     }),
     deliverableDate: yup.date().required(),
-    startingRate: yup.number().positive().required('Your Reference Rate value is required'),
+    startingRate: yup.number().positive().min(5).required('Your Reference Rate value is required'),
     timeFrame: yup
         .string()
         .test('TIME INCORRECT', 'The time format is incorrect', (value) => {
@@ -41,10 +46,10 @@ let orderSchema = yup.object().shape({
             return end.diff(start) > 0;
         }),
     vehicles: yup.array().of(yup.string()).min(1, 'Vehicle must be selected 1 unit at least'),
-    orderItems: yup.array().of(
+    receivers: yup.array().of(
         yup.object().shape({
-            itemName: yup.string().required('Item Name is required field'),
-            itemCharcode: yup.number().default(Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)),
+            receiverName: yup.string().required('Receiver Name is required'),
+            receiverPhone: yup.string().required('Receiver Phone is required'),
             destination: yup.object().shape({
                 unitNumber: yup.string().required('Unit Number is required'),
                 streetNumber: yup.string().required('Street Number is required'),
@@ -53,9 +58,14 @@ let orderSchema = yup.object().shape({
                 state: yup.string().required('State is required'),
                 postCode: yup.number().required('Post code is required'),
             }),
+        }),
+    ),
+    orderItems: yup.array().of(
+        yup.object().shape({
+            itemName: yup.string().required('Item Name is required field'),
+            itemCharcode: yup.number().default(Math.floor(Math.random() * (999999 - 100000 + 1) + 100000)),
             itemDescription: yup.string().nullable(),
-            receiverName: yup.string().required('Receiver Name is required'),
-            receiverPhone: yup.string().required('Receiver Phone is required'),
+            receiverIndex: yup.number().required(),
             quantity: yup
                 .number()
                 .positive()
@@ -73,6 +83,7 @@ let orderSchema = yup.object().shape({
                     }),
                 )
                 .min(1, 'Adding more pictures for product')
+                .max(3, 'Your picture number should be smaller than 4')
                 .required('Adding more pictures for product')
                 .test('FILE SIZE', 'the file collection is too large', (files) => {
                     if (!files) {
@@ -91,12 +102,21 @@ let orderSchema = yup.object().shape({
 });
 
 function OrderCreation() {
+    const actions = {
+        addItem: 'add item',
+        addReceiver: 'add receiver',
+    };
     const [authState] = useContext(AuthContext);
     const [orderState, { postOrder }] = useContext(OrderContext);
     const [phoneError, setPhoneError] = React.useState('');
-    const [currentItemForm, setCurrent] = React.useState(0);
+    const [currentReceiver, setCurrent] = React.useState(0);
+    const [currentItem, setCurrentItem] = React.useState(0);
     const [devModal, setDevModal] = React.useState(false);
     const [swiperRef, setSwiperRef] = React.useState(null);
+    const [receiverDropdown, setReceiverDropdown] = React.useState(0);
+    const [itemDropdown, setItemDropdown] = React.useState(0);
+    const [receiverEditModal, setReceiverEditModal] = React.useState(null);
+    const [activeAction, setActions] = React.useState(null);
 
     const pagination = {
         clickable: true,
@@ -121,12 +141,11 @@ function OrderCreation() {
                 },
                 deliverableDate: Date.now(),
                 timeFrame: '-',
-                startingRate: 5,
+                startingRate: 0,
                 vehicles: [],
-                orderItems: [
+                receivers: [
                     {
-                        itemName: '',
-                        itemCharcode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
+                        index: 0,
                         destination: {
                             unitNumber: '',
                             streetNumber: '',
@@ -137,6 +156,13 @@ function OrderCreation() {
                         },
                         receiverName: '',
                         receiverPhone: '',
+                    },
+                ],
+                orderItems: [
+                    {
+                        itemName: '',
+                        itemCharcode: Math.floor(Math.random() * (999999 - 100000 + 1) + 100000),
+                        receiverIndex: 0,
                         itemDescription: '',
                         quantity: '',
                         weight: '',
@@ -152,6 +178,7 @@ function OrderCreation() {
                     orderItems: values.orderItems.map((item) => {
                         return {
                             ...item,
+                            ...values.receivers.find((r) => r.index === item.receiverIndex),
                             productPictures: item.productPictures.map((item) => item?.file),
                         };
                     }),
@@ -199,7 +226,7 @@ function OrderCreation() {
                             <div
                             // className='form-order'
                             >
-                                <Row>
+                                <Row className="mb-2">
                                     {/* Sending location & Destination */}
                                     <Col lg="6">
                                         <h3 className="mb-3">Order Location</h3>
@@ -392,32 +419,101 @@ function OrderCreation() {
                                 </Row>
 
                                 {/* OrderItems */}
-                                <h3 className="my-3">Item Information</h3>
-
                                 <FieldArray name="orderItems" shouldUpdate={(next, props) => true}>
-                                    {(arrayHelpers) => {
+                                    {(itemArrayHelpers) => {
                                         return (
                                             <Row>
                                                 <Col sm="12" md="6">
                                                     <div className="item-root py-2 px-xl-5">
                                                         <Swiper
                                                             onSwiper={setSwiperRef}
+                                                            navigation={true}
                                                             pagination={pagination}
                                                             modules={[Pagination]}
-                                                            initialSlide={values.orderItems.length - 1}
+                                                            initialSlide={
+                                                                values.orderItems.length
+                                                                    ? values.orderItems.length - 1
+                                                                    : 0
+                                                            }
                                                             spaceBetween={12}
+                                                            effect="fade"
+                                                            onInit={(swiper) => {
+                                                                swiper.updateSlides();
+                                                            }}
+                                                            onSlideChange={(swiper) => {
+                                                                let receiverIndex = values.receivers.findIndex(
+                                                                    (r) =>
+                                                                        r.index ===
+                                                                        values.orderItems?.[swiper.activeIndex]
+                                                                            ?.receiverIndex,
+                                                                );
+                                                                setCurrent(receiverIndex);
+                                                                setCurrentItem(swiper.activeIndex);
+                                                            }}
+                                                            onSlidesLengthChange={(swiper) => {
+                                                                if (
+                                                                    activeAction === actions.addItem ||
+                                                                    swiper.slides.length === 2
+                                                                ) {
+                                                                    swiper.slideNext();
+                                                                } else if (activeAction === actions.addReceiver) {
+                                                                    swiper.slideTo(values.orderItems.length - 1);
+                                                                }
+                                                            }}
                                                         >
                                                             {values.orderItems.map((item, index) => {
                                                                 return (
-                                                                    <SwiperSlide>
-                                                                        <ItemCreation
-                                                                            key={index}
-                                                                            index={index}
-                                                                            itemName={item?.itemName}
-                                                                            name={`orderItems[${index}]`}
-                                                                            setParentPhoneError={setPhoneError}
-                                                                            {...formProps}
-                                                                        ></ItemCreation>
+                                                                    <SwiperSlide className="mb-5">
+                                                                        {() => {
+                                                                            return (
+                                                                                <ItemCreation
+                                                                                    key={index}
+                                                                                    index={index}
+                                                                                    itemName={item?.itemName}
+                                                                                    name={`orderItems[${index}]`}
+                                                                                    setParentPhoneError={setPhoneError}
+                                                                                    onEditReceiver={() =>
+                                                                                        setReceiverEditModal(
+                                                                                            values.receivers.findIndex(
+                                                                                                (r) =>
+                                                                                                    r.index ===
+                                                                                                    item?.receiverIndex,
+                                                                                            ),
+                                                                                        )
+                                                                                    }
+                                                                                    onAddItem={() => {
+                                                                                        setActions(actions.addItem);
+                                                                                        itemArrayHelpers.insert(
+                                                                                            index + 1,
+                                                                                            {
+                                                                                                itemName: '',
+                                                                                                itemCharcode:
+                                                                                                    item.itemCharcode,
+                                                                                                receiverIndex:
+                                                                                                    item.receiverIndex,
+                                                                                                itemDescription: '',
+                                                                                                quantity: '',
+                                                                                                weight: '',
+                                                                                                packageType:
+                                                                                                    authState
+                                                                                                        ?.packageTypes?.[0],
+                                                                                                productPictures: [],
+                                                                                            },
+                                                                                        );
+                                                                                        setCurrentItem(index + 1);
+                                                                                    }}
+                                                                                    onDeleteItem={() => {
+                                                                                        setCurrentItem(
+                                                                                            index - 1 < 0
+                                                                                                ? 0
+                                                                                                : index - 1,
+                                                                                        );
+                                                                                        itemArrayHelpers.remove(index);
+                                                                                    }}
+                                                                                    {...formProps}
+                                                                                ></ItemCreation>
+                                                                            );
+                                                                        }}
                                                                     </SwiperSlide>
                                                                 );
                                                             })}
@@ -431,60 +527,376 @@ function OrderCreation() {
                                                             top: '0',
                                                         }}
                                                     >
-                                                        <h5 className="my-3">Item List Table</h5>
-                                                        <Row>
-                                                            {values.orderItems.map((item, index) => {
+                                                        <h5 className="my-3">Receiver List Table</h5>
+                                                        <FieldArray
+                                                            name="receivers"
+                                                            shouldUpdate={(nextProps, props) => true}
+                                                        >
+                                                            {(receiverArrayHelpers) => {
                                                                 return (
-                                                                    <Col className="p-2" sm="3">
-                                                                        <div
-                                                                            className={
-                                                                                currentItemForm === index &&
-                                                                                'text-danger'
-                                                                            }
-                                                                            data-active="true"
-                                                                            style={{
-                                                                                border: '1px solid var(--clr-txt-secondary)',
-                                                                                height: 'fit-content',
-                                                                                display: 'flex',
-                                                                                padding: '5px 10px',
-                                                                                borderRadius: '5px',
-                                                                                alignItems: 'center',
-                                                                                justifyContent: 'space-between',
-                                                                                cursor: 'pointer',
-                                                                            }}
-                                                                            title={item?.itemName}
-                                                                        >
-                                                                            {item?.itemName || (
-                                                                                <div
-                                                                                    onClick={() => slideTo(index)}
-                                                                                >{`Item ${index + 1}`}</div>
-                                                                            )}
-                                                                            {values.orderItems.length > 1 && (
-                                                                                <FaTimes
-                                                                                    className="times-createProduct"
-                                                                                    onClick={() =>
-                                                                                        arrayHelpers.remove(index)
-                                                                                    }
-                                                                                ></FaTimes>
-                                                                            )}
-                                                                        </div>
-                                                                    </Col>
+                                                                    <>
+                                                                        <p>How many receiver?</p>
+                                                                        <Row>
+                                                                            {values.receivers.map((receiver, index) => {
+                                                                                return (
+                                                                                    <Col className="p-2" sm="5" xl="3">
+                                                                                        <div
+                                                                                            className={
+                                                                                                currentReceiver ===
+                                                                                                    index &&
+                                                                                                'text-danger'
+                                                                                            }
+                                                                                            data-active="true"
+                                                                                            style={{
+                                                                                                border: '1px solid var(--clr-txt-secondary)',
+                                                                                                height: 'fit-content',
+                                                                                                display: 'flex',
+                                                                                                padding: '5px 10px',
+                                                                                                borderRadius: '5px',
+                                                                                                alignItems: 'center',
+                                                                                                justifyContent:
+                                                                                                    'space-between',
+                                                                                                cursor: 'pointer',
+                                                                                            }}
+                                                                                            title={
+                                                                                                receiver.receiverName
+                                                                                            }
+                                                                                        >
+                                                                                            <div
+                                                                                                onClick={() => {
+                                                                                                    setReceiverDropdown(
+                                                                                                        (r) =>
+                                                                                                            r !==
+                                                                                                                null &&
+                                                                                                            r === index
+                                                                                                                ? null
+                                                                                                                : index,
+                                                                                                    );
+                                                                                                    slideTo(
+                                                                                                        values.orderItems.findIndex(
+                                                                                                            (i) =>
+                                                                                                                i.receiverIndex ===
+                                                                                                                index,
+                                                                                                        ),
+                                                                                                    );
+                                                                                                }}
+                                                                                            >
+                                                                                                {receiver.receiverName ||
+                                                                                                    `Receiver ${
+                                                                                                        index + 1
+                                                                                                    }`}
+                                                                                            </div>
+                                                                                            <RiArrowDropDownLine
+                                                                                                className="times-createProduct"
+                                                                                                onClick={() =>
+                                                                                                    setReceiverDropdown(
+                                                                                                        (r) =>
+                                                                                                            r !==
+                                                                                                                null &&
+                                                                                                            r === index
+                                                                                                                ? null
+                                                                                                                : index,
+                                                                                                    )
+                                                                                                }
+                                                                                            ></RiArrowDropDownLine>
+                                                                                        </div>
+                                                                                        <ul
+                                                                                            className="aus-dropdown-menu"
+                                                                                            data-show={
+                                                                                                receiverDropdown ===
+                                                                                                index
+                                                                                            }
+                                                                                        >
+                                                                                            <li
+                                                                                                className="aus-dropdown-item"
+                                                                                                onClick={() =>
+                                                                                                    setReceiverEditModal(
+                                                                                                        index,
+                                                                                                    )
+                                                                                                }
+                                                                                            >
+                                                                                                <MdEdit className="times-createProduct"></MdEdit>{' '}
+                                                                                                Edit
+                                                                                            </li>
+                                                                                            {values.receivers.length >
+                                                                                                1 && (
+                                                                                                <li
+                                                                                                    className="aus-dropdown-item"
+                                                                                                    onClick={() => {
+                                                                                                        receiverArrayHelpers.remove(
+                                                                                                            index,
+                                                                                                        );
+                                                                                                        values.orderItems.forEach(
+                                                                                                            (i, id) => {
+                                                                                                                if (
+                                                                                                                    i.receiverIndex ===
+                                                                                                                    receiver.index
+                                                                                                                ) {
+                                                                                                                    toast.success(
+                                                                                                                        `Removed ${
+                                                                                                                            receiver.receiverName ||
+                                                                                                                            `Receiver ${
+                                                                                                                                index +
+                                                                                                                                1
+                                                                                                                            }`
+                                                                                                                        }`,
+                                                                                                                    );
+                                                                                                                    itemArrayHelpers.remove(
+                                                                                                                        id,
+                                                                                                                    );
+                                                                                                                }
+                                                                                                            },
+                                                                                                        );
+                                                                                                    }}
+                                                                                                >
+                                                                                                    <FaTimes className="times-createProduct"></FaTimes>{' '}
+                                                                                                    Remove
+                                                                                                </li>
+                                                                                            )}
+                                                                                        </ul>
+                                                                                        <Modal
+                                                                                            show={
+                                                                                                receiverEditModal ===
+                                                                                                index
+                                                                                            }
+                                                                                            onHide={() =>
+                                                                                                setReceiverEditModal(
+                                                                                                    null,
+                                                                                                )
+                                                                                            }
+                                                                                        >
+                                                                                            <Modal.Header
+                                                                                                closeButton
+                                                                                            ></Modal.Header>
+                                                                                            <Modal.Body>
+                                                                                                <EditReceiverForm
+                                                                                                    errors={errors}
+                                                                                                    handleBlur={
+                                                                                                        handleBlur
+                                                                                                    }
+                                                                                                    handleChange={
+                                                                                                        handleChange
+                                                                                                    }
+                                                                                                    index={index}
+                                                                                                    name={`receivers.[${index}]`}
+                                                                                                    phoneError={
+                                                                                                        phoneError
+                                                                                                    }
+                                                                                                    setFieldValue={
+                                                                                                        setFieldValue
+                                                                                                    }
+                                                                                                    setPhoneError={
+                                                                                                        setPhoneError
+                                                                                                    }
+                                                                                                    touched={touched}
+                                                                                                    values={values}
+                                                                                                ></EditReceiverForm>
+                                                                                                <Button
+                                                                                                    variant="success"
+                                                                                                    onClick={() =>
+                                                                                                        setReceiverEditModal(
+                                                                                                            null,
+                                                                                                        )
+                                                                                                    }
+                                                                                                >
+                                                                                                    <b>Done</b>
+                                                                                                </Button>
+                                                                                            </Modal.Body>
+                                                                                        </Modal>
+                                                                                    </Col>
+                                                                                );
+                                                                            })}
+                                                                            <Col className="p-2" sm="5" xl="3">
+                                                                                <Button
+                                                                                    onClick={() => {
+                                                                                        let newReceiverIndex =
+                                                                                            values.receivers?.[
+                                                                                                values.receivers
+                                                                                                    .length - 1
+                                                                                            ]?.index + 1;
+                                                                                        setActions(actions.addReceiver);
+                                                                                        receiverArrayHelpers.push({
+                                                                                            index: newReceiverIndex,
+                                                                                            destination: {
+                                                                                                unitNumber: '',
+                                                                                                streetNumber: '',
+                                                                                                streetName: '',
+                                                                                                suburb: '',
+                                                                                                state: '',
+                                                                                                postCode: '',
+                                                                                            },
+                                                                                            receiverName: '',
+                                                                                            receiverPhone: '',
+                                                                                        });
+                                                                                        itemArrayHelpers.push({
+                                                                                            receiverIndex:
+                                                                                                newReceiverIndex,
+                                                                                            itemName: '',
+                                                                                            itemCharcode: Math.floor(
+                                                                                                Math.random() *
+                                                                                                    (999999 -
+                                                                                                        100000 +
+                                                                                                        1) +
+                                                                                                    100000,
+                                                                                            ),
+                                                                                            itemDescription: '',
+                                                                                            quantity: '',
+                                                                                            weight: '',
+                                                                                            packageType:
+                                                                                                authState
+                                                                                                    ?.packageTypes?.[0],
+                                                                                            productPictures: [],
+                                                                                        });
+                                                                                    }}
+                                                                                >
+                                                                                    Add Receiver
+                                                                                </Button>
+                                                                            </Col>
+                                                                        </Row>
+                                                                        <p>
+                                                                            How many items for{' '}
+                                                                            {values.receivers?.find(
+                                                                                (d) => d.index === currentReceiver,
+                                                                            )?.receiverName ||
+                                                                                `Receiver ${
+                                                                                    values.receivers.findIndex(
+                                                                                        (r) =>
+                                                                                            r.index === currentReceiver,
+                                                                                    ) + 1
+                                                                                }`}
+                                                                            ?
+                                                                        </p>
+                                                                        <Row>
+                                                                            {values.orderItems.map((item, index) => {
+                                                                                return item.receiverIndex ===
+                                                                                    currentReceiver ? (
+                                                                                    <Col className="p-2" sm="5" xl="3">
+                                                                                        <div
+                                                                                            className={
+                                                                                                currentItem === index &&
+                                                                                                'text-danger'
+                                                                                            }
+                                                                                            data-active="true"
+                                                                                            style={{
+                                                                                                border: '1px solid var(--clr-txt-secondary)',
+                                                                                                height: 'fit-content',
+                                                                                                display: 'flex',
+                                                                                                padding: '5px 10px',
+                                                                                                borderRadius: '5px',
+                                                                                                alignItems: 'center',
+                                                                                                justifyContent:
+                                                                                                    'space-between',
+                                                                                                cursor: 'pointer',
+                                                                                            }}
+                                                                                            onClick={() =>
+                                                                                                setCurrentItem(index)
+                                                                                            }
+                                                                                            title={item.itemName}
+                                                                                        >
+                                                                                            <div
+                                                                                                onClick={() => {
+                                                                                                    setItemDropdown(
+                                                                                                        (r) =>
+                                                                                                            r !==
+                                                                                                                null &&
+                                                                                                            r === index
+                                                                                                                ? null
+                                                                                                                : index,
+                                                                                                    );
+                                                                                                    slideTo(index);
+                                                                                                }}
+                                                                                            >
+                                                                                                {item.itemName ||
+                                                                                                    `Item ${index + 1}`}
+                                                                                            </div>
+                                                                                            <RiArrowDropDownLine
+                                                                                                className="times-createProduct"
+                                                                                                onClick={() =>
+                                                                                                    setItemDropdown(
+                                                                                                        (r) =>
+                                                                                                            r !==
+                                                                                                                null &&
+                                                                                                            r === index
+                                                                                                                ? null
+                                                                                                                : index,
+                                                                                                    )
+                                                                                                }
+                                                                                            ></RiArrowDropDownLine>
+                                                                                        </div>
+                                                                                        <ul
+                                                                                            className="aus-dropdown-menu"
+                                                                                            data-show={
+                                                                                                itemDropdown === index
+                                                                                            }
+                                                                                        >
+                                                                                            <li
+                                                                                                className="aus-dropdown-item"
+                                                                                                onClick={() =>
+                                                                                                    slideTo(index)
+                                                                                                }
+                                                                                            >
+                                                                                                <MdEdit className="times-createProduct"></MdEdit>{' '}
+                                                                                                Edit
+                                                                                            </li>
+                                                                                            {values.orderItems.filter(
+                                                                                                (i) =>
+                                                                                                    i.receiverIndex ===
+                                                                                                    currentReceiver,
+                                                                                            ).length > 1 && (
+                                                                                                <li
+                                                                                                    className="aus-dropdown-item"
+                                                                                                    onClick={() => {
+                                                                                                        itemArrayHelpers.remove(
+                                                                                                            index,
+                                                                                                        );
+                                                                                                    }}
+                                                                                                >
+                                                                                                    <FaTimes className="times-createProduct"></FaTimes>{' '}
+                                                                                                    Remove
+                                                                                                </li>
+                                                                                            )}
+                                                                                        </ul>
+                                                                                    </Col>
+                                                                                ) : null;
+                                                                            })}
+                                                                            <Col className="p-2" sm="5" xl="3">
+                                                                                <Button
+                                                                                    onClick={() => {
+                                                                                        setActions(actions.addItem);
+
+                                                                                        itemArrayHelpers.insert(
+                                                                                            currentItem + 1,
+                                                                                            {
+                                                                                                receiverIndex:
+                                                                                                    currentReceiver,
+                                                                                                itemName: '',
+                                                                                                itemCharcode:
+                                                                                                    values.orderItems?.[
+                                                                                                        currentItem
+                                                                                                    ]?.itemCharcode,
+                                                                                                itemDescription: '',
+                                                                                                quantity: '',
+                                                                                                weight: '',
+                                                                                                packageType:
+                                                                                                    authState
+                                                                                                        ?.packageTypes?.[0],
+                                                                                                productPictures: [],
+                                                                                            },
+                                                                                        );
+
+                                                                                        setItemDropdown(
+                                                                                            currentItem + 1,
+                                                                                        );
+                                                                                    }}
+                                                                                >
+                                                                                    Add Item
+                                                                                </Button>
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </>
                                                                 );
-                                                            })}
-                                                            <Col className="p-2" sm="3">
-                                                                <Button
-                                                                    onClick={() =>
-                                                                        arrayHelpers.push(
-                                                                            values.orderItems?.[
-                                                                                values.orderItems.length - 1
-                                                                            ],
-                                                                        )
-                                                                    }
-                                                                >
-                                                                    Add Item
-                                                                </Button>
-                                                            </Col>
-                                                        </Row>
+                                                            }}
+                                                        </FieldArray>
 
                                                         {/* Start shipping rate */}
                                                         <Form.Group className="mb-2 mb-lg-3">
@@ -591,6 +1003,221 @@ function OrderCreation() {
         </Formik>
     );
 }
+
+const EditReceiverForm = ({
+    name,
+    values,
+    touched,
+    errors,
+    index,
+    handleChange,
+    handleBlur,
+    setFieldValue,
+    setPhoneError,
+    phoneError,
+}) => {
+    return (
+        <>
+            {/* Receiver Information */}
+            <Form.Group className="mb-4">
+                {/* Receiver Information */}
+                <h5 className="my-3">Receiver Information</h5>
+                <Row>
+                    <Col>
+                        <Form.Group className="mb-2">
+                            <div className="mb-2">
+                                <Form.Label className="label">Receiver Name</Form.Label>
+                                <p className="asterisk">*</p>
+                            </div>
+                            <Form.Control
+                                type="text"
+                                name={`${name}.receiverName`}
+                                placeholder="Enter Receiver Name"
+                                value={values.receivers?.[index]?.receiverName}
+                                isInvalid={
+                                    touched.receivers?.[index]?.receiverName &&
+                                    !!errors?.receivers?.[index]?.receiverName
+                                }
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {errors?.receivers?.[index]?.receiverName}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        {/* Phone */}
+                        <Form.Group>
+                            <div className="mb-2">
+                                <Form.Label className="label">Phone Number</Form.Label>
+                                <p className="asterisk">*</p>
+                            </div>
+                            <PhoneInput
+                                country={'au'}
+                                value={values.receivers?.[index]?.receiverPhone}
+                                containerClass="w-100"
+                                inputClass="w-100"
+                                onChange={(phone) => setFieldValue(`${name}.receiverPhone`, phone)}
+                                onlyCountries={['au', 'vn']}
+                                preferredCountries={['au']}
+                                placeholder="Enter Receiver Phone number"
+                                autoFormat={true}
+                                isValid={(inputNumber, _, countries) => {
+                                    const isValid = countries.some((country) => {
+                                        return (
+                                            inputNumber.startsWith(country.dialCode) ||
+                                            country.dialCode.startsWith(inputNumber)
+                                        );
+                                    });
+
+                                    setPhoneError('');
+
+                                    if (!isValid) {
+                                        setPhoneError('Your phone is not match with dial code');
+                                    }
+
+                                    return isValid;
+                                }}
+                            ></PhoneInput>
+                            <Form.Control
+                                type="hidden"
+                                name={`${name}.receiverPhone`}
+                                defaultValue={values.receivers?.[index]?.phone}
+                                isInvalid={!!errors.receivers?.[index]?.phone || !!phoneError}
+                            />
+                            <Form.Control.Feedback type="invalid">
+                                {errors.receivers?.[index]?.phone || phoneError}
+                            </Form.Control.Feedback>
+                        </Form.Group>
+                    </Col>
+                </Row>
+            </Form.Group>
+            {/* Destination */}
+            <Form.Group className="mb-4">
+                <div className="mb-2">
+                    <Form.Label className="label">Destination</Form.Label>
+                    <p className="asterisk">*</p>
+                </div>
+                <div className="pickup-post">
+                    {/* Unit Number */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.unitNumber`}
+                            placeholder="Enter Unit number (apartment, room,...)"
+                            value={values.receivers?.[index]?.destination?.unitNumber}
+                            isInvalid={
+                                touched.receivers?.[index]?.destination?.unitNumber &&
+                                !!errors?.receivers?.[index]?.destination?.unitNumber
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors.receivers?.[index]?.destination?.unitNumber}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Street Number */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.streetNumber`}
+                            value={values.receivers?.[index]?.destination?.streetNumber}
+                            placeholder="Enter street number"
+                            isInvalid={
+                                touched.receivers?.[index]?.destination?.streetNumber &&
+                                !!errors?.receivers?.[index]?.destination?.streetNumber
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.receivers?.[index]?.destination?.streetNumber}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Street Name */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.streetName`}
+                            placeholder="Enter Street Name"
+                            value={values.receivers?.[index]?.destination?.streetName}
+                            isInvalid={
+                                touched.receivers?.[index]?.destination?.streetName &&
+                                !!errors?.receivers?.[index]?.destination?.streetName
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.receivers?.[index]?.destination?.streetName}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* Suburb */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.suburb`}
+                            placeholder="Enter Suburb"
+                            value={values.receivers?.[index]?.destination?.suburb}
+                            isInvalid={
+                                touched.receivers?.[index]?.destination?.suburb &&
+                                !!errors?.receivers?.[index]?.destination?.suburb
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.receivers?.[index]?.destination?.suburb}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* State */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.state`}
+                            placeholder="Enter state"
+                            value={values.receivers?.[index]?.destination?.state}
+                            isInvalid={
+                                touched.receivers?.[index]?.destination?.state &&
+                                !!errors?.receivers?.[index]?.destination?.state
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.receivers?.[index]?.destination?.state}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+
+                    {/* State */}
+                    <Form.Group>
+                        <Form.Control
+                            type="text"
+                            name={`${name}.destination.postCode`}
+                            placeholder="Enter post code"
+                            value={values.receivers?.[index]?.destination?.postCode}
+                            isInvalid={
+                                touched.receivers?.[index]?.destination?.postCode &&
+                                !!errors?.receivers?.[index]?.destination?.postCode
+                            }
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.receivers?.[index]?.destination?.postCode}
+                        </Form.Control.Feedback>
+                    </Form.Group>
+                </div>
+            </Form.Group>
+        </>
+    );
+};
 
 export default function Index() {
     return <OrderCreation></OrderCreation>;
