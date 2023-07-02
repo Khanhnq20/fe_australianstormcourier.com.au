@@ -67,25 +67,24 @@ function Comment({
                                 <img style={{ margin: 0, padding: 0 }} height="45px" weight="45px" src={avatar} />
                                 <div>
                                     <h5 style={{ fontWeight: '600' }}>{authState?.accountInfo?.username}</h5>
-                                    <p>{authState?.accountInfo?.email}</p>
+                                    <div className="mb-2" style={{ display: 'flex' }}>
+                                        {stars.map((i) => (
+                                            <Star
+                                                key={i}
+                                                starId={i}
+                                                isActive={i <= values.star}
+                                                rating={hoverRating || values.star}
+                                                onMouseEnter={() => setHoverRating(i)}
+                                                onMouseLeave={() => setHoverRating(values.star)}
+                                                onClick={() => {
+                                                    setFieldValue('star', i);
+                                                }}
+                                            />
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                             <div>
-                                <div className="mb-2" style={{ display: 'flex' }}>
-                                    {stars.map((i) => (
-                                        <Star
-                                            key={i}
-                                            starId={i}
-                                            isActive={i <= values.star}
-                                            rating={hoverRating || values.star}
-                                            onMouseEnter={() => setHoverRating(i)}
-                                            onMouseLeave={() => setHoverRating(values.star)}
-                                            onClick={() => {
-                                                setFieldValue('star', i);
-                                            }}
-                                        />
-                                    ))}
-                                </div>
                                 <Form.Group>
                                     <Form.Control
                                         name="star"

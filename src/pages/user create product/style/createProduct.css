@@ -81,9 +81,7 @@
 }
 .t-invoice-form {
     margin: 0 auto;
-    width: fit-content;
     height: fit-content;
-    padding: 20px;
 }
 .t-invoice-header-txt {
     font-weight: 600;
