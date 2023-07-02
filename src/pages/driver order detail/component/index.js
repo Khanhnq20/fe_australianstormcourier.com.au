@@ -5,7 +5,6 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { FaTimes } from 'react-icons/fa';
 import { FieldArray, Formik } from 'formik';
-import Carousel from 'react-bootstrap/Carousel';
 import * as yup from 'yup';
 import { Navigate, useParams } from 'react-router-dom';
 import { authConstraints, authInstance, config } from '../../../api';
@@ -185,8 +184,8 @@ function OrderDetail() {
                                 <p className="content-green">{result?.order?.status}</p>
                             </div>
                             <div className="product-label-info">
-                                <p className="product-label-fit">Additional Information</p>
-                                <p className="product-content">{result?.order?.adInfo || 'Nothing'}</p>
+                                <p className="product-label-fit">Delivered Images</p>
+                                <p className="product-content"></p>
                             </div>
                         </div>
                     </Col>
@@ -194,17 +193,210 @@ function OrderDetail() {
                 {/* It includes before delivering and after prepared process + delivery pictures and cancelled reason */}
                 <Row>
                     <p className="product-content-title my-3">Progressing</p>
+                    {result?.order?.status &&
+                        result?.order?.status !== 'Prepared' &&
+                        result?.order?.status !== 'Delivering' &&
+                        result?.order?.status !== 'Completed' &&
+                        result?.order?.status !== 'Cancelled' && (
+                            <div className="order-letter-form py-4">
+                                {/* otherwise driver send delivery images to confirm their ready */}
+                                <div>
+                                    <Formik
+                                        initialValues={{
+                                            orderId: result?.orderId,
+                                            deliveryImages: [],
+                                        }}
+                                        validationSchema={imgSchema}
+                                        onSubmit={(values) => {
+                                            const formData = dotnetFormDataSerialize(
+                                                {
+                                                    ...values,
+                                                    deliveryImages: values.deliveryImages.map((item) => item?.file),
+                                                },
+                                                {
+                                                    indices: true,
+                                                    dotsForObjectNotation: true,
+                                                },
+                                            );
+                                            putPrepareOrder(formData);
+                                        }}
+                                    >
+                                        {({ errors, isValid, handleSubmit, handleBlur, values }) => {
+                                            const isLoading =
+                                                orderState.tasks?.[authConstraints.putPrepareOrder] ===
+                                                taskStatus.Inprogress;
+                                            return (
+                                                <Form onSubmit={handleSubmit}>
+                                                    <div className="txt-center">
+                                                        <FieldArray
+                                                            name="deliveryImages"
+                                                            render={(arrayHelpers) => {
+                                                                return (
+                                                                    <>
+                                                                        <Row>
+                                                                            {values?.deliveryImages?.map(
+                                                                                ({ url }, ind) => (
+                                                                                    <Col sm={3}>
+                                                                                        <div
+                                                                                            className="img-front-frame"
+                                                                                            style={{
+                                                                                                margin: '0 auto',
+                                                                                            }}
+                                                                                            onClick={() =>
+                                                                                                imgDelivery.current.click()
+                                                                                            }
+                                                                                        >
+                                                                                            <div className="background-front">
+                                                                                                <RiImageEditFill
+                                                                                                    style={{
+                                                                                                        position:
+                                                                                                            'relative',
+                                                                                                        color: 'gray',
+                                                                                                        fontSize:
+                                                                                                            '50px',
+                                                                                                        opacity: '70%',
+                                                                                                    }}
+                                                                                                ></RiImageEditFill>
+                                                                                                <p className="driving-txt">
+                                                                                                    Post the Image
+                                                                                                </p>
+                                                                                            </div>
+                                                                                            <img
+                                                                                                className="img-front"
+                                                                                                src={
+                                                                                                    url ||
+                                                                                                    'https://tinyurl.com/5ehpcctt'
+                                                                                                }
+                                                                                            />
+                                                                                        </div>
+                                                                                        <Button
+                                                                                            variant="danger"
+                                                                                            onClick={() =>
+                                                                                                arrayHelpers.remove(ind)
+                                                                                            }
+                                                                                        >
+                                                                                            Remove
+                                                                                        </Button>
+                                                                                    </Col>
+                                                                                ),
+                                                                            )}
+                                                                            <Col
+                                                                                sm={6}
+                                                                                className="img-front-frame"
+                                                                                style={{
+                                                                                    margin: '0 auto',
+                                                                                }}
+                                                                                onClick={() =>
+                                                                                    imgDelivery.current.click()
+                                                                                }
+                                                                            >
+                                                                                <div className="background-front">
+                                                                                    <RiImageEditFill
+                                                                                        style={{
+                                                                                            position: 'relative',
+                                                                                            color: 'gray',
+                                                                                            fontSize: '50px',
+                                                                                            opacity: '70%',
+                                                                                        }}
+                                                                                    ></RiImageEditFill>
+                                                                                    <p className="driving-txt">
+                                                                                        Post the Image
+                                                                                    </p>
+                                                                                </div>
+                                                                                <img
+                                                                                    className="img-front"
+                                                                                    src={'https://tinyurl.com/5ehpcctt'}
+                                                                                />
+                                                                            </Col>
+                                                                        </Row>
+                                                                        <div>
+                                                                            <Form.Control
+                                                                                type="file"
+                                                                                id="driver_image_front"
+                                                                                name="deliveryImages"
+                                                                                ref={imgDelivery}
+                                                                                multiple
+                                                                                accept="image"
+                                                                                isInvalid={!!errors?.deliveryImages}
+                                                                                onBlur={handleBlur}
+                                                                                onChange={(e) => {
+                                                                                    const files = e.target.files;
+                                                                                    for (
+                                                                                        var i = 0;
+                                                                                        i < files.length;
+                                                                                        i++
+                                                                                    ) {
+                                                                                        //for multiple files
+                                                                                        (function (file) {
+                                                                                            const fileReader =
+                                                                                                new FileReader();
+                                                                                            fileReader.onload =
+                                                                                                function (e) {
+                                                                                                    // get file content
+                                                                                                    fileReader.addEventListener(
+                                                                                                        'loadend',
+                                                                                                        (e) => {
+                                                                                                            arrayHelpers.push(
+                                                                                                                {
+                                                                                                                    file,
+                                                                                                                    url: fileReader.result,
+                                                                                                                },
+                                                                                                            );
+                                                                                                        },
+                                                                                                    );
+                                                                                                };
+                                                                                            fileReader.readAsDataURL(
+                                                                                                file,
+                                                                                            );
+                                                                                        })(files[i]);
+                                                                                    }
+                                                                                }}
+                                                                            />
+                                                                            <Form.Control.Feedback type="invalid">
+                                                                                {errors?.deliveryImages}
+                                                                            </Form.Control.Feedback>
+                                                                        </div>
+                                                                    </>
+                                                                );
+                                                            }}
+                                                        />
+
+                                                        <p className="order-txt-letter txt-center py-3 px-5">
+                                                            Please send package image when you received it from the
+                                                            sender to start delivery process.
+                                                        </p>
+
+                                                        <div style={{ margin: '0 auto' }}>
+                                                            <Button
+                                                                type="submit"
+                                                                className="my-btn-yellow mx-2"
+                                                                disabled={
+                                                                    !isValid ||
+                                                                    !values.deliveryImages?.length ||
+                                                                    isLoading
+                                                                }
+                                                            >
+                                                                {isLoading ? <Spinner></Spinner> : 'Start'}
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </Form>
+                                            );
+                                        }}
+                                    </Formik>
+                                </div>
+                            </div>
+                        )}
                     <Swiper navigation={true} spaceBetween={20}>
                         {result?.order?.orderItems?.map((item) => {
                             return (
                                 <SwiperSlide>
-                                    <Col>
-                                        {/* The order must be larger than "prepared" status to display the process of driver */}
-                                        {result?.order?.status &&
+                                    {/* The order must be larger than "prepared" status to display the process of driver */}
+                                    {result?.order?.status &&
                                         (result?.order?.status === 'Prepared' ||
                                             result?.order?.status === 'Delivering' ||
                                             result?.order?.status === 'Completed' ||
-                                            result?.order?.status === 'Cancelled') ? (
+                                            result?.order?.status === 'Cancelled') && (
                                             <Process
                                                 orderId={result?.orderId}
                                                 receiverName={item?.receiverName}
@@ -218,6 +410,7 @@ function OrderDetail() {
                                                     orderState?.tasks?.[authConstraints.putReceiveOrder] ===
                                                         taskStatus.Inprogress
                                                 }
+                                                deliveryImages={result?.order?.deliverdItemImages}
                                                 putDeliveryOrder={() => putDeliveryOrder(result?.orderId)}
                                                 putReceiveOrder={putReceiveOrder}
                                                 putCancelOrder={() => putCancelOrder(result?.orderId)}
@@ -241,224 +434,7 @@ function OrderDetail() {
                                             >
                                                 {2}
                                             </Process>
-                                        ) : (
-                                            <div className="order-letter-form py-4">
-                                                {/* otherwise driver send delivery images to confirm their ready */}
-                                                <div>
-                                                    <Formik
-                                                        initialValues={{
-                                                            orderId: result?.orderId,
-                                                            deliveryImages: [],
-                                                        }}
-                                                        validationSchema={imgSchema}
-                                                        onSubmit={(values) => {
-                                                            const formData = dotnetFormDataSerialize(
-                                                                {
-                                                                    ...values,
-                                                                    deliveryImages: values.deliveryImages.map(
-                                                                        (item) => item?.file,
-                                                                    ),
-                                                                },
-                                                                {
-                                                                    indices: true,
-                                                                    dotsForObjectNotation: true,
-                                                                },
-                                                            );
-                                                            putPrepareOrder(formData);
-                                                        }}
-                                                    >
-                                                        {({ errors, isValid, handleSubmit, handleBlur, values }) => {
-                                                            const isLoading =
-                                                                orderState.tasks?.[authConstraints.putPrepareOrder] ===
-                                                                taskStatus.Inprogress;
-                                                            return (
-                                                                <Form onSubmit={handleSubmit}>
-                                                                    <div className="txt-center">
-                                                                        <FieldArray
-                                                                            name="deliveryImages"
-                                                                            render={(arrayHelpers) => {
-                                                                                return (
-                                                                                    <>
-                                                                                        <Row>
-                                                                                            {values?.deliveryImages?.map(
-                                                                                                ({ url }, ind) => (
-                                                                                                    <Col sm={3}>
-                                                                                                        <div
-                                                                                                            className="img-front-frame"
-                                                                                                            style={{
-                                                                                                                margin: '0 auto',
-                                                                                                            }}
-                                                                                                            onClick={() =>
-                                                                                                                imgDelivery.current.click()
-                                                                                                            }
-                                                                                                        >
-                                                                                                            <div className="background-front">
-                                                                                                                <RiImageEditFill
-                                                                                                                    style={{
-                                                                                                                        position:
-                                                                                                                            'relative',
-                                                                                                                        color: 'gray',
-                                                                                                                        fontSize:
-                                                                                                                            '50px',
-                                                                                                                        opacity:
-                                                                                                                            '70%',
-                                                                                                                    }}
-                                                                                                                ></RiImageEditFill>
-                                                                                                                <p className="driving-txt">
-                                                                                                                    Post
-                                                                                                                    the
-                                                                                                                    Image
-                                                                                                                </p>
-                                                                                                            </div>
-                                                                                                            <img
-                                                                                                                className="img-front"
-                                                                                                                src={
-                                                                                                                    url ||
-                                                                                                                    'https://tinyurl.com/5ehpcctt'
-                                                                                                                }
-                                                                                                            />
-                                                                                                        </div>
-                                                                                                        <Button
-                                                                                                            variant="danger"
-                                                                                                            onClick={() =>
-                                                                                                                arrayHelpers.remove(
-                                                                                                                    ind,
-                                                                                                                )
-                                                                                                            }
-                                                                                                        >
-                                                                                                            Remove
-                                                                                                        </Button>
-                                                                                                    </Col>
-                                                                                                ),
-                                                                                            )}
-                                                                                            <Col
-                                                                                                sm={6}
-                                                                                                className="img-front-frame"
-                                                                                                style={{
-                                                                                                    margin: '0 auto',
-                                                                                                }}
-                                                                                                onClick={() =>
-                                                                                                    imgDelivery.current.click()
-                                                                                                }
-                                                                                            >
-                                                                                                <div className="background-front">
-                                                                                                    <RiImageEditFill
-                                                                                                        style={{
-                                                                                                            position:
-                                                                                                                'relative',
-                                                                                                            color: 'gray',
-                                                                                                            fontSize:
-                                                                                                                '50px',
-                                                                                                            opacity:
-                                                                                                                '70%',
-                                                                                                        }}
-                                                                                                    ></RiImageEditFill>
-                                                                                                    <p className="driving-txt">
-                                                                                                        Post the Image
-                                                                                                    </p>
-                                                                                                </div>
-                                                                                                <img
-                                                                                                    className="img-front"
-                                                                                                    src={
-                                                                                                        'https://tinyurl.com/5ehpcctt'
-                                                                                                    }
-                                                                                                />
-                                                                                            </Col>
-                                                                                        </Row>
-                                                                                        <div>
-                                                                                            <Form.Control
-                                                                                                type="file"
-                                                                                                id="driver_image_front"
-                                                                                                name="deliveryImages"
-                                                                                                ref={imgDelivery}
-                                                                                                multiple
-                                                                                                accept="image"
-                                                                                                isInvalid={
-                                                                                                    !!errors?.deliveryImages
-                                                                                                }
-                                                                                                onBlur={handleBlur}
-                                                                                                onChange={(e) => {
-                                                                                                    const files =
-                                                                                                        e.target.files;
-                                                                                                    for (
-                                                                                                        var i = 0;
-                                                                                                        i <
-                                                                                                        files.length;
-                                                                                                        i++
-                                                                                                    ) {
-                                                                                                        //for multiple files
-                                                                                                        (function (
-                                                                                                            file,
-                                                                                                        ) {
-                                                                                                            const fileReader =
-                                                                                                                new FileReader();
-                                                                                                            fileReader.onload =
-                                                                                                                function (
-                                                                                                                    e,
-                                                                                                                ) {
-                                                                                                                    // get file content
-                                                                                                                    fileReader.addEventListener(
-                                                                                                                        'loadend',
-                                                                                                                        (
-                                                                                                                            e,
-                                                                                                                        ) => {
-                                                                                                                            arrayHelpers.push(
-                                                                                                                                {
-                                                                                                                                    file,
-                                                                                                                                    url: fileReader.result,
-                                                                                                                                },
-                                                                                                                            );
-                                                                                                                        },
-                                                                                                                    );
-                                                                                                                };
-                                                                                                            fileReader.readAsDataURL(
-                                                                                                                file,
-                                                                                                            );
-                                                                                                        })(files[i]);
-                                                                                                    }
-                                                                                                }}
-                                                                                            />
-                                                                                            <Form.Control.Feedback type="invalid">
-                                                                                                {errors?.deliveryImages}
-                                                                                            </Form.Control.Feedback>
-                                                                                        </div>
-                                                                                    </>
-                                                                                );
-                                                                            }}
-                                                                        />
-
-                                                                        <p className="order-txt-letter txt-center py-3 px-5">
-                                                                            Please send package image when you received
-                                                                            it from the sender to start delivery
-                                                                            process.
-                                                                        </p>
-
-                                                                        <div style={{ margin: '0 auto' }}>
-                                                                            <Button
-                                                                                type="submit"
-                                                                                className="my-btn-yellow mx-2"
-                                                                                disabled={
-                                                                                    !isValid ||
-                                                                                    !values.deliveryImages?.length ||
-                                                                                    isLoading
-                                                                                }
-                                                                            >
-                                                                                {isLoading ? (
-                                                                                    <Spinner></Spinner>
-                                                                                ) : (
-                                                                                    'Start'
-                                                                                )}
-                                                                            </Button>
-                                                                        </div>
-                                                                    </div>
-                                                                </Form>
-                                                            );
-                                                        }}
-                                                    </Formik>
-                                                </div>
-                                            </div>
                                         )}
-                                    </Col>
                                 </SwiperSlide>
                             );
                         })}
@@ -499,38 +475,74 @@ function Process({
                 <StatusFail></StatusFail>
             ) : (
                 <div>
-                    <Row>
-                        <Col className="product-label-info">
-                            <p className="product-label-fit">Item number</p>
-                            <p className="product-content">{item?.id}</p>
+                    <Row className="align-items-start mb-2">
+                        <Col className="product-label-info" sm="3">
+                            <p className="product-label-fit">Item Images</p>
                         </Col>
-                        <Col className="product-label-info">
-                            <p className="product-label-fit">Note</p>
-                            <p className="product-content">{item?.itemDescription}</p>
+                        <Col sm="9">
+                            <img
+                                src={item?.itemImages?.split('[space]')?.[0]}
+                                loading="lazy"
+                                style={{ maxWidth: '120px' }}
+                            ></img>
                         </Col>
                     </Row>
                     <Row>
-                        <Col className="product-label-info">
+                        <Col className="product-label-info" sm="3">
+                            <p className="product-label-fit">Item number</p>
+                        </Col>
+                        <Col sm="9">
+                            <p className="product-content">{item?.id}</p>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="product-label-info" sm="3">
                             <p className="product-label">Receiver Full Name</p>
+                        </Col>
+                        <Col sm="9">
                             <p className="product-content">{receiverName}</p>
                         </Col>
-                        <Col className="product-label-info">
+                    </Row>
+                    <Row>
+                        <Col className="product-label-info" sm="3">
                             <p className="product-label">Phone number</p>
+                        </Col>
+                        <Col sm="9">
                             <p className="product-content">{receiverPhone}</p>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="product-label-info" sm="3">
+                            <p className="product-label">Destination</p>
+                        </Col>
+                        <Col sm="9">
+                            <p className="product-content">{item?.destination}</p>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col className="product-label-info" sm="3">
+                            <p className="product-label-fit">Note</p>
+                        </Col>
+                        <Col sm="9">
+                            <p className="product-content">{item?.itemDescription}</p>
                         </Col>
                     </Row>
                     {/* Agreed to delivery */}
                     {/* Status of delivery */}
-                    <div className="product-label-info">
-                        <p className="product-label-fit">Item Status</p>
-                        {stepTemplate?.[active] === 'Prepared' || stepTemplate?.[active] === 'Delivering' ? (
-                            <p className="content-yellow">{stepTemplate?.[active]}</p>
-                        ) : stepTemplate?.[active] === 'Completed' ? (
-                            <p className="content-green">{stepTemplate?.[active]}</p>
-                        ) : (
-                            <p className="content-red">{stepTemplate?.[active]}</p>
-                        )}
-                    </div>
+                    <Row>
+                        <Col className="product-label-info" sm="3">
+                            <p className="product-label-fit">Item Status</p>
+                        </Col>
+                        <Col sm="9">
+                            {stepTemplate?.[active] === 'Prepared' || stepTemplate?.[active] === 'Delivering' ? (
+                                <p className="content-yellow">{stepTemplate?.[active]}</p>
+                            ) : stepTemplate?.[active] === 'Completed' ? (
+                                <p className="content-green">{stepTemplate?.[active]}</p>
+                            ) : (
+                                <p className="content-red">{stepTemplate?.[active]}</p>
+                            )}
+                        </Col>
+                    </Row>
                     {/* Process of delivery */}
                     <div className="product-label-info" style={{ alignItems: 'unset' }}>
                         <div className="process-form">
@@ -850,13 +862,13 @@ function Process({
                                             opacity: '70%',
                                         }}
                                     >
-                                        {deliveryImages?.length}
+                                        {deliveryImages?.split('[space]')?.length}
                                     </div>
                                     <p className="driving-txt">view image</p>
                                 </div>
                                 <img
                                     className="img-front"
-                                    src={deliveryImages?.[0] || 'https://tinyurl.com/5ehpcctt'}
+                                    src={deliveryImages?.split('[space]')?.[0] || 'https://tinyurl.com/5ehpcctt'}
                                 />
                             </div>
                             <div>
@@ -881,16 +893,20 @@ function Process({
                                                 </Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body className="link-slider">
-                                                <Carousel>
+                                                <Swiper>
                                                     {deliveryImages?.split?.('[space]')?.map((url, index) => {
                                                         return (
-                                                            <Carousel.Item style={{ borderLeft: 'none' }} key={index}>
-                                                                <img className="w-100" src={url} alt="First slide" />
-                                                                <Carousel.Caption></Carousel.Caption>
-                                                            </Carousel.Item>
+                                                            <SwiperSlide style={{ borderLeft: 'none' }} key={index}>
+                                                                <img
+                                                                    className="w-100"
+                                                                    src={url}
+                                                                    alt="First slide"
+                                                                    style={{ maxWidth: '420px' }}
+                                                                />
+                                                            </SwiperSlide>
                                                         );
                                                     })}
-                                                </Carousel>
+                                                </Swiper>
                                             </Modal.Body>
                                         </Modal>
                                     </div>

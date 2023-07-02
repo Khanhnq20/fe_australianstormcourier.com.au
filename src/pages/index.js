@@ -35,4 +35,4 @@ export { EmailForgot } from './forgot/component/emailForgot';
 export { default as Invoice } from './invoice/invoice';
 export { default as NonRouting } from './nonRouting/component/index';
 export { default as UserUpdateProduct } from './user update product/component/index';
-export { default as DriverReview } from './driver review/component/index';
+export { default as DriverReview } from './driver review/component';

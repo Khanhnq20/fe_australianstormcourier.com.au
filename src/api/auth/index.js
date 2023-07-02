@@ -70,6 +70,7 @@ const constraints = {
     putCancelOrder: 'order/cancel',
 
     postFeedback: 'feedback',
+    getFeedbackList: 'feedback',
 
     hubOnline: 'online',
     hubReceiveOnline: 'online',

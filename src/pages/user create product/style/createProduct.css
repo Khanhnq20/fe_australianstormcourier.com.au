@@ -116,3 +116,25 @@
 .t-invoice-to-content {
     flex-grow: 1;
 }
+
+.aus-dropdown-menu {
+    padding: 0;
+    max-height: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: max-height 200ms, opacity 200ms;
+}
+
+.aus-dropdown-menu[data-show='true'] {
+    max-height: 400px;
+    opacity: 1;
+    visibility: visible;
+    transition: max-height 200ms, opacity 200ms;
+}
+
+.aus-dropdown-item {
+    list-style-type: none;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+}
