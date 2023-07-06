@@ -400,11 +400,12 @@ export default function ItemCreation({
                         <Form.Group>
                             <div className="mb-2">
                                 <Form.Label className="label">Phone Number</Form.Label>
+
                                 <p className="asterisk">*</p>
                             </div>
                             <PhoneInput
                                 country={'au'}
-                                value={values.orderItems?.[index]?.receiverPhone}
+                                value={receiverValue?.receiverPhone}
                                 containerClass="w-100"
                                 inputClass="w-100"
                                 onChange={(phone) => setFieldValue(`${name}.receiverPhone`, phone)}
