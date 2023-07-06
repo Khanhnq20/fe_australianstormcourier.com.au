@@ -11,6 +11,7 @@ import PhoneInput from 'react-phone-input-2';
 import { authConstraints, authInstance, config } from '../../../api';
 import { toast } from 'react-toastify';
 import { CustomSpinner } from '../../../layout';
+import { BsCheck2Circle } from 'react-icons/bs';
 
 let registerSchema = yup.object().shape({
     fullName: yup.string().required('Full Name is required field'),
@@ -21,7 +22,7 @@ let registerSchema = yup.object().shape({
 });
 
 function UserInformation() {
-    const [authState, { updateProfile }] = React.useContext(AuthContext);
+    const [authState, { updateProfile, getAccount }] = React.useContext(AuthContext);
     const [phoneError, setPhoneError] = React.useState('');
     const [showPhoneVerification, setShowPhoneVerification] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
@@ -68,6 +69,7 @@ function UserInformation() {
                 if (response.data?.successed) {
                     toast.success('Your account has been confirmed phone');
                     setLoading(false);
+                    getAccount();
                 } else {
                     toast.error('Failed');
                     setLoading(false);
@@ -104,7 +106,13 @@ function UserInformation() {
                         <p className="product-label">Confirmed phone number</p>
                         <p className="product-content">
                             {authState?.accountInfo?.phoneNumberConfirmed ? (
-                                <span>Confirmed</span>
+                                <span>
+                                    <BsCheck2Circle
+                                        className="me-2 text-success"
+                                        style={{ fontSize: '1.6rem' }}
+                                    ></BsCheck2Circle>
+                                    Confirmed
+                                </span>
                             ) : (
                                 <Button
                                     variant="success"
@@ -156,7 +164,6 @@ function UserInformation() {
                                                     Check new message and copy 6-digit code. Return website and paste{' '}
                                                     <b>code</b> to the below
                                                 </p>
-                                                <img src=""></img>
                                                 <Formik
                                                     initialValues={{
                                                         digit: '',

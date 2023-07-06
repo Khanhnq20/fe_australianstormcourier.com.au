@@ -6,8 +6,8 @@ import { Button, Col, Modal, Row, Spinner } from 'react-bootstrap';
 import { AuthContext, OrderContext } from '../../../stores';
 import '../style/createProduct.css';
 import moment from 'moment';
-import { Pagination } from 'swiper';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper';
+import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import { dotnetFormDataSerialize } from '../../../ultitlies';
@@ -18,6 +18,7 @@ import { MdEdit } from 'react-icons/md';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import PhoneInput from 'react-phone-input-2';
 import { toast } from 'react-toastify';
+import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -124,6 +125,8 @@ function OrderCreation() {
             return '<span class="' + className + '">' + (index + 1) + '</span>';
         },
     };
+    const navigationPrevRef = React.useRef(null);
+    const navigationNextRef = React.useRef(null);
     const slideTo = (index) => {
         swiperRef?.slideTo(index, 0);
     };
@@ -327,7 +330,7 @@ function OrderCreation() {
                                                     </Form.Control.Feedback>
                                                 </Form.Group>
 
-                                                {/* State */}
+                                                {/* Post code */}
                                                 <Form.Group>
                                                     <Form.Control
                                                         type="text"
@@ -425,11 +428,13 @@ function OrderCreation() {
                                             <Row>
                                                 <Col sm="12" md="6">
                                                     <div className="item-root py-2 px-xl-5">
+                                                        <CustomNavButtons swiperRef={swiperRef}></CustomNavButtons>
                                                         <Swiper
+                                                            id="orderItems"
                                                             onSwiper={setSwiperRef}
-                                                            navigation={true}
+                                                            // navigation={true}
                                                             pagination={pagination}
-                                                            modules={[Pagination]}
+                                                            modules={[Pagination, Navigation]}
                                                             initialSlide={
                                                                 values.orderItems.length
                                                                     ? values.orderItems.length - 1
@@ -438,6 +443,12 @@ function OrderCreation() {
                                                             spaceBetween={12}
                                                             effect="fade"
                                                             onInit={(swiper) => {
+                                                                // swiper.params.navigation.prevEl =
+                                                                //     navigationPrevRef.current;
+                                                                // swiper.params.navigation.nextEl =
+                                                                //     navigationNextRef.current;
+                                                                // swiper.navigation.init();
+                                                                // swiper.navigation.update();
                                                                 swiper.updateSlides();
                                                             }}
                                                             onSlideChange={(swiper) => {
@@ -1218,6 +1229,41 @@ const EditReceiverForm = ({
         </>
     );
 };
+
+function CustomNavButtons({ swiperRef = null }) {
+    const swiper = useSwiper();
+    console.log(swiperRef);
+    return (
+        <>
+            <AiOutlineLeft
+                className="swiper-nav-btns swiper-nav-prev"
+                onClick={() => {
+                    if (!swiperRef) {
+                        swiper.slidePrev();
+                    } else {
+                        swiperRef?.slidePrev();
+                    }
+                }}
+                style={{
+                    display: swiperRef?.activeIndex > 0 ? 'block' : 'none',
+                }}
+            ></AiOutlineLeft>
+            <AiOutlineRight
+                className="swiper-nav-btns swiper-nav-next"
+                onClick={() => {
+                    if (!swiperRef) {
+                        swiper.slideNext();
+                    } else {
+                        swiperRef?.slideNext();
+                    }
+                }}
+                style={{
+                    display: swiperRef?.activeIndex < swiperRef?.slides?.length - 1 ? 'block' : 'none',
+                }}
+            ></AiOutlineRight>
+        </>
+    );
+}
 
 export default function Index() {
     return <OrderCreation></OrderCreation>;

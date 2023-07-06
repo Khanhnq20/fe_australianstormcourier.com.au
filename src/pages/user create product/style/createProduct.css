@@ -59,6 +59,7 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     flex-grow: 1;
+    position: relative;
 }
 .times-createProduct-form {
     font-size: 25px;
@@ -137,4 +138,26 @@
     cursor: pointer;
     border-bottom: 1px solid #ccc;
     padding: 5px;
+}
+
+#orderItems .swiper-button-next,
+#orderItems .swiper-button-prev {
+    left: -10px;
+}
+
+.swiper-nav-btns {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    font-size: 3.5rem;
+    color: var(--clr-txt-primary);
+}
+
+.swiper-nav-prev {
+    left: 0;
+}
+
+.swiper-nav-next {
+    right: 0;
+    text-align: end;
 }
