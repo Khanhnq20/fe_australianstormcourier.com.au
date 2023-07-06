@@ -1,135 +1,125 @@
-import { Outlet } from "react-router-dom";
-import {
-  EmailCheck,
-  EmailForgot,
-  Forgot,
-  Login,
-  RegisterDriver,
-  RegisterUser,
-  ResetPassword,
-  UserInformation,
-  Verify,
-} from "../pages";
-import { Footer } from "../layout";
-import { NotFound } from "../pages/errors";
+import { Outlet } from 'react-router-dom';
+import { EmailCheck, EmailForgot, Forgot, Login, RegisterDriver, RegisterUser, ResetPassword, Verify } from '../pages';
+import { Footer } from '../layout';
+import { NotFound } from '../pages/errors';
 
 export const authChildrens = [
-  {
-    path: "register",
-    element: <Outlet></Outlet>,
-    children: [
-      {
-        path: "user",
+    {
+        path: 'register',
+        element: <Outlet></Outlet>,
+        children: [
+            {
+                path: 'user',
+                element: (
+                    <>
+                        <Outlet></Outlet>
+                    </>
+                ),
+                children: [
+                    {
+                        path: '',
+                        element: (
+                            <>
+                                <RegisterUser></RegisterUser>
+                                <Footer.Custom></Footer.Custom>
+                            </>
+                        ),
+                    },
+                ],
+            },
+            {
+                path: 'driver',
+                element: (
+                    <>
+                        <RegisterDriver />
+                        <Footer></Footer>
+                    </>
+                ),
+            },
+            {
+                path: 'confirm',
+                element: (
+                    <>
+                        <EmailCheck></EmailCheck>
+                        <Footer.Custom></Footer.Custom>
+                    </>
+                ),
+            },
+            {
+                path: 'verify',
+                element: (
+                    <>
+                        <Verify></Verify>
+                    </>
+                ),
+            },
+        ],
+    },
+    {
+        path: 'login',
         element: (
-          <>
-            <Outlet></Outlet>
-          </>
+            <>
+                <Login></Login>
+                <Footer.Custom></Footer.Custom>
+            </>
+        ),
+    },
+    {
+        path: 'forgot',
+        element: (
+            <>
+                <Outlet></Outlet>
+                <Footer.Custom></Footer.Custom>
+            </>
         ),
         children: [
-          {
-            path: "",
-            element: (
-              <>
-                <RegisterUser></RegisterUser>
-                <Footer.Custom></Footer.Custom>
-              </>
-            ),
-          },
+            {
+                path: '',
+                element: (
+                    <>
+                        <Forgot></Forgot>
+                    </>
+                ),
+            },
+            {
+                path: 'email',
+                element: (
+                    <>
+                        <EmailForgot></EmailForgot>
+                    </>
+                ),
+            },
         ],
-      },
-      {
-        path: "driver",
+    },
+    {
+        path: 'reset',
         element: (
-          <>
-            <RegisterDriver />
-            <Footer></Footer>
-          </>
+            <>
+                <ResetPassword></ResetPassword>
+                <Footer.Custom></Footer.Custom>
+            </>
         ),
-      },
-      {
-        path: "confirm",
+    },
+    {
+        path: 'verify',
+        element: <Outlet></Outlet>,
+        children: [
+            {
+                path: '',
+                element: <Verify></Verify>,
+            },
+            {
+                path: 'phone',
+                element: <></>,
+            },
+        ],
+    },
+    {
+        path: '*',
         element: (
-          <>
-            <EmailCheck></EmailCheck>
-            <Footer.Custom></Footer.Custom>
-          </>
+            <>
+                <NotFound></NotFound>
+            </>
         ),
-      },
-      {
-        path: "verify",
-        element: (
-          <>
-            <Verify></Verify>
-          </>
-        ),
-      },
-    ],
-  },
-  {
-    path: "login",
-    element: (
-      <>
-        <Login></Login>
-        <Footer.Custom></Footer.Custom>
-      </>
-    ),
-  },
-  {
-    path: "forgot",
-    element: (
-      <>
-        <Outlet></Outlet>
-        <Footer.Custom></Footer.Custom>
-      </>
-    ),
-    children: [
-      {
-        path: "",
-        element: (
-          <>
-            <Forgot></Forgot>
-          </>
-        ),
-      },
-      {
-        path: "email",
-        element: (
-          <>
-            <EmailForgot></EmailForgot>
-          </>
-        ),
-      },
-    ],
-  },
-  {
-    path: "reset",
-    element: (
-      <>
-        <ResetPassword></ResetPassword>
-        <Footer.Custom></Footer.Custom>
-      </>
-    ),
-  },
-  {
-    path: "verify",
-    element: <Outlet></Outlet>,
-    children: [
-      {
-        path: "",
-        element: <Verify></Verify>,
-      },
-      {
-        path: "phone",
-        element: <></>,
-      },
-    ],
-  },
-  {
-    path: "*",
-    element: (
-      <>
-        <NotFound></NotFound>
-      </>
-    ),
-  },
+    },
 ];
