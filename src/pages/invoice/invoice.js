@@ -158,7 +158,6 @@ function Invoice({ clientSecrete, payment }) {
                                 <thead>
                                     <tr style={{ backgroundColor: '#025464', color: 'white' }}>
                                         <th>Item Description</th>
-                                        <th>Rate</th>
                                         <th>Unit</th>
                                         <th>Amount</th>
                                     </tr>
@@ -166,44 +165,10 @@ function Invoice({ clientSecrete, payment }) {
                                 <tbody>
                                     <tr>
                                         <td>
-                                            Order #{payment?.order?.id}
-                                            <ul>
-                                                {payment?.order?.orderItems?.map((orderItem) => {
-                                                    const {
-                                                        item: {
-                                                            destination: {
-                                                                unitNumber,
-                                                                streetNumber,
-                                                                streetName,
-                                                                suburb,
-                                                                state,
-                                                                postCode,
-                                                            },
-                                                            itemName,
-                                                        },
-                                                    } = orderItem;
-                                                    return (
-                                                        <li>
-                                                            <p>Item No.{orderItem?.item?.id}</p>
-                                                            <p>{itemName}</p>
-                                                            <p>
-                                                                {`From: ${Object.entries(
-                                                                    payment?.order?.sendingLocation,
-                                                                )
-                                                                    .map(([_, v]) => v)
-                                                                    .join(', ')}`}
-                                                            </p>
-                                                            <p>
-                                                                {`To: ${unitNumber} - ${streetNumber} ${streetName}, ${suburb}, ${state}, ${postCode}`}
-                                                            </p>
-                                                        </li>
-                                                    );
-                                                })}
-                                            </ul>
+                                            <b>Delivery services fee</b>
                                         </td>
-                                        <td>{payment?.order?.shipFee}</td>
                                         <td>1</td>
-                                        <td>{payment?.order?.shipFee}</td>
+                                        <td>${payment?.order?.shipFee}</td>
                                     </tr>
                                 </tbody>
                             </table>
