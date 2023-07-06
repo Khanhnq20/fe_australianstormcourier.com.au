@@ -510,15 +510,19 @@ function ProductDetail() {
                                         initialValues={{
                                             orderId: order?.id,
                                             sendingLocation: {
-                                                unitNumber: '',
-                                                streetNumber: '',
-                                                streetName: '',
-                                                suburb: '',
-                                                state: '',
-                                                postCode: '',
+                                                unitNumber: order?.sendingLocation?.split(' ,')[0],
+                                                streetNumber: order?.sendingLocation?.split(' ,')[1].split(' ')[0],
+                                                streetName: order?.sendingLocation
+                                                    ?.split(' ,')[1]
+                                                    .split(' ')
+                                                    .slice(1, order?.sendingLocation?.split(' ,')[1].split(' ').length)
+                                                    .join(' '),
+                                                suburb: order?.sendingLocation?.split(' ,')[2],
+                                                state: order?.sendingLocation?.split(' ,')[3],
+                                                postCode: order?.sendingLocation?.split(' ,')[4],
                                             },
-                                            deliverableDate: Date.now(),
-                                            timeFrame: '-',
+                                            deliverableDate: moment(order?.deliverableDate, 'YYYY-MM-DD').toDate(),
+                                            timeFrame: order?.timeFrame,
                                             startingRate: order?.startingRate,
                                             vehicles: order?.vehicles.map(
                                                 (v) => authState.vehicles.find((p) => p.name === v).id,
@@ -592,6 +596,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.unitNumber"
                                                                             placeholder="Enter Unit number (apartment, room,...)"
+                                                                            value={values.sendingLocation.unitNumber}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.unitNumber &&
                                                                                 !!errors?.sendingLocation?.unitNumber
@@ -610,6 +615,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.streetNumber"
                                                                             placeholder="Enter street number"
+                                                                            value={values.sendingLocation.streetNumber}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.streetNumber &&
                                                                                 !!errors?.sendingLocation?.streetNumber
@@ -628,6 +634,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.streetName"
                                                                             placeholder="Enter Street Name"
+                                                                            value={values.sendingLocation.streetName}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.streetName &&
                                                                                 !!errors?.sendingLocation?.streetName
@@ -646,6 +653,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.suburb"
                                                                             placeholder="Enter Suburb"
+                                                                            value={values.sendingLocation.suburb}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.suburb &&
                                                                                 !!errors?.sendingLocation?.suburb
@@ -664,6 +672,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.state"
                                                                             placeholder="Enter state"
+                                                                            value={values.sendingLocation.state}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.state &&
                                                                                 !!errors?.sendingLocation?.state
@@ -676,12 +685,13 @@ function ProductDetail() {
                                                                         </Form.Control.Feedback>
                                                                     </Form.Group>
 
-                                                                    {/* State */}
+                                                                    {/* Postcode */}
                                                                     <Form.Group>
                                                                         <Form.Control
                                                                             type="text"
                                                                             name="sendingLocation.postCode"
                                                                             placeholder="Enter post code"
+                                                                            value={values.sendingLocation.postCode}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.postCode &&
                                                                                 !!errors?.sendingLocation?.postCode
@@ -699,6 +709,7 @@ function ProductDetail() {
                                                         <Col>
                                                             {/* Delivery Date */}
                                                             <h4 className="mb-3">Delivery Capability</h4>
+
                                                             <Row className="mb-3">
                                                                 <Col>
                                                                     {/* Deliverable Date */}
@@ -713,6 +724,9 @@ function ProductDetail() {
                                                                             type="date"
                                                                             name="deliverableDate"
                                                                             placeholder="Enter deliverable date"
+                                                                            value={moment(
+                                                                                values?.deliverableDate,
+                                                                            ).format('YYYY-MM-DD')}
                                                                             isInvalid={
                                                                                 touched.deliverableDate &&
                                                                                 !!errors?.deliverableDate
@@ -739,6 +753,10 @@ function ProductDetail() {
                                                                             type="time"
                                                                             name="timeFrame"
                                                                             placeholder="Enter time frame start"
+                                                                            value={moment(
+                                                                                values.timeFrame.split('-')[0],
+                                                                                'hh:mm',
+                                                                            ).format('hh:mm')}
                                                                             isInvalid={
                                                                                 touched?.timeFrame &&
                                                                                 !!errors?.timeFrame
@@ -766,6 +784,7 @@ function ProductDetail() {
                                                                             type="time"
                                                                             name="timeFrame"
                                                                             placeholder="Enter time frame end"
+                                                                            value={values.timeFrame.split('-')[1]}
                                                                             isInvalid={
                                                                                 touched.timeFrame && !!errors?.timeFrame
                                                                             }
@@ -981,12 +1000,22 @@ function ProductDetail() {
                                                     initialValues={{
                                                         itemName: item.itemName,
                                                         destination: {
-                                                            unitNumber: '',
-                                                            streetNumber: '',
-                                                            streetName: '',
-                                                            suburb: '',
-                                                            state: '',
-                                                            postCode: '',
+                                                            unitNumber: item?.destination?.split(' ,')[0],
+                                                            streetNumber: item?.destination
+                                                                ?.split(' ,')[1]
+                                                                ?.split(' ')[0],
+                                                            streetName: item?.destination
+                                                                ?.split(' ,')[1]
+                                                                ?.split(' ')
+                                                                ?.slice(
+                                                                    1,
+                                                                    item?.destination?.split(' ,')[1].split(' ')
+                                                                        .length - 1,
+                                                                )
+                                                                ?.join(' '),
+                                                            suburb: item?.destination?.split(' ,')[2],
+                                                            state: item?.destination?.split(' ,')[3],
+                                                            postCode: item?.destination?.split(' ,')[4],
                                                         },
                                                         receiverName: item.receiverName,
                                                         receiverPhone: item.receiverPhone,
@@ -1294,10 +1323,7 @@ function ProductDetail() {
                                                                                 type="text"
                                                                                 name={`destination.state`}
                                                                                 placeholder="Enter state"
-                                                                                value={
-                                                                                    values.orderItems?.[index]
-                                                                                        ?.destination?.state
-                                                                                }
+                                                                                value={values?.destination?.state}
                                                                                 isInvalid={
                                                                                     touched?.destination?.state &&
                                                                                     !!errors?.destination?.state
