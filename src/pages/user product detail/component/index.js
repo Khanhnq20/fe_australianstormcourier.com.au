@@ -27,6 +27,7 @@ import { usePagination } from '../../../hooks';
 import { CustomSpinner } from '../../../layout';
 import Carousel from 'react-bootstrap/Carousel';
 import { FaTimes } from 'react-icons/fa';
+import { BiEdit, BiPrinter, BiMessageEdit } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
 import { Pagination as SwiperPagination, Navigation } from 'swiper';
 import { SwiperSlide, Swiper } from 'swiper/react';
@@ -499,7 +500,8 @@ function ProductDetail() {
                                 </div>
                             </div>
                             <Button variant="success" onClick={() => setEditOrderModal(true)}>
-                                Edit information
+                                <BiMessageEdit className="me-2"></BiMessageEdit>
+                                Edit Order
                             </Button>
                             <Modal show={editOrderModal} onHide={() => setEditOrderModal(false)}>
                                 <Modal.Header closeButton>
@@ -936,13 +938,14 @@ function ProductDetail() {
                     >
                         {order?.orderItems?.map?.((item, index) => {
                             return (
-                                <SwiperSlide key={index} className="pb-5">
+                                <SwiperSlide key={index} className="pb-5 mb-2">
                                     <div>
                                         <Button
                                             variant="success"
                                             className="mb-3"
                                             onClick={() => setEditItemodal(index)}
                                         >
+                                            <BiEdit className="me-2"></BiEdit>
                                             Edit
                                         </Button>
                                         <Button
@@ -952,7 +955,8 @@ function ProductDetail() {
                                                 setShowLabel(index);
                                             }}
                                         >
-                                            View Label
+                                            <BiPrinter className="me-2"></BiPrinter>
+                                            Print Label
                                         </Button>
                                     </div>
                                     <div>
@@ -1805,7 +1809,7 @@ function ProductDetail() {
                                             </Modal.Body>
                                         </Modal>
                                     </div>
-                                    <Row className="product-form-content justify-content-center" key={index + 1}>
+                                    <Row className="justify-content-center" key={index + 1}>
                                         <Col sm="12" md="8" lg="6">
                                             <div className="product-form-info">
                                                 {/* Item name */}
@@ -1913,61 +1917,53 @@ function ProductDetail() {
                                                             src={item.itemImages?.split?.('[space]')?.[0]}
                                                         />
                                                     </div>
-                                                    <div>
-                                                        {slider ? (
-                                                            <div>
-                                                                <Modal
-                                                                    size="lg"
-                                                                    aria-labelledby="contained-modal-title-vcenter"
-                                                                    centered
-                                                                    show={slider}
-                                                                >
-                                                                    <Modal.Header>
-                                                                        <Modal.Title
-                                                                            className="txt-center w-100"
-                                                                            onClick={() => {
-                                                                                setSlider(false);
-                                                                            }}
-                                                                        >
-                                                                            <div style={{ textAlign: 'right' }}>
-                                                                                <FaTimes
-                                                                                    style={{
-                                                                                        color: 'grey',
-                                                                                        cursor: 'pointer',
-                                                                                    }}
-                                                                                ></FaTimes>
-                                                                            </div>
-                                                                        </Modal.Title>
-                                                                    </Modal.Header>
-                                                                    <Modal.Body className="link-slider">
-                                                                        <Carousel>
-                                                                            {item.itemImages
-                                                                                ?.split?.('[space]')
-                                                                                ?.map((url, index) => {
-                                                                                    return (
-                                                                                        <Carousel.Item
-                                                                                            style={{
-                                                                                                borderLeft: 'none',
-                                                                                            }}
-                                                                                            key={index}
-                                                                                        >
-                                                                                            <img
-                                                                                                className="w-100"
-                                                                                                src={url}
-                                                                                                alt="First slide"
-                                                                                            />
-                                                                                            <Carousel.Caption></Carousel.Caption>
-                                                                                        </Carousel.Item>
-                                                                                    );
-                                                                                })}
-                                                                        </Carousel>
-                                                                    </Modal.Body>
-                                                                </Modal>
-                                                            </div>
-                                                        ) : (
-                                                            <></>
-                                                        )}
-                                                    </div>
+                                                    <Modal
+                                                        size="lg"
+                                                        aria-labelledby="contained-modal-title-vcenter"
+                                                        centered
+                                                        show={slider}
+                                                    >
+                                                        <Modal.Header>
+                                                            <Modal.Title
+                                                                className="txt-center w-100"
+                                                                onClick={() => {
+                                                                    setSlider(false);
+                                                                }}
+                                                            >
+                                                                <div style={{ textAlign: 'right' }}>
+                                                                    <FaTimes
+                                                                        style={{
+                                                                            color: 'grey',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                    ></FaTimes>
+                                                                </div>
+                                                            </Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body className="link-slider">
+                                                            <Carousel>
+                                                                {item.itemImages
+                                                                    ?.split?.('[space]')
+                                                                    ?.map((url, index) => {
+                                                                        return (
+                                                                            <Carousel.Item
+                                                                                style={{
+                                                                                    borderLeft: 'none',
+                                                                                }}
+                                                                                key={index}
+                                                                            >
+                                                                                <img
+                                                                                    className="w-100"
+                                                                                    src={url}
+                                                                                    alt="First slide"
+                                                                                />
+                                                                                <Carousel.Caption></Carousel.Caption>
+                                                                            </Carousel.Item>
+                                                                        );
+                                                                    })}
+                                                            </Carousel>
+                                                        </Modal.Body>
+                                                    </Modal>
                                                 </div>
                                             </div>
                                             <div className="product-label-info" style={{ alignItems: 'unset' }}>
@@ -2045,7 +2041,6 @@ function ProductDetail() {
                                                     </Modal>
                                                 </div>
                                             </div>
-                                            0
                                         </Col>
                                     </Row>
                                 </SwiperSlide>
