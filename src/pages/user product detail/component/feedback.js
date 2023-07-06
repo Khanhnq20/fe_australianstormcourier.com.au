@@ -2,8 +2,6 @@ import moment from 'moment';
 import React from 'react';
 import Rater from 'react-rater';
 import 'react-rater/lib/react-rater.css';
-import { Star } from './comment';
-
 function Feedback({
     review,
     avatar = 'https://thumbs.dreamstime.com/b/male-avatar-icon-flat-style-male-user-icon-cartoon-man-avatar-hipster-vector-stock-91462914.jpg',

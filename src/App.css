@@ -41,6 +41,10 @@ body {
     overflow-y: hidden;
 } */
 
+.text-primary {
+    color: var(--clr-primary) !important;
+}
+
 .container-define {
     min-height: calc(100vh - 96px - 54px);
 }

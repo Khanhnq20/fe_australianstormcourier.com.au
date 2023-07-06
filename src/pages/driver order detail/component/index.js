@@ -16,6 +16,7 @@ import { dotnetFormDataSerialize } from '../../../ultitlies';
 import moment from 'moment';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { toast } from 'react-toastify';
+import Confetti from 'react-confetti';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 let imgSchema = yup.object().shape({
@@ -76,6 +77,7 @@ function OrderDetail() {
         useContext(OrderContext);
     const [result, setResult] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
+    const [congratulation, setCongratulation] = React.useState(true);
     const imgDelivery = useRef();
     const [error, setError] = React.useState('');
     const { id } = useParams();
@@ -121,6 +123,10 @@ function OrderDetail() {
                 setLoading(false);
             });
     }
+
+    useEffect(() => {
+        setCongratulation(result?.order?.status === 'Completed');
+    }, [result?.order?.status]);
 
     if (loading || orderState?.loading)
         return (
@@ -441,6 +447,32 @@ function OrderDetail() {
                     </Swiper>
                 </Row>
             </div>
+            {/* {congratulation && <Confetti></Confetti>} */}
+            <Modal show={congratulation} centered onHide={() => setCongratulation(false)}>
+                <Modal.Header closeButton>
+                    <h4 className="text-primary" style={{ marginBottom: '0' }}>
+                        Congratulations
+                    </h4>
+                </Modal.Header>
+                <Confetti className="w-100"></Confetti>
+                <Modal.Body
+                    className="p-2 text-center"
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        minWidth: '320px',
+                        minHeight: '280px',
+                        // background:
+                        //     'url(https://media.istockphoto.com/id/1168280104/vector/white-background-design-with-golden-ribbon-decoration.jpg?s=612x612&w=0&k=20&c=ezCiSbcFOGoLOkwi_pGf6d-r1sf1oCO5--w9nOSuGpc=) no-repeat',
+                        // backgroundSize: 'contain',
+                    }}
+                >
+                    <i style={{ color: 'var(--clr-txt-primary)', fontSize: '2rem' }}>You have completed this order.</i>
+                    <b style={{ display: 'block' }}>Thanks for your contribution</b>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }
@@ -872,47 +904,36 @@ function Process({
                                 />
                             </div>
                             <div>
-                                {slider ? (
-                                    <div>
-                                        <Modal
-                                            size="lg"
-                                            aria-labelledby="contained-modal-title-vcenter"
-                                            centered
-                                            show={slider}
+                                <Modal size="lg" aria-labelledby="contained-modal-title-vcenter" centered show={slider}>
+                                    <Modal.Header>
+                                        <Modal.Title
+                                            className="txt-center w-100"
+                                            onClick={() => {
+                                                setSlider(false);
+                                            }}
                                         >
-                                            <Modal.Header>
-                                                <Modal.Title
-                                                    className="txt-center w-100"
-                                                    onClick={() => {
-                                                        setSlider(false);
-                                                    }}
-                                                >
-                                                    <div style={{ textAlign: 'right' }}>
-                                                        <FaTimes style={{ color: 'grey', cursor: 'pointer' }}></FaTimes>
-                                                    </div>
-                                                </Modal.Title>
-                                            </Modal.Header>
-                                            <Modal.Body className="link-slider">
-                                                <Swiper>
-                                                    {deliveryImages?.split?.('[space]')?.map((url, index) => {
-                                                        return (
-                                                            <SwiperSlide style={{ borderLeft: 'none' }} key={index}>
-                                                                <img
-                                                                    className="w-100"
-                                                                    src={url}
-                                                                    alt="First slide"
-                                                                    style={{ maxWidth: '420px' }}
-                                                                />
-                                                            </SwiperSlide>
-                                                        );
-                                                    })}
-                                                </Swiper>
-                                            </Modal.Body>
-                                        </Modal>
-                                    </div>
-                                ) : (
-                                    <></>
-                                )}
+                                            <div style={{ textAlign: 'right' }}>
+                                                <FaTimes style={{ color: 'grey', cursor: 'pointer' }}></FaTimes>
+                                            </div>
+                                        </Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body className="link-slider">
+                                        <Swiper>
+                                            {deliveryImages?.split?.('[space]')?.map((url, index) => {
+                                                return (
+                                                    <SwiperSlide style={{ borderLeft: 'none' }} key={index}>
+                                                        <img
+                                                            className="w-100"
+                                                            src={url}
+                                                            alt="First slide"
+                                                            style={{ maxWidth: '420px' }}
+                                                        />
+                                                    </SwiperSlide>
+                                                );
+                                            })}
+                                        </Swiper>
+                                    </Modal.Body>
+                                </Modal>
                             </div>
                         </div>
                     </div>
