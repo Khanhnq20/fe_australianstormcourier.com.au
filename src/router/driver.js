@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router';
 import {
+    ChangePassword,
     DriverActiveOrder,
     DriverHistory,
     DriverInfo,
@@ -78,6 +79,10 @@ export const driverChildrens = [
     {
         path: 'review',
         element: <DriverReview></DriverReview>,
+    },
+    {
+        path: 'password',
+        element: <ChangePassword></ChangePassword>,
     },
     {
         path: '*',

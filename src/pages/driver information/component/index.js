@@ -11,6 +11,7 @@ import { authConstraints, authInstance, config } from '../../../api';
 import { toast } from 'react-toastify';
 import { Modal, Spinner } from 'react-bootstrap';
 import PhoneInput from 'react-phone-input-2';
+import { BsCheck2Circle } from 'react-icons/bs';
 
 let updateDriverSchema = yup.object().shape({
     fullName: yup.string().required('Full Name is required field'),
@@ -20,7 +21,7 @@ let updateDriverSchema = yup.object().shape({
 });
 
 function UpdateDriver() {
-    const [authState, { updateDriverProfile }] = useContext(AuthContext);
+    const [authState, { updateDriverProfile, getAccount }] = useContext(AuthContext);
     const [phoneError, setPhoneError] = React.useState('');
     const [showPhoneVerification, setShowPhoneVerification] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
@@ -67,6 +68,7 @@ function UpdateDriver() {
                 if (response.data?.successed) {
                     toast.success('Your account has been confirmed phone');
                     setLoading(false);
+                    getAccount();
                 } else {
                     toast.error('Failed');
                     setLoading(false);
@@ -123,7 +125,13 @@ function UpdateDriver() {
                                         <p className="product-label">Confirmed phone number</p>
                                         <p className="product-content">
                                             {authState?.accountInfo?.phoneNumberConfirmed ? (
-                                                <span>Confirmed</span>
+                                                <span>
+                                                    <BsCheck2Circle
+                                                        className="me-2 text-success"
+                                                        style={{ fontSize: '1.6rem' }}
+                                                    ></BsCheck2Circle>
+                                                    Confirmed
+                                                </span>
                                             ) : (
                                                 <Button
                                                     variant="success"
