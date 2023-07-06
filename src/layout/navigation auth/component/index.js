@@ -27,9 +27,7 @@ export default function Index() {
                                 <AiFillBell onClick={()=>{setNotify(e=>!e)}} className='nav-auth-icon-notify'></AiFillBell>
                                 {notify ? <Notification></Notification> : <></>}
                             </div> */}
-                            <div>
-                                <AvatarUserDropDown></AvatarUserDropDown>
-                            </div>
+                            <AvatarUserDropDown></AvatarUserDropDown>
                         </div>
                     </div>
                 </Navbar>
@@ -89,15 +87,7 @@ function AvatarUserDropDown() {
                 <div className="nav-menu">
                     <div className="nav-menu-topic" onClick={() => setShow((e) => !e)}>
                         <BsPersonWorkspace className="nav-menu-topic-icon"></BsPersonWorkspace>
-                        <Link
-                            to={`/user/order/me`}
-                            style={{
-                                textDecoration: 'none',
-                                color: 'var(--clr-txt-secondary)',
-                            }}
-                        >
-                            My Workspace
-                        </Link>
+                        <Link to={`/user/order/me`}>My Workspace</Link>
                     </div>
                     <div className="nav-menu-topic" onClick={() => setShow((e) => !e)}>
                         <AiFillUnlock className="nav-menu-topic-icon"></AiFillUnlock>
@@ -109,10 +99,6 @@ function AvatarUserDropDown() {
                                     ? `/user/password`
                                     : `/admin/password`
                             }
-                            style={{
-                                textDecoration: 'none',
-                                color: 'var(--clr-txt-secondary)',
-                            }}
                         >
                             Change Password
                         </Link>
