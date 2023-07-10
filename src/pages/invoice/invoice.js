@@ -133,7 +133,7 @@ function Invoice({ clientSecrete, payment }) {
                         <div>
                             <p className="invoice-txt-header">sameday courier services pty ltd</p>
                             <p style={{ margin: '5px' }}>ABN | 82 654 966 604</p>
-                            <p style={{ margin: '5px' }}>Phone Number | 04 66 56 22 86</p>
+                            <p style={{ margin: '5px' }}>Email | info@australianstormcourier.com.au</p>
                         </div>
                     </div>
                     <div style={{ margin: '0 auto' }}>

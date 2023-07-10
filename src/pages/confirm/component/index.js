@@ -1,6 +1,6 @@
 import React from 'react';
 import '../style/emailCheck.css';
-import { Link, NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
 export default function Index() {
@@ -8,8 +8,8 @@ export default function Index() {
         <div className="em-root">
             <div className="em-form">
                 <div className="em-title">
-                    <h3 className="txt-center mb-4">Thanks for your register!</h3>
-                    <h4 className="txt-center">Your account will be certain by Admin. Please wait in a few minutes.</h4>
+                    <h3 className="txt-center mb-4">WELCOME TO AUSTRALIAN STORM COURIER</h3>
+                    <h4 className="txt-center">Thanks for your register!</h4>
                 </div>
                 <div>
                     <svg width="140" height="140" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -42,8 +42,7 @@ export default function Index() {
                 </div>
                 <div>
                     <p className="em-txt">
-                        Your account have been created and verification email have been sent to your registed email
-                        address. Please click on the verification link included in the email
+                        Thanks for your register! Your registered email needs to be verified. Please check your email.
                     </p>
                 </div>
                 <Link to={'/auth/login'}>

@@ -25,22 +25,22 @@ function Driver({
     const stepTemplate = [
         {
             type: 'Waiting',
-            message: 'We has sent the request to delivery of driver',
+            message: 'Driver is on the way to pick up your orders',
             date: moment(createdTime).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
             type: 'Prepared',
-            message: 'Driver has received the order',
+            message: 'Driver has picked up your orders. ',
             date: moment(preparedTime).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
             type: 'Delivering',
-            message: 'Driver are on his way',
+            message: 'Delivery is on the process',
             date: moment(deliveringTime).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
             type: 'Completed',
-            message: 'Driver has come to you',
+            message: 'Your orders have been delivered to receivers.',
             date: moment(completedTime).format('YYYY-MM-DD HH:mm:ss'),
         },
         {
@@ -87,7 +87,8 @@ function Driver({
                                         <div className="progress-label">
                                             <h2 className="progress-txt-header">{template.type}</h2>
                                             <p className="order-progress-description">
-                                                At <b>{template.date}</b>, {template.message}
+                                                {/* At <b>{template.date}</b>,  */}
+                                                {template.message}
                                             </p>
                                         </div>
                                     </li>

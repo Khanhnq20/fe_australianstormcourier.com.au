@@ -64,6 +64,7 @@ const constraints = {
     getAllPayments: 'payments',
     putPayoutPayments: 'payments/payout',
 
+    putStartOrder: 'order/start',
     putPrepareOrder: 'order/prepare',
     putDeliverOrder: 'order/deliver',
     putReceiveOrder: 'order/receive',

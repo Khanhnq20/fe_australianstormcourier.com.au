@@ -25,7 +25,7 @@ function Product() {
     const [authState] = useContext(AuthContext);
     const [orderState, { postDriverOffer }] = useContext(OrderContext);
     const [{ socketConnection }, { onOrderReceive }] = useContext(SocketContext);
-    const [detailModal, setDetailModal] = useState(false);
+    const [detailModal, setDetailModal] = useState(null);
 
     const rows = [5, 10, 15, 20, 25, 30, 35, 40];
     const {
@@ -141,68 +141,20 @@ function Product() {
                                         <th>Order Id</th>
                                         <th
                                             style={{
-                                                minWidth: '320px',
+                                                minWidth: '150px',
                                             }}
                                         >
                                             Item Name
                                         </th>
-                                        <th
-                                            style={{
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            Pickup
-                                        </th>
+                                        <th>Pickup</th>
 
-                                        <th
-                                            style={{
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            Posted At
-                                        </th>
-                                        <th
-                                            style={{
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            Expected date
-                                        </th>
-                                        <th
-                                            style={{
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            Expected time frame
-                                        </th>
-                                        <th
-                                            style={{
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            Expected vehicles
-                                        </th>
-                                        <th
-                                            style={{
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            Status
-                                        </th>
-                                        <th
-                                            style={{
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            Sender Offer
-                                        </th>
-                                        <th
-                                            style={{
-                                                minWidth: '140px',
-                                            }}
-                                        >
-                                            Actions
-                                        </th>
+                                        <th>Posted At</th>
+                                        <th>Expected date</th>
+                                        <th>Expected time frame</th>
+                                        <th>Expected vehicles</th>
+                                        <th>Status</th>
+                                        <th>Sender Offer</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -215,22 +167,16 @@ function Product() {
                                                     <td>
                                                         <Row>
                                                             <Col sm="5">
-                                                                <div
+                                                                <img
+                                                                    src={
+                                                                        post?.orderItems?.[0]?.itemImages?.split?.(
+                                                                            '[space]',
+                                                                        )?.[0]
+                                                                    }
                                                                     style={{
-                                                                        width: '120px',
+                                                                        width: '100%',
                                                                     }}
-                                                                >
-                                                                    <img
-                                                                        src={
-                                                                            post?.orderItems?.[0]?.itemImages?.split?.(
-                                                                                '[space]',
-                                                                            )?.[0]
-                                                                        }
-                                                                        style={{
-                                                                            width: '100%',
-                                                                        }}
-                                                                    ></img>
-                                                                </div>
+                                                                ></img>
                                                             </Col>
                                                             <Col sm="7">
                                                                 <b>{post?.orderItems?.[0]?.itemName}</b>
@@ -238,21 +184,21 @@ function Product() {
                                                         </Row>
                                                     </td>
                                                     <td>{post?.sendingLocation}</td>
-                                                    <td>
+                                                    <td style={{ whiteSpace: 'nowrap' }}>
                                                         {!!post?.createdDate
                                                             ? moment(post?.createdDate).format('DD-MM-YYYY')
                                                             : ''}
                                                     </td>
-                                                    <td>
+                                                    <td style={{ whiteSpace: 'nowrap' }}>
                                                         {!!post?.deliverableDate
                                                             ? moment(post?.deliverableDate).format('DD-MM-YYYY')
                                                             : ''}
                                                     </td>
-                                                    <td>{post?.timeFrame}</td>
+                                                    <td style={{ whiteSpace: 'nowrap' }}>{post?.timeFrame}</td>
                                                     <td>
-                                                        <ul>
+                                                        <ul className="ps-3">
                                                             {post?.vehicles?.map?.((str) => {
-                                                                return <li>{str}</li>;
+                                                                return <li style={{ whiteSpace: 'nowrap' }}>{str}</li>;
                                                             })}
                                                         </ul>
                                                     </td>
@@ -311,6 +257,7 @@ function Product() {
                                                                                             show: !v.show,
                                                                                         }))
                                                                                     }
+                                                                                    style={{ whiteSpace: 'nowrap' }}
                                                                                 >
                                                                                     My Offer
                                                                                 </Button>
@@ -338,6 +285,12 @@ function Product() {
                                                                                                     onBlur={handleBlur}
                                                                                                     aria-label="RatePrice"
                                                                                                     aria-describedby="aud"
+                                                                                                    style={{
+                                                                                                        boxShadow:
+                                                                                                            '1px 1px #0000',
+                                                                                                        minWidth:
+                                                                                                            '100px !important',
+                                                                                                    }}
                                                                                                 ></Form.Control>
                                                                                                 <InputGroup.Text id="aud">
                                                                                                     $
@@ -360,13 +313,15 @@ function Product() {
                                                                                 <Button
                                                                                     className="w-100"
                                                                                     variant="warning"
-                                                                                    onClick={() => setDetailModal(true)}
+                                                                                    onClick={() =>
+                                                                                        setDetailModal(index)
+                                                                                    }
                                                                                 >
                                                                                     Detail
                                                                                 </Button>
                                                                                 <Modal
-                                                                                    show={detailModal}
-                                                                                    onHide={() => setDetailModal(false)}
+                                                                                    show={detailModal === index}
+                                                                                    onHide={() => setDetailModal(null)}
                                                                                 >
                                                                                     <Modal.Header
                                                                                         closeButton

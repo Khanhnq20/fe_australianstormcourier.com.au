@@ -1,10 +1,8 @@
 import '../style/driverActiveOrder.css';
 import React, { useContext, useEffect } from 'react';
-import * as yup from 'yup';
 import { BiSearchAlt2 } from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Table from 'react-bootstrap/Table';
-import Pagination from 'react-bootstrap/Pagination';
 import { Col, Row, Form, Button, Modal, Spinner } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
@@ -12,7 +10,8 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { AuthContext, OrderContext, SocketContext, taskStatus } from '../../../stores';
 import { Formik } from 'formik';
-import { toast } from 'react-toastify';
+
+const colors = ['yellow', 'red', 'green'];
 
 function Product() {
     const [authState] = useContext(AuthContext);
@@ -153,74 +152,21 @@ function Product() {
 
                                                 <th
                                                     style={{
-                                                        minWidth: '320px',
+                                                        minWidth: '150px',
                                                     }}
                                                 >
                                                     Item Name
                                                 </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Pickup
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Destination
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Expected date
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Expected time frame
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Sender Offer
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    My Offer
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Order Status
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Offer Status
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Actions
-                                                </th>
+                                                <th>Pickup</th>
+                                                <th>Destination</th>
+                                                <th>Expected date</th>
+                                                <th>Expected time frame</th>
+                                                <th>Receiver number</th>
+                                                <th>Sender Offer</th>
+                                                <th>My Offer</th>
+                                                <th>Order Status</th>
+                                                <th>Offer Status</th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -236,9 +182,17 @@ function Product() {
                                                     const waiting = offer?.status === 'Waiting';
                                                     const isCorrectDriver =
                                                         offer?.order?.driverId === authState?.accountInfo?.id;
-                                                    return offer?.order?.orderItems.map((item) => (
+                                                    return offer?.order?.orderItems.map((item, num) => (
                                                         <tr key={index}>
-                                                            <td>{offer?.order?.id}</td>
+                                                            <td>
+                                                                <p
+                                                                    className={`content-${
+                                                                        colors[index % colors.length]
+                                                                    }`}
+                                                                >
+                                                                    {offer?.order?.id}
+                                                                </p>
+                                                            </td>
                                                             <td>
                                                                 <Row>
                                                                     <Col sm="5">
@@ -261,16 +215,31 @@ function Product() {
                                                             </td>
                                                             <td>{offer?.order?.sendingLocation}</td>
                                                             <td>{item?.destination}</td>
-                                                            <td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
                                                                 {!!offer?.order?.deliverableDate
                                                                     ? moment(offer?.order?.deliverableDate).format(
                                                                           'DD-MM-YYYY',
                                                                       )
                                                                     : ''}
                                                             </td>
-                                                            <td>{offer?.order?.timeFrame}</td>
-                                                            <td>{offer?.order?.startingRate} aud</td>
-                                                            <td>{offer?.ratePrice} aud</td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                                {offer?.order?.timeFrame}
+                                                            </td>
+                                                            <td>
+                                                                <p
+                                                                    className={`content-${
+                                                                        colors[index % colors.length]
+                                                                    }`}
+                                                                >
+                                                                    {num + 1}
+                                                                </p>
+                                                            </td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                                {offer?.order?.startingRate} aud
+                                                            </td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                                {offer?.ratePrice} aud
+                                                            </td>
                                                             <td>{offer?.order?.status}</td>
                                                             <td>{offer?.status}</td>
                                                             <td>

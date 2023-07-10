@@ -10,6 +10,8 @@ import { RiImageEditFill } from 'react-icons/ri';
 import { TiEdit } from 'react-icons/ti';
 import { BsPlusSquareFill, BsTrash2Fill } from 'react-icons/bs';
 import { AiFillMinusSquare } from 'react-icons/ai';
+import { MdContentCopy } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 export default function ItemCreation({
     name,
@@ -79,10 +81,24 @@ export default function ItemCreation({
                         <p className="asterisk">*</p>
                     </div>
 
-                    <div style={{ fontStyle: 'italic' }}>
-                        *Please send this barcode to receiver in order to receive the delivery
+                    <p
+                        onClick={() => {
+                            const charcode = values?.orderItems?.[index]?.itemCharcode?.toString();
+                            navigator.clipboard.writeText(charcode);
+                            toast.success('Clipboard has added');
+                        }}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {values?.orderItems?.[index]?.itemCharcode?.toString()}{' '}
+                        <span>
+                            <MdContentCopy></MdContentCopy>
+                        </span>
+                    </p>
+
+                    <div className="text-danger" style={{ fontStyle: 'italic' }}>
+                        <b>*Please send this barcode to receiver before receiving the delivery</b>
                     </div>
-                    <Barcode value={values?.orderItems?.[index]?.itemCharcode?.toString()}></Barcode>
+                    {/* <Barcode value={values?.orderItems?.[index]?.itemCharcode?.toString()}></Barcode> */}
                 </Form.Group>
                 {/* Item Description  */}
                 <Form.Group className="mb-3">
@@ -361,21 +377,21 @@ export default function ItemCreation({
             {/* Receiver Information */}
             <Form.Group className="mb-4">
                 {/* Receiver Information */}
-                <Row>
+                <Row className="justify-content-between">
                     <Col sm="6">
                         <h5 className="my-3">Receiver Information</h5>
                     </Col>
-                    <Col sm="6" className="text-end">
-                        <h5 className="my-3" onClick={() => onEditReceiver(receiverIndex)}>
+                    <Col sm="6" md="6" className="text-end">
+                        <h5 className="" style={{ cursor: 'pointer' }} onClick={() => onEditReceiver(receiverIndex)}>
+                            {receiverError && (
+                                <b className="text-end text-danger" style={{ display: 'block', fontSize: '0.8rem' }}>
+                                    Fill and edit receiver information here
+                                </b>
+                            )}{' '}
                             <TiEdit></TiEdit>
                         </h5>
                     </Col>
                 </Row>
-                {receiverError && (
-                    <b className="text-end text-danger" style={{ display: 'block' }}>
-                        Edit this receiver information
-                    </b>
-                )}
                 <Row>
                     <Col>
                         <Form.Group className="mb-2">

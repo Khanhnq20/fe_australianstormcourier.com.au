@@ -15,10 +15,15 @@ import 'react-phone-input-2/lib/style.css';
 import ItemCreation from './item';
 import { FaTimes } from 'react-icons/fa';
 import { MdEdit } from 'react-icons/md';
+import { LuPackagePlus } from 'react-icons/lu';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import PhoneInput from 'react-phone-input-2';
 import { toast } from 'react-toastify';
-import { AiOutlineLeft, AiOutlineRight } from 'react-icons/ai';
+import { AiOutlineLeft, AiOutlineRight, AiOutlineUserAdd } from 'react-icons/ai';
+import { BsFillSendCheckFill } from 'react-icons/bs';
+import { FcAcceptDatabase } from 'react-icons/fc';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -102,6 +107,17 @@ let orderSchema = yup.object().shape({
     ),
 });
 
+export const stateOptions = [
+    'VICTORIA (VIC)',
+    'NEW SOUTH WALES (NSW)',
+    'QUEENSLAND (QLD)',
+    'SOUTH AUSTRALIA (SA)',
+    'WESTERN AUSTRALIA (WA)',
+    'NOTHERN AUSTRALIA (NT)',
+    'TASMANIA (TAS)',
+    'AUSTRALIAN CAPITAL TERRITORY (ACT)',
+];
+
 function OrderCreation() {
     const actions = {
         addItem: 'add item',
@@ -118,6 +134,7 @@ function OrderCreation() {
     const [itemDropdown, setItemDropdown] = React.useState(0);
     const [receiverEditModal, setReceiverEditModal] = React.useState(null);
     const [activeAction, setActions] = React.useState(null);
+    const [submitConfirm, setSubmitConfirm] = React.useState(false);
 
     const pagination = {
         clickable: true,
@@ -125,8 +142,7 @@ function OrderCreation() {
             return '<span class="' + className + '">' + (index + 1) + '</span>';
         },
     };
-    const navigationPrevRef = React.useRef(null);
-    const navigationNextRef = React.useRef(null);
+
     const slideTo = (index) => {
         swiperRef?.slideTo(index, 0);
     };
@@ -176,8 +192,11 @@ function OrderCreation() {
             }}
             validationSchema={orderSchema}
             onSubmit={(values) => {
+                const states = values.receivers.map((r) => r.destination?.state);
+
                 const handledObjects = {
                     ...values,
+                    states: states.filter((state, index) => states.indexOf(state) === index),
                     orderItems: values.orderItems.map((item) => {
                         return {
                             ...item,
@@ -196,8 +215,17 @@ function OrderCreation() {
             }}
         >
             {(formProps) => {
-                const { touched, isValid, errors, setFieldValue, handleSubmit, handleChange, handleBlur, values } =
-                    formProps;
+                const {
+                    touched,
+                    isValid,
+                    errors,
+                    setFieldValue,
+                    setFieldTouched,
+                    handleSubmit,
+                    handleChange,
+                    handleBlur,
+                    values,
+                } = formProps;
                 return (
                     <div className="p-3">
                         <Modal show={orderState.loading} size="lg" backdrop="static" keyboard={false} centered>
@@ -211,17 +239,283 @@ function OrderCreation() {
                             </Modal.Body>
                         </Modal>
 
-                        <Modal show={devModal} size="lg" centered onHide={() => setDevModal(false)}>
+                        <Modal show={devModal} size="xl" centered onHide={() => setDevModal(false)}>
                             <Modal.Header closeButton></Modal.Header>
                             <Modal.Body>
                                 <Row>
-                                    <Col sm="6">
-                                        <pre>values: {JSON.stringify(values, 4, 4)}</pre>
+                                    <Col sm="12" lg="6">
+                                        <h3>Pickup Location</h3>
+                                        <Row>
+                                            <Col>Unit number</Col>
+                                            <Col>
+                                                <p>{values.sendingLocation.unitNumber}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>Street number</Col>
+                                            <Col>
+                                                <p>{values.sendingLocation.streetNumber}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>Street Name</Col>
+                                            <Col>
+                                                <p>{values.sendingLocation.streetName}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>Suburb</Col>
+                                            <Col>
+                                                <p>{values.sendingLocation.suburb}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>State</Col>
+                                            <Col>
+                                                <p>{values.sendingLocation.state}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>Post code</Col>
+                                            <Col>
+                                                <p>{values.sendingLocation.postCode}</p>
+                                            </Col>
+                                        </Row>
                                     </Col>
-                                    <Col sm="6">
-                                        <pre>errors: {JSON.stringify(errors, 4, 4)}</pre>
+                                    <Col sm="12" lg="6">
+                                        <h3>Delivery Capability</h3>
+                                        <Row>
+                                            <Col>
+                                                <b>Pickup date</b>
+                                            </Col>
+                                            <Col>
+                                                <p>{moment(values?.deliverableDate).format('DD-MM-YYYY')}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <b>Timeframe</b>
+                                            </Col>
+                                            <Col>
+                                                <p>{values?.timeFrame}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <b>Your rate</b>
+                                            </Col>
+                                            <Col>
+                                                <p>{values?.startingRate}</p>
+                                            </Col>
+                                        </Row>
+                                        <Row>
+                                            <Col>
+                                                <b>Vehicles</b>
+                                            </Col>
+                                            <Col>
+                                                <ul>
+                                                    {authState.vehicles?.map?.((v) => {
+                                                        const isExisting = values.vehicles.some((vid) => {
+                                                            return vid === v?.id?.toString?.();
+                                                        });
+
+                                                        return isExisting ? <li key={v}>{v?.name}</li> : null;
+                                                    })}
+                                                </ul>
+                                            </Col>
+                                        </Row>
                                     </Col>
                                 </Row>
+
+                                <Row>
+                                    <Col sm="12" lg="6">
+                                        <h3>Pickup Location</h3>
+                                    </Col>
+                                    <Col sm="12" lg="6" className="d-sm-none d-lg-block">
+                                        <h3>Item Information</h3>
+                                    </Col>
+                                </Row>
+
+                                {values.receivers.map((receiver) => {
+                                    return (
+                                        <Row className="py-2" style={{ border: '1px solid #010101' }}>
+                                            <Col sm="12" lg="6">
+                                                <Row>
+                                                    <Col>
+                                                        <p>
+                                                            <b>Receiver Name</b>
+                                                        </p>
+                                                    </Col>
+                                                    <Col>
+                                                        <p>{receiver.receiverName}</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>
+                                                        <p>
+                                                            <b>Receiver phone number</b>
+                                                        </p>
+                                                    </Col>
+                                                    <Col>
+                                                        <p>{receiver.receiverPhone}</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>Unit number</Col>
+                                                    <Col>
+                                                        <p>{receiver.destination.unitNumber}</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>Street number</Col>
+                                                    <Col>
+                                                        <p>{receiver.destination.streetNumber}</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>Street Name</Col>
+                                                    <Col>
+                                                        <p>{receiver.destination.streetName}</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>Suburb</Col>
+                                                    <Col>
+                                                        <p>{receiver.destination.suburb}</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>State</Col>
+                                                    <Col>
+                                                        <p>{receiver.destination.state}</p>
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    <Col>Post code</Col>
+                                                    <Col>
+                                                        <p>{receiver.destination.postCode}</p>
+                                                    </Col>
+                                                </Row>
+                                            </Col>
+                                            <Col sm="12" lg="6">
+                                                {values.orderItems
+                                                    .filter((p) => p.receiverIndex === receiver.index)
+                                                    .map((item) => {
+                                                        return (
+                                                            <div
+                                                                className="mb-2 p-2"
+                                                                style={{ border: '1px solid #010101' }}
+                                                            >
+                                                                <Row>
+                                                                    <Col>
+                                                                        <p>
+                                                                            <b>Item name</b>
+                                                                        </p>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <p>{item?.itemName}</p>
+                                                                    </Col>
+                                                                    <Col></Col>
+                                                                    <Col></Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <p>
+                                                                            <b>Quantity</b>
+                                                                        </p>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <p>{item?.quantity || 0}</p>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <p>
+                                                                            <b>Weight</b>
+                                                                        </p>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <p>{item?.weight || 0} Kilograms</p>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <p>
+                                                                            <b>Receiver code</b>
+                                                                        </p>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <p>{item?.itemCharcode}</p>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <p>
+                                                                            <b>Package Type</b>
+                                                                        </p>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <p>{item?.packageType}</p>
+                                                                    </Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col>
+                                                                        <p>
+                                                                            <b>Note</b>
+                                                                        </p>
+                                                                    </Col>
+                                                                    <Col>
+                                                                        <p>{item?.itemDescription}</p>
+                                                                    </Col>
+                                                                    <Col></Col>
+                                                                    <Col></Col>
+                                                                </Row>
+                                                                <Row>
+                                                                    <Col sm="12">
+                                                                        <p>
+                                                                            <b>Pictures</b>
+                                                                        </p>
+                                                                    </Col>
+                                                                    <Col sm="12">
+                                                                        <Row>
+                                                                            {item?.productPictures.map((pic) => {
+                                                                                return (
+                                                                                    <Col
+                                                                                        className="mb-2"
+                                                                                        sm={6}
+                                                                                        md={4}
+                                                                                        lg={4}
+                                                                                    >
+                                                                                        <div
+                                                                                            style={{
+                                                                                                border: '1px solid #010101',
+                                                                                            }}
+                                                                                        >
+                                                                                            <img
+                                                                                                src={pic.url}
+                                                                                                width={'100%'}
+                                                                                            ></img>
+                                                                                        </div>
+                                                                                    </Col>
+                                                                                );
+                                                                            })}
+                                                                        </Row>
+                                                                    </Col>
+                                                                </Row>
+                                                            </div>
+                                                        );
+                                                    })}
+                                            </Col>
+                                        </Row>
+                                    );
+                                })}
+
+                                {process.env.NODE_ENV === 'development' && (
+                                    <Row>
+                                        {/* <Col sm="6">
+                                            <pre>values: {JSON.stringify(values, 4, 4)}</pre>
+                                        </Col> */}
+                                        <Col sm="6">
+                                            <pre>errors: {JSON.stringify(errors, 4, 4)}</pre>
+                                        </Col>
+                                    </Row>
+                                )}
                             </Modal.Body>
                         </Modal>
 
@@ -314,7 +608,7 @@ function OrderCreation() {
 
                                                 {/* State */}
                                                 <Form.Group>
-                                                    <Form.Control
+                                                    {/* <Form.Control
                                                         type="text"
                                                         name="sendingLocation.state"
                                                         placeholder="Enter state"
@@ -324,7 +618,31 @@ function OrderCreation() {
                                                         }
                                                         onChange={handleChange}
                                                         onBlur={handleBlur}
-                                                    />
+                                                    /> */}
+                                                    {/* <Form.Control.Feedback type="invalid">
+                                                        {errors?.sendingLocation?.state}
+                                                    </Form.Control.Feedback> */}
+                                                    <Dropdown
+                                                        options={stateOptions}
+                                                        onChange={(e) => {
+                                                            console.log(e);
+                                                            setFieldValue('sendingLocation.state', e.value);
+                                                        }}
+                                                        onFocus={() => {
+                                                            console.log(errors);
+                                                            setFieldTouched('sendingLocation.state', true);
+                                                        }}
+                                                        placeholder={'Select pickup state'}
+                                                        className={`${
+                                                            errors?.sendingLocation?.state ? ' is-invalid' : ''
+                                                        }`}
+                                                        controlClassName={
+                                                            'form-control aus-drop-down' +
+                                                            `${errors?.sendingLocation?.state ? ' is-invalid' : ''}`
+                                                        }
+                                                        value={values.sendingLocation?.state}
+                                                    ></Dropdown>
+
                                                     <Form.Control.Feedback type="invalid">
                                                         {errors?.sendingLocation?.state}
                                                     </Form.Control.Feedback>
@@ -420,6 +738,34 @@ function OrderCreation() {
                                         </Row>
                                     </Col>
                                 </Row>
+
+                                <Modal show={submitConfirm} onHide={() => setSubmitConfirm(false)}>
+                                    <Modal.Header closeButton></Modal.Header>
+                                    <Modal.Body>
+                                        <h4>Do you want to submit this form?</h4>
+                                        <i>
+                                            Please check order information before submitting again. You cannot add more
+                                            items after submission
+                                        </i>
+                                    </Modal.Body>
+                                    <Modal.Footer>
+                                        <Button
+                                            type="submit"
+                                            variant="warning"
+                                            onClick={() => {
+                                                handleSubmit();
+                                                setSubmitConfirm(false);
+                                            }}
+                                        >
+                                            <BsFillSendCheckFill className="me-2"></BsFillSendCheckFill>
+                                            Submit now
+                                        </Button>
+                                        <Button variant="danger" onClick={() => setSubmitConfirm(false)}>
+                                            <FaTimes className="me-2"></FaTimes>
+                                            Cancel
+                                        </Button>
+                                    </Modal.Footer>
+                                </Modal>
 
                                 {/* OrderItems */}
                                 <FieldArray name="orderItems" shouldUpdate={(next, props) => true}>
@@ -696,6 +1042,9 @@ function OrderCreation() {
                                                                                                     setFieldValue={
                                                                                                         setFieldValue
                                                                                                     }
+                                                                                                    setFieldTouched={
+                                                                                                        setFieldTouched
+                                                                                                    }
                                                                                                     setPhoneError={
                                                                                                         setPhoneError
                                                                                                     }
@@ -760,6 +1109,7 @@ function OrderCreation() {
                                                                                         });
                                                                                     }}
                                                                                 >
+                                                                                    <AiOutlineUserAdd className="me-2"></AiOutlineUserAdd>
                                                                                     Add Receiver
                                                                                 </Button>
                                                                             </Col>
@@ -900,6 +1250,7 @@ function OrderCreation() {
                                                                                         );
                                                                                     }}
                                                                                 >
+                                                                                    <LuPackagePlus className="me-2"></LuPackagePlus>
                                                                                     Add Item
                                                                                 </Button>
                                                                             </Col>
@@ -988,18 +1339,18 @@ function OrderCreation() {
                                                         </Form.Group>
 
                                                         <Button
-                                                            type="submit"
+                                                            // type="submit"
+                                                            onClick={() => setSubmitConfirm(true)}
                                                             variant="warning"
                                                             disabled={!isValid || !!phoneError}
                                                             className="my-btn-yellow me-2"
                                                         >
                                                             Search for driver
                                                         </Button>
-                                                        {process.env.NODE_ENV === 'development' && (
-                                                            <Button onClick={() => setDevModal(true)}>
-                                                                See the form value for dev
-                                                            </Button>
-                                                        )}
+                                                        <Button onClick={() => setDevModal(true)}>
+                                                            <FcAcceptDatabase className="me-2"></FcAcceptDatabase>
+                                                            Check your result
+                                                        </Button>
                                                     </div>
                                                 </Col>
                                             </Row>
@@ -1024,6 +1375,7 @@ const EditReceiverForm = ({
     handleChange,
     handleBlur,
     setFieldValue,
+    setFieldTouched,
     setPhoneError,
     phoneError,
 }) => {
@@ -1189,7 +1541,7 @@ const EditReceiverForm = ({
 
                     {/* State */}
                     <Form.Group>
-                        <Form.Control
+                        {/* <Form.Control
                             type="text"
                             name={`${name}.destination.state`}
                             placeholder="Enter state"
@@ -1201,6 +1553,36 @@ const EditReceiverForm = ({
                             onChange={handleChange}
                             onBlur={handleBlur}
                         />
+                        <Form.Control.Feedback type="invalid">
+                            {errors?.receivers?.[index]?.destination?.state}
+                        </Form.Control.Feedback> */}
+                        <Dropdown
+                            options={stateOptions}
+                            onChange={(e) => {
+                                setFieldValue(`${name}.destination.state`, e.value);
+                            }}
+                            onFocus={() => {
+                                setFieldTouched(`${name}.destination.state`, true);
+                            }}
+                            placeholder={'Select destination state'}
+                            className={`${
+                                touched.receivers?.[index]?.destination?.state &&
+                                !!errors?.receivers?.[index]?.destination?.state
+                                    ? ' is-invalid'
+                                    : ''
+                            }`}
+                            controlClassName={
+                                'form-control aus-drop-down' +
+                                `${
+                                    touched.receivers?.[index]?.destination?.state &&
+                                    !!errors?.receivers?.[index]?.destination?.state
+                                        ? ' is-invalid'
+                                        : ''
+                                }`
+                            }
+                            value={values.receivers?.[index]?.destination?.state}
+                        ></Dropdown>
+
                         <Form.Control.Feedback type="invalid">
                             {errors?.receivers?.[index]?.destination?.state}
                         </Form.Control.Feedback>
@@ -1232,7 +1614,7 @@ const EditReceiverForm = ({
 
 function CustomNavButtons({ swiperRef = null }) {
     const swiper = useSwiper();
-    console.log(swiperRef);
+
     return (
         <>
             <AiOutlineLeft

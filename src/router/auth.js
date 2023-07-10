@@ -1,5 +1,15 @@
 import { Outlet } from 'react-router-dom';
-import { EmailCheck, EmailForgot, Forgot, Login, RegisterDriver, RegisterUser, ResetPassword, Verify } from '../pages';
+import {
+    DriverConfirmPhone,
+    EmailCheck,
+    EmailForgot,
+    Forgot,
+    Login,
+    RegisterDriver,
+    RegisterUser,
+    ResetPassword,
+    Verify,
+} from '../pages';
 import { Footer } from '../layout';
 import { NotFound } from '../pages/errors';
 
@@ -110,7 +120,7 @@ export const authChildrens = [
             },
             {
                 path: 'phone',
-                element: <></>,
+                element: <DriverConfirmPhone></DriverConfirmPhone>,
             },
         ],
     },

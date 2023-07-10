@@ -15,7 +15,7 @@ import {
 } from 'react-bootstrap';
 import PaymentPopup from './paymentPopup';
 import '../style/senderProductDetail.css';
-import { MdPayment } from 'react-icons/md';
+import { MdContentCopy, MdPayment } from 'react-icons/md';
 import { FieldArray, Formik } from 'formik';
 import * as yup from 'yup';
 import { RiImageEditFill } from 'react-icons/ri';
@@ -45,9 +45,9 @@ const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 function ProductDetail() {
     const [support, setSupport] = React.useState(false);
     const [authState] = React.useContext(AuthContext);
-    const [slider, setSlider] = React.useState(false);
-    const [receiveImg, setReceiveImg] = React.useState(false);
-    const [deliveryImg, setDeliveryImg] = React.useState(false);
+    const [slider, setSlider] = React.useState(null);
+    const [receiveImg, setReceiveImg] = React.useState(null);
+    const [deliveryImg, setDeliveryImg] = React.useState(null);
     const [showLabel, setShowLabel] = React.useState(null);
     const [order, setResult] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
@@ -237,6 +237,7 @@ function ProductDetail() {
                     params: {
                         orderId,
                         driverId,
+                        returnURL: encodeURIComponent(window.location.origin),
                     },
                 },
             )
@@ -296,6 +297,8 @@ function ProductDetail() {
                     getOrderInfo();
                 } else if (response?.data?.error) {
                     toast.error(response?.data?.error);
+                } else if (response?.data?.errors && Array.isArray(response?.data?.errors)) {
+                    response?.data?.errors.forEach((error) => toast.error(error));
                 }
                 setPopupLoading(false);
             })
@@ -378,7 +381,7 @@ function ProductDetail() {
                             <div className="product-label-info">
                                 <p className="product-label">Posted Date</p>
                                 <p className="product-content">
-                                    {new moment(order?.createdDate).format('YYYY-MM-DD HH : mm : ss')}
+                                    {new moment(order?.createdDate).format('YYYY-MM-DD HH:mm:ss')}
                                 </p>
                             </div>
                             <div className="product-label-info">
@@ -434,7 +437,7 @@ function ProductDetail() {
                                         className="img-front-frame"
                                         style={{ padding: '10px 0 ' }}
                                         onClick={() => {
-                                            setDeliveryImg(true);
+                                            setDeliveryImg(1);
                                         }}
                                     >
                                         <div className="background-front">
@@ -460,13 +463,14 @@ function ProductDetail() {
                                             size="lg"
                                             aria-labelledby="contained-modal-title-vcenter"
                                             centered
-                                            show={deliveryImg}
+                                            show={!!deliveryImg}
+                                            onHide={() => setDeliveryImg(null)}
                                         >
                                             <Modal.Header>
                                                 <Modal.Title
                                                     className="txt-center w-100"
                                                     onClick={() => {
-                                                        setDeliveryImg(false);
+                                                        setDeliveryImg(null);
                                                     }}
                                                 >
                                                     <div style={{ textAlign: 'right' }}>
@@ -1882,8 +1886,36 @@ function ProductDetail() {
                                                 <p className="product-label-fit text-sm-end text-md-start">
                                                     Received Barcode
                                                 </p>
-                                                <p>{item?.itemCharCode}</p>
+
+                                                <span
+                                                    className="p-2"
+                                                    style={{ display: 'inline-block', border: '1px solid red' }}
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(item?.itemCharCode);
+                                                        toast.success('Clipboard has added');
+                                                    }}
+                                                >
+                                                    <p
+                                                        style={{
+                                                            fontWeight: '600',
+                                                            margin: 0,
+                                                            verticalAlign: '',
+                                                            cursor: 'pointer',
+                                                        }}
+                                                    >
+                                                        {item?.itemCharCode}{' '}
+                                                        <span>
+                                                            <MdContentCopy></MdContentCopy>
+                                                        </span>
+                                                    </p>
+                                                </span>
                                             </div>
+                                            <p className="my-2">
+                                                <i>
+                                                    * Please send this barcode to receiver {item?.receiverPhone} before
+                                                    receiving item
+                                                </i>
+                                            </p>
                                             <div className="product-label-info" style={{ alignItems: 'unset' }}>
                                                 <p className="product-label-fit text-sm-end text-md-start">
                                                     Product pictures
@@ -1893,7 +1925,7 @@ function ProductDetail() {
                                                         className="img-front-frame"
                                                         style={{ padding: '10px 0 ' }}
                                                         onClick={() => {
-                                                            setSlider(true);
+                                                            setSlider(index);
                                                         }}
                                                     >
                                                         <div className="background-front">
@@ -1921,13 +1953,14 @@ function ProductDetail() {
                                                         size="lg"
                                                         aria-labelledby="contained-modal-title-vcenter"
                                                         centered
-                                                        show={slider}
+                                                        show={slider === index}
+                                                        onHide={() => setSlider(null)}
                                                     >
                                                         <Modal.Header>
                                                             <Modal.Title
                                                                 className="txt-center w-100"
                                                                 onClick={() => {
-                                                                    setSlider(false);
+                                                                    setSlider(null);
                                                                 }}
                                                             >
                                                                 <div style={{ textAlign: 'right' }}>
@@ -1975,7 +2008,7 @@ function ProductDetail() {
                                                         className="img-front-frame"
                                                         style={{ padding: '10px 0 ' }}
                                                         onClick={() => {
-                                                            setReceiveImg(true);
+                                                            setReceiveImg(index);
                                                         }}
                                                     >
                                                         <div className="background-front">
@@ -2001,13 +2034,14 @@ function ProductDetail() {
                                                         size="lg"
                                                         aria-labelledby="contained-modal-title-vcenter"
                                                         centered
-                                                        show={receiveImg}
+                                                        show={receiveImg === index}
+                                                        onHide={() => setReceiveImg(null)}
                                                     >
                                                         <Modal.Header>
                                                             <Modal.Title
                                                                 className="txt-center w-100"
                                                                 onClick={() => {
-                                                                    setReceiveImg(false);
+                                                                    setReceiveImg(null);
                                                                 }}
                                                             >
                                                                 <div style={{ textAlign: 'right' }}>
