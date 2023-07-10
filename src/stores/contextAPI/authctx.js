@@ -101,7 +101,7 @@ export default function Index({ children }) {
                 .then((response) => {
                     if (response.data?.successed) {
                         toast.success(`You have registered account successfully, please goto "Signin" to join us`, {});
-                        callback?.();
+                        callback?.(response.data?.result);
                         setState((i) => ({
                             ...i,
                             errors: [...response.data.registeredErrors],
@@ -178,7 +178,7 @@ export default function Index({ children }) {
                     }));
                     if (!!response.data?.successed) {
                         toast.success(`You have become driver successfully`, {});
-                        callback?.();
+                        callback?.(response.data?.result);
                     }
                 })
                 .catch((err) => {

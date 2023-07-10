@@ -18,13 +18,17 @@ export default function Index() {
             const userName = urlQuery.get(keys[2]);
 
             verifyAccount(email, userName, confirmToken);
-        } else {
         }
     }, [urlQuery]);
 
     if (authState.tasks?.[authConstraints.verifiedUser] === taskStatus.Inprogress) return <CustomSpinner />;
 
-    if (authState.tasks?.[authConstraints.verifiedUser] === taskStatus.Failed) return <div className="my-5"></div>;
+    if (authState.tasks?.[authConstraints.verifiedUser] === taskStatus.Failed)
+        return (
+            <div className="my-5">
+                <h2>Email Verification Failed</h2>
+            </div>
+        );
 
     return (
         <div className="my-5">
@@ -32,11 +36,26 @@ export default function Index() {
                 <div className="py-3 mx-auto" style={{ maxWidth: '160px' }}>
                     <img src={logo} className="w-100"></img>
                 </div>
-                <h2 className="mb-3 text-center">Your account was verified, welcome to Australian Storm Courier</h2>
-                <p className="text-center">
-                    Your account has been verified by the Administrator, please click the button below to use our
-                    website.
-                </p>
+                {urlQuery.get('role')?.toLowerCase() === 'driver' ? (
+                    <>
+                        <h2 className="mb-3 text-center">
+                            Your account is verified, welcome to Australian Storm Courier
+                        </h2>
+                        <p className="text-center">
+                            Your account information has sent to the Administrator for inspectation. We will notify you
+                            as soon as admin's acceptance
+                        </p>
+                    </>
+                ) : (
+                    <>
+                        <h2 className="mb-3 text-center">
+                            Your account is verified, welcome to Australian Storm Courier
+                        </h2>
+                        <p className="text-center">
+                            Your account is verified, please click the button below to use our services.
+                        </p>
+                    </>
+                )}
                 <Link to={'/auth/login'}>
                     <Button variant="warning" className={`my-btn-yellow my-4 product-btn-search mx-4`}>
                         Go to Sign in

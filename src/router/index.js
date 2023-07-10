@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet, createBrowserRouter } from 'react-router-dom';
 import { Navigation, Footer, UserSideBar, DriverSideBar, AdminSideBar } from '../layout';
-import { DriverReview, EmailCheck, Home, PreventDriver } from '../pages';
+import { DriverConfirmPhone, DriverReview, EmailCheck, Home, PreventDriver } from '../pages';
 
 import { AuthValidator, OrderContextComponent, SocketContainer, SocketContext } from '../stores';
 
@@ -29,14 +29,6 @@ export const router = createBrowserRouter([
                     <>
                         <Home></Home>
                         <Footer />
-                    </>
-                ),
-            },
-            {
-                path: 'review',
-                element: (
-                    <>
-                        <DriverReview></DriverReview>
                     </>
                 ),
             },
@@ -116,6 +108,16 @@ export const router = createBrowserRouter([
                 ),
 
                 children: paymentChildrens,
+            },
+            {
+                path: 'verify',
+                element: <Outlet></Outlet>,
+                children: [
+                    {
+                        path: 'phone',
+                        element: <DriverConfirmPhone></DriverConfirmPhone>,
+                    },
+                ],
             },
             {
                 path: 'error',

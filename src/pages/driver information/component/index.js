@@ -12,6 +12,9 @@ import { toast } from 'react-toastify';
 import { Modal, Spinner } from 'react-bootstrap';
 import PhoneInput from 'react-phone-input-2';
 import { BsCheck2Circle } from 'react-icons/bs';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
+import { stateOptions } from '../../user create product/component';
 
 let updateDriverSchema = yup.object().shape({
     fullName: yup.string().required('Full Name is required field'),
@@ -97,7 +100,17 @@ function UpdateDriver() {
                 updateDriverProfile(values);
             }}
         >
-            {({ values, touched, errors, setFieldValue, handleSubmit, handleChange, handleBlur, isValid }) => {
+            {({
+                values,
+                touched,
+                errors,
+                setFieldValue,
+                setFieldTouched,
+                handleSubmit,
+                handleChange,
+                handleBlur,
+                isValid,
+            }) => {
                 return (
                     <div className="container p-2 px-lg-3">
                         <Row>
@@ -369,18 +382,25 @@ function UpdateDriver() {
                                     {/* City */}
                                     <Form.Group className="form-group">
                                         <div className="mb-2">
-                                            <Form.Label className="label">City</Form.Label>
+                                            <Form.Label className="label">State</Form.Label>
                                             <p className="asterisk">*</p>
                                         </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="city"
-                                            placeholder="Enter Your Full Address"
+                                        <Dropdown
+                                            options={stateOptions}
+                                            onChange={(e) => {
+                                                setFieldValue('city', e.value);
+                                            }}
+                                            onFocus={() => {
+                                                setFieldTouched('city', true);
+                                            }}
+                                            placeholder={'Select pickup state'}
+                                            className={`${touched.city && errors.city ? ' is-invalid' : ''}`}
+                                            controlClassName={
+                                                'form-control aus-drop-down' +
+                                                `${touched.city && errors.city ? ' is-invalid' : ''}`
+                                            }
                                             value={values.city}
-                                            isInvalid={touched.city && errors.city}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
+                                        ></Dropdown>
                                         <Form.Control.Feedback type="invalid">{errors.city}</Form.Control.Feedback>
                                     </Form.Group>
                                     {/* Zipcode */}

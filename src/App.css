@@ -342,6 +342,11 @@ input[type='checkbox'] {
 input {
     min-width: 200px !important;
 }
+.aus-drop-down {
+    background-color: var(--clr-input);
+    padding: 8px 12px;
+    border: 1px solid var(--clr-txt-secondary);
+}
 span.checkmark {
     cursor: pointer;
 }

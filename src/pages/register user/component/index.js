@@ -51,9 +51,23 @@ export default function Index() {
         setShowPassConfirm((e) => !e);
     };
 
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    };
+
     const isLoading =
-        authState?.tasks?.hasOwnProperty(authConstraints.signupUser) &&
+        authState?.tasks?.[authConstraints.signupUser] &&
         authState?.tasks?.[authConstraints.signupUser] === taskStatus.Inprogress;
+
+    React.useEffect(() => {
+        if (authState?.errors) {
+            scrollToTop();
+        }
+    }, [authState?.errors]);
+
     return (
         <Formik
             initialValues={{
@@ -93,11 +107,13 @@ export default function Index() {
                                 {isLoading && <CustomSpinner></CustomSpinner>}
                                 <Form className="form" onSubmit={handleSubmit}>
                                     {!!authState?.errors?.length && (
-                                        <Message.Error>
-                                            {authState?.errors?.map((error) => (
-                                                <p>{error}</p>
+                                        <>
+                                            {authState?.errors?.map((error, idx) => (
+                                                <Message.Error key={idx}>
+                                                    <>{error}</>
+                                                </Message.Error>
                                             ))}
-                                        </Message.Error>
+                                        </>
                                     )}
 
                                     <Form.Group className="form-group">
@@ -284,9 +300,15 @@ export default function Index() {
                                         type="submit"
                                         variant="warning"
                                         className="my-btn-yellow w-100"
-                                        disabled={isLoading || !isValid || !!phoneError}
+                                        disabled={authState?.authLoading || isLoading || !isValid || !!phoneError}
                                     >
-                                        {isLoading ? <Spinner></Spinner> : 'Register'}
+                                        {authState?.authLoading || isLoading ? (
+                                            <>
+                                                <Spinner></Spinner> Submitting
+                                            </>
+                                        ) : (
+                                            'Submit'
+                                        )}
                                     </Button>
                                 </Form>
                             </div>

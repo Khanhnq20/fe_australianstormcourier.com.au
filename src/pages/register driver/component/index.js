@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import '../style/registerDriver.css';
 import { AuthContext, taskStatus } from '../../../stores';
 import { serialize } from 'object-to-formdata';
+import { Popover } from 'react-tiny-popover';
 
 import { RiImageEditFill } from 'react-icons/ri';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
@@ -15,7 +16,13 @@ import { GrDocumentPdf } from 'react-icons/gr';
 import { useNavigate } from 'react-router-dom';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
-
+import ScrollToTop from 'react-scroll-to-top';
+import { BsFillArrowUpSquareFill } from 'react-icons/bs';
+import { BiInfoCircle } from 'react-icons/bi';
+import { FaWhatsapp } from 'react-icons/fa';
+import { stateOptions } from '../..';
+import Dropdown from 'react-dropdown';
+import 'react-dropdown/style.css';
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
 let registerSchema = yup.object().shape({
@@ -37,11 +44,13 @@ let registerSchema = yup.object().shape({
     ABNNumber: yup.number().typeError('ABN must be number').nullable(),
     businessName: yup.string().nullable(),
     address: yup.string().required('Full Address is required field'),
-    city: yup.string().required('City is required field'),
+    city: yup.string().required('State is required field'),
     postCode: yup.number().typeError('Zip code must be number').required('Zip code is required field'),
     vehicles: yup.array().min(1, 'Select one vehicle to complete the registry'),
     adInfo: yup.string().nullable(),
     bsb: yup.string().required('You should specify this field to create transactions with user'),
+    accountName: yup.string().required('Account Name is required field'),
+    accountNumber: yup.string().required('Account Number is required field'),
     isAusDrivingLiense: yup.boolean().default(false),
     frontDrivingLiense: yup
         .mixed()
@@ -120,6 +129,7 @@ function RegisterDriver() {
     const [showPassConfirm, setShowPassConfirm] = React.useState(false);
     const [next, setNext] = React.useState(true);
     const [phoneError, setPhoneError] = React.useState('');
+    const [phonePopOver, setPhonePopOver] = React.useState(false);
     const showPassHandler = () => {
         setShowPass((e) => !e);
     };
@@ -127,11 +137,23 @@ function RegisterDriver() {
         setShowPassConfirm((e) => !e);
     };
 
-    if (authLoading) return <CustomSpinner></CustomSpinner>;
+    const scrollToTop = () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth',
+        });
+    };
 
     const isLoading =
         authState?.tasks?.[authConstraints.signupDriver] &&
-        authState?.tasks?.[authConstraints.signupDriver] === taskStatus.InProgress;
+        authState?.tasks?.[authConstraints.signupDriver] === taskStatus.Inprogress;
+
+    React.useEffect(() => {
+        if (authState?.errors) {
+            scrollToTop();
+        }
+    }, [authState?.errors]);
+
     return (
         <Formik
             initialValues={{
@@ -153,6 +175,8 @@ function RegisterDriver() {
                 vehicles: [],
                 adInfo: '',
                 bsb: '',
+                accountName: '',
+                accountNumber: '',
             }}
             validationSchema={registerSchema}
             onSubmit={(values) => {
@@ -164,8 +188,12 @@ function RegisterDriver() {
                 signupDriver(
                     formData,
                     `${window.location.protocol}//${window.location.host}${config.AccountConfirmationURL}`,
-                    () => {
-                        navigate('/auth/register/confirm');
+                    (newDriver) => {
+                        if (newDriver?.id) {
+                            navigate(
+                                `/auth/verify/phone?phone=${newDriver?.phoneNumber}&userId=${newDriver?.id}&from=register`,
+                            );
+                        }
                     },
                 );
             }}
@@ -175,7 +203,7 @@ function RegisterDriver() {
                 touched,
                 errors,
                 setFieldValue,
-                setErrors,
+                setFieldTouched,
                 handleSubmit,
                 handleChange,
                 handleBlur,
@@ -187,8 +215,8 @@ function RegisterDriver() {
                     <div style={{ minHeight: '86vh' }} className="container p-sm-2 p-lg-5">
                         <div className="text-center">
                             {/* <h3 className="reg-header txt-center">Register</h3>
-                <h4 className="reg-txt-u txt-center">Get started with Us</h4>
-                <p className="txt-center m-0">Register a new membership.</p> */}
+                            <h4 className="reg-txt-u txt-center">Get started with Us</h4>
+                            <p className="txt-center m-0">Register a new membership.</p> */}
                             <h3 className="reg-header txt-center" style={{ textTransform: 'uppercase' }}>
                                 Become a driver
                             </h3>
@@ -198,11 +226,24 @@ function RegisterDriver() {
                             {isLoading && <CustomSpinner></CustomSpinner>}
 
                             {!!authState?.errors?.length && (
-                                <Message.Error>
-                                    {authState?.errors?.map((error) => (
-                                        <p>{error}</p>
+                                <>
+                                    {authState?.errors?.map((error, idx) => (
+                                        <Message.Error key={idx}>
+                                            <>{error}</>
+                                        </Message.Error>
                                     ))}
-                                </Message.Error>
+                                    <ScrollToTop
+                                        top={120}
+                                        width="50"
+                                        height="50"
+                                        component={
+                                            <BsFillArrowUpSquareFill
+                                                className="w-100"
+                                                style={{ fontSize: '2rem', fill: 'var(--clr-primary)' }}
+                                            ></BsFillArrowUpSquareFill>
+                                        }
+                                    ></ScrollToTop>
+                                </>
                             )}
 
                             <Row>
@@ -222,7 +263,7 @@ function RegisterDriver() {
                                                 <Form.Control
                                                     type="text"
                                                     name="userName"
-                                                    placeholder="Enter Your Full Name"
+                                                    placeholder="Enter Your Account Name"
                                                     isInvalid={touched.userName && errors.userName}
                                                     value={values.userName}
                                                     onChange={handleChange}
@@ -231,6 +272,7 @@ function RegisterDriver() {
                                                 <Form.Control.Feedback type="invalid">
                                                     {errors.userName}
                                                 </Form.Control.Feedback>
+                                                <i>* It required the text with no space and symbol.</i>
                                             </Form.Group>
                                         </Col>
                                         <Col>
@@ -348,6 +390,37 @@ function RegisterDriver() {
                                                 return isValid;
                                             }}
                                         ></PhoneInput>
+                                        <i className={phonePopOver ? 'mt-5' : ''}>
+                                            <Popover
+                                                isOpen={phonePopOver}
+                                                positions={['right', 'bottom', 'top', 'left']}
+                                                reposition={true}
+                                                onClickOutside={() => setPhonePopOver(false)}
+                                                content={
+                                                    <div className="p-3" style={{ background: 'var(--clr-light)' }}>
+                                                        <a href="https://www.whatsapp.com/download" target="_blank">
+                                                            <Button variant="success">
+                                                                <FaWhatsapp className="me-2"></FaWhatsapp>
+                                                                Download now !
+                                                            </Button>
+                                                        </a>
+                                                    </div>
+                                                }
+                                            >
+                                                <span
+
+                                                // onMouseLeave={() => setPhonePopOver(false)}
+                                                >
+                                                    * Your phone number should be registered with whatsapp{' '}
+                                                    <BiInfoCircle
+                                                        style={{ cursor: 'pointer' }}
+                                                        onClick={() => setPhonePopOver(true)}
+                                                        onMouseOver={() => setPhonePopOver(true)}
+                                                        onTouchStart={() => setPhonePopOver(true)}
+                                                    ></BiInfoCircle>{' '}
+                                                </span>
+                                            </Popover>
+                                        </i>
                                         <Form.Control
                                             type="hidden"
                                             name="phone"
@@ -450,17 +523,35 @@ function RegisterDriver() {
                                     {/* City */}
                                     <Form.Group className="form-group">
                                         <div className="mb-2">
-                                            <Form.Label className="label">City</Form.Label>
+                                            <Form.Label className="label">State</Form.Label>
                                             <p className="asterisk">*</p>
                                         </div>
-                                        <Form.Control
+                                        {/* <Form.Control
                                             type="text"
                                             name="city"
-                                            placeholder="Enter Your City"
+                                            placeholder="Enter Your State"
                                             isInvalid={touched?.city && !!errors?.city}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
                                         />
+                                        <Form.Control.Feedback type="invalid">{errors?.city}</Form.Control.Feedback> */}
+
+                                        <Dropdown
+                                            options={stateOptions}
+                                            onChange={(e) => {
+                                                setFieldValue('city', e.value);
+                                            }}
+                                            onFocus={() => {
+                                                setFieldTouched('city', true);
+                                            }}
+                                            placeholder={'Select pickup state'}
+                                            className={`${errors?.city ? ' is-invalid' : ''}`}
+                                            controlClassName={
+                                                'form-control aus-drop-down' + `${errors?.city ? ' is-invalid' : ''}`
+                                            }
+                                            value={values.city}
+                                        ></Dropdown>
+
                                         <Form.Control.Feedback type="invalid">{errors?.city}</Form.Control.Feedback>
                                     </Form.Group>
 
@@ -485,7 +576,7 @@ function RegisterDriver() {
                                     <Form.Group className="form-group mb-2">
                                         <div className="mb-2">
                                             <Form.Label className="label py-3 mb-2">
-                                                Driving License (Front an d Back)
+                                                Driving License (Front and Back)
                                             </Form.Label>
                                             <p className="asterisk">*</p>
                                         </div>
@@ -713,6 +804,44 @@ function RegisterDriver() {
                                         <Form.Control.Feedback type="invalid">{errors?.bsb}</Form.Control.Feedback>
                                     </Form.Group>
 
+                                    {/* Account Name */}
+                                    <Form.Group className="form-group">
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Account Name</Form.Label>
+                                            <p className="asterisk">*</p>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="accountName"
+                                            placeholder="Enter Account Name"
+                                            isInvalid={touched.accountName && !!errors?.accountName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors?.accountName}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+
+                                    {/* Account Name */}
+                                    <Form.Group className="form-group">
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Account Number</Form.Label>
+                                            <p className="asterisk">*</p>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="accountNumber"
+                                            placeholder="Enter Account Number"
+                                            isInvalid={touched.accountNumber && !!errors?.accountNumber}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors?.accountNumber}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+
                                     {/* Additional Information */}
                                     <Form.Group className="form-group">
                                         <div className="mb-2">
@@ -738,11 +867,19 @@ function RegisterDriver() {
                                         style={{
                                             backgroundColor: '#f2a13b',
                                             border: 'none',
+                                            display: 'flex',
+                                            alignItems: 'center',
                                         }}
-                                        disabled={authLoading && !isValid}
-                                        className="my-btn-yellow my-2"
+                                        disabled={authLoading || !isValid || isLoading}
+                                        className="my-btn-yellow my-2 gap-2"
                                     >
-                                        {isLoading ? <Spinner></Spinner> : 'Submit'}
+                                        {isLoading || authLoading ? (
+                                            <>
+                                                <Spinner></Spinner> Submitting
+                                            </>
+                                        ) : (
+                                            'Submit'
+                                        )}
                                     </Button>
                                 </Col>
                             </Row>
