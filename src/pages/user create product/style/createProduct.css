@@ -32,7 +32,7 @@
 .swiper-pagination-bullet {
     color: var(--clr-primary);
     background: none;
-    padding: 20px;
+    /* padding: 20px; */
     user-select: none;
     font-size: 14px;
     cursor: pointer;

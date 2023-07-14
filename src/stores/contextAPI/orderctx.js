@@ -14,7 +14,7 @@ export default function Index({ children }) {
     });
 
     const funcs = {
-        getJobAvailables() {
+        getJobAvailables(page, amount, state) {
             setState((i) => ({
                 ...i,
                 loading: true,
@@ -30,6 +30,11 @@ export default function Index({ children }) {
                             config.AuthenticationSchema,
                             localStorage.getItem(authConstraints.LOCAL_KEY),
                         ].join(' '),
+                    },
+                    params: {
+                        page,
+                        amount,
+                        state,
                     },
                 })
                 .then((response) => {
@@ -117,14 +122,16 @@ export default function Index({ children }) {
         },
 
         postDriverOffer(body) {
-            setState((i) => ({
-                ...i,
-                loading: true,
-                tasks: {
-                    ...i.tasks,
-                    [authConstraints.postDriverOffers]: taskStatus.Inprogress,
-                },
-            }));
+            setState((i) => {
+                return {
+                    ...i,
+                    // loading: true,
+                    tasks: {
+                        ...i.tasks,
+                        [authConstraints.postDriverOffers]: taskStatus.Inprogress,
+                    },
+                };
+            });
             return authInstance
                 .post([authConstraints.driverRoot, authConstraints.postDriverOffers].join('/'), body, {
                     headers: {

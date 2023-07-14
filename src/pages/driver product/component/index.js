@@ -6,7 +6,7 @@ import { BiSearchAlt2 } from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Table from 'react-bootstrap/Table';
 import Pagination from 'react-bootstrap/Pagination';
-import { Col, Row, Form, Button, InputGroup, Modal } from 'react-bootstrap';
+import { Col, Row, Form, Button, InputGroup, Modal, Spinner } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
 import moment from 'moment';
@@ -14,6 +14,10 @@ import { AuthContext, OrderContext, SocketContext, taskStatus } from '../../../s
 import { CustomSpinner } from '../../../layout';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css/navigation';
+import { useSearchParams } from 'react-router-dom';
+import { FaCheck } from 'react-icons/fa';
+import { RiHandCoinFill } from 'react-icons/ri';
+import { FcViewDetails } from 'react-icons/fc';
 
 let driverSchema = yup.object().shape({
     driverId: yup.string().nullable(),
@@ -26,6 +30,8 @@ function Product() {
     const [orderState, { postDriverOffer }] = useContext(OrderContext);
     const [{ socketConnection }, { onOrderReceive }] = useContext(SocketContext);
     const [detailModal, setDetailModal] = useState(null);
+    const [orderLoading, setOrderLoading] = useState([]);
+    const [searchParams] = useSearchParams();
 
     const rows = [5, 10, 15, 20, 25, 30, 35, 40];
     const {
@@ -39,8 +45,9 @@ function Product() {
         setCurrent,
         setPerPageAmount,
         refresh,
+        search,
     } = usePagination({
-        fetchingAPIInstance: ({ controller, page, take }) =>
+        fetchingAPIInstance: ({ controller, page, take, ...queries }) =>
             authInstance.get([authConstraints.driverRoot, authConstraints.getDriverJobs].join('/'), {
                 headers: {
                     Authorization: [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(
@@ -48,8 +55,10 @@ function Product() {
                     ),
                 },
                 params: {
-                    page,
+                    page: page,
                     amount: take,
+                    pickup: searchParams?.get?.('state') || null,
+                    ...queries,
                 },
                 signal: controller.signal,
             }),
@@ -68,44 +77,69 @@ function Product() {
 
     // On Global Tasks Changed
     useEffect(() => {
-        console.log(orderState);
         if (orderState.tasks?.[authConstraints.postDriverOffers] === taskStatus.Completed) {
             refresh();
+            setOrderLoading(([_, ...r]) => r);
         } else if (orderState.tasks?.[authConstraints.postDriverOffers] === taskStatus.Failed) {
+            refresh();
+            setOrderLoading(([_, ...r]) => r);
         }
     }, [orderState.tasks]);
-
-    if (loading) {
-        return <CustomSpinner></CustomSpinner>;
-    }
 
     return (
         <div>
             <div className="p-2 p-lg-3">
-                <div className="form-order">
-                    <Form.Group>
-                        <div className="mb-2">
-                            <Form.Label className="label">Suburb</Form.Label>
-                        </div>
-                        <Form.Control type="text" placeholder="Enter The Suburb" name="suburd" />
-                    </Form.Group>
-                    <Form.Group>
-                        <div className="mb-2">
-                            <Form.Label className="label">Postcode</Form.Label>
-                        </div>
-                        <Form.Control type="text" placeholder="Enter Postcode" name="postcode" />
-                    </Form.Group>
-                </div>
-                <div>
-                    <Button
-                        variant="warning"
-                        style={{ backgroundColor: '#f2a13b', border: 'none' }}
-                        className={`my-btn-yellow my-4 product-btn-search`}
-                    >
-                        <BiSearchAlt2 style={{ fontSize: '20px' }}></BiSearchAlt2>
-                        Search
-                    </Button>
-                </div>
+                <Formik
+                    initialValues={{
+                        suburb: '',
+                        postCode: '',
+                    }}
+                    onSubmit={(values) => {
+                        search(values);
+                    }}
+                >
+                    {({ handleChange, handleSubmit, values }) => {
+                        return (
+                            <Form onSubmit={handleSubmit}>
+                                <div className="form-order">
+                                    <Form.Group>
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Suburb</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search by Suburb"
+                                            name="suburb"
+                                            value={values.suburb}
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Zip code</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search by Zip code"
+                                            name="postCode"
+                                            value={values.postCode}
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                </div>
+                                <Button
+                                    type="submit"
+                                    variant="warning"
+                                    style={{ backgroundColor: '#f2a13b', border: 'none' }}
+                                    className={`my-btn-yellow my-4 product-btn-search`}
+                                >
+                                    <BiSearchAlt2 style={{ fontSize: '20px' }}></BiSearchAlt2>
+                                    Search
+                                </Button>
+                            </Form>
+                        );
+                    }}
+                </Formik>
             </div>
 
             <div className="p-2 p-lg-3">
@@ -128,7 +162,9 @@ function Product() {
                     <p className="m-0">Rows</p>
                 </div>
 
-                {items?.length === 0 ? (
+                {loading ? (
+                    <CustomSpinner></CustomSpinner>
+                ) : items?.length === 0 ? (
                     <div className="txt-center">
                         <h5>No Data Found</h5>
                     </div>
@@ -197,8 +233,12 @@ function Product() {
                                                     <td style={{ whiteSpace: 'nowrap' }}>{post?.timeFrame}</td>
                                                     <td>
                                                         <ul className="ps-3">
-                                                            {post?.vehicles?.map?.((str) => {
-                                                                return <li style={{ whiteSpace: 'nowrap' }}>{str}</li>;
+                                                            {post?.vehicles?.map?.((str, id) => {
+                                                                return (
+                                                                    <li style={{ whiteSpace: 'nowrap' }} key={id}>
+                                                                        {str}
+                                                                    </li>
+                                                                );
                                                             })}
                                                         </ul>
                                                     </td>
@@ -214,7 +254,12 @@ function Product() {
                                                                 show: false,
                                                             }}
                                                             validationSchema={driverSchema}
+                                                            enableReinitialize
                                                             onSubmit={(values) => {
+                                                                setOrderLoading((orders) => [
+                                                                    ...orders,
+                                                                    values.orderId,
+                                                                ]);
                                                                 postDriverOffer(values);
                                                             }}
                                                         >
@@ -229,6 +274,10 @@ function Product() {
                                                                 setFieldValue,
                                                                 isValid,
                                                             }) => {
+                                                                const isLoading = orderLoading.some((i) => {
+                                                                    return i === values.orderId.toString();
+                                                                });
+
                                                                 return (
                                                                     <>
                                                                         <Row
@@ -242,8 +291,25 @@ function Product() {
                                                                                         className="w-100"
                                                                                         variant="success"
                                                                                         type="submit"
+                                                                                        disabled={isLoading}
+                                                                                        style={{ whiteSpace: 'nowrap' }}
                                                                                     >
-                                                                                        Accept
+                                                                                        {isLoading ? (
+                                                                                            <Spinner></Spinner>
+                                                                                        ) : (
+                                                                                            <Row className="flex-nowrap">
+                                                                                                <Col sm="auto">
+                                                                                                    <FaCheck></FaCheck>
+                                                                                                </Col>
+                                                                                                <Col
+                                                                                                    style={{
+                                                                                                        paddingLeft: 0,
+                                                                                                    }}
+                                                                                                >
+                                                                                                    Accept
+                                                                                                </Col>
+                                                                                            </Row>
+                                                                                        )}
                                                                                     </Button>
                                                                                 </Form>
                                                                             </Col>
@@ -257,9 +323,25 @@ function Product() {
                                                                                             show: !v.show,
                                                                                         }))
                                                                                     }
+                                                                                    disabled={isLoading}
                                                                                     style={{ whiteSpace: 'nowrap' }}
                                                                                 >
-                                                                                    My Offer
+                                                                                    {isLoading ? (
+                                                                                        <Spinner></Spinner>
+                                                                                    ) : (
+                                                                                        <Row className="flex-nowrap">
+                                                                                            <Col sm="auto">
+                                                                                                <RiHandCoinFill></RiHandCoinFill>
+                                                                                            </Col>
+                                                                                            <Col
+                                                                                                style={{
+                                                                                                    paddingLeft: 0,
+                                                                                                }}
+                                                                                            >
+                                                                                                My Offer
+                                                                                            </Col>
+                                                                                        </Row>
+                                                                                    )}
                                                                                 </Button>
                                                                                 {values.show && (
                                                                                     <Form onSubmit={handleSubmit}>
@@ -316,8 +398,20 @@ function Product() {
                                                                                     onClick={() =>
                                                                                         setDetailModal(index)
                                                                                     }
+                                                                                    style={{ whiteSpace: 'nowrap' }}
                                                                                 >
-                                                                                    Detail
+                                                                                    <Row>
+                                                                                        <Col sm="auto">
+                                                                                            <FcViewDetails></FcViewDetails>
+                                                                                        </Col>
+                                                                                        <Col
+                                                                                            style={{
+                                                                                                paddingLeft: 0,
+                                                                                            }}
+                                                                                        >
+                                                                                            Detail
+                                                                                        </Col>
+                                                                                    </Row>
                                                                                 </Button>
                                                                                 <Modal
                                                                                     show={detailModal === index}
@@ -331,7 +425,9 @@ function Product() {
                                                                                             {post?.orderItems.map(
                                                                                                 (item, index) => {
                                                                                                     return (
-                                                                                                        <SwiperSlide>
+                                                                                                        <SwiperSlide
+                                                                                                            key={index}
+                                                                                                        >
                                                                                                             <div className="py-2">
                                                                                                                 <h5>{`Item ${
                                                                                                                     index +
@@ -359,9 +455,13 @@ function Product() {
                                                                                                                             .map(
                                                                                                                                 (
                                                                                                                                     img,
+                                                                                                                                    index,
                                                                                                                                 ) => (
                                                                                                                                     <img
                                                                                                                                         className="w-100"
+                                                                                                                                        key={
+                                                                                                                                            index
+                                                                                                                                        }
                                                                                                                                         style={{
                                                                                                                                             maxWidth:
                                                                                                                                                 '120px',

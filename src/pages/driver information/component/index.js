@@ -1,11 +1,11 @@
 import React, { useContext } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import { Formik } from 'formik';
+import { Field, Formik } from 'formik';
 import * as yup from 'yup';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import { AuthContext } from '../../../stores';
+import { AuthContext, taskStatus } from '../../../stores';
 import { Link } from 'react-router-dom';
 import { authConstraints, authInstance, config } from '../../../api';
 import { toast } from 'react-toastify';
@@ -84,223 +84,232 @@ function UpdateDriver() {
     }
 
     return (
-        <Formik
-            initialValues={{
-                fullName: authState?.accountInfo?.name,
-                userName: authState?.accountInfo?.username,
-                phone: authState?.accountInfo?.phoneNumber,
-                address: authState?.accountInfo?.address,
-                zipCode: authState?.accountInfo?.zipCode,
-                city: authState?.accountInfo?.city,
-                vehicles: [],
-                addInfo: '',
-            }}
-            validationSchema={updateDriverSchema}
-            onSubmit={(values) => {
-                updateDriverProfile(values);
-            }}
-        >
-            {({
-                values,
-                touched,
-                errors,
-                setFieldValue,
-                setFieldTouched,
-                handleSubmit,
-                handleChange,
-                handleBlur,
-                isValid,
-            }) => {
-                return (
-                    <div className="container p-2 px-lg-3">
-                        <Row>
-                            <Col className="mb-5">
-                                <h3 className="ui-header mb-5">Information</h3>
-                                <div>
-                                    {/* Full Name */}
-                                    <div className="product-label-info">
-                                        <p className="product-label">Full Name</p>
-                                        <p className="product-content">{authState?.accountInfo?.name}</p>
-                                    </div>
-                                    <div className="product-label-info">
-                                        <p className="product-label">User name</p>
-                                        <p className="product-content">{authState?.accountInfo?.username}</p>
-                                    </div>
-                                    <div className="product-label-info">
-                                        <p className="product-label">Email</p>
-                                        <p className="product-content">{authState?.accountInfo?.email}</p>
-                                    </div>
-                                    <div className="product-label-info">
-                                        <p className="product-label">Phone number</p>
-                                        <p className="product-content">{authState?.accountInfo?.phoneNumber}</p>
-                                    </div>
-                                    <div className="product-label-info">
-                                        <p className="product-label">Confirmed phone number</p>
-                                        <p className="product-content">
-                                            {authState?.accountInfo?.phoneNumberConfirmed ? (
-                                                <span>
-                                                    <BsCheck2Circle
-                                                        className="me-2 text-success"
-                                                        style={{ fontSize: '1.6rem' }}
-                                                    ></BsCheck2Circle>
-                                                    Confirmed
-                                                </span>
-                                            ) : (
-                                                <Button
-                                                    variant="success"
-                                                    onClick={() => {
-                                                        setShowPhoneVerification(true);
-                                                    }}
-                                                >
-                                                    Not confirmed
-                                                </Button>
-                                            )}
-                                        </p>
-                                        <Modal
-                                            show={showPhoneVerification}
-                                            onHide={() => setShowPhoneVerification(false)}
-                                        >
-                                            <Modal.Header closeButton></Modal.Header>
-                                            <Modal.Body style={{ minHeight: '200px' }}>
-                                                {loading ? (
-                                                    <Spinner></Spinner>
-                                                ) : (
-                                                    <div>
-                                                        <Row>
-                                                            <Col>
-                                                                <b>Step 1:</b>
-                                                            </Col>
-                                                            <Col>
-                                                                <p>
-                                                                    Download{' '}
-                                                                    <a
-                                                                        href="https://www.whatsapp.com/download"
-                                                                        target="_blank"
-                                                                    >
-                                                                        Whatsapp
-                                                                    </a>{' '}
-                                                                    on your phone
-                                                                </p>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col>
-                                                                <b>Step 2:</b>
-                                                            </Col>
-                                                            <Col>
-                                                                <p>
-                                                                    <b>Signin</b> with your phone number
-                                                                </p>
-                                                            </Col>
-                                                        </Row>
-                                                        <Row>
-                                                            <Col>
-                                                                <b>Step 3:</b>
-                                                            </Col>
-                                                            <Col>
-                                                                <p>
-                                                                    Check new message and copy 6-digit code. Return
-                                                                    website and paste <b>code</b> to the below
-                                                                </p>
-                                                                <img src=""></img>
-                                                                <Formik
-                                                                    initialValues={{
-                                                                        digit: '',
-                                                                    }}
-                                                                    onSubmit={(value) => {
-                                                                        confirmPhone(value?.digit);
-                                                                    }}
-                                                                >
-                                                                    {({ handleChange, handleSubmit, values }) => (
-                                                                        <Form onSubmit={handleSubmit}>
-                                                                            <Form.Group>
-                                                                                <Form.Control
-                                                                                    type="text"
-                                                                                    name="digit"
-                                                                                    value={values.digit}
-                                                                                    className="mb-2"
-                                                                                    onChange={handleChange}
-                                                                                ></Form.Control>
-                                                                                <Button variant="success" type="submit">
-                                                                                    Send
-                                                                                </Button>
-                                                                            </Form.Group>
-                                                                        </Form>
-                                                                    )}
-                                                                </Formik>
-                                                                <div>
-                                                                    if you are not receiving any code?{' '}
-                                                                    <Button
-                                                                        variant="primary"
-                                                                        className="me-2"
-                                                                        onClick={() => sendPhoneDigit()}
-                                                                    >
-                                                                        Resend code
+        <div className="container p-2 px-lg-3">
+            <Row>
+                <Col className="mb-5">
+                    <h3 className="ui-header mb-2">Information</h3>
+                    <div>
+                        {/* Full Name */}
+                        <div className="product-label-info">
+                            <p className="product-label">Full Name</p>
+                            <p className="product-content">{authState?.accountInfo?.name}</p>
+                        </div>
+                        <div className="product-label-info">
+                            <p className="product-label">User name</p>
+                            <p className="product-content">{authState?.accountInfo?.username}</p>
+                        </div>
+                        <div className="product-label-info">
+                            <p className="product-label">Email</p>
+                            <p className="product-content">{authState?.accountInfo?.email}</p>
+                        </div>
+                        <div className="product-label-info">
+                            <p className="product-label">Phone number</p>
+                            <p className="product-content">{authState?.accountInfo?.phoneNumber}</p>
+                        </div>
+                        <div className="product-label-info">
+                            <p className="product-label">Confirmed phone number</p>
+                            <p className="product-content">
+                                {authState?.accountInfo?.phoneNumberConfirmed ? (
+                                    <span>
+                                        <BsCheck2Circle
+                                            className="me-2 text-success"
+                                            style={{ fontSize: '1.6rem' }}
+                                        ></BsCheck2Circle>
+                                        Confirmed
+                                    </span>
+                                ) : (
+                                    <Button
+                                        variant="success"
+                                        onClick={() => {
+                                            setShowPhoneVerification(true);
+                                        }}
+                                    >
+                                        Not confirmed
+                                    </Button>
+                                )}
+                            </p>
+                            <Modal show={showPhoneVerification} onHide={() => setShowPhoneVerification(false)}>
+                                <Modal.Header closeButton></Modal.Header>
+                                <Modal.Body style={{ minHeight: '200px' }}>
+                                    {loading ? (
+                                        <Spinner></Spinner>
+                                    ) : (
+                                        <div>
+                                            <Row>
+                                                <Col>
+                                                    <b>Step 1:</b>
+                                                </Col>
+                                                <Col>
+                                                    <p>
+                                                        Download{' '}
+                                                        <a href="https://www.whatsapp.com/download" target="_blank">
+                                                            Whatsapp
+                                                        </a>{' '}
+                                                        on your phone
+                                                    </p>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col>
+                                                    <b>Step 2:</b>
+                                                </Col>
+                                                <Col>
+                                                    <p>
+                                                        <b>Signin</b> with your phone number
+                                                    </p>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col>
+                                                    <b>Step 3:</b>
+                                                </Col>
+                                                <Col>
+                                                    <p>
+                                                        Check new message and copy 6-digit code. Return website and
+                                                        paste <b>code</b> to the below
+                                                    </p>
+                                                    <img src=""></img>
+                                                    <Formik
+                                                        initialValues={{
+                                                            digit: '',
+                                                        }}
+                                                        onSubmit={(value) => {
+                                                            confirmPhone(value?.digit);
+                                                        }}
+                                                    >
+                                                        {({ handleChange, handleSubmit, values }) => (
+                                                            <Form onSubmit={handleSubmit}>
+                                                                <Form.Group>
+                                                                    <Form.Control
+                                                                        type="text"
+                                                                        name="digit"
+                                                                        value={values.digit}
+                                                                        className="mb-2"
+                                                                        onChange={handleChange}
+                                                                    ></Form.Control>
+                                                                    <Button variant="success" type="submit">
+                                                                        Send
                                                                     </Button>
-                                                                </div>
-                                                            </Col>
-                                                        </Row>
+                                                                </Form.Group>
+                                                            </Form>
+                                                        )}
+                                                    </Formik>
+                                                    <div>
+                                                        if you are not receiving any code?{' '}
+                                                        <Button
+                                                            variant="primary"
+                                                            className="me-2"
+                                                            onClick={() => sendPhoneDigit()}
+                                                        >
+                                                            Resend code
+                                                        </Button>
                                                     </div>
-                                                )}
-                                            </Modal.Body>
-                                        </Modal>
-                                    </div>
-                                    <div className="product-label-info">
-                                        <p className="product-label">Address</p>
-                                        <p className="product-content">{authState?.accountInfo?.address}</p>
-                                    </div>
-                                    <div className="product-label-info">
-                                        <p className="product-label">ABN Number</p>
-                                        <p className="product-content">
-                                            {authState?.accountInfo?.abnNumber || <Link>Not yet</Link>}
-                                        </p>
-                                    </div>
-                                    <div className="product-label-info">
-                                        <p className="product-label">Authorized account type</p>
-                                        <p className="product-content">{authState?.accountInfo?.roles?.[0]}</p>
-                                    </div>
-                                    <div className="product-label-info" style={{ alignItems: 'flex-start' }}>
-                                        <p className="product-label">BSB</p>
-                                        <p className="product-content">{authState?.accountInfo?.bsb}</p>
-                                    </div>
-                                    <div className="product-label-info" style={{ alignItems: 'flex-start' }}>
-                                        <p className="product-label">Vehicles</p>
-                                        <Row>
-                                            {authState?.accountInfo?.vehicles?.map((vehicle) => {
-                                                return (
-                                                    <Col sm="auto">
-                                                        <p className="product-content">{vehicle}</p>
-                                                    </Col>
-                                                );
-                                            })}
-                                        </Row>
-                                    </div>
-                                    <div className="product-label-info" style={{ alignItems: 'flex-start' }}>
-                                        <p className="product-label">Front Driving Liense</p>
-                                        <p className="product-content">
-                                            <div style={{ maxWidth: '320px' }}>
-                                                <img
-                                                    style={{ width: '100%' }}
-                                                    src={authState?.accountInfo?.frontDrivingLiense}
-                                                ></img>
-                                            </div>
-                                        </p>
-                                    </div>
-                                    <div className="product-label-info" style={{ alignItems: 'flex-start' }}>
-                                        <p className="product-label">Back Driving Liense</p>
-                                        <p className="product-content">
-                                            <div style={{ maxWidth: '320px' }}>
-                                                <img
-                                                    style={{ width: '100%' }}
-                                                    src={authState?.accountInfo?.backDrivingLiense}
-                                                ></img>
-                                            </div>
-                                        </p>
-                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </div>
+                                    )}
+                                </Modal.Body>
+                            </Modal>
+                        </div>
+                        <div className="product-label-info">
+                            <p className="product-label">Address</p>
+                            <p className="product-content">{authState?.accountInfo?.address}</p>
+                        </div>
+                        <div className="product-label-info">
+                            <p className="product-label">ABN Number</p>
+                            <p className="product-content">
+                                {authState?.accountInfo?.abnNumber || <Link>Not yet</Link>}
+                            </p>
+                        </div>
+                        <div className="product-label-info">
+                            <p className="product-label">Authorized account type</p>
+                            <p className="product-content">{authState?.accountInfo?.roles?.[0]}</p>
+                        </div>
+                        <div className="product-label-info" style={{ alignItems: 'flex-start' }}>
+                            <p className="product-label">BSB</p>
+                            <p className="product-content">{authState?.accountInfo?.bsb}</p>
+                        </div>
+                        <div className="product-label-info" style={{ alignItems: 'flex-start' }}>
+                            <p className="product-label">Vehicles</p>
+                            <Row>
+                                {authState?.accountInfo?.vehicles?.map((vehicle) => {
+                                    return (
+                                        <Col sm="auto">
+                                            <p className="product-content">{vehicle}</p>
+                                        </Col>
+                                    );
+                                })}
+                            </Row>
+                        </div>
+                        <div className="product-label-info" style={{ alignItems: 'flex-start' }}>
+                            <p className="product-label">Front Driving Liense</p>
+                            <p className="product-content">
+                                <div style={{ maxWidth: '320px' }}>
+                                    <img
+                                        style={{ width: '100%' }}
+                                        src={authState?.accountInfo?.frontDrivingLiense}
+                                    ></img>
                                 </div>
-                            </Col>
-                            <Col className="mb-5">
-                                <h3 className="ui-header mb-5">Edit Driver</h3>
+                            </p>
+                        </div>
+                        <div className="product-label-info" style={{ alignItems: 'flex-start' }}>
+                            <p className="product-label">Back Driving Liense</p>
+                            <p className="product-content">
+                                <div style={{ maxWidth: '320px' }}>
+                                    <img
+                                        style={{ width: '100%' }}
+                                        src={authState?.accountInfo?.backDrivingLiense}
+                                    ></img>
+                                </div>
+                            </p>
+                        </div>
+                    </div>
+                </Col>
+                <Col className="mb-5">
+                    <h3 className="ui-header mb-2">Edit Driver</h3>
+                    <Formik
+                        initialValues={{
+                            fullName: authState?.accountInfo?.name,
+                            userName: authState?.accountInfo?.username,
+                            phone: authState?.accountInfo?.phoneNumber,
+                            address: authState?.accountInfo?.address,
+                            zipCode: authState?.accountInfo?.postCode,
+                            city: authState?.accountInfo?.city,
+                            abnNumber: authState?.accountInfo?.abnNumber,
+                            bsb: authState?.accountInfo?.bsb,
+                            accountName: authState?.accountInfo?.accountName,
+                            accountNumber: authState?.accountInfo?.accountNumber,
+                            vehicles: authState?.vehicles
+                                .map((v) => {
+                                    if (authState?.accountInfo?.vehicles.includes(v?.name)) {
+                                        return v.id.toString();
+                                    }
+                                    return null;
+                                })
+                                .filter((p) => !!p),
+                            addInfo: '',
+                        }}
+                        validationSchema={updateDriverSchema}
+                        onSubmit={(values) => {
+                            updateDriverProfile(values);
+                        }}
+                    >
+                        {({
+                            values,
+                            touched,
+                            errors,
+                            setFieldValue,
+                            setFieldTouched,
+                            handleSubmit,
+                            handleChange,
+                            handleBlur,
+                            isValid,
+                        }) => {
+                            const isLoading =
+                                authState?.tasks?.hasOwnProperty(authConstraints.updateDriver) &&
+                                authState?.tasks?.[authConstraints.updateDriver] === taskStatus.Inprogress;
+                            console.log(isLoading);
+                            return (
                                 <Form onSubmit={handleSubmit}>
                                     {/* Full Name */}
                                     <Form.Group className="form-group">
@@ -439,6 +448,61 @@ function UpdateDriver() {
                                             {errors?.abnNumber}
                                         </Form.Control.Feedback>
                                     </Form.Group>
+                                    {/* BSB */}
+                                    <Form.Group className="form-group">
+                                        <div className="mb-2">
+                                            <Form.Label className="label">BSB</Form.Label>
+                                            <p className="asterisk">*</p>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="bsb"
+                                            placeholder="Enter your bsb code"
+                                            value={values.bsb}
+                                            isInvalid={touched.bsb && !!errors?.bsb}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">{errors?.bsb}</Form.Control.Feedback>
+                                    </Form.Group>
+                                    {/* Account Number */}
+                                    <Form.Group className="form-group">
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Account Number</Form.Label>
+                                            <p className="asterisk">*</p>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="accountNumber"
+                                            placeholder="Enter Your Account Number"
+                                            value={values.accountNumber}
+                                            isInvalid={touched.accountNumber && !!errors?.accountNumber}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors?.accountNumber}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
+                                    {/* Account Name */}
+                                    <Form.Group className="form-group">
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Account Name</Form.Label>
+                                            <p className="asterisk">*</p>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            name="accountName"
+                                            placeholder="Enter Your Account Name"
+                                            value={values.accountName}
+                                            isInvalid={touched.accountName && !!errors?.accountName}
+                                            onChange={handleChange}
+                                            onBlur={handleBlur}
+                                        />
+                                        <Form.Control.Feedback type="invalid">
+                                            {errors?.accountName}
+                                        </Form.Control.Feedback>
+                                    </Form.Group>
                                     {/* Vehicles */}
                                     <Form.Group className="form-group">
                                         <div className="mb-2">
@@ -449,12 +513,13 @@ function UpdateDriver() {
                                             {authState?.vehicles?.map?.((item, index) => {
                                                 return (
                                                     <div key={index}>
-                                                        <label class="fr-checkbox mb-2">
-                                                            <input
+                                                        <label className="fr-checkbox mb-2">
+                                                            <Field
                                                                 type="checkbox"
-                                                                checked={authState?.accountInfo?.vehicles?.includes?.(
-                                                                    item?.name,
-                                                                )}
+                                                                name="vehicles"
+                                                                value={item?.id?.toString()}
+                                                                // checked={values?.vehicles?.includes?.(item?.id)}
+                                                                // onChange={handleChange}
                                                             />
                                                             <span className="checkmark"></span>
                                                             <span
@@ -480,7 +545,7 @@ function UpdateDriver() {
                                         <Form.Control
                                             type="text"
                                             style={{ background: '#fafafa' }}
-                                            name="city"
+                                            name="addInfo"
                                             as="textarea"
                                             rows={3}
                                             placeholder="Enter Your Additional Information"
@@ -501,15 +566,21 @@ function UpdateDriver() {
                                         }}
                                         className="my-btn-yellow my-2"
                                     >
-                                        Send your updates
+                                        {isLoading ? (
+                                            <>
+                                                <Spinner></Spinner> Sending...
+                                            </>
+                                        ) : (
+                                            'Send your updates'
+                                        )}
                                     </Button>
                                 </Form>
-                            </Col>
-                        </Row>
-                    </div>
-                );
-            }}
-        </Formik>
+                            );
+                        }}
+                    </Formik>
+                </Col>
+            </Row>
+        </div>
     );
 }
 

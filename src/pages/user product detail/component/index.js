@@ -29,7 +29,7 @@ import Carousel from 'react-bootstrap/Carousel';
 import { FaTimes } from 'react-icons/fa';
 import { BiEdit, BiPrinter, BiMessageEdit } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
-import { Pagination as SwiperPagination, Navigation } from 'swiper';
+import { Pagination as SwiperPagination, Navigation, EffectCoverflow } from 'swiper';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -479,25 +479,36 @@ function ProductDetail() {
                                                 </Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body className="link-slider">
-                                                <Carousel>
+                                                <Swiper
+                                                    effect={'coverflow'}
+                                                    grabCursor={true}
+                                                    centeredSlides={true}
+                                                    slidesPerView={3}
+                                                    coverflowEffect={{
+                                                        rotate: 50,
+                                                        stretch: 0,
+                                                        depth: 100,
+                                                        modifier: 1,
+                                                        slideShadows: true,
+                                                    }}
+                                                    pagination={true}
+                                                    modules={[EffectCoverflow, SwiperPagination]}
+                                                    className="mySwiper"
+                                                >
                                                     {order?.deliverdItemImages
                                                         ?.split?.('[space]')
                                                         ?.map((url, index) => {
                                                             return (
-                                                                <Carousel.Item
-                                                                    style={{ borderLeft: 'none' }}
-                                                                    key={index}
-                                                                >
+                                                                <SwiperSlide style={{ borderLeft: 'none' }} key={index}>
                                                                     <img
                                                                         className="w-100"
                                                                         src={url}
                                                                         alt="First slide"
                                                                     />
-                                                                    <Carousel.Caption></Carousel.Caption>
-                                                                </Carousel.Item>
+                                                                </SwiperSlide>
                                                             );
                                                         })}
-                                                </Carousel>
+                                                </Swiper>
                                             </Modal.Body>
                                         </Modal>
                                     </div>
@@ -1910,11 +1921,13 @@ function ProductDetail() {
                                                     </p>
                                                 </span>
                                             </div>
-                                            <p className="my-2">
-                                                <i>
-                                                    * Please send this barcode to receiver {item?.receiverPhone} before
-                                                    receiving item
-                                                </i>
+                                            <p className="my-2 text-danger">
+                                                <b>
+                                                    <i>
+                                                        * Please send this barcode to receiver {item?.receiverPhone}{' '}
+                                                        before receiving item
+                                                    </i>
+                                                </b>
                                             </p>
                                             <div className="product-label-info" style={{ alignItems: 'unset' }}>
                                                 <p className="product-label-fit text-sm-end text-md-start">
@@ -1974,15 +1987,30 @@ function ProductDetail() {
                                                             </Modal.Title>
                                                         </Modal.Header>
                                                         <Modal.Body className="link-slider">
-                                                            <Carousel>
+                                                            <Swiper
+                                                                effect={'coverflow'}
+                                                                grabCursor={true}
+                                                                centeredSlides={true}
+                                                                slidesPerView={3}
+                                                                coverflowEffect={{
+                                                                    rotate: 50,
+                                                                    stretch: 0,
+                                                                    depth: 100,
+                                                                    modifier: 1,
+                                                                    slideShadows: true,
+                                                                }}
+                                                                pagination={true}
+                                                                modules={[EffectCoverflow, SwiperPagination]}
+                                                                className="mySwiper"
+                                                            >
                                                                 {item.itemImages
                                                                     ?.split?.('[space]')
                                                                     ?.map((url, index) => {
                                                                         return (
-                                                                            <Carousel.Item
-                                                                                style={{
-                                                                                    borderLeft: 'none',
-                                                                                }}
+                                                                            <SwiperSlide
+                                                                                // style={{
+                                                                                //     borderLeft: 'none',
+                                                                                // }}
                                                                                 key={index}
                                                                             >
                                                                                 <img
@@ -1991,10 +2019,10 @@ function ProductDetail() {
                                                                                     alt="First slide"
                                                                                 />
                                                                                 <Carousel.Caption></Carousel.Caption>
-                                                                            </Carousel.Item>
+                                                                            </SwiperSlide>
                                                                         );
                                                                     })}
-                                                            </Carousel>
+                                                            </Swiper>
                                                         </Modal.Body>
                                                     </Modal>
                                                 </div>
@@ -2020,7 +2048,7 @@ function ProductDetail() {
                                                                     opacity: '70%',
                                                                 }}
                                                             >
-                                                                {order?.receivedItemImages?.split('[space]')?.length ||
+                                                                {item?.receivedItemImages?.split('[space]')?.length ||
                                                                     0}
                                                             </div>
                                                             <p className="driving-txt">view image</p>
@@ -2052,12 +2080,27 @@ function ProductDetail() {
                                                             </Modal.Title>
                                                         </Modal.Header>
                                                         <Modal.Body className="link-slider">
-                                                            <Carousel>
-                                                                {order.receivedItemImages
+                                                            <Swiper
+                                                                effect={'coverflow'}
+                                                                grabCursor={true}
+                                                                centeredSlides={true}
+                                                                slidesPerView={3}
+                                                                coverflowEffect={{
+                                                                    rotate: 50,
+                                                                    stretch: 0,
+                                                                    depth: 100,
+                                                                    modifier: 1,
+                                                                    slideShadows: true,
+                                                                }}
+                                                                pagination={true}
+                                                                modules={[EffectCoverflow, SwiperPagination]}
+                                                                className="mySwiper"
+                                                            >
+                                                                {item.receivedItemImages
                                                                     ?.split?.('[space]')
                                                                     ?.map((url, index) => {
                                                                         return (
-                                                                            <Carousel.Item
+                                                                            <SwiperSlide
                                                                                 style={{ borderLeft: 'none' }}
                                                                                 key={index}
                                                                             >
@@ -2066,11 +2109,10 @@ function ProductDetail() {
                                                                                     src={url}
                                                                                     alt="First slide"
                                                                                 />
-                                                                                <Carousel.Caption></Carousel.Caption>
-                                                                            </Carousel.Item>
+                                                                            </SwiperSlide>
                                                                         );
                                                                     })}
-                                                            </Carousel>
+                                                            </Swiper>
                                                         </Modal.Body>
                                                     </Modal>
                                                 </div>
@@ -2240,7 +2282,10 @@ function ProductDetail() {
                                                                     <Link
                                                                         to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}
                                                                     >
-                                                                        <Button className="w-100 mb-2">
+                                                                        <Button
+                                                                            className="w-100 mb-2"
+                                                                            style={{ whiteSpace: 'nowrap' }}
+                                                                        >
                                                                             View Invoice
                                                                         </Button>
                                                                     </Link>
@@ -2252,7 +2297,12 @@ function ProductDetail() {
                                                                     <Link
                                                                         to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}
                                                                     >
-                                                                        <Button variant="warning">View Invoice</Button>
+                                                                        <Button
+                                                                            variant="warning"
+                                                                            style={{ whiteSpace: 'nowrap' }}
+                                                                        >
+                                                                            View Invoice
+                                                                        </Button>
                                                                     </Link>
                                                                 </Stack>
                                                             ) : (
