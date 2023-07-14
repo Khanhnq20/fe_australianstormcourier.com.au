@@ -144,10 +144,6 @@ function RegisterDriver() {
         });
     };
 
-    const isLoading =
-        authState?.tasks?.[authConstraints.signupDriver] &&
-        authState?.tasks?.[authConstraints.signupDriver] === taskStatus.Inprogress;
-
     React.useEffect(() => {
         if (authState?.errors) {
             scrollToTop();
@@ -209,6 +205,9 @@ function RegisterDriver() {
                 handleBlur,
                 isValid,
             }) => {
+                const isLoading =
+                    !!authState?.tasks?.hasOwnProperty(authConstraints.signupDriver) &&
+                    authState?.tasks?.[authConstraints.signupDriver] === taskStatus.Inprogress;
                 const permitedNext = !errors.userName && !errors.phone && !errors.email && !errors.password;
 
                 return (

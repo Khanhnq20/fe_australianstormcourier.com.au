@@ -46,7 +46,7 @@ function PopUpCenteredModal({ driver, reviews, ...props }) {
                             </div>
                             <div className="product-label-info">
                                 <p className="product-label">Zipcode</p>
-                                <p className="product-content">{driver?.zipCode}</p>
+                                <p className="product-content">{driver?.postCode}</p>
                             </div>
                             <div className="product-label-info">
                                 <p className="product-label">Vehicles</p>

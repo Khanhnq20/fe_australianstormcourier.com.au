@@ -101,7 +101,6 @@ export default function Index({ children }) {
                 .then((response) => {
                     if (response.data?.successed) {
                         toast.success(`You have registered account successfully, please goto "Signin" to join us`, {});
-                        callback?.(response.data?.result);
                         setState((i) => ({
                             ...i,
                             errors: [...response.data.registeredErrors],
@@ -111,6 +110,7 @@ export default function Index({ children }) {
                                 [authConstraints.signupUser]: taskStatus.Completed,
                             },
                         }));
+                        callback?.(response.data?.result);
                         return;
                     } else {
                         setState((i) => ({
@@ -505,6 +505,10 @@ export default function Index({ children }) {
             setState((i) => ({
                 ...i,
                 loading: true,
+                tasks: {
+                    ...i.tasks,
+                    [authConstraints.updateDriver]: taskStatus.Inprogress,
+                },
             }));
 
             return authInstance
@@ -517,20 +521,41 @@ export default function Index({ children }) {
                     },
                 })
                 .then((response) => {
-                    if (!!response.data?.userInfo && !!response.data?.successed) {
+                    if (response.data?.successed) {
                         setState((i) => ({
                             ...i,
                             accountInfo: response.data.userInfo,
                             loading: false,
+                            tasks: {
+                                ...i.tasks,
+                                [authConstraints.updateDriver]: taskStatus.Completed,
+                            },
                         }));
 
-                        toast.success('Updated user information', {});
+                        funcs.getAccount();
+
+                        toast.success('Updated user information');
+                    } else {
+                        setState((i) => ({
+                            ...i,
+                            loading: false,
+                            tasks: {
+                                ...i.tasks,
+                                [authConstraints.updateDriver]: taskStatus.Failed,
+                            },
+                        }));
+
+                        toast.error(response.data);
                     }
                 })
                 .catch((err) => {
                     setState((i) => ({
                         ...i,
                         loading: false,
+                        tasks: {
+                            ...i.tasks,
+                            [authConstraints.updateDriver]: taskStatus.Failed,
+                        },
                     }));
                     toast.error(err.response);
                 });

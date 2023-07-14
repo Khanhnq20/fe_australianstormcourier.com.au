@@ -7,7 +7,7 @@ import { Col, Row, Form, Button, Modal, Spinner } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { AuthContext, OrderContext, SocketContext, taskStatus } from '../../../stores';
 import { Formik } from 'formik';
 
@@ -19,6 +19,7 @@ function Product() {
     const [__, { onOrderReceive }] = useContext(SocketContext);
     const [modalShow, setModalShow] = React.useState(false);
     const [modalData, setModalData] = React.useState();
+    const [searchParams] = useSearchParams();
 
     const rows = [5, 10, 15, 20, 25, 30, 35, 40];
     const {
@@ -32,8 +33,9 @@ function Product() {
         setCurrent,
         setPerPageAmount,
         refresh,
+        search,
     } = usePagination({
-        fetchingAPIInstance: ({ controller, page, take }) =>
+        fetchingAPIInstance: ({ controller, page, take, ...queries }) =>
             authInstance.get([authConstraints.driverRoot, authConstraints.getDriverActiveOrders].join('/'), {
                 headers: {
                     Authorization: [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(
@@ -43,6 +45,8 @@ function Product() {
                 params: {
                     page,
                     amount: take,
+                    pickup: searchParams?.get?.('state') || null,
+                    ...queries,
                 },
                 signal: controller.signal,
             }),
@@ -55,7 +59,6 @@ function Product() {
 
     useEffect(() => {
         onOrderReceive((orderId) => {
-            console.log('Driver Active Order Page has changed status :' + orderId);
             refresh();
         });
     }, []);
@@ -73,42 +76,59 @@ function Product() {
         <Formik
             initialValues={{
                 suburb: '',
-                postcode: '',
+                postCode: '',
             }}
-            onSubmit={(values) => {}}
+            onSubmit={(values) => {
+                search(values);
+            }}
         >
-            {(props) => {
+            {({ values, handleSubmit, handleChange }) => {
                 return (
                     <>
                         {/* Search Panel */}
                         <div className="p-3">
-                            <div className="form-order">
-                                <Form.Group>
-                                    <div className="mb-2">
-                                        <Form.Label className="label">Suburb</Form.Label>
-                                    </div>
-                                    <Form.Control type="text" placeholder="Enter The Suburb" name="suburd" />
-                                </Form.Group>
-                                <Form.Group>
-                                    <div className="mb-2">
-                                        <Form.Label className="label">Postcode</Form.Label>
-                                    </div>
-                                    <Form.Control type="text" placeholder="Enter Postcode" name="postcode" />
-                                </Form.Group>
-                            </div>
-                            <div>
-                                <Button
-                                    variant="warning"
-                                    style={{
-                                        backgroundColor: '#f2a13b',
-                                        border: 'none',
-                                    }}
-                                    className={`my-btn-yellow my-4 product-btn-search`}
-                                >
-                                    <BiSearchAlt2 style={{ fontSize: '20px' }}></BiSearchAlt2>
-                                    Search
-                                </Button>
-                            </div>
+                            <Form onSubmit={handleSubmit}>
+                                <div className="form-order">
+                                    <Form.Group>
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Suburb</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search by Suburb"
+                                            name="suburb"
+                                            value={values.suburb}
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Postcode</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search by Postcode"
+                                            name="postCode"
+                                            value={values.postCode}
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                </div>
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        variant="warning"
+                                        style={{
+                                            backgroundColor: '#f2a13b',
+                                            border: 'none',
+                                        }}
+                                        className={`my-btn-yellow my-4 product-btn-search`}
+                                    >
+                                        <BiSearchAlt2 style={{ fontSize: '20px' }}></BiSearchAlt2>
+                                        Search
+                                    </Button>
+                                </div>
+                            </Form>
                         </div>
 
                         {/* Table Showcase */}

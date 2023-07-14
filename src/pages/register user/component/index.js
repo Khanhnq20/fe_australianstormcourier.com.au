@@ -10,7 +10,7 @@ import { AuthContext, taskStatus } from '../../../stores';
 import { CustomSpinner, Message } from '../../../layout';
 import { authConstraints, config } from '../../../api';
 import { useNavigate, useNavigation } from 'react-router-dom';
-import { Spinner } from 'react-bootstrap';
+import { Col, Row, Spinner } from 'react-bootstrap';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
@@ -58,10 +58,6 @@ export default function Index() {
         });
     };
 
-    const isLoading =
-        authState?.tasks?.[authConstraints.signupUser] &&
-        authState?.tasks?.[authConstraints.signupUser] === taskStatus.Inprogress;
-
     React.useEffect(() => {
         if (authState?.errors) {
             scrollToTop();
@@ -80,6 +76,7 @@ export default function Index() {
                 abn: null,
             }}
             validationSchema={registerSchema}
+            enableReinitialize
             onSubmit={(values) => {
                 signupUser(
                     values,
@@ -91,6 +88,9 @@ export default function Index() {
             }}
         >
             {({ values, touched, errors, isValid, setFieldValue, handleSubmit, handleChange, handleBlur }) => {
+                const isLoading =
+                    !!authState?.tasks?.hasOwnProperty(authConstraints.signupUser) &&
+                    authState?.tasks?.[authConstraints.signupUser] === taskStatus.Inprogress;
                 return (
                     <div className="reg-user">
                         <div className="container p-sm-1 p-lg-5">
@@ -267,7 +267,6 @@ export default function Index() {
                     />
                     <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
                 </Form.Group> */}
-
                                     <Form.Group className="form-group">
                                         <div className="mb-2">
                                             <Form.Label className="label">Address</Form.Label>
@@ -303,9 +302,12 @@ export default function Index() {
                                         disabled={authState?.authLoading || isLoading || !isValid || !!phoneError}
                                     >
                                         {authState?.authLoading || isLoading ? (
-                                            <>
-                                                <Spinner></Spinner> Submitting
-                                            </>
+                                            <Row style={{ alignItems: 'center' }}>
+                                                <Col sm="auto" style={{ padding: 0 }}>
+                                                    <Spinner className="me-2"></Spinner>
+                                                </Col>
+                                                <Col style={{ padding: 0 }}>Submitting...</Col>
+                                            </Row>
                                         ) : (
                                             'Submit'
                                         )}

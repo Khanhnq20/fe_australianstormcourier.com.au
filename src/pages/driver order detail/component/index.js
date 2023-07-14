@@ -17,6 +17,7 @@ import moment from 'moment';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { toast } from 'react-toastify';
 import Confetti from 'react-confetti';
+import { EffectCoverflow, EffectFade, Navigation, Pagination } from 'swiper';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 let imgSchema = yup.object().shape({
@@ -127,6 +128,7 @@ function OrderDetail() {
     const imgLabDelivery = useRef([]);
     const [error, setError] = React.useState('');
     const { id } = useParams();
+    const [showDeliveredImage, setShowDeliveredImage] = React.useState(false);
 
     useEffect(() => {
         refresh();
@@ -208,7 +210,9 @@ function OrderDetail() {
                                 </div>
                                 <div className="product-label-info">
                                     <p className="product-label">Sender Full Name</p>
-                                    <p className="product-content">{result?.sender?.name}</p>
+                                    <p className="product-content">
+                                        {result?.sender?.name || result?.sender?.['username']}
+                                    </p>
                                 </div>
                                 <div className="product-label-info">
                                     <p className="product-label">Phone number</p>
@@ -232,16 +236,67 @@ function OrderDetail() {
                     <Col>
                         <div>
                             <div className="product-label-info">
-                                <p className="product-label-fit">Total</p>
-                                <p className="product-content">{result?.order?.total} AUD</p>
+                                <p className="product-label">Shipment price</p>
+                                <p className="product-content">{result?.order?.shipFee?.toFixed?.(2)} AUD</p>
                             </div>
                             <div className="product-label-info">
-                                <p className="product-label-fit">Status</p>
+                                <p className="product-label">Status</p>
                                 <p className="content-green">{result?.order?.status}</p>
                             </div>
-                            <div className="product-label-info">
-                                <p className="product-label-fit">Delivered Images</p>
-                                <p className="product-content"></p>
+                            <div className="product-label-info align-items-start" style={{ flexWrap: 'wrap' }}>
+                                <p className="product-label">Delivered Images</p>
+                                <div className="product-content">
+                                    <div className="img-front-frame" onClick={() => setShowDeliveredImage(true)}>
+                                        <div className="background-front">
+                                            <div
+                                                style={{
+                                                    position: 'relative',
+                                                    color: 'gray',
+                                                    fontSize: '50px',
+                                                    opacity: '0.7',
+                                                }}
+                                            >
+                                                {result?.order?.deliverdItemImages?.split?.('[space]')?.length || 0}
+                                            </div>
+                                            <p class="driving-txt">view image</p>
+                                        </div>
+                                        <img
+                                            className="img-front"
+                                            src={
+                                                result?.order?.deliverdItemImages?.split?.('[space]')?.[0] ||
+                                                'https://tinyurl.com/5ehpcctt'
+                                            }
+                                            style={{ minWidth: '220px' }}
+                                        />
+                                    </div>
+                                    <Modal
+                                        show={!!result?.order?.deliverdItemImages && showDeliveredImage}
+                                        onHide={() => setShowDeliveredImage(false)}
+                                    >
+                                        <Modal.Header closeButton></Modal.Header>
+                                        <Modal.Body>
+                                            <Swiper
+                                                spaceBetween={30}
+                                                effect={'fade'}
+                                                navigation={true}
+                                                pagination={{
+                                                    clickable: true,
+                                                }}
+                                                modules={[EffectFade, Navigation, Pagination]}
+                                            >
+                                                {result?.order?.deliverdItemImages
+                                                    ?.split?.('[space]')
+                                                    ?.map?.((imageUrl, id) => {
+                                                        return (
+                                                            <SwiperSlide key={id}>
+                                                                <img src={imageUrl} width="100%"></img>
+                                                            </SwiperSlide>
+                                                        );
+                                                    })}
+                                            </Swiper>
+                                        </Modal.Body>
+                                    </Modal>
+                                </div>
                             </div>
                         </div>
                     </Col>
@@ -272,7 +327,10 @@ function OrderDetail() {
                                             const handleObj = {
                                                 ...values,
                                                 deliveryImages: values.deliveryImages.reduce(
-                                                    (p, c) => [...p, ...c.map((item) => item?.file)],
+                                                    (p, c) => [
+                                                        ...p,
+                                                        ...c.filter((item) => item?.file).map((item) => item?.file),
+                                                    ],
                                                     [],
                                                 ),
                                             };
@@ -282,7 +340,10 @@ function OrderDetail() {
                                                 dotsForObjectNotation: true,
                                             });
 
-                                            if (result.order.orderItems.length > values.deliveryImages.length) {
+                                            if (
+                                                result?.order?.orderItems?.length * 2 >
+                                                handleObj?.deliveryImages?.length
+                                            ) {
                                                 toast.error(
                                                     `This order's included ${
                                                         result?.order.orderItems.length
@@ -292,6 +353,8 @@ function OrderDetail() {
                                                 );
                                                 return;
                                             }
+
+                                            console.log(handleObj);
 
                                             putPrepareOrder(formData);
                                         }}
@@ -684,6 +747,7 @@ function Process({
     const [active] = React.useState(orderStatus);
     const [complete, setComplete] = React.useState(false);
     const [modalShow, setModalShow] = React.useState(false);
+    const [presentModal, setPresentModal] = React.useState(false);
     const [slider, setSlider] = React.useState(false);
     const imgDone = useRef([]);
     const imgLabelDone = useRef([]);
@@ -705,7 +769,37 @@ function Process({
                                 src={item?.itemImages?.split('[space]')?.[0]}
                                 loading="lazy"
                                 style={{ maxWidth: '120px' }}
+                                onClick={() => setPresentModal(true)}
                             ></img>
+                            <Modal show={presentModal} onHide={() => setPresentModal(false)}>
+                                <Modal.Header closeButton></Modal.Header>
+                                <Modal.Body>
+                                    <Swiper
+                                        effect={'coverflow'}
+                                        grabCursor={true}
+                                        centeredSlides={true}
+                                        slidesPerView={3}
+                                        coverflowEffect={{
+                                            rotate: 50,
+                                            stretch: 0,
+                                            depth: 100,
+                                            modifier: 1,
+                                            slideShadows: true,
+                                        }}
+                                        pagination={true}
+                                        modules={[EffectCoverflow, Pagination]}
+                                        className="mySwiper"
+                                    >
+                                        {item?.itemImages?.split('[space]').map((url, id) => {
+                                            return (
+                                                <SwiperSlide key={id}>
+                                                    <img src={url} loading="lazy" style={{ maxWidth: '120px' }}></img>
+                                                </SwiperSlide>
+                                            );
+                                        })}
+                                    </Swiper>
+                                </Modal.Body>
+                            </Modal>
                         </Col>
                     </Row>
                     <Row>
@@ -859,7 +953,12 @@ function Process({
                                                 const handleObj = {
                                                     ...values,
                                                     receivedImages: values.receivedImages.reduce(
-                                                        (p, c) => [...p, ...c.map((item) => item?.file)],
+                                                        (p, c) => [
+                                                            ...p,
+                                                            ...c
+                                                                ?.filter((item) => item?.file)
+                                                                .map((item) => item?.file),
+                                                        ],
                                                         [],
                                                     ),
                                                 };
@@ -1233,7 +1332,22 @@ function Process({
                                         </Modal.Title>
                                     </Modal.Header>
                                     <Modal.Body className="link-slider">
-                                        <Swiper>
+                                        <Swiper
+                                            effect={'coverflow'}
+                                            grabCursor={true}
+                                            centeredSlides={true}
+                                            slidesPerView={3}
+                                            coverflowEffect={{
+                                                rotate: 50,
+                                                stretch: 0,
+                                                depth: 100,
+                                                modifier: 1,
+                                                slideShadows: true,
+                                            }}
+                                            pagination={true}
+                                            modules={[EffectCoverflow, Pagination]}
+                                            className="mySwiper"
+                                        >
                                             {deliveryImages?.split?.('[space]')?.map((url, index) => {
                                                 return (
                                                     <SwiperSlide style={{ borderLeft: 'none' }} key={index}>
