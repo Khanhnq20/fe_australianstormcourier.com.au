@@ -508,3 +508,25 @@ a {
 .link-slider > .active {
     border-left: none !important;
 }
+.form-group-border {
+    border-radius: 0.8rem;
+    position: relative;
+    border: 1px solid var(--clr-txt-secondary);
+    padding: 1.2rem 0.5rem 0.5rem;
+    z-index: 2;
+}
+.form-group-border * {
+    z-index: 2;
+}
+.form-group-border .form-group-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translate(10px, -50%);
+    background-color: #ffffff;
+    display: inline-block;
+    width: fit-content;
+    padding: 0 0.2rem;
+    z-index: 1;
+    margin: 0;
+}

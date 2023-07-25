@@ -96,7 +96,7 @@ export default function ItemCreation({
                     </p>
 
                     <div className="text-danger" style={{ fontStyle: 'italic' }}>
-                        <b>*Please send this barcode to receiver before receiving the delivery</b>
+                        <b>*Please send this barcode to receiver in order to receive the delivery</b>
                     </div>
                     {/* <Barcode value={values?.orderItems?.[index]?.itemCharcode?.toString()}></Barcode> */}
                 </Form.Group>

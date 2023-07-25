@@ -298,10 +298,11 @@ function Product() {
                                                                                             <Spinner></Spinner>
                                                                                         ) : (
                                                                                             <Row className="flex-nowrap">
-                                                                                                <Col sm="auto">
+                                                                                                <Col sm="auto   ">
                                                                                                     <FaCheck></FaCheck>
                                                                                                 </Col>
                                                                                                 <Col
+                                                                                                    className="text-start d-none d-md-block"
                                                                                                     style={{
                                                                                                         paddingLeft: 0,
                                                                                                     }}
@@ -334,6 +335,7 @@ function Product() {
                                                                                                 <RiHandCoinFill></RiHandCoinFill>
                                                                                             </Col>
                                                                                             <Col
+                                                                                                className="text-start d-none d-md-block"
                                                                                                 style={{
                                                                                                     paddingLeft: 0,
                                                                                                 }}
@@ -405,6 +407,7 @@ function Product() {
                                                                                             <FcViewDetails></FcViewDetails>
                                                                                         </Col>
                                                                                         <Col
+                                                                                            className="text-start d-none d-md-block"
                                                                                             style={{
                                                                                                 paddingLeft: 0,
                                                                                             }}

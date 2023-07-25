@@ -514,10 +514,10 @@ function ProductDetail() {
                                     </div>
                                 </div>
                             </div>
-                            <Button variant="success" onClick={() => setEditOrderModal(true)}>
+                            {/* <Button variant="success" onClick={() => setEditOrderModal(true)}>
                                 <BiMessageEdit className="me-2"></BiMessageEdit>
                                 Edit Order
-                            </Button>
+                            </Button> */}
                             <Modal show={editOrderModal} onHide={() => setEditOrderModal(false)}>
                                 <Modal.Header closeButton>
                                     <h5 style={{ margin: 0 }}>Edit order information</h5>
@@ -955,17 +955,17 @@ function ProductDetail() {
                             return (
                                 <SwiperSlide key={index} className="pb-5 mb-2">
                                     <div>
-                                        <Button
+                                        {/* <Button
                                             variant="success"
-                                            className="mb-3"
+                                            className="mb-3 me-3"
                                             onClick={() => setEditItemodal(index)}
                                         >
                                             <BiEdit className="me-2"></BiEdit>
                                             Edit
-                                        </Button>
+                                        </Button> */}
                                         <Button
                                             variant="warning"
-                                            className="mb-3 mx-3"
+                                            className="mb-3"
                                             onClick={() => {
                                                 setShowLabel(index);
                                             }}
@@ -1833,7 +1833,7 @@ function ProductDetail() {
                                                     <p className="product-content">{item.itemName}</p>
                                                 </div>
                                                 {/* Charcode */}
-                                                <div className="product-label-info">
+                                                {/* <div className="product-label-info">
                                                     <p className="product-label text-sm-start text-lg-end">Charcode</p>
                                                     <p className="product-content">
                                                         {'000000'.substring(
@@ -1841,7 +1841,7 @@ function ProductDetail() {
                                                             6 - item.itemCharCode.toString().length,
                                                         ) + item.itemCharCode}
                                                     </p>
-                                                </div>
+                                                </div> */}
                                                 {/* Note */}
                                                 <div className="product-label-info">
                                                     <p className="product-label text-sm-start text-lg-end">Note</p>
@@ -1924,8 +1924,8 @@ function ProductDetail() {
                                             <p className="my-2 text-danger">
                                                 <b>
                                                     <i>
-                                                        * Please send this barcode to receiver {item?.receiverPhone}{' '}
-                                                        before receiving item
+                                                        * Please send this barcode to receiver {item?.receiverPhone} in
+                                                        order to receive the delivery
                                                     </i>
                                                 </b>
                                             </p>

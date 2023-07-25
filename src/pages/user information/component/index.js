@@ -211,7 +211,7 @@ function UserInformation() {
                         <p className="product-content">{authState?.accountInfo?.address}</p>
                     </div>
                     <div className="product-label-info">
-                        <p className="product-label">ABN Number</p>
+                        <p className="product-label">ABN</p>
                         <p className="product-content">{authState?.accountInfo?.abnNumber || <Link>_blank</Link>}</p>
                     </div>
                     <div className="product-label-info">
@@ -305,7 +305,7 @@ function UserInformation() {
                                             <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                                         </Form.Group>
                                         {/* Phone */}
-                                        <Form.Group>
+                                        <Form.Group className="mb-2">
                                             <div className="mb-2">
                                                 <Form.Label className="label">Phone Number</Form.Label>
                                                 <p className="asterisk">*</p>
@@ -347,7 +347,8 @@ function UserInformation() {
                                                 {errors?.phoneNumber || phoneError}
                                             </Form.Control.Feedback>
                                         </Form.Group>
-                                        <Form.Group className="form-group">
+                                        {/* Address */}
+                                        <Form.Group className="form-group mb-2">
                                             <div className="mb-2">
                                                 <Form.Label className="label">Address</Form.Label>
                                                 <p className="asterisk">*</p>
@@ -357,6 +358,24 @@ function UserInformation() {
                                                 name="address"
                                                 placeholder="Enter Your Full Address"
                                                 value={values.address}
+                                                isInvalid={touched.address && errors.address}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.address}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                        {/* ABN */}
+                                        <Form.Group className="form-group mb-2">
+                                            <div className="mb-2">
+                                                <Form.Label className="label">ABN</Form.Label>
+                                                {/* <p className="asterisk">*</p> */}
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="address"
+                                                placeholder="Enter Your ABN"
                                                 isInvalid={touched.address && errors.address}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}

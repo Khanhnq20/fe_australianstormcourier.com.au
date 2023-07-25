@@ -141,6 +141,7 @@ function Invoice({ clientSecrete, payment }) {
                             <div>
                                 <div className="invoice-txt-label">Invoice Id</div>
                                 <div className="invoice-txt-label"> Date</div>
+                                <div className="invoice-txt-label"> Full Name</div>
                                 <div className="invoice-txt-label"> Address</div>
                                 <div className="invoice-txt-label"> Phone</div>
                             </div>
@@ -149,6 +150,7 @@ function Invoice({ clientSecrete, payment }) {
                                 <div className="invoice-txt-content">
                                     {moment(payment?.createdAt).format('MM/DD/YYYY')}
                                 </div>
+                                <div className="invoice-txt-content">{payment?.sender?.name}</div>
                                 <div className="invoice-txt-content">{payment?.sender?.address}</div>
                                 <div className="invoice-txt-content">+{payment?.sender?.phoneNumber}</div>
                             </div>
@@ -203,20 +205,21 @@ function Invoice({ clientSecrete, payment }) {
                                 </tbody>
                             </table>
                         </div>
+
                         <div className="invoice-last-info" style={{ marginTop: '35px' }}>
                             <div>
-                                <div className="invoice-txt-label">Payment Method</div>
+                                {/* <div className="invoice-txt-label">Payment Method</div>
                                 <div className="invoice-txt-label">Name </div>
                                 <div className="invoice-txt-label"> BSB</div>
-                                <div className="invoice-txt-label"> ACC NO</div>
+                                <div className="invoice-txt-label"> ACC NO</div> */}
                             </div>
                             <div>
-                                <div style={{ marginBottom: '10px', textTransform: 'uppercase' }}>bank transfer</div>
+                                {/* <div style={{ marginBottom: '10px', textTransform: 'uppercase' }}>bank transfer</div>
                                 <div style={{ marginBottom: '10px', textTransform: 'uppercase' }}>
                                     sameday courier services pty ltd
                                 </div>
                                 <div className="invoice-txt-content">013-437</div>
-                                <div className="invoice-txt-content">1555 00392</div>
+                                <div className="invoice-txt-content">1555 00392</div> */}
                             </div>
                         </div>
                     </div>

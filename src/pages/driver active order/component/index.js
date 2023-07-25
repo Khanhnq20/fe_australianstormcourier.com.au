@@ -179,6 +179,7 @@ function Product() {
                                                 </th>
                                                 <th>Pickup</th>
                                                 <th>Destination</th>
+                                                <th>Posted date</th>
                                                 <th>Expected date</th>
                                                 <th>Expected time frame</th>
                                                 <th>Receiver number</th>
@@ -235,6 +236,13 @@ function Product() {
                                                             </td>
                                                             <td>{offer?.order?.sendingLocation}</td>
                                                             <td>{item?.destination}</td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                                {!!offer?.order?.createdDate
+                                                                    ? moment(offer?.order?.createdDate).format(
+                                                                          'DD-MM-YYYY',
+                                                                      )
+                                                                    : ''}
+                                                            </td>
                                                             <td style={{ whiteSpace: 'nowrap' }}>
                                                                 {!!offer?.order?.deliverableDate
                                                                     ? moment(offer?.order?.deliverableDate).format(
