@@ -448,60 +448,63 @@ function UpdateDriver() {
                                             {errors?.abnNumber}
                                         </Form.Control.Feedback>
                                     </Form.Group>
-                                    {/* BSB */}
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">BSB</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="bsb"
-                                            placeholder="Enter your bsb code"
-                                            value={values.bsb}
-                                            isInvalid={touched.bsb && !!errors?.bsb}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors?.bsb}</Form.Control.Feedback>
-                                    </Form.Group>
-                                    {/* Account Number */}
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Account Number</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="accountNumber"
-                                            placeholder="Enter Your Account Number"
-                                            value={values.accountNumber}
-                                            isInvalid={touched.accountNumber && !!errors?.accountNumber}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors?.accountNumber}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
-                                    {/* Account Name */}
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Account Name</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="accountName"
-                                            placeholder="Enter Your Account Name"
-                                            value={values.accountName}
-                                            isInvalid={touched.accountName && !!errors?.accountName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors?.accountName}
-                                        </Form.Control.Feedback>
+                                    <Form.Group id="payment_detail">
+                                        <h4>Payment detail</h4>
+                                        {/* BSB */}
+                                        <Form.Group className="form-group">
+                                            <div className="mb-2">
+                                                <Form.Label className="label">BSB</Form.Label>
+                                                <p className="asterisk">*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="bsb"
+                                                placeholder="Enter your bsb code"
+                                                value={values.bsb}
+                                                isInvalid={touched.bsb && !!errors?.bsb}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors?.bsb}</Form.Control.Feedback>
+                                        </Form.Group>
+                                        {/* Account Number */}
+                                        <Form.Group className="form-group">
+                                            <div className="mb-2">
+                                                <Form.Label className="label">Account Number</Form.Label>
+                                                <p className="asterisk">*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="accountNumber"
+                                                placeholder="Enter Your Account Number"
+                                                value={values.accountNumber}
+                                                isInvalid={touched.accountNumber && !!errors?.accountNumber}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors?.accountNumber}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                        {/* Account Name */}
+                                        <Form.Group className="form-group">
+                                            <div className="mb-2">
+                                                <Form.Label className="label">Account Name</Form.Label>
+                                                <p className="asterisk">*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="accountName"
+                                                placeholder="Enter Your Account Name"
+                                                value={values.accountName}
+                                                isInvalid={touched.accountName && !!errors?.accountName}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors?.accountName}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
                                     </Form.Group>
                                     {/* Vehicles */}
                                     <Form.Group className="form-group">

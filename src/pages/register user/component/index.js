@@ -15,6 +15,7 @@ import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
 let registerSchema = yup.object().shape({
+    name: yup.string().required('Full name is specific'),
     userName: yup
         .string()
         .required('User Name is required field')
@@ -67,6 +68,7 @@ export default function Index() {
     return (
         <Formik
             initialValues={{
+                name: '',
                 userName: '',
                 email: '',
                 password: '',
@@ -93,227 +95,240 @@ export default function Index() {
                     authState?.tasks?.[authConstraints.signupUser] === taskStatus.Inprogress;
                 return (
                     <div className="reg-user">
-                        <div className="container p-sm-1 p-lg-5">
+                        <div className="container p-sm-1 p-lg-5 mb-5">
                             <div>
-                                <div>
-                                    {/* <h3 className="reg-header txt-center">Register</h3>
-                                    <h4 className="reg-txt-u txt-center">Get started with Us</h4>
-                                    <p className="txt-center m-0">Register a new membership.</p> */}
-                                    <h3 className="reg-header txt-center" style={{ textTransform: 'uppercase' }}>
-                                        Become a sender
-                                    </h3>
-                                    <h4 className="reg-txt-u txt-center">Register now.</h4>
-                                </div>
-                                {isLoading && <CustomSpinner></CustomSpinner>}
-                                <Form className="form" onSubmit={handleSubmit}>
-                                    {!!authState?.errors?.length && (
-                                        <>
-                                            {authState?.errors?.map((error, idx) => (
-                                                <Message.Error key={idx}>
-                                                    <>{error}</>
-                                                </Message.Error>
-                                            ))}
-                                        </>
-                                    )}
+                                {/* <h3 className="reg-header txt-center">Register</h3>
+                                <h4 className="reg-txt-u txt-center">Get started with Us</h4>
+                                <p className="txt-center m-0">Register a new membership.</p> */}
+                                <h3 className="reg-header txt-center" style={{ textTransform: 'uppercase' }}>
+                                    Become a sender
+                                </h3>
+                                <h4 className="reg-txt-u txt-center">Register now.</h4>
+                            </div>
+                            {isLoading && <CustomSpinner></CustomSpinner>}
+                            <Form className="form" onSubmit={handleSubmit}>
+                                {!!authState?.errors?.length && (
+                                    <>
+                                        {authState?.errors?.map((error, idx) => (
+                                            <Message.Error key={idx}>
+                                                <>{error}</>
+                                            </Message.Error>
+                                        ))}
+                                    </>
+                                )}
 
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">User name</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
+                                <Form.Group className="form-group">
+                                    <div className="mb-2">
+                                        <Form.Label className="label">Full name</Form.Label>
+                                        <p className="asterisk">*</p>
+                                    </div>
+                                    <Form.Control
+                                        type="text"
+                                        name="name"
+                                        placeholder="Enter Full Name"
+                                        isInvalid={touched.name && errors.name}
+                                        value={values.name}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="form-group">
+                                    <div className="mb-2">
+                                        <Form.Label className="label">User name</Form.Label>
+                                        <p className="asterisk">*</p>
+                                    </div>
+                                    <Form.Control
+                                        type="text"
+                                        name="userName"
+                                        placeholder="Enter User Name"
+                                        isInvalid={touched.userName && errors.userName}
+                                        value={values.userName}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{errors.userName}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="form-group">
+                                    <div className="mb-2">
+                                        <Form.Label className="label">Email</Form.Label>
+                                        <p className="asterisk">*</p>
+                                    </div>
+                                    <Form.Control
+                                        type="text"
+                                        name="email"
+                                        placeholder="Enter Your Email"
+                                        isInvalid={touched.email && errors.email}
+                                        value={values.email}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="form-group">
+                                    <div className="mb-2">
+                                        <Form.Label className="label">Password</Form.Label>
+                                        <p className="asterisk">*</p>
+                                    </div>
+                                    <div className="frame-pass">
                                         <Form.Control
-                                            type="text"
-                                            name="userName"
-                                            placeholder="Enter User Name"
-                                            isInvalid={touched.userName && errors.userName}
-                                            value={values.userName}
+                                            type={showPass ? 'text' : 'password'}
+                                            isInvalid={touched.password && errors.password}
+                                            value={values.password}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
+                                            placeholder="Enter Your Password"
+                                            name="password"
                                         />
-                                        <Form.Control.Feedback type="invalid">{errors.userName}</Form.Control.Feedback>
-                                    </Form.Group>
-
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Email</Form.Label>
-                                            <p className="asterisk">*</p>
+                                        <Form.Control.Feedback type="invalid">{errors.password}</Form.Control.Feedback>
+                                        <div className="override-block"></div>
+                                        <div className="eyes-pass">
+                                            {showPass ? (
+                                                <AiFillEye onClick={showPassHandler}></AiFillEye>
+                                            ) : (
+                                                <AiFillEyeInvisible onClick={showPassHandler}></AiFillEyeInvisible>
+                                            )}
                                         </div>
+                                    </div>
+                                </Form.Group>
+
+                                <Form.Group className="form-group">
+                                    <div className="mb-2">
+                                        <Form.Label className="label">Confirm Password</Form.Label>
+                                        <p className="asterisk">*</p>
+                                    </div>
+                                    <div className="frame-pass">
                                         <Form.Control
-                                            type="text"
-                                            name="email"
-                                            placeholder="Enter Your Email"
-                                            isInvalid={touched.email && errors.email}
-                                            value={values.email}
+                                            type={showPassConfirm ? 'text' : 'password'}
+                                            name="confirmPassword"
+                                            placeholder="Enter Password Again"
+                                            isInvalid={touched.confirmPassword && errors.confirmPassword}
+                                            value={values.confirmPassword}
                                             onChange={handleChange}
                                             onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
-                                    </Form.Group>
-
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Password</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
-                                        <div className="frame-pass">
-                                            <Form.Control
-                                                type={showPass ? 'text' : 'password'}
-                                                isInvalid={touched.password && errors.password}
-                                                value={values.password}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                                placeholder="Enter Your Password"
-                                                name="password"
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                                {errors.password}
-                                            </Form.Control.Feedback>
-                                            <div className="override-block"></div>
-                                            <div className="eyes-pass">
-                                                {showPass ? (
-                                                    <AiFillEye onClick={showPassHandler}></AiFillEye>
-                                                ) : (
-                                                    <AiFillEyeInvisible onClick={showPassHandler}></AiFillEyeInvisible>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </Form.Group>
-
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Confirm Password</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
-                                        <div className="frame-pass">
-                                            <Form.Control
-                                                type={showPassConfirm ? 'text' : 'password'}
-                                                name="confirmPassword"
-                                                placeholder="Enter Password Again"
-                                                isInvalid={touched.confirmPassword && errors.confirmPassword}
-                                                value={values.confirmPassword}
-                                                onChange={handleChange}
-                                                onBlur={handleBlur}
-                                            />
-                                            <Form.Control.Feedback type="invalid">
-                                                {errors.confirmPassword}
-                                            </Form.Control.Feedback>
-                                            <div className="override-block"></div>
-                                            <div className="eyes-pass">
-                                                {showPassConfirm ? (
-                                                    <AiFillEye onClick={showPassConfirmHandler}></AiFillEye>
-                                                ) : (
-                                                    <AiFillEyeInvisible
-                                                        onClick={showPassConfirmHandler}
-                                                    ></AiFillEyeInvisible>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </Form.Group>
-                                    {/* Phone */}
-                                    <Form.Group className="form-group mb-2">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Phone Number</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
-                                        <PhoneInput
-                                            containerClass="w-100"
-                                            inputClass="w-100"
-                                            country={'au'}
-                                            value={values?.phone}
-                                            onChange={(phone) => setFieldValue('phone', phone)}
-                                            onlyCountries={['au', 'vn', 'us']}
-                                            preferredCountries={['au']}
-                                            placeholder="Enter Your Phone number"
-                                            autoFormat={true}
-                                            isValid={(inputNumber, _, countries) => {
-                                                const isValid = countries.some((country) => {
-                                                    return (
-                                                        inputNumber.startsWith(country.dialCode) ||
-                                                        country.dialCode.startsWith(inputNumber)
-                                                    );
-                                                });
-
-                                                setPhoneError('');
-
-                                                if (!isValid) {
-                                                    setPhoneError('Your phone is not match with dial code');
-                                                }
-
-                                                return isValid;
-                                            }}
-                                        ></PhoneInput>
-                                        <Form.Control
-                                            type="hidden"
-                                            name="phone"
-                                            defaultValue={values?.phone}
-                                            isInvalid={!!errors.phone || !!phoneError}
                                         />
                                         <Form.Control.Feedback type="invalid">
-                                            {errors.phone || phoneError}
+                                            {errors.confirmPassword}
                                         </Form.Control.Feedback>
-                                    </Form.Group>
-                                    {/* <Form.Group className="form-group" >
-                    <div className='mb-2'>
-                        <Form.Label className='label'>Phone Number</Form.Label>
-                        <p className='asterisk'>*</p>
-                    </div>
-                    <Form.Control
-                        type="text"
-                        name="phone"
-                        placeholder="Enter Your Phone Number"
-                        isInvalid={touched.phone && errors.phone}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                    />
-                    <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
-                </Form.Group> */}
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Address</Form.Label>
-                                            <p className="asterisk">*</p>
+                                        <div className="override-block"></div>
+                                        <div className="eyes-pass">
+                                            {showPassConfirm ? (
+                                                <AiFillEye onClick={showPassConfirmHandler}></AiFillEye>
+                                            ) : (
+                                                <AiFillEyeInvisible
+                                                    onClick={showPassConfirmHandler}
+                                                ></AiFillEyeInvisible>
+                                            )}
                                         </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="address"
-                                            placeholder="Enter Your Full Address"
-                                            isInvalid={touched.address && errors.address}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors.address}</Form.Control.Feedback>
-                                    </Form.Group>
+                                    </div>
+                                </Form.Group>
+                                {/* Phone */}
+                                <Form.Group className="form-group mb-2">
+                                    <div className="mb-2">
+                                        <Form.Label className="label">Phone Number</Form.Label>
+                                        <p className="asterisk">*</p>
+                                    </div>
+                                    <PhoneInput
+                                        containerClass="w-100"
+                                        inputClass="w-100"
+                                        country={'au'}
+                                        value={values?.phone}
+                                        onChange={(phone) => setFieldValue('phone', phone)}
+                                        onlyCountries={['au', 'vn', 'us']}
+                                        preferredCountries={['au']}
+                                        placeholder="Enter Your Phone number"
+                                        autoFormat={true}
+                                        isValid={(inputNumber, _, countries) => {
+                                            const isValid = countries.some((country) => {
+                                                return (
+                                                    inputNumber.startsWith(country.dialCode) ||
+                                                    country.dialCode.startsWith(inputNumber)
+                                                );
+                                            });
 
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">ABN</Form.Label>
-                                        </div>
-                                        <Form.Control
-                                            type="number"
-                                            name="abn"
-                                            placeholder="Enter Your ABN"
-                                            onChange={handleChange}
-                                        />
-                                    </Form.Group>
+                                            setPhoneError('');
 
-                                    <Button
-                                        type="submit"
-                                        variant="warning"
-                                        className="my-btn-yellow w-100"
-                                        disabled={authState?.authLoading || isLoading || !isValid || !!phoneError}
-                                    >
-                                        {authState?.authLoading || isLoading ? (
-                                            <Row style={{ alignItems: 'center' }}>
-                                                <Col sm="auto" style={{ padding: 0 }}>
-                                                    <Spinner className="me-2"></Spinner>
-                                                </Col>
-                                                <Col style={{ padding: 0 }}>Submitting...</Col>
-                                            </Row>
-                                        ) : (
-                                            'Submit'
-                                        )}
-                                    </Button>
-                                </Form>
-                            </div>
+                                            if (!isValid) {
+                                                setPhoneError('Your phone is not match with dial code');
+                                            }
+
+                                            return isValid;
+                                        }}
+                                    ></PhoneInput>
+                                    <Form.Control
+                                        type="hidden"
+                                        name="phone"
+                                        defaultValue={values?.phone}
+                                        isInvalid={!!errors.phone || !!phoneError}
+                                    />
+                                    <Form.Control.Feedback type="invalid">
+                                        {errors.phone || phoneError}
+                                    </Form.Control.Feedback>
+                                </Form.Group>
+                                {/* <Form.Group className="form-group" >
+                <div className='mb-2'>
+                    <Form.Label className='label'>Phone Number</Form.Label>
+                    <p className='asterisk'>*</p>
+                </div>
+                <Form.Control
+                    type="text"
+                    name="phone"
+                    placeholder="Enter Your Phone Number"
+                    isInvalid={touched.phone && errors.phone}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                />
+                <Form.Control.Feedback type="invalid">{errors.phone}</Form.Control.Feedback>
+            </Form.Group> */}
+                                <Form.Group className="form-group">
+                                    <div className="mb-2">
+                                        <Form.Label className="label">Address</Form.Label>
+                                        <p className="asterisk">*</p>
+                                    </div>
+                                    <Form.Control
+                                        type="text"
+                                        name="address"
+                                        placeholder="Enter Your Full Address"
+                                        isInvalid={touched.address && errors.address}
+                                        onChange={handleChange}
+                                        onBlur={handleBlur}
+                                    />
+                                    <Form.Control.Feedback type="invalid">{errors.address}</Form.Control.Feedback>
+                                </Form.Group>
+
+                                <Form.Group className="form-group">
+                                    <div className="mb-2">
+                                        <Form.Label className="label">ABN</Form.Label>
+                                    </div>
+                                    <Form.Control
+                                        type="number"
+                                        name="abn"
+                                        placeholder="Enter Your ABN"
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+
+                                <Button
+                                    type="submit"
+                                    variant="warning"
+                                    className="my-btn-yellow w-100"
+                                    disabled={authState?.authLoading || isLoading || !isValid || !!phoneError}
+                                >
+                                    {authState?.authLoading || isLoading ? (
+                                        <Row style={{ alignItems: 'center' }}>
+                                            <Col sm="auto" style={{ padding: 0 }}>
+                                                <Spinner className="me-2"></Spinner>
+                                            </Col>
+                                            <Col style={{ padding: 0 }}>Submitting...</Col>
+                                        </Row>
+                                    ) : (
+                                        'Submit'
+                                    )}
+                                </Button>
+                            </Form>
                         </div>
                     </div>
                 );

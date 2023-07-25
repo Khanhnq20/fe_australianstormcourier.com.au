@@ -329,7 +329,7 @@ function OrderCreation() {
 
                                 <Row>
                                     <Col sm="12" lg="6">
-                                        <h3>Pickup Location</h3>
+                                        <h3>Delivery Location</h3>
                                     </Col>
                                     <Col sm="12" lg="6" className="d-sm-none d-lg-block">
                                         <h3>Item Information</h3>
@@ -742,10 +742,10 @@ function OrderCreation() {
                                 <Modal show={submitConfirm} onHide={() => setSubmitConfirm(false)}>
                                     <Modal.Header closeButton></Modal.Header>
                                     <Modal.Body>
-                                        <h4>Do you want to submit this form?</h4>
+                                        <h4>Do you want to submit this order now?</h4>
                                         <i>
-                                            Please check order information before submitting again. You cannot add more
-                                            items after submission
+                                            Please check order information again before submitting. You cannot edit any
+                                            details after submission.
                                         </i>
                                     </Modal.Body>
                                     <Modal.Footer>
@@ -1349,7 +1349,7 @@ function OrderCreation() {
                                                         </Button>
                                                         <Button onClick={() => setDevModal(true)}>
                                                             <FcAcceptDatabase className="me-2"></FcAcceptDatabase>
-                                                            Check your result
+                                                            Check your order
                                                         </Button>
                                                     </div>
                                                 </Col>

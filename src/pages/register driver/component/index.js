@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from 'react';
-import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
+import { Row, Col, Form, Button, Spinner, FloatingLabel } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import '../style/registerDriver.css';
@@ -271,7 +271,7 @@ function RegisterDriver() {
                                                 <Form.Control.Feedback type="invalid">
                                                     {errors.userName}
                                                 </Form.Control.Feedback>
-                                                <i>* It required the text with no space and symbol.</i>
+                                                <i>* Please enter with no space and symbol.</i>
                                             </Form.Group>
                                         </Col>
                                         <Col>
@@ -369,8 +369,8 @@ function RegisterDriver() {
                                             country={'au'}
                                             value={values?.phone}
                                             onChange={(phone) => setFieldValue('phone', phone)}
-                                            onlyCountries={['au', 'vn', 'us']}
-                                            preferredCountries={['au']}
+                                            onlyCountries={config.PhoneCountries}
+                                            preferredCountries={config.PhoneCountries}
                                             placeholder="Enter Your Phone number"
                                             autoFormat={true}
                                             isValid={(inputNumber, _, countries) => {
@@ -597,8 +597,9 @@ function RegisterDriver() {
                                                     <p className="driving-txt">Change driving license</p>
                                                 </div>
                                                 <img
-                                                    className="img-front"
+                                                    className="img-front w-100"
                                                     src={imgUrlFront || 'https://tinyurl.com/5ehpcctt'}
+                                                    style={{ maxWidth: 'unset' }}
                                                 />
                                             </div>
                                             <Form.Control
@@ -644,6 +645,7 @@ function RegisterDriver() {
                                                 <img
                                                     className="img-front"
                                                     src={imgUrlBack || 'https://tinyurl.com/5ehpcctt'}
+                                                    style={{ maxWidth: 'unset' }}
                                                 />
                                             </div>
 
@@ -786,59 +788,64 @@ function RegisterDriver() {
                                         </div>
                                     </Form.Group>
 
-                                    {/* BSB */}
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">BSB</Form.Label>
-                                            <p className="asterisk">*</p>
+                                    <Form.Group className="form-group-border mb-3" id="payment_detail">
+                                        <div className="form-group-label">
+                                            <h5>Payment Detail</h5>
                                         </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="bsb"
-                                            placeholder="Enter Bsb"
-                                            isInvalid={touched.bsb && !!errors?.bsb}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">{errors?.bsb}</Form.Control.Feedback>
-                                    </Form.Group>
+                                        {/* BSB */}
+                                        <Form.Group className="form-group">
+                                            <div className="mb-2">
+                                                <Form.Label className="label">BSB</Form.Label>
+                                                <p className="asterisk">*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="bsb"
+                                                placeholder="Enter Bsb"
+                                                isInvalid={touched.bsb && !!errors?.bsb}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">{errors?.bsb}</Form.Control.Feedback>
+                                        </Form.Group>
 
-                                    {/* Account Name */}
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Account Name</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="accountName"
-                                            placeholder="Enter Account Name"
-                                            isInvalid={touched.accountName && !!errors?.accountName}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors?.accountName}
-                                        </Form.Control.Feedback>
-                                    </Form.Group>
+                                        {/* Account Name */}
+                                        <Form.Group className="form-group">
+                                            <div className="mb-2">
+                                                <Form.Label className="label">Account Name</Form.Label>
+                                                <p className="asterisk">*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="accountName"
+                                                placeholder="Enter Account Name"
+                                                isInvalid={touched.accountName && !!errors?.accountName}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors?.accountName}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
 
-                                    {/* Account Name */}
-                                    <Form.Group className="form-group">
-                                        <div className="mb-2">
-                                            <Form.Label className="label">Account Number</Form.Label>
-                                            <p className="asterisk">*</p>
-                                        </div>
-                                        <Form.Control
-                                            type="text"
-                                            name="accountNumber"
-                                            placeholder="Enter Account Number"
-                                            isInvalid={touched.accountNumber && !!errors?.accountNumber}
-                                            onChange={handleChange}
-                                            onBlur={handleBlur}
-                                        />
-                                        <Form.Control.Feedback type="invalid">
-                                            {errors?.accountNumber}
-                                        </Form.Control.Feedback>
+                                        {/* Account Name */}
+                                        <Form.Group className="form-group">
+                                            <div className="mb-2">
+                                                <Form.Label className="label">Account Number</Form.Label>
+                                                <p className="asterisk">*</p>
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="accountNumber"
+                                                placeholder="Enter Account Number"
+                                                isInvalid={touched.accountNumber && !!errors?.accountNumber}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors?.accountNumber}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
                                     </Form.Group>
 
                                     {/* Additional Information */}
