@@ -237,7 +237,7 @@ export default function Index() {
                                         country={'au'}
                                         value={values?.phone}
                                         onChange={(phone) => setFieldValue('phone', phone)}
-                                        onlyCountries={['au', 'vn', 'us']}
+                                        onlyCountries={config.PhoneCountries}
                                         preferredCountries={['au']}
                                         placeholder="Enter Your Phone number"
                                         autoFormat={true}
