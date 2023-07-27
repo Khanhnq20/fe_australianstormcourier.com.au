@@ -4,7 +4,7 @@ const config = {
     AuthenticationSchema: 'Bearer',
     AccountConfirmationURL: process.env.REACT_APP_ACCOUNT_CONFIRM_RETURN_URL || '/confirm',
     ResetPwdConfirmationURL: process.env.REACT_APP_RESET_PWD_RETURN_URL,
-    PhoneCountries: process.env.NODE_ENV === 'development' ? ['au', 'vn', 'us'] : ['au', 'vn'],
+    PhoneCountries: process.env.NODE_ENV === 'development' ? ['au', 'vn', 'us'] : ['au'],
 };
 
 export default config;

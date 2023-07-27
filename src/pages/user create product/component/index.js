@@ -4,7 +4,7 @@ import Form from 'react-bootstrap/Form';
 import React, { useContext } from 'react';
 import { Button, Col, Modal, Row, Spinner } from 'react-bootstrap';
 import { AuthContext, OrderContext } from '../../../stores';
-import '../style/createProduct.css';
+import { config } from '../../../api';
 import moment from 'moment';
 import { Navigation, Pagination } from 'swiper';
 import { Swiper, SwiperSlide, useSwiper } from 'swiper/react';
@@ -24,6 +24,7 @@ import { BsFillSendCheckFill } from 'react-icons/bs';
 import { FcAcceptDatabase } from 'react-icons/fc';
 import Dropdown from 'react-dropdown';
 import 'react-dropdown/style.css';
+import '../style/createProduct.css';
 
 const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 
@@ -1422,7 +1423,7 @@ const EditReceiverForm = ({
                                 containerClass="w-100"
                                 inputClass="w-100"
                                 onChange={(phone) => setFieldValue(`${name}.receiverPhone`, phone)}
-                                onlyCountries={['au', 'vn']}
+                                onlyCountries={config.PhoneCountries}
                                 preferredCountries={['au']}
                                 placeholder="Enter Receiver Phone number"
                                 autoFormat={true}

@@ -12,6 +12,7 @@ import { BsPlusSquareFill, BsTrash2Fill } from 'react-icons/bs';
 import { AiFillMinusSquare } from 'react-icons/ai';
 import { MdContentCopy } from 'react-icons/md';
 import { toast } from 'react-toastify';
+import { config } from '../../../api';
 
 export default function ItemCreation({
     name,
@@ -425,7 +426,7 @@ export default function ItemCreation({
                                 containerClass="w-100"
                                 inputClass="w-100"
                                 onChange={(phone) => setFieldValue(`${name}.receiverPhone`, phone)}
-                                onlyCountries={['au', 'vn']}
+                                onlyCountries={config.PhoneCountries}
                                 preferredCountries={['au']}
                                 placeholder="Enter Receiver Phone number"
                                 autoFormat={true}
