@@ -1,5 +1,5 @@
 import React, { useContext, useRef } from 'react';
-import { Row, Col, Form, Button, Spinner, FloatingLabel } from 'react-bootstrap';
+import { Row, Col, Form, Button, Spinner, FloatingLabel, Modal } from 'react-bootstrap';
 import { Formik } from 'formik';
 import * as yup from 'yup';
 import '../style/registerDriver.css';
@@ -130,6 +130,8 @@ function RegisterDriver() {
     const [next, setNext] = React.useState(true);
     const [phoneError, setPhoneError] = React.useState('');
     const [phonePopOver, setPhonePopOver] = React.useState(false);
+    const [modal, setModal] = React.useState(false);
+
     const showPassHandler = () => {
         setShowPass((e) => !e);
     };
@@ -430,15 +432,27 @@ function RegisterDriver() {
                                             {errors.phone || phoneError}
                                         </Form.Control.Feedback>
                                     </Form.Group>
-
-                                    <Button
-                                        variant="warning"
-                                        disabled={!permitedNext || !!phoneError}
-                                        onClick={() => setNext((e) => !e)}
-                                        className="my-btn-yellow w-100 w-lg-40"
-                                    >
-                                        Next
-                                    </Button>
+                                    <Row>
+                                        <Col sm="auto">
+                                            <Button
+                                                variant="warning"
+                                                disabled={!permitedNext || !!phoneError}
+                                                onClick={() => setNext((e) => !e)}
+                                                className="my-btn-yellow w-100 w-lg-40"
+                                            >
+                                                Next
+                                            </Button>
+                                        </Col>
+                                        <Col sm="auto">
+                                            <Button
+                                                variant="warning"
+                                                className="my-btn-yellow"
+                                                onClick={() => setModal(true)}
+                                            >
+                                                Watch tutorial
+                                            </Button>
+                                        </Col>
+                                    </Row>
                                 </Col>
 
                                 <Col className={!next ? 'step2-show' : 'step2-hide'}>
@@ -600,6 +614,7 @@ function RegisterDriver() {
                                                     className="img-front w-100"
                                                     src={imgUrlFront || 'https://tinyurl.com/5ehpcctt'}
                                                     style={{ maxWidth: 'unset' }}
+                                                    alt="FrontDrivingImage"
                                                 />
                                             </div>
                                             <Form.Control
@@ -866,27 +881,57 @@ function RegisterDriver() {
                                         />
                                         <Form.Control.Feedback type="invalid">{errors.adInfo}</Form.Control.Feedback>
                                     </Form.Group>
-
-                                    <Button
-                                        type="submit"
-                                        variant="warning"
-                                        style={{
-                                            backgroundColor: '#f2a13b',
-                                            border: 'none',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                        }}
-                                        disabled={authLoading || !isValid || isLoading}
-                                        className="my-btn-yellow my-2 gap-2"
-                                    >
-                                        {isLoading || authLoading ? (
-                                            <>
-                                                <Spinner></Spinner> Submitting
-                                            </>
-                                        ) : (
-                                            'Submit'
-                                        )}
-                                    </Button>
+                                    <Row className="align-items-center">
+                                        <Col sm="auto">
+                                            <Button
+                                                type="submit"
+                                                variant="warning"
+                                                style={{
+                                                    backgroundColor: '#f2a13b',
+                                                    border: 'none',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                }}
+                                                disabled={authLoading || !isValid || isLoading}
+                                                className="my-btn-yellow my-2 gap-2"
+                                            >
+                                                {isLoading || authLoading ? (
+                                                    <>
+                                                        <Spinner></Spinner> Submitting
+                                                    </>
+                                                ) : (
+                                                    'Submit'
+                                                )}
+                                            </Button>
+                                        </Col>
+                                        <Col sm="auto">
+                                            <Button
+                                                variant="warning"
+                                                className="my-btn-yellow"
+                                                onClick={() => setModal(true)}
+                                            >
+                                                Watch tutorial
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                    <Modal show={modal} size="lg" onHide={() => setModal(false)}>
+                                        <Modal.Header closeButton>
+                                            <Modal.Title>Tutorial Video</Modal.Title>
+                                        </Modal.Header>
+                                        <Modal.Body>
+                                            <section>
+                                                <iframe
+                                                    width="100%"
+                                                    height="520"
+                                                    src="https://www.youtube.com/embed/OeCiWm2RuUc"
+                                                    title="YouTube video player"
+                                                    frameborder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                    allowfullscreen
+                                                ></iframe>
+                                            </section>
+                                        </Modal.Body>
+                                    </Modal>
                                 </Col>
                             </Row>
                         </Form>

@@ -3,11 +3,14 @@ import { AiFillLeftCircle, AiOutlineIdcard, AiOutlineHistory } from 'react-icons
 import { User } from '../../../pages';
 import { Breadcrumbs } from './breadscrumb';
 import { NavLink } from 'react-router-dom';
-import { BiPackage } from 'react-icons/bi';
+import { BiPackage, BiMoviePlay } from 'react-icons/bi';
 import { TbPackages } from 'react-icons/tb';
+import { Modal } from 'react-bootstrap';
 
 export function UserSideBar({ children }) {
     const [toggle, setToggle] = React.useState(true);
+    const [modal, setModal] = React.useState(true);
+
     return (
         <div>
             <div className="h-root">
@@ -82,6 +85,13 @@ export function UserSideBar({ children }) {
                                             </div>
                                             <p className={toggle ? 'sbar-txt txt-hide' : 'sbar-txt'}>Information</p>
                                         </NavLink>
+                                        {/* 5. Guide */}
+                                        <a className="sbar-link" onClick={() => setModal(true)}>
+                                            <div className="sbar-icon-frame">
+                                                <BiMoviePlay className="sbar-icon"></BiMoviePlay>
+                                            </div>
+                                            <p className={toggle ? 'sbar-txt txt-hide' : 'sbar-txt'}>How to use?</p>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -97,6 +107,24 @@ export function UserSideBar({ children }) {
                     </div>
                 </div>
             </div>
+            <Modal show={modal} size="xxl" onHide={() => setModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Tutorial Video</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <section>
+                        <iframe
+                            width="100%"
+                            height="315"
+                            src="https://www.youtube.com/embed/6jQ3dMAr6zs"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen
+                        ></iframe>
+                    </section>
+                </Modal.Body>
+            </Modal>
         </div>
     );
 }

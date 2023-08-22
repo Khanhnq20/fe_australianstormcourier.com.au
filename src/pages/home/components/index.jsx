@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import '../styles/home.css';
@@ -18,6 +18,7 @@ import sender from '../../../image/sender.png';
 import senderPost from '../../../image/sender-post.png';
 import customer from '../../../image/customer.png';
 import logo from '../../../image/as-logo.png';
+import { Modal } from 'react-bootstrap';
 // import { FacebookProvider, Page, Like } from "react-facebook";
 
 export default function Index() {
@@ -78,42 +79,77 @@ function Banner() {
 }
 
 function Delivery() {
+    const [modal, setModal] = useState(false);
+
     return (
-        <InView threshold={0}>
-            {({ inView, ref }) => (
-                <div className="del-root" ref={ref}>
-                    <div className="container">
-                        <Row>
-                            <Col className="del-content py-4">
-                                <h3 className="card-header py-4">DELIVERY SERVICES</h3>
-                                <p>
-                                    If you need assistance with parcel deliveries, we can help! We can assist with
-                                    deliveries of all sizes whether personal or business related. AS Courier provides
-                                    package delivery and same-day courier services within each city in Australia. We
-                                    cater to households and businesses; specialising in providing final mile delivery
-                                    solutions for eCommerce businesses and online traders.
-                                </p>
-                                <Link to="/auth/register/user">
-                                    <Button variant="warning" className="my-btn-yellow">
-                                        BECOME A CUSTOMER
-                                    </Button>
-                                </Link>
-                            </Col>
-                            <Col className="col-12 col-md-6">
-                                <div>
+        <>
+            <InView threshold={0}>
+                {({ inView, ref }) => (
+                    <div className="del-root" ref={ref}>
+                        <div className="container">
+                            <Row>
+                                <Col className="del-content py-4">
+                                    <h3 className="card-header py-4">DELIVERY SERVICES</h3>
+                                    <p>
+                                        If you need assistance with parcel deliveries, we can help! We can assist with
+                                        deliveries of all sizes whether personal or business related. AS Courier
+                                        provides package delivery and same-day courier services within each city in
+                                        Australia. We cater to households and businesses; specialising in providing
+                                        final mile delivery solutions for eCommerce businesses and online traders.
+                                    </p>
+                                    <Row>
+                                        <Col sm="auto">
+                                            <Link to="/auth/register/user" className="d-inline-block">
+                                                <Button variant="warning" className="my-btn-yellow">
+                                                    BECOME A CUSTOMER
+                                                </Button>
+                                            </Link>
+                                        </Col>
+                                        <Col sm="auto">
+                                            <Button
+                                                variant="warning"
+                                                className="my-btn-yellow"
+                                                onClick={() => setModal(true)}
+                                            >
+                                                Watch tutorial
+                                            </Button>
+                                        </Col>
+                                    </Row>
+                                </Col>
+                                <Col className="col-12 col-md-6">
                                     <div>
-                                        <img
-                                            className={`del-img img-auto-flex${inView ? ' fadeRight' : ''}`}
-                                            src={shipping}
-                                        />
+                                        <div>
+                                            <img
+                                                className={`del-img img-auto-flex${inView ? ' fadeRight' : ''}`}
+                                                src={shipping}
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-                            </Col>
-                        </Row>
+                                </Col>
+                            </Row>
+                        </div>
                     </div>
-                </div>
-            )}
-        </InView>
+                )}
+            </InView>
+            <Modal show={modal} size="lg" onHide={() => setModal(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Tutorial Video</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <section>
+                        <iframe
+                            width="100%"
+                            height="520"
+                            src="https://www.youtube.com/embed/6jQ3dMAr6zs"
+                            title="YouTube video player"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen
+                        ></iframe>
+                    </section>
+                </Modal.Body>
+            </Modal>
+        </>
     );
 }
 

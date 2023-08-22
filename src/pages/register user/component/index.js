@@ -10,7 +10,7 @@ import { AuthContext, taskStatus } from '../../../stores';
 import { CustomSpinner, Message } from '../../../layout';
 import { authConstraints, config } from '../../../api';
 import { useNavigate, useNavigation } from 'react-router-dom';
-import { Col, Row, Spinner } from 'react-bootstrap';
+import { Col, Modal, Row, Spinner } from 'react-bootstrap';
 import PhoneInput from 'react-phone-input-2';
 import 'react-phone-input-2/lib/style.css';
 
@@ -42,6 +42,8 @@ export default function Index() {
     const [showPass, setShowPass] = React.useState(false);
     const [showPassConfirm, setShowPassConfirm] = React.useState(false);
     const [phoneError, setPhoneError] = React.useState('');
+    const [modal, setModal] = React.useState(false);
+
     const navigate = useNavigate();
 
     const showPassHandler = () => {
@@ -311,23 +313,54 @@ export default function Index() {
                                     />
                                 </Form.Group>
 
-                                <Button
-                                    type="submit"
-                                    variant="warning"
-                                    className="my-btn-yellow w-100"
-                                    disabled={authState?.authLoading || isLoading || !isValid || !!phoneError}
-                                >
-                                    {authState?.authLoading || isLoading ? (
-                                        <Row style={{ alignItems: 'center' }}>
-                                            <Col sm="auto" style={{ padding: 0 }}>
-                                                <Spinner className="me-2"></Spinner>
-                                            </Col>
-                                            <Col style={{ padding: 0 }}>Submitting...</Col>
-                                        </Row>
-                                    ) : (
-                                        'Submit'
-                                    )}
-                                </Button>
+                                <Row>
+                                    <Col sm="auto">
+                                        <Button
+                                            type="submit"
+                                            variant="warning"
+                                            className="my-btn-yellow w-100"
+                                            disabled={authState?.authLoading || isLoading || !isValid || !!phoneError}
+                                        >
+                                            {authState?.authLoading || isLoading ? (
+                                                <Row style={{ alignItems: 'center' }}>
+                                                    <Col sm="auto" style={{ padding: 0 }}>
+                                                        <Spinner className="me-2"></Spinner>
+                                                    </Col>
+                                                    <Col style={{ padding: 0 }}>Submitting...</Col>
+                                                </Row>
+                                            ) : (
+                                                'Submit'
+                                            )}
+                                        </Button>
+                                    </Col>
+                                    <Col sm="auto">
+                                        <Button
+                                            variant="warning"
+                                            className="my-btn-yellow"
+                                            onClick={() => setModal(true)}
+                                        >
+                                            Watch tutorial
+                                        </Button>
+                                    </Col>
+                                </Row>
+                                <Modal show={modal} size="lg" onHide={() => setModal(false)}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Tutorial Video</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <section>
+                                            <iframe
+                                                width="100%"
+                                                height="520"
+                                                src="https://www.youtube.com/embed/6jQ3dMAr6zs"
+                                                title="YouTube video player"
+                                                frameborder="0"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                allowfullscreen
+                                            ></iframe>
+                                        </section>
+                                    </Modal.Body>
+                                </Modal>
                             </Form>
                         </div>
                     </div>
