@@ -2189,12 +2189,16 @@ function ProductDetail() {
                                                         </Row>
                                                         <Row>
                                                             <Col>Freight:</Col>
-                                                            <Col>10%</Col>
+                                                            <Col>{config.ServicePricing}%</Col>
                                                         </Row>
                                                         <Row>
                                                             <Col>Total</Col>
                                                             <Col>
-                                                                {(offer?.ratePrice * (1 + 0.1) * (1 + 0.1)).toFixed(2)}
+                                                                {(
+                                                                    offer?.ratePrice *
+                                                                    (1 + 0.1) *
+                                                                    (1 + config.ServicePricing / 100)
+                                                                ).toFixed(2)}
                                                             </Col>
                                                         </Row>
                                                     </td>
