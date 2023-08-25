@@ -98,14 +98,14 @@ function Delivery() {
                                         final mile delivery solutions for eCommerce businesses and online traders.
                                     </p>
                                     <Row>
-                                        <Col sm="auto">
+                                        <Col xs="auto" sm="auto">
                                             <Link to="/auth/register/user" className="d-inline-block">
                                                 <Button variant="warning" className="my-btn-yellow">
                                                     BECOME A CUSTOMER
                                                 </Button>
                                             </Link>
                                         </Col>
-                                        <Col sm="auto">
+                                        <Col xs="auto" sm="auto">
                                             <Button
                                                 variant="warning"
                                                 className="my-btn-yellow"
@@ -192,6 +192,7 @@ function Rate() {
 }
 
 function Notifycation() {
+    const [modal, setModal] = useState(false);
     return (
         <InView>
             {({ inView, ref }) => (
@@ -205,11 +206,36 @@ function Notifycation() {
                                     you, and get paid for it! At Australian Storm Courier, we understand the importance
                                     of a balanced lifestyle. Connect with us here to start delivering
                                 </p>
-                                <Link to="/auth/register/driver">
-                                    <Button variant="warning" className="my-btn-yellow">
-                                        BECOME A DRIVER
-                                    </Button>
-                                </Link>
+                                <Row>
+                                    <Col xs="auto" sm="auto">
+                                        <Link to="/auth/register/driver">
+                                            <Button variant="warning" className="my-btn-yellow">
+                                                BECOME A DRIVER
+                                            </Button>
+                                        </Link>
+                                    </Col>
+                                    <Col xs="auto" sm="auto">
+                                        <Button className="my-btn-yellow" onClick={() => setModal(true)}>
+                                            Watch tutorial
+                                        </Button>
+                                    </Col>
+                                </Row>
+                                <Modal size="lg" show={modal} centered onHide={() => setModal(false)}>
+                                    <Modal.Header closeButton>
+                                        <Modal.Title>Become a driver</Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                        <iframe
+                                            width="100%"
+                                            height="520"
+                                            src="https://www.youtube.com/embed/OeCiWm2RuUc?si=ahjgvN_QIUURDua_"
+                                            title="YouTube video player"
+                                            frameborder="0"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowfullscreen
+                                        ></iframe>
+                                    </Modal.Body>
+                                </Modal>
                             </Col>
                             <Col className="col-12 col-md-6">
                                 <div>
