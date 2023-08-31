@@ -1,18 +1,17 @@
 import '../style/driverActiveOrder.css';
 import React, { useContext, useEffect } from 'react';
-import * as yup from 'yup';
 import { BiSearchAlt2 } from 'react-icons/bi';
 import Dropdown from 'react-bootstrap/Dropdown';
 import Table from 'react-bootstrap/Table';
-import Pagination from 'react-bootstrap/Pagination';
 import { Col, Row, Form, Button, Modal, Spinner } from 'react-bootstrap';
 import { usePagination } from '../../../hooks';
 import { authConstraints, authInstance, config } from '../../../api';
 import moment from 'moment';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { AuthContext, OrderContext, SocketContext, taskStatus } from '../../../stores';
 import { Formik } from 'formik';
-import { toast } from 'react-toastify';
+
+const colors = ['yellow', 'red', 'green'];
 
 function Product() {
     const [authState] = useContext(AuthContext);
@@ -20,6 +19,7 @@ function Product() {
     const [__, { onOrderReceive }] = useContext(SocketContext);
     const [modalShow, setModalShow] = React.useState(false);
     const [modalData, setModalData] = React.useState();
+    const [searchParams] = useSearchParams();
 
     const rows = [5, 10, 15, 20, 25, 30, 35, 40];
     const {
@@ -33,8 +33,9 @@ function Product() {
         setCurrent,
         setPerPageAmount,
         refresh,
+        search,
     } = usePagination({
-        fetchingAPIInstance: ({ controller, page, take }) =>
+        fetchingAPIInstance: ({ controller, page, take, ...queries }) =>
             authInstance.get([authConstraints.driverRoot, authConstraints.getDriverActiveOrders].join('/'), {
                 headers: {
                     Authorization: [config.AuthenticationSchema, localStorage.getItem(authConstraints.LOCAL_KEY)].join(
@@ -44,6 +45,8 @@ function Product() {
                 params: {
                     page,
                     amount: take,
+                    pickup: searchParams?.get?.('state') || null,
+                    ...queries,
                 },
                 signal: controller.signal,
             }),
@@ -56,7 +59,6 @@ function Product() {
 
     useEffect(() => {
         onOrderReceive((orderId) => {
-            console.log('Driver Active Order Page has changed status :' + orderId);
             refresh();
         });
     }, []);
@@ -74,42 +76,59 @@ function Product() {
         <Formik
             initialValues={{
                 suburb: '',
-                postcode: '',
+                postCode: '',
             }}
-            onSubmit={(values) => {}}
+            onSubmit={(values) => {
+                search(values);
+            }}
         >
-            {(props) => {
+            {({ values, handleSubmit, handleChange }) => {
                 return (
                     <>
                         {/* Search Panel */}
                         <div className="p-3">
-                            <div className="form-order">
-                                <Form.Group>
-                                    <div className="mb-2">
-                                        <Form.Label className="label">Suburb</Form.Label>
-                                    </div>
-                                    <Form.Control type="text" placeholder="Enter The Suburb" name="suburd" />
-                                </Form.Group>
-                                <Form.Group>
-                                    <div className="mb-2">
-                                        <Form.Label className="label">Postcode</Form.Label>
-                                    </div>
-                                    <Form.Control type="text" placeholder="Enter Postcode" name="postcode" />
-                                </Form.Group>
-                            </div>
-                            <div>
-                                <Button
-                                    variant="warning"
-                                    style={{
-                                        backgroundColor: '#f2a13b',
-                                        border: 'none',
-                                    }}
-                                    className={`my-btn-yellow my-4 product-btn-search`}
-                                >
-                                    <BiSearchAlt2 style={{ fontSize: '20px' }}></BiSearchAlt2>
-                                    Search
-                                </Button>
-                            </div>
+                            <Form onSubmit={handleSubmit}>
+                                <div className="form-order">
+                                    <Form.Group>
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Suburb</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search by Suburb"
+                                            name="suburb"
+                                            value={values.suburb}
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                    <Form.Group>
+                                        <div className="mb-2">
+                                            <Form.Label className="label">Postcode</Form.Label>
+                                        </div>
+                                        <Form.Control
+                                            type="text"
+                                            placeholder="Search by Postcode"
+                                            name="postCode"
+                                            value={values.postCode}
+                                            onChange={handleChange}
+                                        />
+                                    </Form.Group>
+                                </div>
+                                <div>
+                                    <Button
+                                        type="submit"
+                                        variant="warning"
+                                        style={{
+                                            backgroundColor: '#f2a13b',
+                                            border: 'none',
+                                        }}
+                                        className={`my-btn-yellow my-4 product-btn-search`}
+                                    >
+                                        <BiSearchAlt2 style={{ fontSize: '20px' }}></BiSearchAlt2>
+                                        Search
+                                    </Button>
+                                </div>
+                            </Form>
                         </div>
 
                         {/* Table Showcase */}
@@ -153,74 +172,22 @@ function Product() {
 
                                                 <th
                                                     style={{
-                                                        minWidth: '320px',
+                                                        minWidth: '150px',
                                                     }}
                                                 >
                                                     Item Name
                                                 </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Pickup
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Destination
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Expected date
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Expected time frame
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Sender Offer
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    My Offer
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Order Status
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Offer Status
-                                                </th>
-                                                <th
-                                                    style={{
-                                                        minWidth: '140px',
-                                                    }}
-                                                >
-                                                    Actions
-                                                </th>
+                                                <th>Pickup</th>
+                                                <th>Destination</th>
+                                                <th>Posted date</th>
+                                                <th>Expected date</th>
+                                                <th>Expected time frame</th>
+                                                <th>Receiver number</th>
+                                                <th>Sender Offer</th>
+                                                <th>My Offer</th>
+                                                <th>Order Status</th>
+                                                <th>Offer Status</th>
+                                                <th>Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -236,9 +203,17 @@ function Product() {
                                                     const waiting = offer?.status === 'Waiting';
                                                     const isCorrectDriver =
                                                         offer?.order?.driverId === authState?.accountInfo?.id;
-                                                    return offer?.order?.orderItems.map((item) => (
+                                                    return offer?.order?.orderItems.map((item, num) => (
                                                         <tr key={index}>
-                                                            <td>{offer?.order?.id}</td>
+                                                            <td>
+                                                                <p
+                                                                    className={`content-${
+                                                                        colors[index % colors.length]
+                                                                    }`}
+                                                                >
+                                                                    {offer?.order?.id}
+                                                                </p>
+                                                            </td>
                                                             <td>
                                                                 <Row>
                                                                     <Col sm="5">
@@ -261,16 +236,38 @@ function Product() {
                                                             </td>
                                                             <td>{offer?.order?.sendingLocation}</td>
                                                             <td>{item?.destination}</td>
-                                                            <td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                                {!!offer?.order?.createdDate
+                                                                    ? moment(offer?.order?.createdDate).format(
+                                                                          'DD-MM-YYYY',
+                                                                      )
+                                                                    : ''}
+                                                            </td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
                                                                 {!!offer?.order?.deliverableDate
                                                                     ? moment(offer?.order?.deliverableDate).format(
                                                                           'DD-MM-YYYY',
                                                                       )
                                                                     : ''}
                                                             </td>
-                                                            <td>{offer?.order?.timeFrame}</td>
-                                                            <td>{offer?.order?.startingRate} aud</td>
-                                                            <td>{offer?.ratePrice} aud</td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                                {offer?.order?.timeFrame}
+                                                            </td>
+                                                            <td>
+                                                                <p
+                                                                    className={`content-${
+                                                                        colors[index % colors.length]
+                                                                    }`}
+                                                                >
+                                                                    {num + 1}
+                                                                </p>
+                                                            </td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                                {offer?.order?.startingRate} aud
+                                                            </td>
+                                                            <td style={{ whiteSpace: 'nowrap' }}>
+                                                                {offer?.ratePrice} aud
+                                                            </td>
                                                             <td>{offer?.order?.status}</td>
                                                             <td>{offer?.status}</td>
                                                             <td>

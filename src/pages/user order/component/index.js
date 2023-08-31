@@ -153,81 +153,20 @@ const UserOrders = () => {
                                                         <th>Order Id</th>
                                                         <th
                                                             style={{
-                                                                minWidth: '320px',
+                                                                minWidth: '150px',
                                                             }}
                                                         >
                                                             Item Name
                                                         </th>
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Pickup Location
-                                                        </th>
-                                                        {/* <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Destination
-                                                        </th> */}
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Posted At
-                                                        </th>
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Expected date
-                                                        </th>
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Expected time frame
-                                                        </th>
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Status
-                                                        </th>
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Vehicles
-                                                        </th>
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Your Offer Price
-                                                        </th>
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Driver Offers
-                                                        </th>
-                                                        <th
-                                                            style={{
-                                                                minWidth: '150px',
-                                                            }}
-                                                        >
-                                                            Actions
-                                                        </th>
+                                                        <th>Pickup Location</th>
+                                                        <th>Posted At</th>
+                                                        <th>Expected date</th>
+                                                        <th>Expected time frame</th>
+                                                        <th>Status</th>
+                                                        <th>Vehicles</th>
+                                                        <th>Your Offer Price</th>
+                                                        <th>Driver Offers</th>
+                                                        <th>Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -259,27 +198,39 @@ const UserOrders = () => {
                                                                 </td>
                                                                 <td>{post?.sendingLocation}</td>
                                                                 {/* <td>{post?.destination}</td> */}
-                                                                <td>
+                                                                <td style={{ whiteSpace: 'nowrap' }}>
                                                                     {!!post?.createdDate
                                                                         ? moment(post?.createdDate).format('DD-MM-YYYY')
                                                                         : ''}
                                                                 </td>
-                                                                <td>
+                                                                <td style={{ whiteSpace: 'nowrap' }}>
                                                                     {!!post?.deliveredDate
                                                                         ? moment(post?.deliverableDate).format(
                                                                               'DD-MM-YYYY',
                                                                           )
                                                                         : ''}
                                                                 </td>
-                                                                <td>{post?.timeFrame}</td>
+                                                                <td style={{ whiteSpace: 'nowrap' }}>
+                                                                    {post?.timeFrame}
+                                                                </td>
                                                                 <td>
                                                                     {post?.status
                                                                         ?.replace?.(/([A-Z])/g, ' $1')
                                                                         ?.trim?.()}
                                                                 </td>
-                                                                <td>{post?.vehicles?.join?.(' - ')}</td>
-                                                                <td>{post?.startingRate} AUD</td>
-                                                                <td>{post?.offerNumber}</td>
+                                                                <td>
+                                                                    <ul className="ps-3">
+                                                                        {post?.vehicles?.map?.((v) => (
+                                                                            <li>{v}</li>
+                                                                        ))}
+                                                                    </ul>
+                                                                </td>
+                                                                <td style={{ whiteSpace: 'nowrap' }}>
+                                                                    {post?.startingRate} AUD
+                                                                </td>
+                                                                <td style={{ whiteSpace: 'nowrap' }}>
+                                                                    {post?.offerNumber}
+                                                                </td>
                                                                 <td>
                                                                     <Link
                                                                         to={`/user/order/detail?orderid=${post?.id}`}

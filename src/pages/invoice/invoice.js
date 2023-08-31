@@ -133,7 +133,7 @@ function Invoice({ clientSecrete, payment }) {
                         <div>
                             <p className="invoice-txt-header">sameday courier services pty ltd</p>
                             <p style={{ margin: '5px' }}>ABN | 82 654 966 604</p>
-                            <p style={{ margin: '5px' }}>Phone Number | 04 66 56 22 86</p>
+                            <p style={{ margin: '5px' }}>Email | info@australianstormcourier.com.au</p>
                         </div>
                     </div>
                     <div style={{ margin: '0 auto' }}>
@@ -141,6 +141,7 @@ function Invoice({ clientSecrete, payment }) {
                             <div>
                                 <div className="invoice-txt-label">Invoice Id</div>
                                 <div className="invoice-txt-label"> Date</div>
+                                <div className="invoice-txt-label"> Full Name</div>
                                 <div className="invoice-txt-label"> Address</div>
                                 <div className="invoice-txt-label"> Phone</div>
                             </div>
@@ -149,6 +150,7 @@ function Invoice({ clientSecrete, payment }) {
                                 <div className="invoice-txt-content">
                                     {moment(payment?.createdAt).format('MM/DD/YYYY')}
                                 </div>
+                                <div className="invoice-txt-content">{payment?.sender?.name}</div>
                                 <div className="invoice-txt-content">{payment?.sender?.address}</div>
                                 <div className="invoice-txt-content">+{payment?.sender?.phoneNumber}</div>
                             </div>
@@ -158,7 +160,6 @@ function Invoice({ clientSecrete, payment }) {
                                 <thead>
                                     <tr style={{ backgroundColor: '#025464', color: 'white' }}>
                                         <th>Item Description</th>
-                                        <th>Rate</th>
                                         <th>Unit</th>
                                         <th>Amount</th>
                                     </tr>
@@ -166,44 +167,10 @@ function Invoice({ clientSecrete, payment }) {
                                 <tbody>
                                     <tr>
                                         <td>
-                                            Order #{payment?.order?.id}
-                                            <ul>
-                                                {payment?.order?.orderItems?.map((orderItem) => {
-                                                    const {
-                                                        item: {
-                                                            destination: {
-                                                                unitNumber,
-                                                                streetNumber,
-                                                                streetName,
-                                                                suburb,
-                                                                state,
-                                                                postCode,
-                                                            },
-                                                            itemName,
-                                                        },
-                                                    } = orderItem;
-                                                    return (
-                                                        <li>
-                                                            <p>Item No.{orderItem?.item?.id}</p>
-                                                            <p>{itemName}</p>
-                                                            <p>
-                                                                {`From: ${Object.entries(
-                                                                    payment?.order?.sendingLocation,
-                                                                )
-                                                                    .map(([_, v]) => v)
-                                                                    .join(', ')}`}
-                                                            </p>
-                                                            <p>
-                                                                {`To: ${unitNumber} - ${streetNumber} ${streetName}, ${suburb}, ${state}, ${postCode}`}
-                                                            </p>
-                                                        </li>
-                                                    );
-                                                })}
-                                            </ul>
+                                            <b>Delivery services fee</b>
                                         </td>
-                                        <td>{payment?.order?.shipFee}</td>
                                         <td>1</td>
-                                        <td>{payment?.order?.shipFee}</td>
+                                        <td>${payment?.order?.shipFee}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -238,20 +205,21 @@ function Invoice({ clientSecrete, payment }) {
                                 </tbody>
                             </table>
                         </div>
+
                         <div className="invoice-last-info" style={{ marginTop: '35px' }}>
                             <div>
-                                <div className="invoice-txt-label">Payment Method</div>
+                                {/* <div className="invoice-txt-label">Payment Method</div>
                                 <div className="invoice-txt-label">Name </div>
                                 <div className="invoice-txt-label"> BSB</div>
-                                <div className="invoice-txt-label"> ACC NO</div>
+                                <div className="invoice-txt-label"> ACC NO</div> */}
                             </div>
                             <div>
-                                <div style={{ marginBottom: '10px', textTransform: 'uppercase' }}>bank transfer</div>
+                                {/* <div style={{ marginBottom: '10px', textTransform: 'uppercase' }}>bank transfer</div>
                                 <div style={{ marginBottom: '10px', textTransform: 'uppercase' }}>
                                     sameday courier services pty ltd
                                 </div>
                                 <div className="invoice-txt-content">013-437</div>
-                                <div className="invoice-txt-content">1555 00392</div>
+                                <div className="invoice-txt-content">1555 00392</div> */}
                             </div>
                         </div>
                     </div>

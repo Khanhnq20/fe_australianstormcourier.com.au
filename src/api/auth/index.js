@@ -64,12 +64,14 @@ const constraints = {
     getAllPayments: 'payments',
     putPayoutPayments: 'payments/payout',
 
+    putStartOrder: 'order/start',
     putPrepareOrder: 'order/prepare',
     putDeliverOrder: 'order/deliver',
     putReceiveOrder: 'order/receive',
     putCancelOrder: 'order/cancel',
 
     postFeedback: 'feedback',
+    getFeedbackList: 'feedback',
 
     hubOnline: 'online',
     hubReceiveOnline: 'online',

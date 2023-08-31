@@ -9,11 +9,11 @@ import { AuthContextComponent } from './stores';
 import { ToastContainer } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
-import './index.css';
-import './App.css';
-import 'swiper/css';
+import 'swiper/css/bundle';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'react-datepicker/dist/react-datepicker.css';
+import './index.css';
+import './App.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

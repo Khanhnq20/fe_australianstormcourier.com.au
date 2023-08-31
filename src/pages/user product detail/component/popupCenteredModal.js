@@ -1,4 +1,6 @@
 import { Col, Modal, Row } from 'react-bootstrap';
+import Rater from 'react-rater';
+import 'react-rater/lib/react-rater.css';
 
 function PopUpCenteredModal({ driver, reviews, ...props }) {
     return (
@@ -44,7 +46,7 @@ function PopUpCenteredModal({ driver, reviews, ...props }) {
                             </div>
                             <div className="product-label-info">
                                 <p className="product-label">Zipcode</p>
-                                <p className="product-content">{driver?.zipCode}</p>
+                                <p className="product-content">{driver?.postCode}</p>
                             </div>
                             <div className="product-label-info">
                                 <p className="product-label">Vehicles</p>
@@ -68,13 +70,14 @@ function PopUpCenteredModal({ driver, reviews, ...props }) {
                                 <p className="product-label">Additional Information</p>
                                 <p className="product-content">Additional Information</p>
                             </div>
-                            <div className="product-label-info">
+                            <div className="product-label-info" style={{ alignItems: 'start' }}>
                                 <p className="product-label">Review</p>
-                                <ul className="product-content">
+                                <ul className="product-content" style={{ padding: 0 }}>
                                     {reviews?.map((i, ind) => (
-                                        <li key={ind}>
-                                            <p>{i?.feedback}</p>
-                                            <label>{i?.star}</label>
+                                        <li key={ind} className="mb-2" style={{ listStyleType: 'none' }}>
+                                            <Rater total={5} rating={i?.star || 1} interactive={false}></Rater>
+                                            <label className="ms-2">{i?.star}</label>
+                                            <p style={{ margin: 0 }}>{i?.feedback}</p>
                                         </li>
                                     ))}
                                 </ul>

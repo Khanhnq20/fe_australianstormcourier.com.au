@@ -15,7 +15,7 @@ import {
 } from 'react-bootstrap';
 import PaymentPopup from './paymentPopup';
 import '../style/senderProductDetail.css';
-import { MdPayment } from 'react-icons/md';
+import { MdContentCopy, MdPayment } from 'react-icons/md';
 import { FieldArray, Formik } from 'formik';
 import * as yup from 'yup';
 import { RiImageEditFill } from 'react-icons/ri';
@@ -27,8 +27,9 @@ import { usePagination } from '../../../hooks';
 import { CustomSpinner } from '../../../layout';
 import Carousel from 'react-bootstrap/Carousel';
 import { FaTimes } from 'react-icons/fa';
+import { BiEdit, BiPrinter, BiMessageEdit } from 'react-icons/bi';
 import { Link } from 'react-router-dom';
-import { Pagination as SwiperPagination, Navigation } from 'swiper';
+import { Pagination as SwiperPagination, Navigation, EffectCoverflow } from 'swiper';
 import { SwiperSlide, Swiper } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -44,9 +45,9 @@ const PERMIT_FILE_FORMATS = ['image/jpeg', 'image/png', 'image/jpg'];
 function ProductDetail() {
     const [support, setSupport] = React.useState(false);
     const [authState] = React.useContext(AuthContext);
-    const [slider, setSlider] = React.useState(false);
-    const [receiveImg, setReceiveImg] = React.useState(false);
-    const [deliveryImg, setDeliveryImg] = React.useState(false);
+    const [slider, setSlider] = React.useState(null);
+    const [receiveImg, setReceiveImg] = React.useState(null);
+    const [deliveryImg, setDeliveryImg] = React.useState(null);
     const [showLabel, setShowLabel] = React.useState(null);
     const [order, setResult] = React.useState(null);
     const [loading, setLoading] = React.useState(true);
@@ -236,6 +237,7 @@ function ProductDetail() {
                     params: {
                         orderId,
                         driverId,
+                        returnURL: encodeURIComponent(window.location.origin),
                     },
                 },
             )
@@ -295,6 +297,8 @@ function ProductDetail() {
                     getOrderInfo();
                 } else if (response?.data?.error) {
                     toast.error(response?.data?.error);
+                } else if (response?.data?.errors && Array.isArray(response?.data?.errors)) {
+                    response?.data?.errors.forEach((error) => toast.error(error));
                 }
                 setPopupLoading(false);
             })
@@ -377,7 +381,7 @@ function ProductDetail() {
                             <div className="product-label-info">
                                 <p className="product-label">Posted Date</p>
                                 <p className="product-content">
-                                    {new moment(order?.createdDate).format('YYYY-MM-DD HH : mm : ss')}
+                                    {new moment(order?.createdDate).format('YYYY-MM-DD HH:mm:ss')}
                                 </p>
                             </div>
                             <div className="product-label-info">
@@ -433,7 +437,7 @@ function ProductDetail() {
                                         className="img-front-frame"
                                         style={{ padding: '10px 0 ' }}
                                         onClick={() => {
-                                            setDeliveryImg(true);
+                                            setDeliveryImg(1);
                                         }}
                                     >
                                         <div className="background-front">
@@ -459,13 +463,14 @@ function ProductDetail() {
                                             size="lg"
                                             aria-labelledby="contained-modal-title-vcenter"
                                             centered
-                                            show={deliveryImg}
+                                            show={!!deliveryImg}
+                                            onHide={() => setDeliveryImg(null)}
                                         >
                                             <Modal.Header>
                                                 <Modal.Title
                                                     className="txt-center w-100"
                                                     onClick={() => {
-                                                        setDeliveryImg(false);
+                                                        setDeliveryImg(null);
                                                     }}
                                                 >
                                                     <div style={{ textAlign: 'right' }}>
@@ -474,33 +479,45 @@ function ProductDetail() {
                                                 </Modal.Title>
                                             </Modal.Header>
                                             <Modal.Body className="link-slider">
-                                                <Carousel>
+                                                <Swiper
+                                                    effect={'coverflow'}
+                                                    grabCursor={true}
+                                                    centeredSlides={true}
+                                                    slidesPerView={3}
+                                                    coverflowEffect={{
+                                                        rotate: 50,
+                                                        stretch: 0,
+                                                        depth: 100,
+                                                        modifier: 1,
+                                                        slideShadows: true,
+                                                    }}
+                                                    pagination={true}
+                                                    modules={[EffectCoverflow, SwiperPagination]}
+                                                    className="mySwiper"
+                                                >
                                                     {order?.deliverdItemImages
                                                         ?.split?.('[space]')
                                                         ?.map((url, index) => {
                                                             return (
-                                                                <Carousel.Item
-                                                                    style={{ borderLeft: 'none' }}
-                                                                    key={index}
-                                                                >
+                                                                <SwiperSlide style={{ borderLeft: 'none' }} key={index}>
                                                                     <img
                                                                         className="w-100"
                                                                         src={url}
                                                                         alt="First slide"
                                                                     />
-                                                                    <Carousel.Caption></Carousel.Caption>
-                                                                </Carousel.Item>
+                                                                </SwiperSlide>
                                                             );
                                                         })}
-                                                </Carousel>
+                                                </Swiper>
                                             </Modal.Body>
                                         </Modal>
                                     </div>
                                 </div>
                             </div>
-                            <Button variant="success" onClick={() => setEditOrderModal(true)}>
-                                Edit information
-                            </Button>
+                            {/* <Button variant="success" onClick={() => setEditOrderModal(true)}>
+                                <BiMessageEdit className="me-2"></BiMessageEdit>
+                                Edit Order
+                            </Button> */}
                             <Modal show={editOrderModal} onHide={() => setEditOrderModal(false)}>
                                 <Modal.Header closeButton>
                                     <h5 style={{ margin: 0 }}>Edit order information</h5>
@@ -510,15 +527,19 @@ function ProductDetail() {
                                         initialValues={{
                                             orderId: order?.id,
                                             sendingLocation: {
-                                                unitNumber: '',
-                                                streetNumber: '',
-                                                streetName: '',
-                                                suburb: '',
-                                                state: '',
-                                                postCode: '',
+                                                unitNumber: order?.sendingLocation?.split(' ,')[0],
+                                                streetNumber: order?.sendingLocation?.split(' ,')[1].split(' ')[0],
+                                                streetName: order?.sendingLocation
+                                                    ?.split(' ,')[1]
+                                                    .split(' ')
+                                                    .slice(1, order?.sendingLocation?.split(' ,')[1].split(' ').length)
+                                                    .join(' '),
+                                                suburb: order?.sendingLocation?.split(' ,')[2],
+                                                state: order?.sendingLocation?.split(' ,')[3],
+                                                postCode: order?.sendingLocation?.split(' ,')[4],
                                             },
-                                            deliverableDate: Date.now(),
-                                            timeFrame: '-',
+                                            deliverableDate: moment(order?.deliverableDate, 'YYYY-MM-DD').toDate(),
+                                            timeFrame: order?.timeFrame,
                                             startingRate: order?.startingRate,
                                             vehicles: order?.vehicles.map(
                                                 (v) => authState.vehicles.find((p) => p.name === v).id,
@@ -592,6 +613,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.unitNumber"
                                                                             placeholder="Enter Unit number (apartment, room,...)"
+                                                                            value={values.sendingLocation.unitNumber}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.unitNumber &&
                                                                                 !!errors?.sendingLocation?.unitNumber
@@ -610,6 +632,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.streetNumber"
                                                                             placeholder="Enter street number"
+                                                                            value={values.sendingLocation.streetNumber}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.streetNumber &&
                                                                                 !!errors?.sendingLocation?.streetNumber
@@ -628,6 +651,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.streetName"
                                                                             placeholder="Enter Street Name"
+                                                                            value={values.sendingLocation.streetName}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.streetName &&
                                                                                 !!errors?.sendingLocation?.streetName
@@ -646,6 +670,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.suburb"
                                                                             placeholder="Enter Suburb"
+                                                                            value={values.sendingLocation.suburb}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.suburb &&
                                                                                 !!errors?.sendingLocation?.suburb
@@ -664,6 +689,7 @@ function ProductDetail() {
                                                                             type="text"
                                                                             name="sendingLocation.state"
                                                                             placeholder="Enter state"
+                                                                            value={values.sendingLocation.state}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.state &&
                                                                                 !!errors?.sendingLocation?.state
@@ -676,12 +702,13 @@ function ProductDetail() {
                                                                         </Form.Control.Feedback>
                                                                     </Form.Group>
 
-                                                                    {/* State */}
+                                                                    {/* Postcode */}
                                                                     <Form.Group>
                                                                         <Form.Control
                                                                             type="text"
                                                                             name="sendingLocation.postCode"
                                                                             placeholder="Enter post code"
+                                                                            value={values.sendingLocation.postCode}
                                                                             isInvalid={
                                                                                 touched.sendingLocation?.postCode &&
                                                                                 !!errors?.sendingLocation?.postCode
@@ -699,6 +726,7 @@ function ProductDetail() {
                                                         <Col>
                                                             {/* Delivery Date */}
                                                             <h4 className="mb-3">Delivery Capability</h4>
+
                                                             <Row className="mb-3">
                                                                 <Col>
                                                                     {/* Deliverable Date */}
@@ -713,6 +741,9 @@ function ProductDetail() {
                                                                             type="date"
                                                                             name="deliverableDate"
                                                                             placeholder="Enter deliverable date"
+                                                                            value={moment(
+                                                                                values?.deliverableDate,
+                                                                            ).format('YYYY-MM-DD')}
                                                                             isInvalid={
                                                                                 touched.deliverableDate &&
                                                                                 !!errors?.deliverableDate
@@ -739,6 +770,10 @@ function ProductDetail() {
                                                                             type="time"
                                                                             name="timeFrame"
                                                                             placeholder="Enter time frame start"
+                                                                            value={moment(
+                                                                                values.timeFrame.split('-')[0],
+                                                                                'hh:mm',
+                                                                            ).format('hh:mm')}
                                                                             isInvalid={
                                                                                 touched?.timeFrame &&
                                                                                 !!errors?.timeFrame
@@ -766,6 +801,7 @@ function ProductDetail() {
                                                                             type="time"
                                                                             name="timeFrame"
                                                                             placeholder="Enter time frame end"
+                                                                            value={values.timeFrame.split('-')[1]}
                                                                             isInvalid={
                                                                                 touched.timeFrame && !!errors?.timeFrame
                                                                             }
@@ -917,23 +953,25 @@ function ProductDetail() {
                     >
                         {order?.orderItems?.map?.((item, index) => {
                             return (
-                                <SwiperSlide key={index} className="pb-5">
+                                <SwiperSlide key={index} className="pb-5 mb-2">
                                     <div>
-                                        <Button
+                                        {/* <Button
                                             variant="success"
-                                            className="mb-3"
+                                            className="mb-3 me-3"
                                             onClick={() => setEditItemodal(index)}
                                         >
+                                            <BiEdit className="me-2"></BiEdit>
                                             Edit
-                                        </Button>
+                                        </Button> */}
                                         <Button
                                             variant="warning"
-                                            className="mb-3 mx-3"
+                                            className="mb-3"
                                             onClick={() => {
                                                 setShowLabel(index);
                                             }}
                                         >
-                                            View Label
+                                            <BiPrinter className="me-2"></BiPrinter>
+                                            Print Label
                                         </Button>
                                     </div>
                                     <div>
@@ -981,12 +1019,22 @@ function ProductDetail() {
                                                     initialValues={{
                                                         itemName: item.itemName,
                                                         destination: {
-                                                            unitNumber: '',
-                                                            streetNumber: '',
-                                                            streetName: '',
-                                                            suburb: '',
-                                                            state: '',
-                                                            postCode: '',
+                                                            unitNumber: item?.destination?.split(' ,')[0],
+                                                            streetNumber: item?.destination
+                                                                ?.split(' ,')[1]
+                                                                ?.split(' ')[0],
+                                                            streetName: item?.destination
+                                                                ?.split(' ,')[1]
+                                                                ?.split(' ')
+                                                                ?.slice(
+                                                                    1,
+                                                                    item?.destination?.split(' ,')[1].split(' ')
+                                                                        .length - 1,
+                                                                )
+                                                                ?.join(' '),
+                                                            suburb: item?.destination?.split(' ,')[2],
+                                                            state: item?.destination?.split(' ,')[3],
+                                                            postCode: item?.destination?.split(' ,')[4],
                                                         },
                                                         receiverName: item.receiverName,
                                                         receiverPhone: item.receiverPhone,
@@ -1294,10 +1342,7 @@ function ProductDetail() {
                                                                                 type="text"
                                                                                 name={`destination.state`}
                                                                                 placeholder="Enter state"
-                                                                                value={
-                                                                                    values.orderItems?.[index]
-                                                                                        ?.destination?.state
-                                                                                }
+                                                                                value={values?.destination?.state}
                                                                                 isInvalid={
                                                                                     touched?.destination?.state &&
                                                                                     !!errors?.destination?.state
@@ -1779,7 +1824,7 @@ function ProductDetail() {
                                             </Modal.Body>
                                         </Modal>
                                     </div>
-                                    <Row className="product-form-content justify-content-center" key={index + 1}>
+                                    <Row className="justify-content-center" key={index + 1}>
                                         <Col sm="12" md="8" lg="6">
                                             <div className="product-form-info">
                                                 {/* Item name */}
@@ -1788,7 +1833,7 @@ function ProductDetail() {
                                                     <p className="product-content">{item.itemName}</p>
                                                 </div>
                                                 {/* Charcode */}
-                                                <div className="product-label-info">
+                                                {/* <div className="product-label-info">
                                                     <p className="product-label text-sm-start text-lg-end">Charcode</p>
                                                     <p className="product-content">
                                                         {'000000'.substring(
@@ -1796,7 +1841,7 @@ function ProductDetail() {
                                                             6 - item.itemCharCode.toString().length,
                                                         ) + item.itemCharCode}
                                                     </p>
-                                                </div>
+                                                </div> */}
                                                 {/* Note */}
                                                 <div className="product-label-info">
                                                     <p className="product-label text-sm-start text-lg-end">Note</p>
@@ -1852,8 +1897,38 @@ function ProductDetail() {
                                                 <p className="product-label-fit text-sm-end text-md-start">
                                                     Received Barcode
                                                 </p>
-                                                <p>{item?.itemCharCode}</p>
+
+                                                <span
+                                                    className="p-2"
+                                                    style={{ display: 'inline-block', border: '1px solid red' }}
+                                                    onClick={() => {
+                                                        navigator.clipboard.writeText(item?.itemCharCode);
+                                                        toast.success('Clipboard has added');
+                                                    }}
+                                                >
+                                                    <p
+                                                        style={{
+                                                            fontWeight: '600',
+                                                            margin: 0,
+                                                            verticalAlign: '',
+                                                            cursor: 'pointer',
+                                                        }}
+                                                    >
+                                                        {item?.itemCharCode}{' '}
+                                                        <span>
+                                                            <MdContentCopy></MdContentCopy>
+                                                        </span>
+                                                    </p>
+                                                </span>
                                             </div>
+                                            <p className="my-2 text-danger">
+                                                <b>
+                                                    <i>
+                                                        * Please send this barcode to receiver {item?.receiverPhone} in
+                                                        order to receive the delivery
+                                                    </i>
+                                                </b>
+                                            </p>
                                             <div className="product-label-info" style={{ alignItems: 'unset' }}>
                                                 <p className="product-label-fit text-sm-end text-md-start">
                                                     Product pictures
@@ -1863,7 +1938,7 @@ function ProductDetail() {
                                                         className="img-front-frame"
                                                         style={{ padding: '10px 0 ' }}
                                                         onClick={() => {
-                                                            setSlider(true);
+                                                            setSlider(index);
                                                         }}
                                                     >
                                                         <div className="background-front">
@@ -1887,61 +1962,69 @@ function ProductDetail() {
                                                             src={item.itemImages?.split?.('[space]')?.[0]}
                                                         />
                                                     </div>
-                                                    <div>
-                                                        {slider ? (
-                                                            <div>
-                                                                <Modal
-                                                                    size="lg"
-                                                                    aria-labelledby="contained-modal-title-vcenter"
-                                                                    centered
-                                                                    show={slider}
-                                                                >
-                                                                    <Modal.Header>
-                                                                        <Modal.Title
-                                                                            className="txt-center w-100"
-                                                                            onClick={() => {
-                                                                                setSlider(false);
-                                                                            }}
-                                                                        >
-                                                                            <div style={{ textAlign: 'right' }}>
-                                                                                <FaTimes
-                                                                                    style={{
-                                                                                        color: 'grey',
-                                                                                        cursor: 'pointer',
-                                                                                    }}
-                                                                                ></FaTimes>
-                                                                            </div>
-                                                                        </Modal.Title>
-                                                                    </Modal.Header>
-                                                                    <Modal.Body className="link-slider">
-                                                                        <Carousel>
-                                                                            {item.itemImages
-                                                                                ?.split?.('[space]')
-                                                                                ?.map((url, index) => {
-                                                                                    return (
-                                                                                        <Carousel.Item
-                                                                                            style={{
-                                                                                                borderLeft: 'none',
-                                                                                            }}
-                                                                                            key={index}
-                                                                                        >
-                                                                                            <img
-                                                                                                className="w-100"
-                                                                                                src={url}
-                                                                                                alt="First slide"
-                                                                                            />
-                                                                                            <Carousel.Caption></Carousel.Caption>
-                                                                                        </Carousel.Item>
-                                                                                    );
-                                                                                })}
-                                                                        </Carousel>
-                                                                    </Modal.Body>
-                                                                </Modal>
-                                                            </div>
-                                                        ) : (
-                                                            <></>
-                                                        )}
-                                                    </div>
+                                                    <Modal
+                                                        size="lg"
+                                                        aria-labelledby="contained-modal-title-vcenter"
+                                                        centered
+                                                        show={slider === index}
+                                                        onHide={() => setSlider(null)}
+                                                    >
+                                                        <Modal.Header>
+                                                            <Modal.Title
+                                                                className="txt-center w-100"
+                                                                onClick={() => {
+                                                                    setSlider(null);
+                                                                }}
+                                                            >
+                                                                <div style={{ textAlign: 'right' }}>
+                                                                    <FaTimes
+                                                                        style={{
+                                                                            color: 'grey',
+                                                                            cursor: 'pointer',
+                                                                        }}
+                                                                    ></FaTimes>
+                                                                </div>
+                                                            </Modal.Title>
+                                                        </Modal.Header>
+                                                        <Modal.Body className="link-slider">
+                                                            <Swiper
+                                                                effect={'coverflow'}
+                                                                grabCursor={true}
+                                                                centeredSlides={true}
+                                                                slidesPerView={3}
+                                                                coverflowEffect={{
+                                                                    rotate: 50,
+                                                                    stretch: 0,
+                                                                    depth: 100,
+                                                                    modifier: 1,
+                                                                    slideShadows: true,
+                                                                }}
+                                                                pagination={true}
+                                                                modules={[EffectCoverflow, SwiperPagination]}
+                                                                className="mySwiper"
+                                                            >
+                                                                {item.itemImages
+                                                                    ?.split?.('[space]')
+                                                                    ?.map((url, index) => {
+                                                                        return (
+                                                                            <SwiperSlide
+                                                                                // style={{
+                                                                                //     borderLeft: 'none',
+                                                                                // }}
+                                                                                key={index}
+                                                                            >
+                                                                                <img
+                                                                                    className="w-100"
+                                                                                    src={url}
+                                                                                    alt="First slide"
+                                                                                />
+                                                                                <Carousel.Caption></Carousel.Caption>
+                                                                            </SwiperSlide>
+                                                                        );
+                                                                    })}
+                                                            </Swiper>
+                                                        </Modal.Body>
+                                                    </Modal>
                                                 </div>
                                             </div>
                                             <div className="product-label-info" style={{ alignItems: 'unset' }}>
@@ -1953,7 +2036,7 @@ function ProductDetail() {
                                                         className="img-front-frame"
                                                         style={{ padding: '10px 0 ' }}
                                                         onClick={() => {
-                                                            setReceiveImg(true);
+                                                            setReceiveImg(index);
                                                         }}
                                                     >
                                                         <div className="background-front">
@@ -1965,7 +2048,7 @@ function ProductDetail() {
                                                                     opacity: '70%',
                                                                 }}
                                                             >
-                                                                {order?.receivedItemImages?.split('[space]')?.length ||
+                                                                {item?.receivedItemImages?.split('[space]')?.length ||
                                                                     0}
                                                             </div>
                                                             <p className="driving-txt">view image</p>
@@ -1979,13 +2062,14 @@ function ProductDetail() {
                                                         size="lg"
                                                         aria-labelledby="contained-modal-title-vcenter"
                                                         centered
-                                                        show={receiveImg}
+                                                        show={receiveImg === index}
+                                                        onHide={() => setReceiveImg(null)}
                                                     >
                                                         <Modal.Header>
                                                             <Modal.Title
                                                                 className="txt-center w-100"
                                                                 onClick={() => {
-                                                                    setReceiveImg(false);
+                                                                    setReceiveImg(null);
                                                                 }}
                                                             >
                                                                 <div style={{ textAlign: 'right' }}>
@@ -1996,12 +2080,27 @@ function ProductDetail() {
                                                             </Modal.Title>
                                                         </Modal.Header>
                                                         <Modal.Body className="link-slider">
-                                                            <Carousel>
-                                                                {order.receivedItemImages
+                                                            <Swiper
+                                                                effect={'coverflow'}
+                                                                grabCursor={true}
+                                                                centeredSlides={true}
+                                                                slidesPerView={3}
+                                                                coverflowEffect={{
+                                                                    rotate: 50,
+                                                                    stretch: 0,
+                                                                    depth: 100,
+                                                                    modifier: 1,
+                                                                    slideShadows: true,
+                                                                }}
+                                                                pagination={true}
+                                                                modules={[EffectCoverflow, SwiperPagination]}
+                                                                className="mySwiper"
+                                                            >
+                                                                {item.receivedItemImages
                                                                     ?.split?.('[space]')
                                                                     ?.map((url, index) => {
                                                                         return (
-                                                                            <Carousel.Item
+                                                                            <SwiperSlide
                                                                                 style={{ borderLeft: 'none' }}
                                                                                 key={index}
                                                                             >
@@ -2010,16 +2109,14 @@ function ProductDetail() {
                                                                                     src={url}
                                                                                     alt="First slide"
                                                                                 />
-                                                                                <Carousel.Caption></Carousel.Caption>
-                                                                            </Carousel.Item>
+                                                                            </SwiperSlide>
                                                                         );
                                                                     })}
-                                                            </Carousel>
+                                                            </Swiper>
                                                         </Modal.Body>
                                                     </Modal>
                                                 </div>
                                             </div>
-                                            0
                                         </Col>
                                     </Row>
                                 </SwiperSlide>
@@ -2092,12 +2189,16 @@ function ProductDetail() {
                                                         </Row>
                                                         <Row>
                                                             <Col>Freight:</Col>
-                                                            <Col>10%</Col>
+                                                            <Col>{config.ServicePricing}%</Col>
                                                         </Row>
                                                         <Row>
                                                             <Col>Total</Col>
                                                             <Col>
-                                                                {(offer?.ratePrice * (1 + 0.1) * (1 + 0.1)).toFixed(2)}
+                                                                {(
+                                                                    offer?.ratePrice *
+                                                                    (1 + 0.1) *
+                                                                    (1 + config.ServicePricing / 100)
+                                                                ).toFixed(2)}
                                                             </Col>
                                                         </Row>
                                                     </td>
@@ -2185,7 +2286,10 @@ function ProductDetail() {
                                                                     <Link
                                                                         to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}
                                                                     >
-                                                                        <Button className="w-100 mb-2">
+                                                                        <Button
+                                                                            className="w-100 mb-2"
+                                                                            style={{ whiteSpace: 'nowrap' }}
+                                                                        >
                                                                             View Invoice
                                                                         </Button>
                                                                     </Link>
@@ -2197,7 +2301,12 @@ function ProductDetail() {
                                                                     <Link
                                                                         to={`/payment/checkout/return/invoice?id=${order?.paymentId}`}
                                                                     >
-                                                                        <Button variant="warning">View Invoice</Button>
+                                                                        <Button
+                                                                            variant="warning"
+                                                                            style={{ whiteSpace: 'nowrap' }}
+                                                                        >
+                                                                            View Invoice
+                                                                        </Button>
                                                                     </Link>
                                                                 </Stack>
                                                             ) : (

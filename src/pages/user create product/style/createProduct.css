@@ -32,7 +32,7 @@
 .swiper-pagination-bullet {
     color: var(--clr-primary);
     background: none;
-    padding: 20px;
+    /* padding: 20px; */
     user-select: none;
     font-size: 14px;
     cursor: pointer;
@@ -59,6 +59,7 @@
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     flex-grow: 1;
+    position: relative;
 }
 .times-createProduct-form {
     font-size: 25px;
@@ -115,4 +116,48 @@
 }
 .t-invoice-to-content {
     flex-grow: 1;
+}
+
+.aus-dropdown-menu {
+    padding: 0;
+    max-height: 0;
+    visibility: hidden;
+    opacity: 0;
+    transition: max-height 200ms, opacity 200ms;
+}
+
+.aus-dropdown-menu[data-show='true'] {
+    max-height: 400px;
+    opacity: 1;
+    visibility: visible;
+    transition: max-height 200ms, opacity 200ms;
+}
+
+.aus-dropdown-item {
+    list-style-type: none;
+    cursor: pointer;
+    border-bottom: 1px solid #ccc;
+    padding: 5px;
+}
+
+#orderItems .swiper-button-next,
+#orderItems .swiper-button-prev {
+    left: -10px;
+}
+
+.swiper-nav-btns {
+    position: absolute;
+    top: 50%;
+    z-index: 1;
+    font-size: 3.5rem;
+    color: var(--clr-txt-primary);
+}
+
+.swiper-nav-prev {
+    left: 0;
+}
+
+.swiper-nav-next {
+    right: 0;
+    text-align: end;
 }

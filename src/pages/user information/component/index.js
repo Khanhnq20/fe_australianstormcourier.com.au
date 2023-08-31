@@ -11,6 +11,7 @@ import PhoneInput from 'react-phone-input-2';
 import { authConstraints, authInstance, config } from '../../../api';
 import { toast } from 'react-toastify';
 import { CustomSpinner } from '../../../layout';
+import { BsCheck2Circle } from 'react-icons/bs';
 
 let registerSchema = yup.object().shape({
     fullName: yup.string().required('Full Name is required field'),
@@ -21,7 +22,7 @@ let registerSchema = yup.object().shape({
 });
 
 function UserInformation() {
-    const [authState, { updateProfile }] = React.useContext(AuthContext);
+    const [authState, { updateProfile, getAccount }] = React.useContext(AuthContext);
     const [phoneError, setPhoneError] = React.useState('');
     const [showPhoneVerification, setShowPhoneVerification] = React.useState(false);
     const [loading, setLoading] = React.useState(false);
@@ -68,6 +69,7 @@ function UserInformation() {
                 if (response.data?.successed) {
                     toast.success('Your account has been confirmed phone');
                     setLoading(false);
+                    getAccount();
                 } else {
                     toast.error('Failed');
                     setLoading(false);
@@ -104,7 +106,13 @@ function UserInformation() {
                         <p className="product-label">Confirmed phone number</p>
                         <p className="product-content">
                             {authState?.accountInfo?.phoneNumberConfirmed ? (
-                                <span>Confirmed</span>
+                                <span>
+                                    <BsCheck2Circle
+                                        className="me-2 text-success"
+                                        style={{ fontSize: '1.6rem' }}
+                                    ></BsCheck2Circle>
+                                    Confirmed
+                                </span>
                             ) : (
                                 <Button
                                     variant="success"
@@ -156,7 +164,6 @@ function UserInformation() {
                                                     Check new message and copy 6-digit code. Return website and paste{' '}
                                                     <b>code</b> to the below
                                                 </p>
-                                                <img src=""></img>
                                                 <Formik
                                                     initialValues={{
                                                         digit: '',
@@ -204,7 +211,7 @@ function UserInformation() {
                         <p className="product-content">{authState?.accountInfo?.address}</p>
                     </div>
                     <div className="product-label-info">
-                        <p className="product-label">ABN Number</p>
+                        <p className="product-label">ABN</p>
                         <p className="product-content">{authState?.accountInfo?.abnNumber || <Link>_blank</Link>}</p>
                     </div>
                     <div className="product-label-info">
@@ -298,7 +305,7 @@ function UserInformation() {
                                             <Form.Control.Feedback type="invalid">{errors.email}</Form.Control.Feedback>
                                         </Form.Group>
                                         {/* Phone */}
-                                        <Form.Group>
+                                        <Form.Group className="mb-2">
                                             <div className="mb-2">
                                                 <Form.Label className="label">Phone Number</Form.Label>
                                                 <p className="asterisk">*</p>
@@ -340,7 +347,8 @@ function UserInformation() {
                                                 {errors?.phoneNumber || phoneError}
                                             </Form.Control.Feedback>
                                         </Form.Group>
-                                        <Form.Group className="form-group">
+                                        {/* Address */}
+                                        <Form.Group className="form-group mb-2">
                                             <div className="mb-2">
                                                 <Form.Label className="label">Address</Form.Label>
                                                 <p className="asterisk">*</p>
@@ -350,6 +358,24 @@ function UserInformation() {
                                                 name="address"
                                                 placeholder="Enter Your Full Address"
                                                 value={values.address}
+                                                isInvalid={touched.address && errors.address}
+                                                onChange={handleChange}
+                                                onBlur={handleBlur}
+                                            />
+                                            <Form.Control.Feedback type="invalid">
+                                                {errors.address}
+                                            </Form.Control.Feedback>
+                                        </Form.Group>
+                                        {/* ABN */}
+                                        <Form.Group className="form-group mb-2">
+                                            <div className="mb-2">
+                                                <Form.Label className="label">ABN</Form.Label>
+                                                {/* <p className="asterisk">*</p> */}
+                                            </div>
+                                            <Form.Control
+                                                type="text"
+                                                name="address"
+                                                placeholder="Enter Your ABN"
                                                 isInvalid={touched.address && errors.address}
                                                 onChange={handleChange}
                                                 onBlur={handleBlur}
