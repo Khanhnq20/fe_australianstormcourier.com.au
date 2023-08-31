@@ -131,5 +131,5 @@ export const authChildrens = [
         <NotFound></NotFound>
       </>
     ),
-  },
+  }
 ];
