@@ -2,6 +2,7 @@ import React, { createContext, useEffect } from 'react';
 import { authConstraints, authInstance, config } from '../../api';
 import { toast } from 'react-toastify';
 import taskStatus from './taskStatus';
+import { ConsoleLogger } from '@microsoft/signalr/dist/esm/Utils';
 export const AuthContext = createContext();
 
 export default function Index({ children }) {
@@ -150,6 +151,7 @@ export default function Index({ children }) {
         },
 
         signupDriver(body, returnURL = '', callback) {
+            console.log(body);
             setState((i) => ({
                 ...i,
                 loading: true,
@@ -165,6 +167,7 @@ export default function Index({ children }) {
                     },
                 })
                 .then((response) => {
+                    console.log(response);
                     setState((i) => ({
                         ...i,
                         errors: [...response.data?.registeredErrors],
