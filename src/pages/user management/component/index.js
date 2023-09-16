@@ -328,7 +328,7 @@ function UserManagement() {
                                   <td>{driver?.email}</td>
                                   <td>{driver?.phoneNumber}</td>
                                   <td>
-                                    {moment(new Date()).format("YYYY/MM/DD")}
+                                    {moment(driver?.createdDate).format("YYYY/MM/DD")}
                                   </td>
                                   <td>{driver?.abnNumber}</td>
                                   <td>{driver?.bussinessName}</td>

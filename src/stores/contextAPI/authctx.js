@@ -151,7 +151,6 @@ export default function Index({ children }) {
         },
 
         signupDriver(body, returnURL = '', callback) {
-            console.log(body);
             setState((i) => ({
                 ...i,
                 loading: true,
@@ -167,7 +166,6 @@ export default function Index({ children }) {
                     },
                 })
                 .then((response) => {
-                    console.log(response);
                     setState((i) => ({
                         ...i,
                         errors: [...response.data?.registeredErrors],
